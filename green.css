@@ -1,0 +1,17 @@
+:root {
+  --background: #AFE0C8;
+  --select: #948ED7;
+  --font: Gill Sans Light, Helvetica;
+  --butfont: Gill Sans Light, Helvetica;
+  --butcolor: #252426;
+  --textcolor: #252426;
+  --butbackground: #E3DEE9;
+  --butborder: grey;
+  --menufont: Gill Sans Light, Helvetica;
+  --bdcolor: grey;
+  --duedatecolor: rgba(255, 0, 0, 0.3);
+  --contextcolor: whitesmoke;
+  --contextfontcolor: grey;
+  --important: firebrick;
+  --event: rgba(135,206,235,0.3);
+}

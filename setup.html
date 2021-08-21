@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>flop&pop</title>
+  <script src='jquery.js'></script> <!-- jquery -->
+  <script src='filesaver.js'></script> <!-- this is the extension to save a text file -->
+  <script src='timer.js'></script>
+  <!-- load data and append stylesheet to head-->
+  <script id='load' src='load.js'></script>
+  <link href='style.css' rel='stylesheet' />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+</head>
+<body>
+  <div class='container'>
+    <div class='leftcolumn'>
+      <div>
+        <input placeholder="username" id='username' />
+      </div>
+      <div class='butbar' id='editbuts'>
+        <button class='opts' id='optionsbut'>OPTIONS</button>
+        <button class='opts' id='moveUpBut' title='move up'>^</button>
+        <button class='opts' id='moveDownBut' title='move down'>v</button>
+        <button class='opts' id='editTaskBut' title='edit'>o</button>
+        <button class='opts' id='deleteTaskBut' title='delete'>x</button>
+        <button class='opts' id='archiveTaskBut' title='complete'>POP!</button>
+      </div>
+      <div>
+        <input id='searchbar' placeholder="search (d: date)">
+        <div id='searchbar-results' class='dropdown' style='position:absolute'></div>
+      </div>
+      <div class='butbar'>
+        <button class='opts' id='timer25But' title='25 minutes'>25</button>
+        <button class='opts' id='timer15But' title='15 minutes'>15</button>
+        <button class='opts' id='timer5But' title='5 minutes'>5</button>
+        <button class='opts' id='timer+2But' title='+2 minutes'>+2</button>
+        <button class='opts' id='timer-2But' title='-2 minutes'>-2</button>
+        <button class='opts' id='timerStartBut' title='start timer'>START</button>
+        <button class='opts' id='timerStopBut' title='stop timer'>STOP</button>
+      </div>
+      <input id='timerent' onkeydown='timertest(event)' placeholder="timer" />
+      <p class='title'>LISTS</p>
+      <div class='butbar'>
+        <button class='opts' id='addListBut' title='new list'>+</button>
+        <button class='opts' id='deleteListBut' title='delete list'>x</button>
+        <button class='opts' id='editListBut' title='edit list'>o</button>
+      </div>
+      <div id='loads' class='loads' onfocusout='dragson()'> <!-- this is used to store list names -->
+      </div>
+      <p id='help'>
+        <span onclick='helpfold($(this));'>
+          <span class='h2'>controls</span>
+          <span class='list'>• click: select task</span>
+          <span class='list'>• right-click: options</span>
+          <span class='list'>• doubleclick: edit task</span>
+          <span class='list'>• esc: unselect</span>
+          <span class='list'>• drag: move tasks</span>
+        </span>
+        <span onclick='helpfold($(this));'>
+          <span class='h2'>commands</span>
+          <span class='list'>• return: edit/save</span>
+          <span class='list'>• alt-return: new task below</span>
+          <span class='list'>• alt-shift-return: new subtask</span>
+          <span class='list'>• delete: delete task</span>
+          <span class='list'>• up/down: select above/below</span>
+          <span class='list'>• right/left: select between lists</span>
+          <span class='list'>• alt-up/down: move up/down</span>
+          <span class='list'>• alt-right/left: move between lists</span>
+          <span class='list'>• [/]: fold/un</span>
+          <span class='list'>• alt-[/]: indent/un</span>
+          <span class='list'>• i: important/un</span>
+          <span class='list'>• space: complete/un</span>
+          <span class='list'>• shift-space: archive</span>
+        </span>
+        <span onclick='helpfold($(this));'>
+          <span class='h2'>syntax</span>
+          <span class='h1'># h1</span>
+          <span class='h2'>## h2</span>
+          <span class='h3'>### h3</span>
+          <span class='list'>• list<span class='list'>• 2 spaces: indent</span></span>
+          <span class='italic'>*italic*</span>
+          <span class='bold'>**bold**</span>
+          <span class='bold-italic'>***bold-italic***</span>
+          <span class='link'>[[link (click to search)]]</span>
+          <span><span class='deadline'>>dd.mm.yyyy</span> deadline</span>
+          <span class='event'>@ 10a event
+            <span class='list'>• create or drag subtasks</span>
+          </span>
+        </span>
+        <span onclick='helpfold($(this));'>
+          <span class='h2'>dates</span>
+          <span>Type "d:" into the search bar to search a date (toggle between short/long dates in options)</span>
+          <span class='list'>• M/Mon: monday</span>
+          <span class='list'>• T/Tue: tuesday</span>
+          <span class='list'>• W/Wed: wednesday</span>
+          <span class='list'>• R/Thu: thursday</span>
+          <span class='list'>• F/Fri: friday</span>
+          <span class='list'>• S/Sat: saturday</span>
+          <span class='list'>• U/Sun: sunday</span>
+          <span class='list'>• t: today's weekday</span>
+          <span class='list'>• +/-: change by time unit</span>
+          <span class='list'>• w: weeks</span>
+          <span class='list'>• m: months</span>
+          <span class='list'>• y: years</span>
+        </span>
+        <span onclick='helpfold($(this));'>
+          <span class='h2'>examples</span>
+          <span class='list'>• replace M with Mon for long dates option</span>
+          <span class='list'>• d:M (next Monday)</span>
+          <span class='list'>• d:M+1w (a week from Monday)</span>
+          <span class='list'>• d:M+1m (the first Monday next month)</span>
+          <span class='list'>• d:M+1m+1w (a week after the first Monday of next month)</span>
+          <span class='list'>• d:M+1y (the first Monday of next year)</span>
+          <span class='list'>• you can also type in a date (day, day & month, or day month & year) to find that date</span>
+          <span class='list'>• change between dd.mm.yyyy, yyyy-mm-dd, and mm/dd/yyyy formats in options</span>
+        </span>
+      </p>
+    </div>
+    <div class='listcontainer'>
+      <div class='floplist'>
+        <div class='butbar' id='flopbuts'>
+          <button class='flopbut' id='flopBut' title='new task in bank'>+ BANK</button>
+          <button class='opts' id='newHeadingFlopBut' title='new heading in bank'>+#</button>
+          <button class='opts' id='randomBut' title='select random flop'>?</button>
+          <button class='opts' id='movePopBut' title='move task to river'>></button>
+        </div>
+        <p id='flop' class='rendered in' ondrop='dropTask(event)' ondragover='draggingOver(event)'></p>
+        <div style='height: 500px;'></div>
+        <p id='texttest'></p>
+      </div>
+      <div class='poplist'>
+        <div class='butbar'>
+          <button class='opts' id='moveFlopBut' title='move task to bank'><</button>
+          <button id='todayBut' title='jump to today'>d:t</button>
+          <button class='flopbut' id='popBut' title='new task in river'>+ RIVER</button>
+        </div>
+        <p id='pop' class='rendered in' ondrop='dropTask(event)' ondragover='draggingOver(event)'></p>
+      </div>
+    </div>
+  </div>
+  <p id='test' style='display:none;position:absolute;'><p>
+  <nav id="context-menu">
+    <p function='toggleComplete()' class='dropdown-item' id='context-togglecomplete'>complete/un (space)</p>
+    <p function='toggleImportant()' class='dropdown-item' id='context-toggleimportant'>important/un (i)</p>
+    <p function='indentTask(true)' class='dropdown-item' id='context-indentTask'>indent (alt-])</p>
+    <p function='indentTask(false)' class='dropdown-item' id='context-unIndentTask'>unindent (alt-[)</p>
+    <p function='toggleSubtasks()' class='dropdown-item' id='context-toggleSubtasks'>fold/un ([/])</p>
+    <p function='newlist()' class='dropdown-item' id='context-newlist'>new</p>
+    <p function='toggledrags()' class='dropdown-item' id='context-toggledrags'>edit</p>
+    <p function='deletelist()' class='dropdown-item' id='context-deletelist'>delete</p>
+    <p function='reset()' class='dropdown-item' id='context-reset'>reset</p>
+    <p function='switchUser()' class='dropdown-item' id='context-switchUser'>switch user</p>
+    <p function='upload()' class='dropdown-item' id='context-upload'>upload backup</p>
+    <p function='download()' class='dropdown-item' id='context-download'>download backup</p>
+    <p function='editTask()' class='dropdown-item' id='context-editTask'>edit (enter)</p>
+    <p function='newTask()' class='dropdown-item' id='context-newTaskBlank'>new (opt-enter)</p>
+    <p function='newTask(subtask=true)' class='dropdown-item' id='context-newSubtask'>new subtask (shift-opt-enter)</p>
+    <p function='deleteTask()' class='dropdown-item' id='context-deleteTask'>delete (del)</p>
+    <p function='archiveComplete()' class='dropdown-item' id='context-archiveComplete'>archive completed (shift-space)</p>
+    <p function='clearEmptyHeadlines()' class='dropdown-item' id='context-clearEmptyHeadlines'>clear empty</p>
+    <p function='collapseAll("false")' class='dropdown-item' id='context-collapseAll'>collapse all ({/})</p>
+    <p function='collapseAll("true")' class='dropdown-item' id='context-expandAll'>expand all ({/})</p>
+    <p function='toggleButs()' class='dropdown-item' id='context-toggleButs'>hide/show buttons</p>
+    <p function='setStyle("default.css")' class='dropdown-item' id='context-styleDefault'>style: dark</p>
+    <p function='setStyle("jason.css")' class='dropdown-item' id='context-styleJason'>style: blue</p>
+    <p function='setStyle("light.css")' class='dropdown-item' id='context-styleGreen'>style: light</p>
+    <p function='setStyle("green.css")' class='dropdown-item' id='context-styleLight'>style: green</p>
+    <p function='setStyle("pink.css")' class='dropdown-item' id='context-stylePink'>style: pink</p>
+    <p function='changeDateFormat("dd.mm.yyyy")' class='dropdown-item' id='context-changeDate1'>dates: dd.mm.yyyy</p>
+    <p function='changeDateFormat("mm/dd/yyyy")' class='dropdown-item' id='context-changeDate2'>dates: mm/dd/yyyy</p>
+    <p function='changeDateFormat("yyyy-mm-dd")' class='dropdown-item' id='context-changeDate3'>dates: yyyy-mm-dd</p>
+    <p function='toggleWeekdayFormat()' class='dropdown-item' id='context-toggleWeekdays'>weekdays: M/Mon</p>
+    <p function='toggleHelp()' class='dropdown-item' id='context-toggleWeekdays'>hide/show help</p>
+    <p function='clearEmptyDates()' class='dropdown-item' id='context-clearEmptyDates'>clear empty dates</p>
+  </nav>
+  <!-- sounds -->
+  <script type='text/javascript' src='script.js'></script>
+  <audio src='snd/pop.mp3' type='audio/mp3' id='popsnd'>
+  <audio src='snd/timer.mp3' type='audio/mp3' id='timersnd'>
+</body>
+</html>

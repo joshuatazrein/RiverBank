@@ -1,0 +1,17 @@
+:root {
+  --background: black;
+  --select: skyblue;
+  --font: 'Garamond';
+  --butfont: Andale Mono;
+  --butcolor: whitesmoke;
+  --textcolor: whitesmoke;
+  --butbackground: dimgrey;
+  --butborder: transparent;
+  --menufont: Courier New;
+  --bdcolor: grey;
+  --duedatecolor: rgba(255, 0, 0, 0.75);
+  --contextcolor: rgba(0, 0, 0, 0.8);
+  --contextfontcolor: grey;
+  --important: firebrick;
+  --event: rgba(135,206,235,0.3);
+}

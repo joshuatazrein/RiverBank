@@ -1,0 +1,17 @@
+:root {
+  --background: #005EFF;
+  --select: skyblue;
+  --font: Andale Mono;
+  --butfont: Andale Mono;
+  --butcolor: dimgrey;
+  --textcolor: whitesmoke;
+  --butbackground: whitesmoke;
+  --butborder: transparent;
+  --menufont: Andale Mono;
+  --bdcolor: grey;
+  --duedatecolor: rgba(255, 0, 0, 0.3);
+  --contextcolor: rgba(0, 0, 0, 0.8);
+  --contextfontcolor: grey;
+  --important: firebrick;
+  --event: rgba(135,206,235,0.3);
+}
