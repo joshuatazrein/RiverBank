@@ -1469,17 +1469,18 @@ function togglefold(e, saving) {
   }
 }
 
-// Hi Ivy!
 function toggleButs() {
   if (data.hidebuts == 'true') {
     $('.butbar').show()
-    $('#editbuts').prepend($('#optionsbut'))
+    $('#editbuts').append($('#optionsbut'))
     data.hidebuts = 'false'
     $(':root').css('--butheight', $('#flopbuts').height() + 'px')
+    $('#optionsbut').css('margin', '0')
   } else {
     $('.butbar').hide()
     data.hidebuts = 'true'
     $('#searchbar').before($('#optionsbut'))
+    $('#optionsbut').css('margin', '5px 0 5px calc(50% - 15px)');
     $(':root').css('--butheight', '0px')
   }
   save()
@@ -1618,6 +1619,17 @@ function selectRandom() {
 }
 
 function clicked(ev) {
+  if (
+    (($(ev.target).hasClass('taskselect') &&
+    ev.target.tagName != 'TEXTAREA') ||
+    ($(ev.target).hasClass('selected'))) &&
+    window.innerWidth < 600
+  ) {
+    if ($('#context-menu').css('display') == 'none') {
+      context(ev)
+      return
+    }
+  }
   if ($(ev.target).hasClass('buffer')) {
     $('.buffer').remove();
   };
@@ -1825,15 +1837,6 @@ function moveTask(direction) {
 
 function dblclick(ev) {
   if (
-    ($(ev.target).hasClass('in') ||
-    $(ev.target).hasClass('selected') ||
-    $(ev.target).hasClass('buffer') ||
-    $(ev.target).hasClass('unselected')) &&
-    ev.target.tagName != 'TEXTAREA' &&
-    window.innerWidth < 600
-  ) {
-    context(ev)
-  } else if (
     $(ev.target).hasClass('in') &&
     ev.target.tagName != 'TEXTAREA' && 
     $(ev.target).hasClass('dateheading') == false
@@ -1870,9 +1873,13 @@ function keycomms(evt) {
     evt.preventDefault()
     const exp = /^(•*)(\s*)$/
     if (exp.test(selected.val()) == true) {
+      const thisone = selected
+      select(selected.prev())
+      const above = taskAbove()
+      select(thisone)
       selected.prev().remove()
       selected.remove()
-      select()
+      select(above)
     } else {
       // select current task if cancelling
       saveTask()
