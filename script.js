@@ -312,11 +312,42 @@ function switchUser() {
 }
 
 function upload() {
-  
+  var fileinput = $('<input type="file" id="fileinput" />');
+  fileinput.on('change', function() {
+    const fileReader = new FileReader();
+    fileReader.onload = function() {
+      // rewrite existing data with this
+      data = JSON.parse(this.result);
+      console.log(data);
+      dataString = JSON.stringify(data);
+      localStorage.setItem('data', dataString);
+      try {
+        const inaweek = new Date();
+        inaweek.setTime(inaweek.getTime() + 604800000);
+        document.cookie = 'username=' + $('#username').val() + '; expires=' + 
+        inaweek.toUTCString();
+        const blob = new Blob([JSON.stringify(data)], {type:
+          "text/plain"});
+        const newdata = new FormData();
+        newdata.append("upfile", blob);
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "upload.php");
+        xhr.send(newdata);
+      } catch (err) {
+        // pass
+      }
+    };
+    fileReader.readAsText(this.files[0]);
+    location.reload();
+  });
+  fileinput.click();
 }
 
 function download() {
-  
+  var blob = new Blob([JSON.stringify(data)], 
+  {type: 'text/plain;charset=utf-8'});
+  const date = new Date();
+  saveAs(blob, 'RiverBank-backup-' + dateToString(date) + '.json');
 }
 
 // Reset data to store in the browser
@@ -1296,6 +1327,8 @@ function context(e) {
     '#context-deletelist': [['TEXTAREA'], ['selected', 'unselected']],
     '#context-reset': [['BUTTON', 'DIV'], ['opts']],
     '#context-switchUser': [['BUTTON', 'DIV'], ['opts']],
+    '#context-upload': [['BUTTON', 'DIV'], ['opts']],
+    '#context-download': [['BUTTON', 'DIV'], ['opts']],
     '#context-togglecomplete': [['SPAN'],['in']],
     '#context-toggleSomeday': [['SPAN'],['in']],
     '#context-toggleimportant': [['SPAN'],['in']],
