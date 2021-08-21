@@ -322,10 +322,6 @@ function upload() {
       dataString = JSON.stringify(data);
       localStorage.setItem('data', dataString);
       try {
-        const inaweek = new Date();
-        inaweek.setTime(inaweek.getTime() + 604800000);
-        document.cookie = 'username=' + $('#username').val() + '; expires=' + 
-        inaweek.toUTCString();
         const blob = new Blob([JSON.stringify(data)], {type:
           "text/plain"});
         const newdata = new FormData();
