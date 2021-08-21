@@ -38,7 +38,7 @@ while (worked === false) {
       if (this.status != 200) {
         const newuser = confirm(
           'This username and password are not in the system. Create a new' + 
-          'profile? (Click "no" to re-enter your information)'
+          ' profile? (Click "cancel" to re-enter your information)'
         );
         if (newuser) {
           // create a new profile under username and password
