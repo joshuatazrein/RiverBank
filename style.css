@@ -86,6 +86,12 @@ button {
   flex-wrap: wrap;
 }
 
+.placeholder {
+  text-align: right;
+  font-family: var(--butfont);
+  font-size: 12px;
+}
+
 .flopbut {
   flex-grow: 1;
 }

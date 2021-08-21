@@ -56,7 +56,6 @@ timer.on('end', function () {
 
 //start of drag
 function dragStarted(evt) {
-  // console.log(data.flop);
   //start drag
   loadedlistobj = evt.target;
   //set data - sets drag data
@@ -74,13 +73,29 @@ function draggingOver(evt) {
 //dropping
 function dropped(evt) {
   //drop
-  // console.log(data);
   evt.preventDefault();
   evt.stopPropagation();
   //update data
   loads = Array.from($('#loads').children());
-  // console.log(loads);
   // swap positions in array
+  if (selected != undefined) {
+    // move task to new list
+    const index = $(evt.target).parent().children().toArray().indexOf(
+    $(evt.target)[0]);
+    const children = getHeadingChildren(selected);
+    $('#test').html(data.flop[index].text); // update test p with html
+    $('#test').append(selected);
+    for (i = children.length - 1; i >= 0; i --) {
+      // append each child after
+      selected.after(children[i]);
+    }
+    console.log($('#test').html());
+    data.flop[index].text = $('#test').html();
+    save();
+    loadedlist = index;
+    loadlist();
+    return;
+  } 
   loadedlist = loads.indexOf(evt.target);
   if (loads.indexOf(loadedlistobj) > loads.indexOf(evt.target)) {
     data.flop.splice(loads.indexOf(evt.target), 0,
@@ -95,7 +110,6 @@ function dropped(evt) {
   } else {
     data.flop.splice(loads.indexOf(loadedlistobj), 1);
   }
-  // console.log(data.flop);
   for (let i = 0; i < loads.length; i ++) {
     loads[i].value = data.flop[i].title;
   }
@@ -205,7 +219,6 @@ function updateSizes() {
     let fontsize = 24;
     // shrink that font
     while ($(list).width() / (fontsize / 2) < $(list).val().length) {
-      // console.log($(list).val(), $(list).width() / (fontsize / 2), $(list).val().length);
       fontsize -= 1;
     }
     $(list).css('font-size', fontsize + 'px');
@@ -291,17 +304,13 @@ function save() {
 }
 
 function clearEmptyDates() {
+  $('.placeholder').remove();
   // take away empty dates
   const dateslist = $('#pop').children().filter('.h1');
-  // console.log(dateslist);
-  const today = new Date();
   for (date of dateslist) {
-    // console.log($(date).text(), dateToString(today, true));
-    if (getHeadingChildren($(date)).length == 0 && $(date) != selected);
-      if ($(date).text() != dateToString(today, true)) {
-        date.remove();
-      }
+    if (getHeadingChildren($(date)).length == 0) date.remove();
   }
+  save();
 }
 
 function switchUser() {
@@ -430,6 +439,7 @@ function changeDateFormat(format) {
       $('.taskselect').removeClass('taskselect');
     }
   }
+  data.dateSplit = format;
   save();
 }
 
@@ -536,7 +546,6 @@ function stringToDate(string, weekday) {
   // analyze for addition of stuff
   if (string.match(/(?:\+|-)(?:\d+)(?:w|m|y|d)/g) != null) {
     const matches = string.match(/(?:\+|-)(?:\d+)(?:w|m|y|d)/g); // regexp
-    // // // // // console.log(matches);
     for (match of matches) {
       if (match.charAt(match.length - 1) == 'd') {
         date.setDate(Number(date.getDate()) +
@@ -575,6 +584,7 @@ function stringToDate(string, weekday) {
 }
 
 function dateToHeading(date) {
+  if (date === undefined) return;
   // find the matching date, or create if not
   const newtask = createBlankTask();
   newtask.addClass('h1');
@@ -675,9 +685,53 @@ function gotosearch(el) {
   select(focused);
 }
 
+function datesToRelative(a, b) {
+  // converts two dates into the relation between them as a string
+  let returnstring = ''
+  let diff = b.getTime() - a.getTime();
+  if (diff < 0) {return ''};
+  let years = 0;
+  let months = 0;
+  let weeks = 0;
+  let days = 0;
+  while (diff > 31556952000) {
+    // years
+    diff -= 31556952000;
+    years += 1;
+  }
+  if (years != 0) returnstring += years + 'y';
+  while (diff > 2592000000) {
+    // months
+    diff -= 2592000000;
+    months += 1;
+  }
+  if (months != 0) returnstring += months + 'm';
+  while (diff > 604800000) {
+    // weeks
+    diff -= 604800000;
+    weeks += 1;
+  }
+  if (weeks != 0) returnstring += weeks + 'w';
+  while (diff > 86400000) {
+    // days
+    diff -= 86400000;
+    days += 1;
+  }
+  if (days != 0) returnstring += days + 'd';
+  if (returnstring == '') returnstring = 't';
+  return returnstring;
+}
+
 function updatedeadlines() {
   $('.duedate').remove();
-  // console.log('updatingdeadlines');
+  $('.placeholder').remove();
+  const collapselist = $('#pop').children().filter('.h1').toArray().filter(
+  (x) => {return $(x).attr('folded') == 'true'});
+  console.log(collapselist);
+  // uncollapses then recollapses to prevent weirdness
+  for (heading of collapselist) {
+    togglefold($(heading), false);
+  }
   for (list of data.flop.concat([{'title':'pop', 'text':$('#pop').html()}])) {
     $('#test').empty();
     $('#test').html(list.text);
@@ -687,10 +741,22 @@ function updatedeadlines() {
       const duedate = createBlankTask();
       duedate.text(stripChildren($($(deadline).parent())).split(' ').slice(1)
       .join(' ')); // take out deadline
-      // console.log(duedate.text());
       duedate.addClass('duedate');
       $(heading).after(duedate);
     }
+  }
+  for (heading of collapselist) {
+    togglefold($(heading), false);
+  }
+  today = new Date();
+  for (heading of $('#pop').children().filter('.dateheading')) {
+    // add in relative dates underneath
+    const newelt = createBlankTask();
+    newelt.text(datesToRelative(today, 
+    stringToDate($(heading).text(), true)));
+    newelt.addClass('placeholder');
+    newelt.removeClass('in');
+    $(heading).after(newelt);
   }
 }
 
@@ -789,7 +855,6 @@ function saveTask() {
       if (htmlstr.slice(i, i + lineinner.length) == lineinner &&
       htmlstr.slice(i).includes(lineinners[lineinner][0])) {
         // add in a span to the list and where it splits
-        // // console.log('yes');
         newstr += htmlstr.slice(start, i) + '<span class=\'' +
         lineinners[lineinner][1] + '\'>';
         start = i;
@@ -815,7 +880,6 @@ function saveTask() {
   }
   const wordlist = stripChildren(savetask).split(' ');
   for (word in wordlist) {
-    // // console.log(stringToDate(wordlist[word]));
     if (wordlist[word].slice(1, wordlist[word].length - 1).includes('.') && 
     stringToDate(wordlist[word]) == 'Invalid Date') { 
       let match = false 
@@ -851,9 +915,8 @@ function helpfold(el) {
   }
 }
 
-function select(el) {
+function select(el, scroll) {
   // switch selection
-  // // console.log(el);
   if (selected != undefined) {
     selected.removeClass('taskselect');
   }
@@ -868,11 +931,12 @@ function select(el) {
     } else {
       parent = $(el);
     }
-    parent.scrollTop(0);
-    // // console.log(Number(selected.offset().top) - 
-    // Number(parent.offset().top) - 200)
-    parent.scrollTop(Number(selected.offset().top) - 
-    Number(parent.offset().top) - 200);
+    if (scroll != false) {
+      // only execute if not clicked
+      parent.scrollTop(0);
+      parent.scrollTop(Number(selected.offset().top) - 
+      Number(parent.offset().top) - 200);
+    }
   } else if ($(el).parent().attr('id') == 'context-menu') {
     // do nothing (context)
   } else {
@@ -893,7 +957,6 @@ function stripChildren(el, mode) {
       $(child).remove();
     } else if ($(child).hasClass('weblink') == true) {
       $(child).html($($(child).children()[0]).attr('href'));
-      // // // // console.log(child);
     }
   }
   if (mode == undefined) {
@@ -1030,7 +1093,6 @@ function archiveTask(dated) {
   const day = $(dateToHeading(stringToDate('t')));
   const childText = getHeadingChildren(day).map((x) =>
   {return $(x).text()});
-  // console.log(childText);
   if ((childText.includes('completed') == true ||
   childText.includes('completed ...') == true) == false) {
     // add in an extra heading
@@ -1068,6 +1130,39 @@ function archiveTask(dated) {
 }
 
 function toggleComplete() {
+  if (selected[0].tagName == 'P') {
+    return;
+  }
+  const text = stripChildren(selected).split(' ');
+  if (!selected.hasClass('complete') && 
+  /~\d[d|w|m|y]/.test(text[text.length - 1])) {
+    const date = new Date();
+    const lastchar = text[text.length - 1].charAt(
+    text[text.length - 1].length - 1);
+    const amount = Number(text[text.length - 1].slice(1, 
+    text[text.length - 1].length - 1));
+    if (lastchar == 'd') {
+      date.setDate(Number(date.getDate()) + amount);
+    } else if (lastchar == 'w') {
+      date.setDate(Number(date.getDate()) + (amount * 7));
+    } else if (lastchar == 'm') {
+      date.setMonth(Number(date.getMonth()) + amount);
+    } else if (lastchar == 'y') {
+      date.setFullYear(Number(date.getFullYear()) + amount);
+    }
+    const heading = dateToHeading(date);
+    const newtask = createBlankTask();
+    newtask.text(selected.text());
+    console.log(selected.text());
+    console.log(getHeadingChildren($(heading)));
+    if (
+      !getHeadingChildren($(heading)).map((x) => {
+        return $(x).text();
+      }).includes(selected.text())
+    ) {
+      $(heading).after(newtask);
+    }
+  }
   selected.toggleClass('complete');
   save();
 }
@@ -1093,7 +1188,6 @@ function timertest(ev) {
   if (ev.key == 'Enter') {
     startTimer();
   } else if (ev.key == 'Escape') {
-    // console.log('stopping timer');
     timer.stop();
     $('#timerent').blur();
     $('#timerent').val('');
@@ -1173,7 +1267,6 @@ function dropTask(evt) {
     } else {
       if (evt.metaKey == true) {
         $(evt.target).before(selected);
-        // // console.log('before');
       } else {
         $(evt.target).after(selected);
       }
@@ -1238,7 +1331,7 @@ function collapseAll(folded) {
 }
 
 // toggle fold of a heading
-function togglefold(e) {
+function togglefold(e, saving) {
   children = e.parent().children().toArray();
   start = children.indexOf(e[0]) + 1;
   hides = [];
@@ -1275,7 +1368,9 @@ function togglefold(e) {
       e.html(stripChildren(e).slice(0, -4) + getChildren(e));
     }
   }
-  save();
+  if (saving === undefined) {
+    save();
+  }
 }
 
 // Hi Ivy!
@@ -1546,11 +1641,11 @@ function clicked(ev) {
     $(ev.target).attr('class')) == false
   ) {
     // select allowable elements
-    select(ev.target);
+    select(ev.target, false);
   } else if (
   ['bold', 'italic', 'bold-italic'].includes(
   $(ev.target).attr('class')) == true) {
-    select($(ev.target).parent());
+    select($(ev.target).parent(), false);
   } else if ($(ev.target).hasClass('dropdown-item') == true) {
     eval($(ev.target).attr('function'));
   } else {
@@ -1628,7 +1723,6 @@ function moveTask(direction) {
 }
 
 function dblclick(ev) {
-  // // console.log(Object.keys(lineinners));
   if (
     ($(ev.target).hasClass('in') ||
     $(ev.target).hasClass('selected') ||
@@ -1672,9 +1766,7 @@ function keycomms(evt) {
   if (evt.key == 'Escape' && selected != undefined &&
   selected[0].tagName == 'TEXTAREA') {
     evt.preventDefault();
-    // console.log('things');
     const exp = /^(•*)(\s*)$/;
-    // console.log(exp);
     if (exp.test(selected.val()) == true) {
       selected.prev().remove();
       selected.remove();
@@ -1702,7 +1794,6 @@ function keycomms(evt) {
     }
   } else if (evt.key == 'Escape') {
     // cancel select
-    // console.log('blurrsearch');
     $('#searchbar').val('');
     $('#searchbar-results').hide();
     $(':focus').blur();
@@ -1755,7 +1846,6 @@ function keycomms(evt) {
   'TEXTAREA') {
     if (evt.key == 'Backspace') {
       let newselect = selected.next();
-      // // // // console.log(newselect);
       if (newselect[0] == undefined) {
         newselect = selected.prev();
       }
@@ -1865,7 +1955,6 @@ for (i of data.flop) {
 }
 loadedlist = oldload;
 loadlist();
-// console.log(loadedlist);
 // go to today
 $('#searchbar').val('d:t');
 select(dateToHeading(stringToDate($('#searchbar').val().slice(2))));
