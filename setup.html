@@ -18,12 +18,12 @@
         <input placeholder="username" id='username' />
       </div>
       <div class='butbar' id='editbuts'>
-        <button class='opts' id='optionsbut'>OPTIONS</button>
-        <button class='opts' id='moveUpBut' title='move up'>^</button>
-        <button class='opts' id='moveDownBut' title='move down'>v</button>
+        <button class='opts' id='optionsbut'>...</button>
+        <button class='opts' id='moveUpBut' title='move up'>↑</button>
+        <button class='opts' id='moveDownBut' title='move down'>↓</button>
         <button class='opts' id='editTaskBut' title='edit'>o</button>
         <button class='opts' id='deleteTaskBut' title='delete'>x</button>
-        <button class='opts' id='archiveTaskBut' title='complete'>POP!</button>
+        <button class='opts' id='archiveTaskBut' title='complete'>!</button>
       </div>
       <div>
         <input id='searchbar' placeholder="search (d: date)">
@@ -35,11 +35,11 @@
         <button class='opts' id='timer5But' title='5 minutes'>5</button>
         <button class='opts' id='timer+2But' title='+2 minutes'>+2</button>
         <button class='opts' id='timer-2But' title='-2 minutes'>-2</button>
-        <button class='opts' id='timerStartBut' title='start timer'>START</button>
-        <button class='opts' id='timerStopBut' title='stop timer'>STOP</button>
+        <button class='opts' id='timerStartBut' title='start timer'>▶</button>
+        <button class='opts' id='timerStopBut' title='stop timer'>■</button>
       </div>
-      <input id='timerent' onkeydown='timertest(event)' placeholder="timer" />
-      <p class='title'>LISTS</p>
+      <input id='timerent' placeholder="timer" />
+      <p class='title' id='lists'>LISTS</p>
       <div class='butbar'>
         <button class='opts' id='addListBut' title='new list'>+</button>
         <button class='opts' id='deleteListBut' title='delete list'>x</button>
@@ -122,7 +122,7 @@
           <button class='flopbut' id='flopBut' title='new task in bank'>+ BANK</button>
           <button class='opts' id='newHeadingFlopBut' title='new heading in bank'>+#</button>
           <button class='opts' id='randomBut' title='select random flop'>?</button>
-          <button class='opts' id='movePopBut' title='move task to river'>></button>
+          <button class='opts' id='movePopBut' title='move task to river'>→</button>
         </div>
         <p id='flop' class='rendered in' ondrop='dropTask(event)' ondragover='draggingOver(event)'></p>
         <div style='height: 500px;'></div>
@@ -130,7 +130,7 @@
       </div>
       <div class='poplist'>
         <div class='butbar'>
-          <button class='opts' id='moveFlopBut' title='move task to bank'><</button>
+          <button class='opts' id='moveFlopBut' title='move task to bank'>←ˀ</button>
           <button id='todayBut' title='jump to today'>d:t</button>
           <button class='flopbut' id='popBut' title='new task in river'>+ RIVER</button>
         </div>
@@ -140,11 +140,18 @@
   </div>
   <p id='test' style='display:none;position:absolute;'><p>
   <nav id="context-menu">
-    <p function='toggleComplete()' class='dropdown-item' id='context-togglecomplete'>complete/un (space)</p>
-    <p function='toggleImportant()' class='dropdown-item' id='context-toggleimportant'>important/un (i)</p>
+    <p function='editTask()' class='dropdown-item' id='context-editTask'>edit task (enter)</p>
+    <p function='newTask()' class='dropdown-item' id='context-newTask'>new task (opt-enter)</p>
+    <p function='newTask(subtask=true)' class='dropdown-item' id='context-newSubtask'>new subtask (shift-opt-enter)</p>
+    <p function='deleteTask()' class='dropdown-item' id='context-deleteTask'>delete (del)</p>
+    <p function='archiveTask()' class='dropdown-item' id='context-archiveTask'>archive (shift-space)</p>
+    <p function='' class='dropdown-item' id='context-divider'><hr></p>
+    <p function='toggleComplete()' class='dropdown-item' id='context-toggleComplete'>toggle complete (space)</p>
+    <p function='toggleImportant()' class='dropdown-item' id='context-toggleimportant'>toggle important (i)</p>
+    <p function='toggleSubtasks()' class='dropdown-item' id='context-toggleSubtasks'>toggle fold ([/])</p>
     <p function='indentTask(true)' class='dropdown-item' id='context-indentTask'>indent (alt-])</p>
     <p function='indentTask(false)' class='dropdown-item' id='context-unIndentTask'>unindent (alt-[)</p>
-    <p function='toggleSubtasks()' class='dropdown-item' id='context-toggleSubtasks'>fold/un ([/])</p>
+    <p function='archiveComplete()' class='dropdown-item' id='context-archiveComplete'>archive completed</p>
     <p function='newlist()' class='dropdown-item' id='context-newlist'>new</p>
     <p function='toggledrags()' class='dropdown-item' id='context-toggledrags'>edit</p>
     <p function='deletelist()' class='dropdown-item' id='context-deletelist'>delete</p>
@@ -152,15 +159,10 @@
     <p function='switchUser()' class='dropdown-item' id='context-switchUser'>switch user</p>
     <p function='upload()' class='dropdown-item' id='context-upload'>upload backup</p>
     <p function='download()' class='dropdown-item' id='context-download'>download backup</p>
-    <p function='editTask()' class='dropdown-item' id='context-editTask'>edit (enter)</p>
-    <p function='newTask()' class='dropdown-item' id='context-newTaskBlank'>new (opt-enter)</p>
-    <p function='newTask(subtask=true)' class='dropdown-item' id='context-newSubtask'>new subtask (shift-opt-enter)</p>
-    <p function='deleteTask()' class='dropdown-item' id='context-deleteTask'>delete (del)</p>
-    <p function='archiveComplete()' class='dropdown-item' id='context-archiveComplete'>archive completed (shift-space)</p>
     <p function='clearEmptyHeadlines()' class='dropdown-item' id='context-clearEmptyHeadlines'>clear empty</p>
     <p function='collapseAll("false")' class='dropdown-item' id='context-collapseAll'>collapse all ({/})</p>
     <p function='collapseAll("true")' class='dropdown-item' id='context-expandAll'>expand all ({/})</p>
-    <p function='toggleButs()' class='dropdown-item' id='context-toggleButs'>hide/show buttons</p>
+    <p function='toggleButs()' class='dropdown-item' id='context-toggleButs'>toggle buttons</p>
     <p function='setStyle("default.css")' class='dropdown-item' id='context-styleDefault'>style: dark</p>
     <p function='setStyle("jason.css")' class='dropdown-item' id='context-styleJason'>style: blue</p>
     <p function='setStyle("light.css")' class='dropdown-item' id='context-styleGreen'>style: light</p>
@@ -170,12 +172,12 @@
     <p function='changeDateFormat("mm/dd/yyyy")' class='dropdown-item' id='context-changeDate2'>dates: mm/dd/yyyy</p>
     <p function='changeDateFormat("yyyy-mm-dd")' class='dropdown-item' id='context-changeDate3'>dates: yyyy-mm-dd</p>
     <p function='toggleWeekdayFormat()' class='dropdown-item' id='context-toggleWeekdays'>weekdays: M/Mon</p>
-    <p function='toggleHelp()' class='dropdown-item' id='context-toggleWeekdays'>hide/show help</p>
+    <p function='toggleHelp()' class='dropdown-item' id='context-toggleWeekdays'>toggle help</p>
     <p function='clearEmptyDates()' class='dropdown-item' id='context-clearEmptyDates'>clear empty dates</p>
   </nav>
   <!-- sounds -->
   <script type='text/javascript' src='script.js'></script>
   <audio src='snd/pop.mp3' type='audio/mp3' id='popsnd'>
-  <audio src='snd/timer.mp3' type='audio/mp3' id='timersnd'>
+  <audio src='snd/timer.mp3' type='audio/mp3' id='timersnd' loop='true'>
 </body>
 </html>
