@@ -22,6 +22,14 @@ test1.onreadystatechange = function () {
     }
   }
 }
+test1.open('GET', 'users/' + 
+document.cookie.split(';')[0].split('=')[1] + '.json', false);
+try {
+  test1.send();
+} catch (err) {
+  worked = true;
+  data = JSON.parse(localStorage.getItem('data'));
+}
 while (worked === false) {
   // if the first one didn't work
   const test = new XMLHttpRequest();
@@ -51,10 +59,10 @@ while (worked === false) {
     }
   }
   // end of loop
-  xhttp.open('GET', 'users/' + 
+  test.open('GET', 'users/' + 
   document.cookie.split(';')[0].split('=')[1] + '.json', false);
   try {
-    xhttp.send();
+    test.send();
   } catch (err) {
     worked = true;
     data = JSON.parse(localStorage.getItem('data'));
