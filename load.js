@@ -10,7 +10,7 @@ if (document.cookie === '') {
 var data;
 var worked;
 const test1 = new XMLHttpRequest();
-test.onreadystatechange = function () {
+test1.onreadystatechange = function () {
   if (this.readyState == 4) {
     // try to get data originally
     if (this.status != 200) {
