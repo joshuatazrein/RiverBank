@@ -153,25 +153,20 @@ audio {
 input {
   display: block;
   font: inherit;
-  width: calc(100% - 15px);
-  margin: 0 auto;
+  width: 100%;
+  margin: auto;
   background-color: inherit;
   border: 1px solid var(--bdcolor);
   color: var(--textcolor);
 }
 
 #searchbar {
-  display: block;
-  font: inherit;
-  background-color: inherit;
   border: 1px solid var(--bdcolor);
   color: var(--textcolor);
 }
 
 #timerent {
-  display: block;
   font: 80% var(--menufont), monospace;
-  background-color: inherit;
   text-align: center;
   border: 1px solid var(--bdcolor);
   color: var(--textcolor);
