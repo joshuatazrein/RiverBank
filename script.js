@@ -1,4 +1,5 @@
 // is this working?
+// i made a change
 var loadedlist;
 var data;
 var selected;
@@ -312,11 +313,11 @@ function switchUser() {
 }
 
 function upload() {
-
+  
 }
 
 function download() {
-
+  
 }
 
 // Reset data to store in the browser
