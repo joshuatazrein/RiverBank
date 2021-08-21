@@ -1569,9 +1569,9 @@ function context(e) {
   } else {
     $('#context-togglecomplete').hide()
   }
-  $('#context-menu').css('top', Math.min(event.pageY,
+  $('#context-menu').css('top', Math.min(e.pageY,
   window.innerHeight - $('#context-menu').height()) - 20)
-  $('#context-menu').css('left', Math.min(event.pageX,
+  $('#context-menu').css('left', Math.min(e.pageX,
   window.innerWidth - $('#context-menu').width()) - 40)
   select($(e.target))
 }

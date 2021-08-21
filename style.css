@@ -145,6 +145,7 @@ audio {
   overflow-x: hidden;
   position: absolute;
   height: 40%;
+  margin: 0;
   bottom: 0;
   width: calc(100% - 10px);
   border-top: 1px solid var(--bdcolor);
@@ -434,11 +435,11 @@ span.italic, span.bold, span.bold-italic, span.link, span.deadline {
   }
   .leftcolumn {
     width: 15%;
-    height: 40%;
     font-size: 12px;
   }
   input {
     font-size: 24px;
+    width: calc(100% - 15px);
   }
   button {
     font-size: 14px !important;
