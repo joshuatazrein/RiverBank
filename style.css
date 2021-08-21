@@ -65,7 +65,8 @@ button {
   overflow: hidden;
 }
 
-span {
+span:not(.bold), span:not(.bold-italic), span:not(.deadline), 
+span:not(.link), span:not(.italic) {
   display: inline-block;
   width: calc(100% - 30px);
   padding-left: 10px;
@@ -73,7 +74,8 @@ span {
   padding-top: 2px;
 }
 
-span span {
+span span:not(.bold), span span:not(.bold-italic), 
+span span:not(.italic), span span:not(.link), span span:not(.deadline) {
   padding-left: calc(1em);
   width: calc(100% - 13px - 1em);
 }
@@ -276,6 +278,7 @@ p.dropdown-item {
   background-color: inherit;
   position: relative;
   float:left;
+  overflow: hidden;
 }
 
 #help > span {
