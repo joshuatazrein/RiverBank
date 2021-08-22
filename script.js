@@ -311,6 +311,7 @@ function save() {
   // backup data to the server after setting localstorage data
   uploadData()
   updatedeadlines()
+  console.log(dataString);
 }
 
 function clearEmptyDates() {
