@@ -393,7 +393,7 @@ function uploadData(async) {
     xhr.send(newdata)
   } catch (err) {
     // pass
-    console.log('didn\'t work')
+    console.log(err)
   }
 }
 
