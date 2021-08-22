@@ -1505,6 +1505,7 @@ function toggleHelp() {
 function setStyle(style) {
   data.style = style
   save()
+  alert(data.style)
   location.reload()
 }
 
