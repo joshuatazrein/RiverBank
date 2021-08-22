@@ -337,7 +337,6 @@ function switchUser() {
   const past = new Date()
   past.setTime(past.getTime() - 86400000)
   document.cookie = 'username=; expires=' + past.toUTCString()
-  load()
   reloadpage()
 }
 
@@ -363,7 +362,7 @@ function upload() {
       }
     }
     fileReader.readAsText(this.files[0])
-    location.reload()
+    reloadpage()
   })
   fileinput.click()
 }
@@ -1519,8 +1518,8 @@ function toggleHelp() {
 
 function setStyle(style) {
   data.style = style
-  location.reload()
   save()
+  reloadpage()
 }
 
 function context(e) {
@@ -2056,6 +2055,7 @@ function keycomms(evt) {
 }
 
 function reloadpage() {
+  load()
   $('#pop').empty()
   $('#flop').empty()
   $('#loads').empty()
