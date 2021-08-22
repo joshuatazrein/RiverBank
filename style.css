@@ -68,12 +68,7 @@ button {
 span:not(.bold), span:not(.bold-italic), span:not(.deadline), 
 span:not(.link), span:not(.italic) {
   display: inline-block;
-<<<<<<< HEAD
   width: calc(100% - 20px);
-=======
-  width: calc(100% - 30px);
-  padding-left: 10px;
->>>>>>> parent of 1ce6ca1 (fixed css and mousover on mobile)
   padding-bottom: 5px;
   padding-top: 2px;
 }
