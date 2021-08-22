@@ -298,7 +298,11 @@ function save() {
   data.pop = $('#pop').html()
   if (loadedlist != undefined) {
     data.flop[loadedlist].text = $('#flop').html()
-    data.flop[loadedlist].title = $('#loads').children()[loadedlist].value
+    try {
+      data.flop[loadedlist].title = $('#loads').children()[loadedlist].value
+    } catch (TypeError) {
+      data.flop[loadedlist].title = '--'
+    }
     data.loadedlist = loadedlist
   }
   dataString = JSON.stringify(data)
