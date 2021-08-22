@@ -256,6 +256,7 @@ function loadthis() {
 function finalsave() {
   select()
   save()
+  uploadData(true) // makes sure it gets saved
 }
 
 // Storing data:
@@ -372,7 +373,7 @@ function reset() {
   }
 }
 
-function uploadData() {
+function uploadData(async) {
   // uploads data to server
   try {
     const inaweek = new Date()
@@ -384,7 +385,11 @@ function uploadData() {
     const newdata = new FormData()
     newdata.append("upfile", blob)
     const xhr = new XMLHttpRequest()
-    xhr.open("POST", "upload.php", false)
+    if (async == true) {
+      xhr.open("POST", "upload.php", false)
+    } else {
+      xhr.open("POST", "upload.php")
+    }
     xhr.send(newdata)
   } catch (err) {
     // pass
