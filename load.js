@@ -30,11 +30,12 @@ function load() {
     const xml = new XMLHttpRequest()
     xml.open(
       'GET', 
-      'users/' + document.cookie.split(';')[0].split('=')[1] + '.json', 
+      'users/testfile.json', 
       false
     )
     xml.send()
   } catch (err) {
+    console.log('testfile failed');
     // offline mode
     data = JSON.parse(localStorage.getItem('data'))
     $('head').append(
