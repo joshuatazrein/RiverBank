@@ -364,7 +364,7 @@ function reset() {
     dataString = JSON.stringify(data)
     localStorage.setItem('data', dataString)
     uploadData()
-    alert('reset; reload page')
+    reloadpage()
   }
 }
 
@@ -378,7 +378,6 @@ function uploadData(async) {
     const xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function() {
       if (this.readyState == 4) {
-        console.log(JSON.stringify(data), 'uploaded');
       }
     }
     if (async == true) {
@@ -438,7 +437,6 @@ function toggleWeekdayFormat() {
 }
 
 function changeDateFormat(format) {
-  // switches date formats
   const thisformat = data.dateSplit
   $('.dateheading').toArray().forEach((x) => {
     // change all dates in pop
@@ -447,24 +445,31 @@ function changeDateFormat(format) {
     $(x).text(dateToString(getdate, true))
     data.dateSplit = thisformat
   })
-  for (i in data.flop) {
-    $('#test').html(data.flop[i].text)
+  const floplist = data.flop.concat([{title:'#pop', text:$('#pop').html()}])
+  for (i in floplist) {
+    $('#test').html(floplist[i].text)
     for (x of $('#test').find('.deadline')) {
       // change all deadlines
       data.dateSplit = thisformat
-      const getdate = stringToDate($(x).text().slice(1), false)
+      console.log(stringToDate($(x).text().slice(
+        1, $(x).text().length - 1), false));
+      const getdate = stringToDate($(x).text().slice(
+        1, $(x).text().length - 1), false)
       data.dateSplit = format
+      console.log(dateToString(getdate, false));
       $(x).text('>' + dateToString(getdate, false) + ' ')
     }
     // update loadedlist
-    data.flop[i].text = $('#test').html()
-    if (loadedlist == i) {
-      $('#flop').html(data.flop[i].text)
-      $('.taskselect').removeClass('taskselect')
+    if (floplist[i].title != '#pop') { // # to prevent overlap
+      data.flop[i].text = $('#test').html()
+    } else {
+      data.pop = $('#test').html()
     }
   }
   data.dateSplit = format
-  save()
+  localStorage.setItem('data', JSON.stringify(data))
+  uploadData()
+  reloadpage()
 }
 
 function dateToString(date, weekday) {
@@ -666,7 +671,6 @@ function search(skiplinks) {
         } else if (skiplinks == 'deadline' &&
         !stripChildren($(child)).includes('>')) {
           // finds only deadlines
-          console.log('skipping', stripChildren($(child)));
           continue
         } else {
           // add it
@@ -679,7 +683,6 @@ function search(skiplinks) {
       }
     }
   }
-  console.log(matches);
   $('#searchbar-results').empty()
   for (let match of matches) {
     // create search results
@@ -893,7 +896,6 @@ function saveTask() {
       addspace = true
     }
     else endindex += index
-    console.log(stringToDate(selected.val().slice(index + 1, endindex)))
     if (
       stringToDate(selected.val().slice(index + 1, endindex)) == 
       'Invalid Date'
@@ -1476,7 +1478,6 @@ function togglefold(e, saving) {
   }
 }
 
-// Hi Ivy!
 function toggleButs() {
   if (data.hidebuts == 'true') {
     $('.butbar').show()
@@ -1539,6 +1540,7 @@ function context(e) {
     '#context-toggleComplete': [['SPAN'],['in']],
     '#context-toggleSomeday': [['SPAN'],['in']],
     '#context-toggleimportant': [['SPAN'],['in']],
+    '#context-weekdaysToggle': [['BUTTON'], ['opts']],
     '#context-editTask': [['SPAN'], ['in']],
     '#context-archiveTask': [['SPAN'], ['in']],
     '#context-newTask': [['SPAN', 'P'], ['in', 'buffer']],
@@ -1560,7 +1562,6 @@ function context(e) {
     '#context-changeDate1' : [['BUTTON'], ['opts']],
     '#context-changeDate2' : [['BUTTON'], ['opts']],
     '#context-changeDate3' : [['BUTTON'], ['opts']],
-    '#context-toggleWeekdays' : [['BUTTON'], ['opts']],
     '#context-clearEmptyDates' : [['BUTTON'], ['opts']],
   }
   for (option of Object.keys(options)) {
@@ -1572,20 +1573,13 @@ function context(e) {
           break
         }
       }
-      if (options[option][1].length == 0) {
-        showoption = true
-      }
     }
     if (showoption == true) {
       $(option).show()
     } else {
+      console.log(option, 'hiding');
       $(option).hide()
     }
-  }
-  if (e.target.tagName == 'SPAN') {
-    $('#context-togglecomplete').show()
-  } else {
-    $('#context-togglecomplete').hide()
   }
   $('#context-menu').css('top', Math.min(e.pageY,
   window.innerHeight - $('#context-menu').height()) - 20)

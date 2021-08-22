@@ -1,6 +1,7 @@
 var data;
 var weekdaysStr;
 var weekdaysNum;
+var worked = false;
 
 function fileNotFound() {
   // file not found
@@ -61,7 +62,6 @@ function load() {
     document.cookie = 'username=' + username + '_' + password + 
     '; expires=' + inaweek.toUTCString();
   }
-  var worked = false;
   while (worked === false) {
     const test = new XMLHttpRequest();
     test.onreadystatechange = function () {

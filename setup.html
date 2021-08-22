@@ -141,40 +141,48 @@
   </div>
   <p id='test' style='display:none;position:absolute;'><p>
   <nav id="context-menu">
+
     <p function='editTask()' class='dropdown-item' id='context-editTask'>edit task (enter)</p>
     <p function='newTask()' class='dropdown-item' id='context-newTask'>new task (opt-enter)</p>
     <p function='newTask(subtask=true)' class='dropdown-item' id='context-newSubtask'>new subtask (shift-opt-enter)</p>
     <p function='deleteTask()' class='dropdown-item' id='context-deleteTask'>delete (del)</p>
     <p function='archiveTask()' class='dropdown-item' id='context-archiveTask'>archive (shift-space)</p>
     <p function='' class='dropdown-item' id='context-divider'>————————————</p>
+
     <p function='toggleComplete()' class='dropdown-item' id='context-toggleComplete'>toggle complete (space)</p>
     <p function='toggleImportant()' class='dropdown-item' id='context-toggleimportant'>toggle important (i)</p>
     <p function='toggleSubtasks()' class='dropdown-item' id='context-toggleSubtasks'>toggle fold ([/])</p>
     <p function='indentTask(true)' class='dropdown-item' id='context-indentTask'>indent (alt-])</p>
     <p function='indentTask(false)' class='dropdown-item' id='context-unIndentTask'>unindent (alt-[)</p>
     <p function='archiveComplete()' class='dropdown-item' id='context-archiveComplete'>archive completed</p>
+    <p function='clearEmptyHeadlines()' class='dropdown-item' id='context-clearEmptyHeadlines'>clear empty</p>
+    <p function='collapseAll("false")' class='dropdown-item' id='context-collapseAll'>collapse all ({/})</p>
+    <p function='collapseAll("true")' class='dropdown-item' id='context-expandAll'>expand all ({/})</p>
+
     <p function='newlist()' class='dropdown-item' id='context-newlist'>new</p>
     <p function='toggledrags()' class='dropdown-item' id='context-toggledrags'>edit</p>
     <p function='deletelist()' class='dropdown-item' id='context-deletelist'>delete</p>
+
+    <p function='toggleHelp()' class='dropdown-item' id='context-toggleWeekdays'>toggle help</p>
+    <p function='toggleButs()' class='dropdown-item' id='context-toggleButs'>toggle buttons</p>
+    <p function='clearEmptyDates()' class='dropdown-item' id='context-clearEmptyDates'>clear empty dates</p>
+
     <p function='reset()' class='dropdown-item' id='context-reset'>reset</p>
     <p function='switchUser()' class='dropdown-item' id='context-switchUser'>switch user</p>
     <p function='upload()' class='dropdown-item' id='context-upload'>upload backup</p>
     <p function='download()' class='dropdown-item' id='context-download'>download backup</p>
-    <p function='clearEmptyHeadlines()' class='dropdown-item' id='context-clearEmptyHeadlines'>clear empty</p>
-    <p function='collapseAll("false")' class='dropdown-item' id='context-collapseAll'>collapse all ({/})</p>
-    <p function='collapseAll("true")' class='dropdown-item' id='context-expandAll'>expand all ({/})</p>
-    <p function='toggleButs()' class='dropdown-item' id='context-toggleButs'>toggle buttons</p>
+
     <p function='setStyle("default.css")' class='dropdown-item' id='context-styleDefault'>style: dark</p>
     <p function='setStyle("jason.css")' class='dropdown-item' id='context-styleJason'>style: blue</p>
     <p function='setStyle("light.css")' class='dropdown-item' id='context-styleGreen'>style: light</p>
     <p function='setStyle("green.css")' class='dropdown-item' id='context-styleLight'>style: green</p>
     <p function='setStyle("pink.css")' class='dropdown-item' id='context-stylePink'>style: pink</p>
+
+    <p function='toggleWeekdayFormat()' class='dropdown-item' id='context-weekdaysToggle'>weekdays: M/Mon</p>
     <p function='changeDateFormat("dd.mm.yyyy")' class='dropdown-item' id='context-changeDate1'>dates: dd.mm.yyyy</p>
     <p function='changeDateFormat("mm/dd/yyyy")' class='dropdown-item' id='context-changeDate2'>dates: mm/dd/yyyy</p>
     <p function='changeDateFormat("yyyy-mm-dd")' class='dropdown-item' id='context-changeDate3'>dates: yyyy-mm-dd</p>
-    <p function='toggleWeekdayFormat()' class='dropdown-item' id='context-toggleWeekdays'>weekdays: M/Mon</p>
-    <p function='toggleHelp()' class='dropdown-item' id='context-toggleWeekdays'>toggle help</p>
-    <p function='clearEmptyDates()' class='dropdown-item' id='context-clearEmptyDates'>clear empty dates</p>
+
   </nav>
   <!-- sounds -->
   <script type='text/javascript' src='script.js'></script>
