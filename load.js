@@ -40,13 +40,14 @@ function load() {
   }
   var worked = false
   while (worked === false) {
+    alert(worked, 'worked?')
     const test = new XMLHttpRequest();
     test.onreadystatechange = function () {
       if (this.readyState == 4) {
         if (this.status != 200) {
           // file not found
           const newuser = confirm(
-            'This user is not recognized. Create a new user? ' + 
+            'Current user is not recognized. Create a new user? ' + 
             '(Press Cancel to re-enter username & password)'
           )
           if (newuser) {
@@ -62,7 +63,7 @@ function load() {
             const password = prompt('enter password: ')
             document.cookie = 'username=; expires=' + past.toUTCString()
             document.cookie = 'username=' + username + '_' + password + 
-            '; expires=' + inaweek.toUTCString()
+              '; expires=' + inaweek.toUTCString()
           }
         } else {
           // file found
