@@ -138,6 +138,7 @@ function toggledrags() {
     $(':focus').blur()
     save()
   }
+  updateSizes()
 }
 
 function dragsoff() {
@@ -207,21 +208,23 @@ function loadlist() { //updates the list display
   'class', 'selected')
   $('#flop').html(data.flop[loadedlist].text)
   $('.taskselect').removeClass('taskselect')
-  $(':focus').blur()
   save()
 }
 
 function updateSizes() {
   // updates the text sizes of each list
   let height = 0
+  $('#texttest').css('font-family', 'var(--font), serif')
+  $('#texttest').css('font-size', $('#loads').css('font-size'))
+  $('#texttest').css('font-weight', 'bold')
   for (list of $('#loads').children()) {
-    let fontsize = 24
-    // shrink that font
-    while (($(list).width()) / (fontsize / 2) < $(list).val().length) {
-      fontsize -= 1
-    }
-    $(list).css('font-size', fontsize + 'px')
+    $('#texttest').html($(list).val())
+    $('#texttest').css('width', $(list).width() + 'px')
+    $(list).css('height', $('#texttest').height() + 'px')
   }
+  $('#texttest').css('font-family', '')
+  $('#texttest').css('font-size', '')
+  $('#texttest').css('font-weight', '')
   for (list of [
     [$('#timerent')[0], 6], 
     [$('#searchbar')[0], 5],
@@ -318,7 +321,12 @@ function clearEmptyDates() {
   // take away empty dates
   const dateslist = $('#pop').children().filter('.h1')
   for (date of dateslist) {
-    if (getHeadingChildren($(date)).length == 0) date.remove()
+    console.log(stringToDate($(date).text(), true), stringToDate('t'));
+    if (
+      getHeadingChildren($(date)).length == 0 &&
+      stringToDate($(date).text(), true).getTime() != 
+        stringToDate('t').getTime()
+    ) date.remove()
   }
   save()
 }
@@ -393,10 +401,28 @@ function uploadData(async) {
 }
 
 function clearEmptyHeadlines() {
-  // clears empty headlines
-  for (heading of $('span').filter('.h1').toArray().concat(
-  $('span').filter('.h2').toArray(),
-  $('span').filter('.h3').toArray())) {
+  // clears empty headlines'
+  let parent
+  if (selected == undefined) {
+    return
+  } else {
+    if (
+      selected.parents().toArray().includes(('#pop')[0]) ||
+      selected.attr('id') == 'pop'
+    ) {
+      parent = $('#pop')
+    } else if (
+      selected.parents().toArray().includes(('#flop')[0]) ||
+      selected.attr('id') == 'flop'
+    ) {
+      parent = $('#flop')
+    }
+  }
+  for (
+    heading of parent.find('span.h1').toArray().concat(
+    parent.find('span.h2').toArray(),
+    parent.find('span.h3').toArray()
+  )) {
     if (getHeadingChildren($(heading)).length == 0) {
       $(heading).remove()
     }
@@ -520,9 +546,11 @@ function stringToDate(string, weekday) {
   } else {
     // analyze as a date string
     let datestring
-    if (string.match(/(?:\+|-)(?:\d+)(?:w|m|y|d)/) != null) {
+    if (string.match(/[\+-]*\d+[wmyd]/) != null) {
       datestring = string.slice(0,
-      string.search(/(?:\+|-)(?:\d+)(?:w|m|y|d)/))
+      string.search(/[\+-]*\d+[wmyd]/))
+      // compensates for no t
+      if (datestring == '') datestring = String(date.getDate())
     } else {
       datestring = string
     }
@@ -573,8 +601,8 @@ function stringToDate(string, weekday) {
     }
   }
   // analyze for addition of stuff
-  if (string.match(/(?:\+|-)(?:\d+)(?:w|m|y|d)/g) != null) {
-    const matches = string.match(/(?:\+|-)(?:\d+)(?:w|m|y|d)/g); // regexp
+  if (string.match(/[\+-]*\d+[wmyd]/g) != null) {
+    const matches = string.match(/[\+-]*\d+[wmyd]/g); // regexp
     for (match of matches) {
       if (match.charAt(match.length - 1) == 'd') {
         date.setDate(Number(date.getDate()) +
@@ -848,6 +876,7 @@ function deleteTask() {
   selected.remove()
   select(newselect)
   save()
+  clearEmptyDates()
 }
 
 function indentTask(indent) {
@@ -869,6 +898,15 @@ function saveTask() {
   if (selected.val() == '---') {
     // add in a hr
     savetask.before('<span class=\'in horizline\'>   </span>')
+    savetask.remove()
+    selected.remove()
+    return
+  }
+  if (
+    selected.val().slice(0, 2) == '# ' && 
+    savetask.parents().filter('#pop').length != 0
+  ) {
+    alert('create new dates by searching them')
     savetask.remove()
     selected.remove()
     return
@@ -1101,6 +1139,8 @@ function updateHeight() {
     selected.css('height', '1em')
   } else {
     $('#texttest').text(selected.val())
+    $('#texttest').css('width', selected.width() + 'px')
+    $('#texttest').css('padding-left', selected.css('padding-left'))
     selected.css('height', $('#texttest').height() + 'px')
   }
 }
@@ -1304,7 +1344,7 @@ function timertest(ev) {
 
 //start of drag
 function dragTask(evt) {
-  select(evt.target)
+  select(evt.target, false)
   //start drag
   if (selected[0].tagName == 'TEXTAREA') {
     return; // stops from dragging edited subtasks
@@ -1312,7 +1352,6 @@ function dragTask(evt) {
   selected.parents().toArray().includes($('#pop')[0]) == true) {
     return; // stops from reordering dates
   }
-  select(evt.target)
 	// plaintext alternative? for compatibility?
   //specify allowed transfer
   evt.dataTransfer.effectAllowed = 'move'
@@ -1413,7 +1452,7 @@ function getHeadingChildren(el) {
   } else if (el.hasClass('h3') == true) {
     thisclass = 'h3'
   }
-  const children = el.parent().children()
+  const children = el.parent().children().filter('.in')
   const start = el.parent().children().toArray().indexOf(el[0]) + 1
   for (let i = start; i < children.length; i ++) {
     let toggle = true
@@ -1490,7 +1529,7 @@ function toggleButs() {
     data.hidebuts = 'true'
     $('#searchbar').before($('#optionsbut'))
     $('#optionsbut').css('margin', '5px calc(50% - 10px)')
-    $(':root').css('--butheight', '0px')
+    $(':root').css('--butheight', '-10px')
   }
   save()
 }
@@ -1679,6 +1718,10 @@ function clicked(ev) {
   } else if ($(ev.target).attr('id') == 'todayBut') {
     select(dateToHeading(stringToDate('t')))
     save()
+  } else if ($(ev.target).attr('id') == 'addDateBut') {
+    $('#searchbar').val('d:')
+    $('#searchbar').focus()
+    console.log('date');
   } else if ($(ev.target).attr('id') == 'timer25But') {
     timer.stop()
     $('#timerent').val('25:00')
@@ -1937,7 +1980,10 @@ function keycomms(evt) {
     }
     loadedlist = oldload
     loadlist()
-  } else if (selected == undefined && evt.key == 'Enter') {
+  } else if (
+    selected == undefined && evt.key == 'Enter' &&
+    $(':focus').hasClass('selected')
+  ) {
     evt.preventDefault()
     toggledrags()
   } else if (selected != undefined && evt.key == 'Enter' &&
@@ -2099,8 +2145,9 @@ function loadpage(setload) {
   toggleHelp(); toggleHelp()
   toggleButs()
   $('.taskselect').removeClass('taskselect')
-  $('#help').children().toArray().forEach((x) => {helpfold($(x))});
-  updateSizes();
+  $('#help').children().toArray().forEach((x) => {helpfold($(x))})
+  updateSizes()
+  clearEmptyDates()
 }
 
 loadpage()

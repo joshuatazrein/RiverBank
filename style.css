@@ -103,22 +103,28 @@ span span:not(.italic), span span:not(.link), span span:not(.deadline) {
 }
 
 textarea.selected, textarea.unselected {
-  width: calc(100% - 12px);
+  width: calc(100% - 10px);
   height: calc(1em + 5px);
-  margin-left: 5px;
+  margin: 1px 5px;
   display: inline-block;
   font: 100% var(--font), serif;
   font-weight: bold;
   background-color: inherit;
   border: none;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 
 textarea.in {
   font: 80% var(--menufont), monospace;
-  width: calc(100% - 5px);
+  width: calc(100% - 10px);
   color: var(--textcolor);
   background: inherit;
+}
+
+span textarea.in {
+  padding-left: 1em;
+  width: calc(100% - 1em - 10px);
 }
 
 textarea {
@@ -227,15 +233,18 @@ span.important {
   color: var(--important);
 }
 
+span span:not(.list) {
+  text-indent: 0
+}
+
 span.event {
   background-color: var(--event);
   display: inline-block;
   border-radius: 3px;
-  width: calc(100% - 20px);
-  padding: 2px 0 5px 0;
+  /* width: calc(100% - 1.2em - 10px); */
   margin-bottom: 5px;
-  text-indent: -0.5em;
-  padding-left: 0.75em;
+  /* text-indent: -1.2em; */
+  /* padding-left: calc(1.2em + 5px); */
 }
 
 span.link, span.bold, span.italic, span.bold-italic, 
@@ -252,10 +261,6 @@ span.list {
   display: inline-block;
   text-indent: -0.5em;
   padding-left: calc(0.5em + 5px);
-}
-
-span:not(.list) {
-  text-indent: 0;
 }
 
 .topbar {
@@ -297,7 +302,6 @@ span:not(.list) {
 .listcontainer {
   width: calc(80% - 5px);
   height: 100%;
-  /* left: 20%; */
   float: left;
 }
 
@@ -326,7 +330,7 @@ span:not(.list) {
 
 
 .rendered {
-  height: calc(100vh - 15px - var(--butheight));
+  height: calc(100vh - 23px - var(--butheight));
   width: 100%;
   margin: 0;
   overflow: scroll;
@@ -337,8 +341,10 @@ span:not(.list) {
 
 .loads {
   background-color: transparent;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
   height: 100%;
+  width: 100%;
 }
 
 .selected {
