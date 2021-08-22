@@ -12,6 +12,7 @@ function load() {
     document.cookie = 'username=' + username + '_' + password + 
     '; expires=' + inaweek.toUTCString();
   }
+  alert(document.cookie, 'alert')
   var worked;
   const test1 = new XMLHttpRequest();
   test1.onreadystatechange = function () {
@@ -41,7 +42,7 @@ function load() {
       if (this.readyState == 4) {
         if (this.status != 200) {
           const newuser = confirm(
-            'This username and password are not in the system. Create a new' + 
+            'The current username and password are not in the system. Create a new' + 
             ' profile? (Click "cancel" to re-enter your information)'
           );
           if (newuser) {
@@ -62,7 +63,7 @@ function load() {
         }
       }
     }
-    // end of loop
+    // end of function
     test.open('GET', 'users/' + 
     document.cookie.split(';')[0].split('=')[1] + '.json', false);
     try {
