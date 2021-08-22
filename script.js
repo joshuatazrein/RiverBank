@@ -332,10 +332,13 @@ function clearEmptyDates() {
 }
 
 function switchUser() {
+  // switches data and reloads page
+  save()
   const past = new Date()
   past.setTime(past.getTime() - 86400000)
   document.cookie = 'username=; expires=' + past.toUTCString()
   load()
+  reloadpage()
 }
 
 function upload() {
@@ -2049,39 +2052,49 @@ function keycomms(evt) {
       newTask() // new task
     }
   }
-
   if (evt.key == 'Escape') $(document).scrollTop(0); // fixes scrolling
 }
 
-$('#username').val(document.cookie.split(';')[0].split('=')[1].split('_')[0])
-$(document).on('keydown', keycomms)
-$(document).on('contextmenu', event, context)
-$(document).on('click', event, clicked)
-$(document).on('dblclick', event, dblclick)
-$(window).resize(updateSizes)
-$(window).on('focus', load)
-$(window).on('beforeunload', finalsave)
+function reloadpage() {
+  $('#pop').empty()
+  $('#flop').empty()
+  $('#loads').empty()
+  loadpage()
+}
 
-$('#pop').html(data.pop)
-// loads data
-const oldload = Number(data.loadedlist)
-for (i of data.flop) {
-  newlist(i.title, i.text)
+function loadpage() {
+  $('#username').val(document.cookie.split(';')[0].split('=')[1].split('_')[0])
+  $(document).on('keydown', keycomms)
+  $(document).on('contextmenu', event, context)
+  $(document).on('click', event, clicked)
+  $(document).on('dblclick', event, dblclick)
+  $(window).resize(updateSizes)
+  $(window).on('focus', load)
+  $(window).on('beforeunload', finalsave)
+
+  $('#pop').html(data.pop)
+  // loads data
+  const oldload = Number(data.loadedlist)
+  for (i of data.flop) {
+    newlist(i.title, i.text)
+  }
+  loadedlist = oldload
+  loadlist()
+  // go to today
+  $('#searchbar').val('d:t')
+  select(dateToHeading(stringToDate($('#searchbar').val().slice(2))))
+  $('#searchbar').val('')
+  // hide or show buttons via toggle
+  if (data.hidebuts == 'true') {
+    data.hidebuts = 'false'
+  } else {
+    data.hidebuts = 'true'
+  }
+  toggleHelp(); toggleHelp()
+  toggleButs()
+  $('.taskselect').removeClass('taskselect')
+  $('#help').children().toArray().forEach((x) => {helpfold($(x))});
+  updateSizes();
 }
-loadedlist = oldload
-loadlist()
-// go to today
-$('#searchbar').val('d:t')
-select(dateToHeading(stringToDate($('#searchbar').val().slice(2))))
-$('#searchbar').val('')
-// hide or show buttons via toggle
-if (data.hidebuts == 'true') {
-  data.hidebuts = 'false'
-} else {
-  data.hidebuts = 'true'
-}
-toggleHelp(); toggleHelp()
-toggleButs()
-$('.taskselect').removeClass('taskselect')
-$('#help').children().toArray().forEach((x) => {helpfold($(x))});
-updateSizes();
+
+loadpage()
