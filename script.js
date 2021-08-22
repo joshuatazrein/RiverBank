@@ -380,7 +380,7 @@ function uploadData(async) {
     const newdata = new FormData()
     newdata.append("upfile", blob)
     const xhr = new XMLHttpRequest()
-    xhr.onreadystatechange(function() {
+    xhr.onreadystatechange = function() {
       if (this.readyState == 4) {
         console.log(JSON.stringify(data), 'uploaded');
       }
