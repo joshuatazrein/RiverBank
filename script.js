@@ -384,7 +384,7 @@ function uploadData(async) {
       if (this.readyState == 4) {
         console.log(JSON.stringify(data), 'uploaded');
       }
-    })
+    }
     if (async == true) {
       xhr.open("POST", "upload.php", false)
     } else {
