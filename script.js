@@ -349,7 +349,7 @@ function upload() {
       }
     }
     fileReader.readAsText(this.files[0])
-    reloadpage()
+    location.reload()
   })
   fileinput.click()
 }
