@@ -1038,6 +1038,14 @@ function select(el, scroll) {
   } else {
     selected = undefined
   }
+  if (
+    $(el)[0].tagName == 'TEXTAREA' && 
+    ($(el).hasClass('unselected') ||
+    $(el).hasClass('selected'))
+  ) {
+    // select the right-clicked list
+    $(el).click()
+  }
 }
 
 function setText(el) {
