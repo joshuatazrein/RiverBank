@@ -335,7 +335,7 @@ function switchUser() {
   const past = new Date()
   past.setTime(past.getTime() - 86400000)
   document.cookie = 'username=; expires=' + past.toUTCString()
-  location.reload()
+  load()
 }
 
 function upload() {
