@@ -338,9 +338,7 @@ function switchUser() {
   past.setTime(past.getTime() - 86400000)
   document.cookie = 'username=; expires=' + past.toUTCString()
   load()
-  $(window).on('focus', function() {}) // prevent endless loop
   reloadpage()
-  $(window).on('focus', load)
 }
 
 function upload() {
@@ -2066,16 +2064,16 @@ function reloadpage() {
 
 function loadpage(setload) {
   $('#username').val(document.cookie.split(';')[0].split('=')[1].split('_')[0])
-  $(document).on('keydown', keycomms)
-  $(document).on('contextmenu', event, context)
-  $(document).on('click', event, clicked)
-  $(document).on('dblclick', event, dblclick)
-  $(window).resize(updateSizes)
   if (setload != false) {
     // prevents endless loading loop
+    $(document).on('keydown', keycomms)
+    $(document).on('contextmenu', event, context)
+    $(document).on('click', event, clicked)
+    $(document).on('dblclick', event, dblclick)
+    $(window).resize(updateSizes)
     $(window).on('focus', load)
+    $(window).on('beforeunload', finalsave)
   }
-  $(window).on('beforeunload', finalsave)
 
   $('#pop').html(data.pop)
   // loads data
