@@ -82,7 +82,6 @@ span:not(.link), span:not(.italic) {
 span span:not(.bold), span span:not(.bold-italic), 
 span span:not(.italic), span span:not(.link), span span:not(.deadline) {
   padding-left: calc(1em);
-  width: calc(100% - 1em - 5px);
 }
 
 .duedate {
