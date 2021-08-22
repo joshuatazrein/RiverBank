@@ -1771,7 +1771,11 @@ function taskAbove() {
   selected.parent()[0].tagName == 'SPAN') {
     return selected.parent()
   } else if (selected.prev()[0] != undefined) {
-    return selected.prev()
+    let returntask = selected.prev()
+    while (returntask.hasClass('in') == false) {
+      returntask = returntask.prev()
+    }
+    return returntask
   } // nonedisplays are not selected
 }
 
@@ -1784,13 +1788,21 @@ function taskBelow() {
       }
     }
     // if no subtasks
-    return selected.next()
+    let returntask = selected.next()
+    while (returntask.hasClass('in') == false) {
+      returntask = returntask.next()
+    }
+    return returntask
   } else if (selected.next()[0] == undefined &&
   selected.parent().next()[0] != undefined) {
     // end of parent item
     return selected.parent().next()
   } else if (selected.next()[0] != undefined) {
-    return selected.next()
+    let returntask = selected.next()
+    while (returntask.hasClass('in') == false) {
+      returntask = returntask.next()
+    }
+    return returntask
   }
 }
 
