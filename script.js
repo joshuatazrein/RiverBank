@@ -191,11 +191,12 @@ function newlist(title, text) {
 function deletelist() {
   yes = confirm('are you sure you want to delete this list?')
   if (yes == true) {
-    save()
     $('#loads').children()[loadedlist].remove()
     data.flop.splice(loadedlist, 1)
-    loadedlist = undefined
     $('#flop').empty()
+    loadedlist = 0
+    loadlist()
+    save()
   }
 }
 
@@ -1038,14 +1039,6 @@ function select(el, scroll) {
   } else {
     selected = undefined
   }
-  if (
-    $(el)[0].tagName == 'TEXTAREA' && 
-    ($(el).hasClass('unselected') ||
-    $(el).hasClass('selected'))
-  ) {
-    // select the right-clicked list
-    $(el).click()
-  }
 }
 
 function setText(el) {
@@ -1520,6 +1513,15 @@ function context(e) {
     saveTask()
   }
   e.preventDefault()
+  if (
+    $(e.target)[0].tagName == 'TEXTAREA' && 
+    !$(e.target).hasClass('selected')
+  ) {
+    // select list
+    e.target.click()
+  } else {
+    select($(e.target))
+  }
   $('#context-menu').show()
   options = {
     '#context-newlist': [['TEXTAREA', 'DIV'], ['selected', 'unselected', 
@@ -1586,7 +1588,6 @@ function context(e) {
   window.innerHeight - $('#context-menu').height()) - 20)
   $('#context-menu').css('left', Math.min(e.pageX,
   window.innerWidth - $('#context-menu').width()) - 40)
-  select($(e.target))
 }
 
 function gotolink(e) {
