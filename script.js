@@ -332,7 +332,6 @@ function clearEmptyDates() {
 }
 
 function switchUser() {
-  save()
   const past = new Date()
   past.setTime(past.getTime() - 86400000)
   document.cookie = 'username=; expires=' + past.toUTCString()
@@ -2067,7 +2066,8 @@ $(document).on('contextmenu', event, context)
 $(document).on('click', event, clicked)
 $(document).on('dblclick', event, dblclick)
 $(window).resize(updateSizes)
-$(window).on('focus', load);
+$(window).on('focus', load)
+$(window).on('beforeunload', finalsave)
 
 $('#pop').html(data.pop)
 // loads data

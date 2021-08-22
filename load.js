@@ -12,7 +12,6 @@ function load() {
     document.cookie = 'username=' + username + '_' + password + 
     '; expires=' + inaweek.toUTCString();
   }
-  alert(document.cookie, 'alert')
   var worked;
   const test1 = new XMLHttpRequest();
   test1.onreadystatechange = function () {
