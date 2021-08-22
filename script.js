@@ -195,8 +195,8 @@ function deletelist() {
     data.flop.splice(loadedlist, 1)
     $('#flop').empty()
     loadedlist = 0
-    loadlist()
     save()
+    loadlist()
   }
 }
 
