@@ -339,12 +339,12 @@ function upload() {
       console.log(data.flop[0].text)
       uploadData(true)
       console.log(data.flop[0].text)
+      reloadpage()
+      console.log(data.flop[0].text)
     })
     fileReader.readAsText(this.files[0])
   })
   fileinput.click()
-  reloadpage()
-  console.log(data.flop[0].text);
 }
 
 function download() {
