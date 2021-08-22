@@ -302,23 +302,9 @@ function save() {
   }
   dataString = JSON.stringify(data)
   localStorage.setItem('data', dataString)
+  // backup data to the server after setting localstorage data
+  uploadData()
   updatedeadlines()
-  // backup data to the server
-  try {
-    const inaweek = new Date()
-    inaweek.setTime(inaweek.getTime() + 604800000)
-    document.cookie = 'username=' + $('#username').val() + '; expires=' + 
-    inaweek.toUTCString()
-    const blob = new Blob([JSON.stringify(data)], {type:
-      "text/plain"})
-    const newdata = new FormData()
-    newdata.append("upfile", blob)
-    const xhr = new XMLHttpRequest()
-    xhr.open("POST", "upload.php")
-    xhr.send(newdata)
-  } catch (err) {
-    // pass
-  }
 }
 
 function clearEmptyDates() {
@@ -1519,7 +1505,7 @@ function toggleHelp() {
 function setStyle(style) {
   data.style = style
   save()
-  reloadpage()
+  location.reload()
 }
 
 function context(e) {
