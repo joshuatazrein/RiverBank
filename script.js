@@ -336,10 +336,13 @@ function upload() {
       data = JSON.parse(this.result)
       dataString = JSON.stringify(data)
       localStorage.setItem('data', dataString)
+      console.log(data.flop[0].text)
       uploadData(true)
+      console.log(data.flop[0].text)
     }
     fileReader.readAsText(this.files[0])
     reloadpage()
+    console.log(data.flop[0].text);
   })
   fileinput.click()
 }
