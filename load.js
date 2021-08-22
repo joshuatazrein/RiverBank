@@ -40,7 +40,6 @@ function load() {
   }
   var worked = false
   while (worked === false) {
-    alert(worked, 'worked?')
     const test = new XMLHttpRequest();
     test.onreadystatechange = function () {
       if (this.readyState == 4) {
