@@ -298,14 +298,13 @@ function save() {
   // save data
   data.pop = $('#pop').html()
   if (loadedlist != undefined) {
+    data.flop[loadedlist].text = $('#flop').html()
     try {
-      data.flop[loadedlist].text = $('#flop').html()
       data.flop[loadedlist].title = $('#loads').children()[loadedlist].value
-      data.loadedlist = loadedlist
     } catch (TypeError) {
-      data.flop.splice(loadedlist, 1)
-      data.loadedlist = 0
+      data.flop[loadedlist].title = ''
     }
+    data.loadedlist = loadedlist
   }
   dataString = JSON.stringify(data)
   localStorage.setItem('data', dataString)
