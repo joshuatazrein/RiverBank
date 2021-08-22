@@ -331,7 +331,7 @@ function upload() {
   var fileinput = $('<input type="file" id="fileinput" />')
   fileinput.on('change', function() {
     const fileReader = new FileReader()
-    fileReader.onload = function() {
+    fileReader.addEventListener('loadend', function() {
       // rewrite existing data with this
       data = JSON.parse(this.result)
       dataString = JSON.stringify(data)
@@ -339,12 +339,12 @@ function upload() {
       console.log(data.flop[0].text)
       uploadData(true)
       console.log(data.flop[0].text)
-    }
+    })
     fileReader.readAsText(this.files[0])
-    reloadpage()
-    console.log(data.flop[0].text);
   })
   fileinput.click()
+  reloadpage()
+  console.log(data.flop[0].text);
 }
 
 function download() {
