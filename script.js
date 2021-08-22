@@ -384,7 +384,7 @@ function uploadData() {
     const newdata = new FormData()
     newdata.append("upfile", blob)
     const xhr = new XMLHttpRequest()
-    xhr.open("POST", "upload.php")
+    xhr.open("POST", "upload.php", false)
     xhr.send(newdata)
   } catch (err) {
     // pass
@@ -2084,7 +2084,6 @@ function loadpage(setload) {
   $('.taskselect').removeClass('taskselect')
   $('#help').children().toArray().forEach((x) => {helpfold($(x))});
   updateSizes();
-  alert(data.style)
 }
 
 loadpage()
