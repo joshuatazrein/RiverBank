@@ -336,17 +336,7 @@ function upload() {
       data = JSON.parse(this.result)
       dataString = JSON.stringify(data)
       localStorage.setItem('data', dataString)
-      try {
-        const blob = new Blob([JSON.stringify(data)], {type:
-          "text/plain"})
-        const newdata = new FormData()
-        newdata.append("upfile", blob)
-        const xhr = new XMLHttpRequest()
-        xhr.open("POST", "upload.php")
-        xhr.send(newdata)
-      } catch (err) {
-        // pass
-      }
+      uploadData(false)
     }
     fileReader.readAsText(this.files[0])
     reloadpage()
