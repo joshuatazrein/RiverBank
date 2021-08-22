@@ -1505,7 +1505,6 @@ function toggleHelp() {
 function setStyle(style) {
   data.style = style
   save()
-  alert(data.style)
   location.reload()
 }
 
@@ -2085,6 +2084,7 @@ function loadpage(setload) {
   $('.taskselect').removeClass('taskselect')
   $('#help').children().toArray().forEach((x) => {helpfold($(x))});
   updateSizes();
+  alert(data.style)
 }
 
 loadpage()
