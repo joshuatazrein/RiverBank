@@ -20,31 +20,31 @@
       </div>
       <div class='butbar' id='editbuts'>
         <button class='opts' id='optionsbut'>...</button>
-        <button class='opts' id='moveUpBut' title='move up'>↑</button>
-        <button class='opts' id='moveDownBut' title='move down'>↓</button>
-        <button class='opts' id='editTaskBut' title='edit'>o</button>
-        <button class='opts' id='deleteTaskBut' title='delete'>x</button>
-        <button class='opts' id='archiveTaskBut' title='complete'>!</button>
+        <button id='moveUpBut' title='move up'>↑</button>
+        <button id='moveDownBut' title='move down'>↓</button>
+        <button id='editTaskBut' title='edit'>o</button>
+        <button id='deleteTaskBut' title='delete'>x</button>
+        <button id='archiveTaskBut' title='complete'>!</button>
       </div>
       <div>
         <input id='searchbar' placeholder="search (d: date)">
         <div id='searchbar-results' class='dropdown' style='position:absolute'></div>
       </div>
       <div class='butbar'>
-        <button class='opts' id='timer25But' title='25 minutes'>25</button>
-        <button class='opts' id='timer15But' title='15 minutes'>15</button>
-        <button class='opts' id='timer5But' title='5 minutes'>5</button>
-        <button class='opts' id='timer+2But' title='+2 minutes'>+2</button>
-        <button class='opts' id='timer-2But' title='-2 minutes'>-2</button>
-        <button class='opts' id='timerStartBut' title='start timer'>▶</button>
-        <button class='opts' id='timerStopBut' title='stop timer'>■</button>
+        <button id='timer25But' title='25 minutes'>25</button>
+        <button id='timer15But' title='15 minutes'>15</button>
+        <button id='timer5But' title='5 minutes'>5</button>
+        <button id='timer+2But' title='+2 minutes'>+2</button>
+        <button id='timer-2But' title='-2 minutes'>-2</button>
+        <button id='timerStartBut' title='start timer'>▶</button>
+        <button id='timerStopBut' title='stop timer'>■</button>
       </div>
       <input id='timerent' placeholder="timer" />
       <p class='title' id='lists'>LISTS</p>
       <div class='butbar'>
-        <button class='opts' id='addListBut' title='new list'>+</button>
-        <button class='opts' id='deleteListBut' title='delete list'>x</button>
-        <button class='opts' id='editListBut' title='edit list'>o</button>
+        <button id='addListBut' title='new list'>+</button>
+        <button id='deleteListBut' title='delete list'>x</button>
+        <button id='editListBut' title='edit list'>o</button>
       </div>
       <div id='loads' class='loads' onfocusout='dragson()'> <!-- this is used to store list names -->
       </div>
@@ -121,9 +121,9 @@
       <div class='floplist'>
         <div class='butbar' id='flopbuts'>
           <button class='flopbut' id='flopBut' title='new task in bank'>+ BANK</button>
-          <button class='opts' id='newHeadingFlopBut' title='new heading in bank'>+#</button>
-          <button class='opts' id='randomBut' title='select random flop'>?</button>
-          <button class='opts' id='movePopBut' title='move task to river'>→</button>
+          <button id='newHeadingFlopBut' title='new heading in bank'>+#</button>
+          <button id='randomBut' title='select random flop'>?</button>
+          <button id='movePopBut' title='move task to river'>→</button>
         </div>
         <p id='flop' class='rendered in' ondrop='dropTask(event)' ondragover='draggingOver(event)'></p>
         <div style='height: 500px;'></div>
@@ -131,7 +131,7 @@
       </div>
       <div class='poplist'>
         <div class='butbar'>
-          <button class='opts' id='moveFlopBut' title='move task to bank'>←</button>
+          <button id='moveFlopBut' title='move task to bank'>←</button>
           <button id='todayBut' title='jump to today'>d:t</button>
           <button class='flopbut' id='popBut' title='new task in river'>+ RIVER</button>
         </div>

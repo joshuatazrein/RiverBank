@@ -41,10 +41,16 @@ button {
   padding: 4px;
 }
 
+.opts {
+  height: 100%;
+  margin: 2px;
+}
+
 .butbar {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+  margin: 5px 0;
 }
 
 .flopbut {

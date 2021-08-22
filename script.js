@@ -1480,13 +1480,15 @@ function togglefold(e, saving) {
 function toggleButs() {
   if (data.hidebuts == 'true') {
     $('.butbar').show()
-    $('#editbuts').prepend($('#optionsbut'))
+    $('#editbuts').append($('#optionsbut'))
+    $('#optionsbut').css('margin', '')
     data.hidebuts = 'false'
     $(':root').css('--butheight', $('#flopbuts').height() + 'px')
   } else {
     $('.butbar').hide()
     data.hidebuts = 'true'
     $('#searchbar').before($('#optionsbut'))
+    $('#optionsbut').css('margin', '5px calc(50% - 10px)')
     $(':root').css('--butheight', '0px')
   }
   save()
