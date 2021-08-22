@@ -468,7 +468,7 @@ function changeDateFormat(format) {
   }
   data.dateSplit = format
   localStorage.setItem('data', JSON.stringify(data))
-  uploadData()
+  uploadData(true)
   reloadpage()
 }
 
