@@ -336,7 +336,7 @@ function upload() {
       data = JSON.parse(this.result)
       dataString = JSON.stringify(data)
       localStorage.setItem('data', dataString)
-      uploadData(false)
+      uploadData(true)
     }
     fileReader.readAsText(this.files[0])
     reloadpage()
