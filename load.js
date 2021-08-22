@@ -63,6 +63,7 @@ function load() {
       }
     }
     // end of function
+    console.log(document.cookie, 'cookie');
     test.open('GET', 'users/' + 
     document.cookie.split(';')[0].split('=')[1] + '.json', false);
     try {
