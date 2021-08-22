@@ -311,7 +311,6 @@ function save() {
   // backup data to the server after setting localstorage data
   uploadData()
   updatedeadlines()
-  console.log(dataString);
 }
 
 function clearEmptyDates() {
@@ -387,6 +386,7 @@ function uploadData(async) {
       xhr.open("POST", "upload.php")
     }
     xhr.send(newdata)
+    console.log(JSON.stringify(data), 'uploaded');
   } catch (err) {
     // pass
     console.log('didn\'t work')
