@@ -2140,15 +2140,16 @@ function loadpage(setload) {
     window.addEventListener('focus', reloadpage)
     $(window).on('beforeunload', finalsave)
   }
-
   $('#pop').html(data.pop)
   // loads data
   const oldload = Number(data.loadedlist)
+  console.log('oldload', oldload);
   for (i of data.flop) {
     newlist(i.title, i.text)
   }
   loadedlist = oldload
   loadlist()
+  console.log('newload', loadedlist);
   // go to today
   $('#searchbar').val('d:t')
   select(dateToHeading(stringToDate($('#searchbar').val().slice(2))))
