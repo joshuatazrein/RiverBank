@@ -2142,8 +2142,13 @@ function loadpage(setload) {
   }
   $('#pop').html(data.pop)
   // loads data
-  const oldload = Number(data.loadedlist)
-  console.log('oldload', oldload);
+  let oldload
+  if (setload == false) {
+    // fixes weird loadlist glitch
+    oldload = loadedlist
+  } else {
+    oldload = Number(data.loadedlist)
+  }
   for (i of data.flop) {
     newlist(i.title, i.text)
   }
