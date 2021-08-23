@@ -2097,14 +2097,26 @@ function keycomms(evt) {
   if (evt.key == 'Escape') $(document).scrollTop(0); // fixes scrolling
 }
 
+function getFrame(task) {
+  const parents = task.parents().toArray()
+  if (parents.includes($('#flop')[0])) return $('#flop')
+  else if (parents.includes($('#pop')[0])) return $('#pop')
+}
+
 function reloadpage() {
-  const oldselect = selected
+  // reselect old select
+  console.log('reloading');
+  const selectframe = getFrame(selected)
+  const selectindex = selectframe.find('span').toArray(
+    ).indexOf(selected[0])
+  const poptop = $('#pop').scrollTop()
   load()
   $('#pop').empty()
   $('#flop').empty()
   $('#loads').empty()
   loadpage(false)
-  select(oldselect)
+  select($(selectframe.find('span').toArray()[selectindex]))
+  $('#pop').scrollTop(poptop)
 }
 
 function loadpage(setload) {
