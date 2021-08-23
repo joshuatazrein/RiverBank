@@ -321,7 +321,6 @@ function clearEmptyDates() {
   // take away empty dates
   const dateslist = $('#pop').children().filter('.h1')
   for (date of dateslist) {
-    console.log(stringToDate($(date).text(), true), stringToDate('t'));
     if (
       getHeadingChildren($(date)).length == 0 &&
       stringToDate($(date).text(), true).getTime() != 
@@ -477,12 +476,9 @@ function changeDateFormat(format) {
     for (x of $('#test').find('.deadline')) {
       // change all deadlines
       data.dateSplit = thisformat
-      console.log(stringToDate($(x).text().slice(
-        1, $(x).text().length - 1), false));
       const getdate = stringToDate($(x).text().slice(
         1, $(x).text().length - 1), false)
       data.dateSplit = format
-      console.log(dateToString(getdate, false));
       $(x).text('>' + dateToString(getdate, false) + ' ')
     }
     // update loadedlist
@@ -1616,7 +1612,6 @@ function context(e) {
     if (showoption == true) {
       $(option).show()
     } else {
-      console.log(option, 'hiding');
       $(option).hide()
     }
   }
@@ -1721,7 +1716,6 @@ function clicked(ev) {
   } else if ($(ev.target).attr('id') == 'addDateBut') {
     $('#searchbar').val('d:')
     $('#searchbar').focus()
-    console.log('date');
   } else if ($(ev.target).attr('id') == 'timer25But') {
     timer.stop()
     $('#timerent').val('25:00')
