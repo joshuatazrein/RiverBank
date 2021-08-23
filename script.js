@@ -2104,7 +2104,7 @@ function keycomms(evt) {
 }
 
 function reloadpage() {
-  console.log('reloading');
+  console.log('reloading')
   load()
   $('#pop').empty()
   $('#flop').empty()
@@ -2121,7 +2121,7 @@ function loadpage(setload) {
     $(document).on('click', event, clicked)
     $(document).on('dblclick', event, dblclick)
     $(window).resize(updateSizes)
-    $(window).on('focus', reloadpage)
+    window.addEventListener('focus', reloadpage)
     $(window).on('beforeunload', finalsave)
   }
 
