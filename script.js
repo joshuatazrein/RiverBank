@@ -2121,7 +2121,7 @@ function loadpage(setload) {
     $(document).on('click', event, clicked)
     $(document).on('dblclick', event, dblclick)
     $(window).resize(updateSizes)
-    $(window).on('focus', load)
+    $(window).on('focus', reloadpage)
     $(window).on('beforeunload', finalsave)
   }
 
