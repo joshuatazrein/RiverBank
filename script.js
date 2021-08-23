@@ -1453,7 +1453,7 @@ function getHeadingChildren(el) {
     thisclass = 'h3'
   }
   const children = el.parent().children().filter('.in')
-  const start = el.parent().children().toArray().indexOf(el[0]) + 1
+  const start = children.toArray().indexOf(el[0]) + 1
   for (let i = start; i < children.length; i ++) {
     let toggle = true
     for (fold of folds[thisclass]) {
