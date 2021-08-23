@@ -82,11 +82,13 @@ span:not(.link), span:not(.italic) {
 
 span span:not(.bold), span span:not(.bold-italic), 
 span span:not(.italic), span span:not(.link), span span:not(.deadline) {
-  padding-left: 0.5em;
+  padding-left: 1em;
 }
 
-#help span span {
-  padding-left: 2px;
+span.list span:not(.bold), span.list span:not(.bold-italic), 
+span.list span:not(.italic), span.list span:not(.link), 
+span.list span:not(.deadline) {
+  padding-left: 0.5em;
 }
 
 .duedate {
@@ -147,6 +149,11 @@ audio {
   user-select: none;
 }
 
+#help span {
+  padding-left: 5px;
+  width: calc(100% - 5px);
+}
+
 #help {
   font: inherit;
   font-size: 18px;
@@ -170,6 +177,12 @@ input {
   background-color: inherit;
   border: 1px solid var(--bdcolor);
   color: var(--textcolor);
+}
+
+#username {
+  color: var(--textcolor);
+  text-align: center;
+  margin: 0 0;
 }
 
 #searchbar {
@@ -242,6 +255,7 @@ span.event {
   display: inline-block;
   border-radius: 3px;
   margin-bottom: 5px;
+  width: calc(100% - 15px);
 }
 
 span.link, span.bold, span.italic, span.bold-italic, 
@@ -255,7 +269,6 @@ span.deadline {
 }
 
 span.list {
-  display: inline-block;
   text-indent: -0.5em;
   padding-left: calc(0.5em + 5px);
 }
@@ -282,18 +295,6 @@ span.list {
   position: relative;
   float:left;
   overflow: hidden;
-}
-
-#help > span {
-  /* border: 1px solid skyblue;
-  border-radius: 5px; */
-  color: skyblue;
-}
-
-#help > span > span, #help > span > span > span {
-  /* border: 1px solid skyblue;
-  border-radius: 5px; */
-  color: var(--textcolor);
 }
 
 .listcontainer {
@@ -366,35 +367,27 @@ span.list {
   font-style: italic;
 }
 
-span.italic, span.bold, span.bold-italic, span.link, span.deadline {
-  display: inline;
-}
-
 .h1 {
-  margin-top: 1em;
   font-size: 150%;
-  line-height: 1em;
-  font-family: var(--font), serif;
-  font-weight: bold;
-  display: inline-block;
+  font-weight: bold; 
 }
 
 .h2 {
-  margin-top: 0.75em;
   font-size: 125%;
-  line-height: 1em;
-  font-family: var(--font), serif;
   font-style: italic;
-  display: inline-block;
 }
 
 .h3 {
-  margin-top: 0.5em;
   font-size: 112%;
+  text-decoration: underline;
+}
+
+.h1, .h2, .h3 {
+  margin-top: 0.5em;
+  display: inline-block;
+  text-align: center;
   line-height: 1em;
   font-family: var(--font), serif;
-  text-decoration: underline;
-  display: inline-block;
 }
 
 .dateheading {

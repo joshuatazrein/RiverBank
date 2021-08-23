@@ -16,7 +16,7 @@
   <div class='container'>
     <div class='leftcolumn'>
       <div>
-        <input placeholder="username" id='username' />
+        <p id='username'></p>
       </div>
       <div class='butbar' id='editbuts'>
         <button class='opts' id='optionsbut'>...</button>
@@ -49,15 +49,18 @@
       <div id='loads' class='loads' onfocusout='dragson()'> <!-- this is used to store list names -->
       </div>
       <p id='help' class='help'>
-        <span onclick='helpfold($(this));'>
+        <span class='h1'>help</span>
+        <span>
           <span class='h2'>controls</span>
           <span class='list'>• click: select task</span>
           <span class='list'>• right-click: options</span>
           <span class='list'>• doubleclick: edit task</span>
           <span class='list'>• esc: unselect</span>
-          <span class='list'>• drag: move tasks</span>
+          <span class='list'>• drag/drop: move after targer</span>
+          <span class='list'>• alt-drag/drop: move as subtask</span>
+          <span class='list'>• cmd-drag/drop: move before target</span>
         </span>
-        <span onclick='helpfold($(this));'>
+        <span>
           <span class='h2'>commands</span>
           <span class='list'>• return: edit/save</span>
           <span class='list'>• alt-return: new task below</span>
@@ -73,22 +76,22 @@
           <span class='list'>• space: complete/un</span>
           <span class='list'>• shift-space: archive</span>
         </span>
-        <span onclick='helpfold($(this));'>
+        <span>
           <span class='h2'>syntax</span>
           <span class='h1'># h1</span>
           <span class='h2'>## h2</span>
           <span class='h3'>### h3</span>
           <span class='list'>• list<span class='list'>• 2 spaces: indent</span></span>
-          <span class='italic'>*italic*</span>
-          <span class='bold'>**bold**</span>
-          <span class='bold-italic'>***bold-italic***</span>
-          <span class='link'>[[link (click to search)]]</span>
+          <span class='italic'>_italic_</span><br>
+          <span class='bold'>*bold*</span><br>
+          <span class='bold-italic'>_*bold-italic*_</span><br>
+          <span class='link'>[[link (click to search)]]</span><br>
           <span><span class='deadline'>>dd.mm.yyyy</span> deadline</span>
           <span class='event'>@ 10a event
             <span class='list'>• create or drag subtasks</span>
           </span>
         </span>
-        <span onclick='helpfold($(this));'>
+        <span>
           <span class='h2'>dates</span>
           <span>Type "d:" into the search bar to search a date (toggle between short/long dates in options)</span>
           <span class='list'>• M/Mon: monday</span>
@@ -104,16 +107,16 @@
           <span class='list'>• m: months</span>
           <span class='list'>• y: years</span>
         </span>
-        <span onclick='helpfold($(this));'>
+        <span>
           <span class='h2'>examples</span>
           <span class='list'>• replace M with Mon for long dates option</span>
           <span class='list'>• d:M (next Monday)</span>
-          <span class='list'>• d:M+1w (a week from Monday)</span>
-          <span class='list'>• d:M+1m (the first Monday next month)</span>
-          <span class='list'>• d:M+1m+1w (a week after the first Monday of next month)</span>
-          <span class='list'>• d:M+1y (the first Monday of next year)</span>
+          <span class='list'>• d:M1w (a week from Monday)</span>
+          <span class='list'>• d:M1m (the first Monday next month)</span>
+          <span class='list'>• d:M1m1w (a week after the first Monday of next month)</span>
+          <span class='list'>• d:M1y (the first Monday of next year)</span>
           <span class='list'>• you can also type in a date (day, day & month, or day month & year) to find that date</span>
-          <span class='list'>• change between dd.mm.yyyy, yyyy-mm-dd, and mm/dd/yyyy formats in options</span>
+          <span class='list'>• change between dd.mm.yyyy, yyyy-mm-dd, and mm/dd/yyyy formats in options</span><br><br>
         </span>
       </p>
     </div>
@@ -157,8 +160,6 @@
     <p function='indentTask(false)' class='dropdown-item' id='context-unIndentTask'>unindent (alt-[)</p>
     <p function='archiveComplete()' class='dropdown-item' id='context-archiveComplete'>archive completed</p>
     <p function='clearEmptyHeadlines()' class='dropdown-item' id='context-clearEmptyHeadlines'>clear empty</p>
-    <p function='collapseAll("false")' class='dropdown-item' id='context-collapseAll'>collapse all ({/})</p>
-    <p function='collapseAll("true")' class='dropdown-item' id='context-expandAll'>expand all ({/})</p>
 
     <p function='newlist()' class='dropdown-item' id='context-newlist'>new</p>
     <p function='toggledrags()' class='dropdown-item' id='context-toggledrags'>edit</p>
