@@ -2105,18 +2105,25 @@ function getFrame(task) {
 
 function reloadpage() {
   // reselect old select
-  console.log('reloading');
-  const selectframe = getFrame(selected)
-  const selectindex = selectframe.find('span').toArray(
-    ).indexOf(selected[0])
+  console.log('reloading', 'loadedlist = ', loadedlist);
+  let selectframe, selectindex
+  if (selected != undefined) {
+    selectframe = getFrame(selected)
+    selectindex = selectframe.find('span').toArray(
+      ).indexOf(selected[0])
+  }
   const poptop = $('#pop').scrollTop()
   load()
   $('#pop').empty()
   $('#flop').empty()
   $('#loads').empty()
   loadpage(false)
-  select($(selectframe.find('span').toArray()[selectindex]))
+  if (selectframe != undefined) {
+    select($(selectframe.find('span').toArray()[selectindex]))
+  }
   $('#pop').scrollTop(poptop)
+  $(':focus').blur()
+  console.log('loadedlist is', loadedlist);
 }
 
 function loadpage(setload) {
