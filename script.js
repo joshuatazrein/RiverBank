@@ -2137,8 +2137,19 @@ function loadpage(setload) {
   } else {
     data.hidebuts = 'true'
   }
-  toggleHelp(); toggleHelp()
-  toggleButs()
+  if (data.help == 'show') $('#help').show()
+  if (data.help == 'hide') $('#help').hide()
+  if (data.hidebuts == 'false') {
+    $('.butbar').show()
+    $('#editbuts').append($('#optionsbut'))
+    $('#optionsbut').css('margin', '')
+    $(':root').css('--butheight', $('#flopbuts').height() + 'px')
+  } else {
+    $('.butbar').hide()
+    $('#searchbar').before($('#optionsbut'))
+    $('#optionsbut').css('margin', '5px calc(50% - 10px)')
+    $(':root').css('--butheight', '-10px')
+  }
   $('.taskselect').removeClass('taskselect')
   $('#help').children().toArray().forEach((x) => {helpfold($(x))})
   updateSizes()
