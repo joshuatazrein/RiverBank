@@ -1559,7 +1559,7 @@ function context(e) {
     // select list
     e.target.click()
   } else {
-    select($(e.target))
+    select($(e.target), false)
   }
   $('#context-menu').show()
   options = {
@@ -1576,6 +1576,7 @@ function context(e) {
     '#context-toggleSomeday': [['SPAN'],['in']],
     '#context-toggleimportant': [['SPAN'],['in']],
     '#context-weekdaysToggle': [['BUTTON'], ['opts']],
+    '#context-toggleHelp': [['BUTTON', 'P'], ['opts', 'help']],
     '#context-editTask': [['SPAN'], ['in']],
     '#context-archiveTask': [['SPAN'], ['in']],
     '#context-newTask': [['SPAN', 'P'], ['in', 'buffer']],
@@ -2104,8 +2105,8 @@ function getFrame(task) {
 }
 
 function reloadpage() {
+  return
   // reselect old select
-  console.log('reloading', 'loadedlist = ', loadedlist);
   let selectframe, selectindex
   if (selected != undefined) {
     selectframe = getFrame(selected)
@@ -2114,18 +2115,15 @@ function reloadpage() {
   }
   const poptop = $('#pop').scrollTop()
   load()
-  console.log('loadedlist is', loadedlist);
   $('#pop').empty()
   $('#flop').empty()
   $('#loads').empty()
   loadpage(false)
-  console.log('loadedlist is', loadedlist);
   if (selectframe != undefined) {
     select($(selectframe.find('span').toArray()[selectindex]), false)
   }
   $('#pop').scrollTop(poptop)
   $(':focus').blur()
-  console.log('loadedlist is', loadedlist);
 }
 
 function loadpage(setload) {
@@ -2154,7 +2152,6 @@ function loadpage(setload) {
   }
   loadedlist = oldload
   loadlist()
-  console.log('newload', loadedlist);
   // go to today
   $('#searchbar').val('d:t')
   select(dateToHeading(stringToDate($('#searchbar').val().slice(2))))

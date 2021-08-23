@@ -82,7 +82,7 @@ span:not(.link), span:not(.italic) {
 
 span span:not(.bold), span span:not(.bold-italic), 
 span span:not(.italic), span span:not(.link), span span:not(.deadline) {
-  padding-left: calc(1em);
+  padding-left: 0.5em;
 }
 
 #help span span {
@@ -241,10 +241,7 @@ span.event {
   background-color: var(--event);
   display: inline-block;
   border-radius: 3px;
-  /* width: calc(100% - 1.2em - 10px); */
   margin-bottom: 5px;
-  /* text-indent: -1.2em; */
-  /* padding-left: calc(1.2em + 5px); */
 }
 
 span.link, span.bold, span.italic, span.bold-italic, 
