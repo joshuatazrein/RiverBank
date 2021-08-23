@@ -2104,6 +2104,7 @@ function keycomms(evt) {
 }
 
 function reloadpage() {
+  console.log('reloading');
   load()
   $('#pop').empty()
   $('#flop').empty()
