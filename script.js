@@ -2098,12 +2098,13 @@ function keycomms(evt) {
 }
 
 function reloadpage() {
-  console.log('reloading')
+  const oldselect = selected
   load()
   $('#pop').empty()
   $('#flop').empty()
   $('#loads').empty()
   loadpage(false)
+  select(oldselect)
 }
 
 function loadpage(setload) {
