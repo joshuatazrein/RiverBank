@@ -2131,12 +2131,6 @@ function loadpage(setload) {
   $('#searchbar').val('d:t')
   select(dateToHeading(stringToDate($('#searchbar').val().slice(2))))
   $('#searchbar').val('')
-  // hide or show buttons via toggle
-  if (data.hidebuts == 'true') {
-    data.hidebuts = 'false'
-  } else {
-    data.hidebuts = 'true'
-  }
   if (data.help == 'show') $('#help').show()
   if (data.help == 'hide') $('#help').hide()
   if (data.hidebuts == 'false') {
