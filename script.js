@@ -2105,7 +2105,6 @@ function getFrame(task) {
 }
 
 function reloadpage() {
-  return
   // reselect old select
   let selectframe, selectindex
   if (selected != undefined) {
@@ -2176,4 +2175,3 @@ function loadpage(setload) {
 }
 
 loadpage()
-reset()
