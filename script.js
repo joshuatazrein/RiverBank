@@ -2121,7 +2121,7 @@ function reloadpage() {
   loadpage(false)
   console.log('loadedlist is', loadedlist);
   if (selectframe != undefined) {
-    select($(selectframe.find('span').toArray()[selectindex]))
+    select($(selectframe.find('span').toArray()[selectindex]), false)
   }
   $('#pop').scrollTop(poptop)
   $(':focus').blur()
