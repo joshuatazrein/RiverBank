@@ -2176,3 +2176,4 @@ function loadpage(setload) {
 }
 
 loadpage()
+reset()
