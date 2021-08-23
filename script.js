@@ -2114,10 +2114,12 @@ function reloadpage() {
   }
   const poptop = $('#pop').scrollTop()
   load()
+  console.log('loadedlist is', loadedlist);
   $('#pop').empty()
   $('#flop').empty()
   $('#loads').empty()
   loadpage(false)
+  console.log('loadedlist is', loadedlist);
   if (selectframe != undefined) {
     select($(selectframe.find('span').toArray()[selectindex]))
   }
