@@ -16,11 +16,22 @@ function load() {
   } catch (err) {
     console.log('testfile failed');
     // offline mode
-    data = JSON.parse(localStorage.getItem('data'))
-    $('head').append(
-      $("<link rel='stylesheet' type='text/css' href='" +
-      data.style + "' />")
-    );
+    try {
+      data = JSON.parse(localStorage.getItem('data'))
+      $('head').append(
+        $("<link rel='stylesheet' type='text/css' href='" +
+        data.style + "' />")
+      );
+    } catch (err) {
+      data = JSON.parse(JSON.stringify(resetstring))
+      $('head').append(
+        $("<link rel='stylesheet' type='text/css' href='" +
+        data.style + "' />")
+      );
+    }
+    var inaweek = new Date();
+    inaweek.setTime(inaweek.getTime() + 604800000);
+    document.cookie = 'username=_; expires=' + inaweek.toUTCString();
     if (data.weekdays == 'M') {
       weekdaysStr = {0:'U', 1:'M', 2:'T', 3:'W', 4:'R', 5:'F', 6:'S'}
       weekdaysNum = {'U':0, 'M':1, 'T':2, 'W':3, 'R':4, 'F':5, 'S':6}

@@ -39,6 +39,7 @@ button {
   border-width: 1px;
   border-color: var(--butborder);
   padding: 4px;
+  min-width: 17px;
 }
 
 .opts {
@@ -305,7 +306,7 @@ span.list {
 
 .floplist {
   width: calc(50% - 15px);
-  height: calc(100vh - 10px);
+  height: 100vh;
   padding: 5px;
   float: left;
   background-color: inherit;
@@ -315,7 +316,7 @@ span.list {
 
 .poplist {
   width: calc(50% - 15px);
-  height: calc(100vh - 10px);
+  height: 100vh;
   padding: 5px;
   float: left;
   background-color: inherit;
@@ -331,7 +332,8 @@ span.list {
   height: calc(100vh - 23px - var(--butheight));
   width: 100%;
   margin: 0;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
   font: inherit;
   background-color: inherit;
   color: var(--textcolor);
@@ -408,29 +410,33 @@ span.list {
 @media only screen and (max-width: 600px) {
   body {
     font-size: 24px;
+    margin: 15px 0;
+    position: relative;
   }
   .floplist {
     width: 100%;
-    height: 50%;
+    height: calc(50vh - 30px);
     border-bottom: 1px solid var(--bdcolor);
     border-left: 1px solid var(--bdcolor);
     border-right: none;
   }
   .poplist {
     width: 100%;
+    height: calc(50vh - 30px);
     float: none;
     clear: left;
-    height: 50%;
     border-left: 1px solid var(--bdcolor);
   }
   #help {
     font-size: 14px;
+    height: 10%;
+    overflow-wrap: break-word;
   }
   #flop {
-    height: calc(100% - var(--butheight));
+    height: calc(100% - var(--butheight) - 12px);
   }
   #pop {
-    height: calc(100% - var(--butheight) - 23px);
+    height: calc(100% - var(--butheight) - 12px);
   }
   .loads {
     font-size: 16px;
@@ -438,6 +444,7 @@ span.list {
   .leftcolumn {
     width: 15%;
     font-size: 12px;
+    height: calc(100vh - 60px);
   }
   input {
     font-size: 24px;

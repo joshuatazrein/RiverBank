@@ -1,5 +1,4 @@
 // changes
-// ivy is my one turtle wuv
 var loadedlist
 var data
 var selected
@@ -231,7 +230,13 @@ function updateSizes() {
     [$('#searchbar')[0], 5],
     [$('#username')[0], $('#username').text().length / 2 + 2],
     [$('#lists')[0], 7]
-  ]) {
+  ].concat(
+    $('#loads').children().toArray().map((x) => {
+      let textlength = Math.max($(x).val().split(' ').map((x) => {return x.length}))
+      return [$(x)[0], textlength / 2 + 2.5]
+    })
+  )) {
+    console.log(list);
     // update entries
     let fontsize = 24
     while ($(list[0]).width() / (fontsize / 2) < list[1]) {
@@ -259,9 +264,9 @@ function loadthis() {
 }
 
 function finalsave() {
-  select()
-  save()
-  uploadData(true) // makes sure it gets saved
+  // select()
+  // save()
+  // uploadData(true) // makes sure it gets saved
 }
 
 // Storing data:
@@ -290,7 +295,8 @@ function save() {
   for (blinded of blindeds) {
     if (foldedlist.includes(blinded) == false &&
     $(blinded) != selected) {
-      $(blinded).remove()
+      // filter out subtasks
+      if ($(blinded).parent()[0].tagName != 'SPAN') $(blinded).remove()
     }
   }
   for (span of $('span').toArray()) {
@@ -328,6 +334,15 @@ function clearEmptyDates() {
         stringToDate('t').getTime()
     ) date.remove()
   }
+  const today = stringToDate('t')
+  $('#pop').children().filter('.dateheading').toArray().forEach((heading) => {
+    if (
+      stringToDate($(heading).text(), true).getTime() < today.getTime() &&
+      $(heading).attr('folded') == 'false'
+    ) {
+      togglefold($(heading))
+    }
+  })
   save()
 }
 
@@ -368,7 +383,6 @@ function download() {
 function reset() {
   yes = confirm("Are you sure you want to reset?")
   if (yes == true) {
-    console.log('resetting')
     data = JSON.parse(JSON.stringify(resetstring))
     localStorage.setItem('data', JSON.stringify(data))
     uploadData()
@@ -531,6 +545,9 @@ function stringToDate(string, weekday) {
   }
   let date = new Date()
   if (string.charAt(0) == 't') {
+    if (string.length > 1 && !/[\+-]*\d+[wmyd]/.test(string.slice(1))) {
+      return 'Invalid Date'
+    }
     // nothing because the weekday is correct
   } else if (
     Object.keys(weekdaysNum).includes(string.split(/(\+|-|\s)/)[0])
@@ -648,18 +665,21 @@ function dateToHeading(date) {
   newtask.addClass('dateheading')
   newtask.attr('draggable', 'false')
   // sort date headings to be correct
-  const headingslist = $('#pop').children().toArray().filter((x) =>
-  {if (stringToDate($(x).text()) != 'Invalid Date' &&
-  $(x).hasClass('dateheading')) return true})
-  let heading1 = headingslist.find((x) => 
-  {if ($(x).text() == newtask.text()) return true})
+  const headingslist = $('#pop').children().toArray().filter((x) => {
+    if (stringToDate($(x).text()) != 'Invalid Date' &&
+    $(x).hasClass('dateheading')) return true
+  })
+  let heading1 = headingslist.find((x) => {
+    if ($(x).text().replace('...', '') == newtask.text()) return true
+  })
   if (heading1 == undefined) {
     // insert elt at beginning
     $('#pop').append(newtask)
     headingslist.push(newtask)
-    for (heading of headingslist.sort(
-    (a, b) => {return stringToDate($(a).text(), true).getTime() - 
-    stringToDate($(b).text(), true).getTime()})) {
+    for (heading of headingslist.sort((a, b) => {
+      return stringToDate($(a).text().replace('...', ''), true).getTime() - 
+      stringToDate($(b).text().replace('...', ''), true).getTime()
+    })) {
       const children = getHeadingChildren($(heading)).reverse()
       $('#pop').append($(heading))
       children.forEach((x) => {$(heading).after($(x))})
@@ -825,9 +845,10 @@ function updatedeadlines() {
   for (heading of $('#pop').children().filter('.dateheading')) {
     // add in relative dates underneath
     const newelt = createBlankTask()
+    let headingtext = $(heading).text().replace('...', '')
     newelt.text(datesToRelative(
       today, 
-      stringToDate($(heading).text(), true))
+      stringToDate(headingtext, true))
     )
     newelt.addClass('placeholder')
     newelt.removeClass('in')
@@ -1042,7 +1063,9 @@ function saveTask() {
 }
 
 function select(el, scroll) {
+  $(document).scrollTop(0); // fixes weird shit
   // switch selection
+  $('.buffer').remove()
   if (selected != undefined) {
     selected.removeClass('taskselect')
   }
@@ -1061,12 +1084,23 @@ function select(el, scroll) {
       // only execute if not clicked
       parent.scrollTop(0)
       parent.scrollTop(Number(selected.offset().top) - 
-      Number(parent.offset().top) - 200)
+      Number(parent.offset().top))
     }
   } else if ($(el).parent().attr('id') == 'context-menu') {
     // do nothing (context)
   } else {
     selected = undefined
+  }
+  if (selected != undefined) {
+    try {
+      getFrame(selected).find(":not(span)").addBack().contents().filter(function() {
+        return this.nodeType == 3;
+      }).remove();
+      $('#pop').append('<span class="buffer" style="height:75%"></span>')
+      if ($('#flop').html().length > 0) {
+        $('#flop').append('<span class="buffer" style="height:75%"></span>')
+      }
+    } catch (err) {}
   }
 }
 
@@ -1351,6 +1385,7 @@ function dropTask(evt) {
     return
   } else if (stringToDate(selected.text()) != 'Invalid Date' && 
   selected.parents().toArray().includes($('#pop')[0]) == true) {
+    console.log(stringToDate(selected.text()))
     return; // stops from reordering dates
   }
   let children = []
@@ -1361,8 +1396,12 @@ function dropTask(evt) {
   }
   if ($(evt.target).attr('folded') == 'true') {
     togglefold($(evt.target))
-    getHeadingChildren($(evt.target))[
-    getHeadingChildren($(evt.target)).length - 1].after(selected)
+    if (getHeadingChildren($(evt.target)).length == 0) {
+      $(evt.target).after(selected)
+    } else {
+      getHeadingChildren($(evt.target))[
+        getHeadingChildren($(evt.target)).length - 1].after(selected)
+    }
   } else if (evt.target.tagName == 'P' && 
   $(evt.target).hasClass('in')) {
     if (evt.altKey == true) {
@@ -1410,6 +1449,7 @@ function toggleSubtasks() {
     togglefold(selected)
   } else {
     if (getChildren(selected) != '') {
+      console.log('folding');
       // hide subitems
       const e = selected
       if (e.hasClass('folded') == true) {
@@ -1422,6 +1462,7 @@ function toggleSubtasks() {
       e.toggleClass('folded')
     }
   }
+  save()
 }
 
 function getHeadingChildren(el) {
@@ -1476,9 +1517,13 @@ function togglefold(e, saving) {
       child.show()
     }
   }
-  for (heading of keepfolded) {
-    heading.attr('folded', 'false')
-    togglefold(heading)
+  if (e.attr('folded') == 'true') {
+    for (heading of keepfolded) {
+      // keep folded headings folded
+      getHeadingChildren($(heading)).forEach((x) => {
+        $(x).hide()
+      })
+    }
   }
   // update folded attr
   if (e.attr('folded') == 'false') {
@@ -1530,7 +1575,8 @@ function toggleHelp() {
 function setStyle(style) {
   data.style = style
   save()
-  location.reload()
+  uploadData(true)
+  reloadpage()
 }
 
 function context(e) {
@@ -1832,6 +1878,7 @@ function taskBelow() {
 }
 
 function moveTask(direction) {
+  if (selected.hasClass('dateheading')) return
   if (direction == 'pop' &&
   selected.parents().toArray().includes($('#flop')[0]) == true) {
     $('#searchbar').val('d:')
@@ -1869,6 +1916,7 @@ function moveTask(direction) {
       select(oldselect)
     }
   }
+  save()
 }
 
 function dblclick(ev) {
@@ -2099,7 +2147,6 @@ function reloadpage() {
     selectindex = selectframe.find('span').toArray(
       ).indexOf(selected[0])
   }
-  const poptop = $('#pop').scrollTop()
   load()
   $('#pop').empty()
   $('#flop').empty()
@@ -2108,7 +2155,6 @@ function reloadpage() {
   if (selectframe != undefined) {
     select($(selectframe.find('span').toArray()[selectindex]), false)
   }
-  $('#pop').scrollTop(poptop)
   $(':focus').blur()
 }
 
@@ -2138,9 +2184,6 @@ function loadpage(setload) {
   }
   loadedlist = oldload
   loadlist()
-  // go to today
-  $('#searchbar').val('d:t')
-  select(dateToHeading(stringToDate($('#searchbar').val().slice(2))))
   $('#searchbar').val('')
   if (data.help == 'show') $('#help').show()
   if (data.help == 'hide') $('#help').hide()
@@ -2158,7 +2201,8 @@ function loadpage(setload) {
   $('.taskselect').removeClass('taskselect')
   updateSizes()
   clearEmptyDates()
+  // go to today
+  select(dateToHeading(stringToDate('t')))
 }
 
 loadpage()
-console.log(JSON.stringify(data))
