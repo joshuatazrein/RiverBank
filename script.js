@@ -2199,6 +2199,7 @@ function loadpage(setload) {
   updateSizes()
   clearEmptyDates()
   // go to today
+  updatedeadlines()
   select(dateToHeading(stringToDate('t')))
 }
 
