@@ -670,7 +670,7 @@ function dateToHeading(date) {
     $(x).hasClass('dateheading')) return true
   })
   let heading1 = headingslist.find((x) => {
-    if (stringToDate(stripChildren($(x))) == stringToDate(newtask.text())) return true
+    return stringToDate(stripChildren($(x))).getTime() == stringToDate(newtask.text()).getTime()
   })
   if (heading1 == undefined) {
     // insert elt at beginning
