@@ -539,6 +539,7 @@ function stringToDate(string, weekday) {
   } else {
     weekday = false
   }
+  string = string.replace('...', '')
   if (string.charAt(0) == ' ') {
     string = string.slice(1)
   }
