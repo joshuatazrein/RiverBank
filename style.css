@@ -413,16 +413,25 @@ span.list {
     margin: 15px 0;
     position: relative;
   }
+  .container {
+    border-top: 1px solid var(--bdcolor);
+    border-bottom: 1px solid var(--bdcolor);
+    height: calc(100vh - 30px);
+  }
+  .listcontainer {
+    height: 100%;
+    width: calc(85% - 25px);
+  }
   .floplist {
-    width: 100%;
-    height: calc(50vh - 30px);
+    width: calc(100%);
+    height: calc(50vh - 25px);
     border-bottom: 1px solid var(--bdcolor);
     border-left: 1px solid var(--bdcolor);
     border-right: none;
   }
   .poplist {
     width: 100%;
-    height: calc(50vh - 30px);
+    height: calc(50vh - 25px);
     float: none;
     clear: left;
     border-left: 1px solid var(--bdcolor);
