@@ -33,18 +33,18 @@ var weekdaysNum
 
 //# TIMER
 var timer = new Timer({
-    tick : 1,
-    ontick : function (sec) {
-      let minutes = Math.floor(sec / 60000); // minutes
-      let secs = Math.ceil((sec - (Math.floor(sec / 60000) * 60000)) / 1000)
-      $('#timerent').val(String(minutes) + ':' +
+  tick: 1,
+  ontick: function(sec) {
+    let minutes = Math.floor(sec / 60000); // minutes
+    let secs = Math.ceil((sec - (Math.floor(sec / 60000) * 60000)) / 1000)
+    $('#timerent').val(String(minutes) + ':' +
       String(secs).padStart(2, 0))
-    },
-    onstart : function() {}
+  },
+  onstart: function() {}
 })
 
 // defining options using on
-timer.on('end', function () {
+timer.on('end', function() {
   $('#timersnd')[0].play()
   alert('timer done')
   $('#timersnd')[0].pause()
@@ -80,11 +80,11 @@ function dropped(evt) {
   if (selected != undefined) {
     // move task to new list
     const index = $(evt.target).parent().children().toArray().indexOf(
-    $(evt.target)[0])
+      $(evt.target)[0])
     const children = getHeadingChildren(selected)
     $('#test').html(data.flop[index].text); // update test p with html
     $('#test').append(selected)
-    for (i = children.length - 1; i >= 0; i --) {
+    for (i = children.length - 1; i >= 0; i--) {
       // append each child after
       selected.after(children[i])
     }
@@ -93,7 +93,7 @@ function dropped(evt) {
     loadedlist = index
     loadlist()
     return
-  } 
+  }
   loadedlist = loads.indexOf(evt.target)
   if (loads.indexOf(loadedlistobj) > loads.indexOf(evt.target)) {
     data.flop.splice(loads.indexOf(evt.target), 0,
@@ -108,7 +108,7 @@ function dropped(evt) {
   } else {
     data.flop.splice(loads.indexOf(loadedlistobj), 1)
   }
-  for (let i = 0; i < loads.length; i ++) {
+  for (let i = 0; i < loads.length; i++) {
     loads[i].value = data.flop[i].title
   }
   if (data.hidebuts == 'true') {
@@ -169,7 +169,10 @@ function newlist(title, text) {
   } else {
     savetext = text
   }
-  const newobj = {'title': savetitle, 'text': savetext}
+  const newobj = {
+    'title': savetitle,
+    'text': savetext
+  }
   if (title === undefined) {
     data.flop.push(newobj); //add to main list of lists only if it's new
   }
@@ -177,7 +180,9 @@ function newlist(title, text) {
   newthing.val(newobj.title)
   newthing.addClass('unselected listtitle')
   newthing.on('click', loadthis)
-  if (dragsenabled == 'true'){newthing.attr('draggable', 'true')}
+  if (dragsenabled == 'true') {
+    newthing.attr('draggable', 'true')
+  }
   newthing.attr('ondragstart', 'dragStarted(event)')
   newthing.attr('ondragover', 'draggingOver(event)')
   newthing.attr('ondrop', 'dropped(event)')
@@ -203,9 +208,11 @@ function deletelist() {
 
 function loadlist() { //updates the list display
   loads = Array.from($('#loads').children())
-  loads.forEach(function(i) {i.setAttribute('class', 'unselected')})
+  loads.forEach(function(i) {
+    i.setAttribute('class', 'unselected')
+  })
   document.getElementById('loads').children[loadedlist].setAttribute(
-  'class', 'selected')
+    'class', 'selected')
   $('#flop').html(data.flop[loadedlist].text)
   $('.taskselect').removeClass('taskselect')
   save()
@@ -213,16 +220,18 @@ function loadlist() { //updates the list display
 
 function updateSizes() {
   for (list of [
-    [$('#timerent')[0], 6], 
-    [$('#searchbar')[0], 5],
-    [$('#username')[0], $('#username').text().length / 2 + 2],
-    [$('#lists')[0], 7]
-  ].concat(
-    $('#loads').children().toArray().map((x) => {
-      let textlength = Math.max($(x).val().split(' ').map((x) => {return x.length}))
-      return [$(x)[0], textlength / 2 + 2.5]
-    })
-  )) {
+      [$('#timerent')[0], 6],
+      [$('#searchbar')[0], 5],
+      [$('#username')[0], $('#username').text().length / 2 + 2],
+      [$('#lists')[0], 7]
+    ].concat(
+      $('#loads').children().toArray().map((x) => {
+        let textlength = Math.max($(x).val().split(' ').map((x) => {
+          return x.length
+        }))
+        return [$(x)[0], textlength / 2 + 2.5]
+      })
+    )) {
     // update entries
     let fontsize = 24
     if (window.innerWidth < 600) fontsize = 16
@@ -274,8 +283,9 @@ function save() {
   savedata = JSON.parse(JSON.stringify(data))
   // update height of loads
   const leftcol = $($('.leftcolumn')[0])
-  const loadsheight = leftcol.height() - 
-    leftcol.children().filter(':not(#loads):visible').toArray().reduce((total, x) => {
+  const loadsheight = leftcol.height() -
+    leftcol.children().filter(':not(#loads):visible').toArray().reduce((total,
+      x) => {
       console.log($(x).height());
       return total + $(x).height();
     }, 0) - 25
@@ -283,27 +293,31 @@ function save() {
   $('#loads').css('height', loadsheight + 'px')
   $('textarea.in').remove()
   if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
-  selected.parent().hasClass('in')) {
+    selected.parent().hasClass('in')) {
     // clear open tasks
     selected.remove()
   }
   // cleans invisible things which aren't folded under headings
   let headings = $('span').toArray()
-  headings = headings.filter((x) =>
-  {if ($(x).attr('folded') == 'true' &&
-  $(x).css('display') != 'none') {return true}})
+  headings = headings.filter((x) => {
+    if ($(x).attr('folded') == 'true' &&
+      $(x).css('display') != 'none') {
+      return true
+    }
+  })
   let foldedlist = []
   for (heading of headings) {
     foldedlist =
-    foldedlist.concat(getHeadingChildren($(heading)).map((x) =>
-    {return x[0]}))
+      foldedlist.concat(getHeadingChildren($(heading)).map((x) => {
+        return x[0]
+      }))
   }
   const blindeds = $('span').toArray().filter((x) => {
     return ($(x).css('display') == 'none')
   })
   for (blinded of blindeds) {
     if (foldedlist.includes(blinded) == false &&
-    $(blinded) != selected) {
+      $(blinded) != selected) {
       // filter out subtasks
       if ($(blinded).parent()[0].tagName != 'SPAN') $(blinded).remove()
     }
@@ -345,8 +359,8 @@ function clearEmptyDates() {
   for (date of dateslist) {
     if (
       getHeadingChildren($(date)).length == 0 &&
-      stringToDate($(date).text(), true).getTime() != 
-        stringToDate('t').getTime()
+      stringToDate($(date).text(), true).getTime() !=
+      stringToDate('t').getTime()
     ) date.remove()
   }
   const today = stringToDate('t')
@@ -388,8 +402,9 @@ function upload() {
 }
 
 function download() {
-  var blob = new Blob([JSON.stringify(data)], 
-  {type: 'text/plain;charset=utf-8'})
+  var blob = new Blob([JSON.stringify(data)], {
+    type: 'text/plain;charset=utf-8'
+  })
   const date = new Date()
   saveAs(blob, 'RiverBank-backup-' + dateToString(date) + '.json')
 }
@@ -408,16 +423,16 @@ function reset() {
 function uploadData(async) {
   // uploads data to server
   try {
-    const blob = new Blob([JSON.stringify(data)], {type:
-      "text/plain"})
+    const blob = new Blob([JSON.stringify(data)], {
+      type: "text/plain"
+    })
     const newdata = new FormData()
     newdata.append("upfile", blob)
     const xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function() {
-      if (this.readyState == 4) {
-      }
+      if (this.readyState == 4) {}
     }
-    if (async == true) {
+    if (async ==true) {
       xhr.open("POST", "upload.php", false)
     } else {
       xhr.open("POST", "upload.php")
@@ -449,9 +464,9 @@ function clearEmptyHeadlines() {
   }
   for (
     heading of parent.find('span.h1').toArray().concat(
-    parent.find('span.h2').toArray(),
-    parent.find('span.h3').toArray()
-  )) {
+      parent.find('span.h2').toArray(),
+      parent.find('span.h3').toArray()
+    )) {
     if (getHeadingChildren($(heading)).length == 0) {
       $(heading).remove()
     }
@@ -462,26 +477,73 @@ function clearEmptyHeadlines() {
 function toggleWeekdays() {
   if (data.weekdays == 'M') {
     data.weekdays = 'Mon'
-    weekdaysStr = {0:'Sun', 1:'Mon', 2:'Tue', 3:'Wed', 4:'Thu', 5:'Fri', 
-      6:'Sat'}
-    weekdaysNum = {'Sun':0, 'Mon':1, 'Tue':2, 'Wed':3, 'Thu':4, 'Fri':5, 
-      'Sat':6}
+    weekdaysStr = {
+      0: 'Sun',
+      1: 'Mon',
+      2: 'Tue',
+      3: 'Wed',
+      4: 'Thu',
+      5: 'Fri',
+      6: 'Sat'
+    }
+    weekdaysNum = {
+      'Sun': 0,
+      'Mon': 1,
+      'Tue': 2,
+      'Wed': 3,
+      'Thu': 4,
+      'Fri': 5,
+      'Sat': 6
+    }
   } else if (data.weekdays == 'Mon') {
     data.weekdays = 'M'
-    weekdaysStr = {0:'U', 1:'M', 2:'T', 3:'W', 4:'R', 5:'F', 6:'S'}
-    weekdaysNum = {'U':0, 'M':1, 'T':2, 'W':3, 'R':4, 'F':5, 'S':6}
+    weekdaysStr = {
+      0: 'U',
+      1: 'M',
+      2: 'T',
+      3: 'W',
+      4: 'R',
+      5: 'F',
+      6: 'S'
+    }
+    weekdaysNum = {
+      'U': 0,
+      'M': 1,
+      'T': 2,
+      'W': 3,
+      'R': 4,
+      'F': 5,
+      'S': 6
+    }
   }
   save()
 }
 
 function toggleWeekdayFormat() {
   // changes between 1 and 3 letter date formats
-  const weekdaytransdict = {'M':'Mon','Mon':'M','T':'Tue','Tue':'T','W':'Wed',
-  'Wed':'W','R':'Thu','Thu':'R','F':'Fri','Fri':'F','S':'Sat','Sat':'S',
-  'U':'Sun','Sun':'U'}
+  const weekdaytransdict = {
+    'M': 'Mon',
+    'Mon': 'M',
+    'T': 'Tue',
+    'Tue': 'T',
+    'W': 'Wed',
+    'Wed': 'W',
+    'R': 'Thu',
+    'Thu': 'R',
+    'F': 'Fri',
+    'Fri': 'F',
+    'S': 'Sat',
+    'Sat': 'S',
+    'U': 'Sun',
+    'Sun': 'U'
+  }
   const headingslist = $('#pop').children().toArray().filter(
-  (x) => {if ($(x).hasClass('h1') &&
-  stringToDate($(x).text(), true) != 'Invalid Date') {return true}})
+    (x) => {
+      if ($(x).hasClass('h1') &&
+        stringToDate($(x).text(), true) != 'Invalid Date') {
+        return true
+      }
+    })
   for (heading of headingslist) {
     // switches the dates back and forth
     const textlist = $(heading).text().split(' ')
@@ -500,7 +562,10 @@ function changeDateFormat(format) {
     $(x).text(dateToString(getdate, true))
     data.dateSplit = thisformat
   })
-  const floplist = data.flop.concat([{title:'#pop', text:$('#pop').html()}])
+  const floplist = data.flop.concat([{
+    title: '#pop',
+    text: $('#pop').html()
+  }])
   for (i in floplist) {
     $('#test').html(floplist[i].text)
     for (x of $('#test').find('.deadline')) {
@@ -533,16 +598,16 @@ function dateToString(date, weekday) {
   }
   if (data.dateSplit == 'dd.mm.yyyy') {
     datestr += String(date.getDate()).padStart(2, 0) + '.' +
-    String(Number(date.getMonth()) + 1).padStart(2, 0) + '.' +
-    date.getFullYear()
+      String(Number(date.getMonth()) + 1).padStart(2, 0) + '.' +
+      date.getFullYear()
   } else if (data.dateSplit == 'mm/dd/yyyy') {
     datestr += String(Number(date.getMonth() + 1)).padStart(2, 0) +
-    '/' + String(date.getDate()).padStart(2, 0) + '/' +
-    date.getFullYear()
+      '/' + String(date.getDate()).padStart(2, 0) + '/' +
+      date.getFullYear()
   } else if (data.dateSplit == 'yyyy-mm-dd') {
     datestr += date.getFullYear() + '-' +
-    String(Number(date.getMonth() + 1)).padStart(2, 0) + '-' +
-    String(date.getDate()).padStart(2, 0)
+      String(Number(date.getMonth() + 1)).padStart(2, 0) + '-' +
+      String(date.getDate()).padStart(2, 0)
   }
   return datestr
 }
@@ -578,7 +643,7 @@ function stringToDate(string, weekday) {
     let datestring
     if (string.match(/[\+-]*\d+[wmyd]/) != null) {
       datestring = string.slice(0,
-      string.search(/[\+-]*\d+[wmyd]/))
+        string.search(/[\+-]*\d+[wmyd]/))
       // compensates for no t
       if (datestring == '') datestring = String(date.getDate())
     } else {
@@ -636,13 +701,13 @@ function stringToDate(string, weekday) {
     for (match of matches) {
       if (match.charAt(match.length - 1) == 'd') {
         date.setDate(Number(date.getDate()) +
-        Number(match.slice(0, -1)))
+          Number(match.slice(0, -1)))
       } else if (match.charAt(match.length - 1) == 'w') {
         date.setDate(Number(date.getDate()) + (match.slice(0, -1) * 7))
       } else if (match.charAt(match.length - 1) == 'm') {
         // find first weekday of month
         date.setMonth(Number(date.getMonth()) +
-        Number(match.slice(0, -1)))
+          Number(match.slice(0, -1)))
         if (weekday != false) {
           date.setDate(1)
           while (date.getDay() != weekday) {
@@ -652,7 +717,7 @@ function stringToDate(string, weekday) {
       } else if (match.charAt(match.length - 1) == 'y') {
         // find first weekday of year
         date.setFullYear(Number(date.getFullYear()) +
-        Number(match.slice(0, -1)))
+          Number(match.slice(0, -1)))
         if (weekday != false) {
           date.setDate(1)
           date.setMonth(0)
@@ -683,22 +748,25 @@ function dateToHeading(date) {
   // sort date headings to be correct
   const headingslist = $('#pop').children().toArray().filter((x) => {
     if (stringToDate($(x).text()) != 'Invalid Date' &&
-    $(x).hasClass('dateheading')) return true
+      $(x).hasClass('dateheading')) return true
   })
   let heading1 = headingslist.find((x) => {
-    return stringToDate(stripChildren($(x)), true).getTime() == stringToDate(newtask.text(), true).getTime()
+    return stringToDate(stripChildren($(x)), true).getTime() ==
+      stringToDate(newtask.text(), true).getTime()
   })
   if (heading1 == undefined) {
     // insert elt at beginning
     $('#pop').append(newtask)
     headingslist.push(newtask)
     for (heading of headingslist.sort((a, b) => {
-      return stringToDate($(a).text().replace('...', ''), true).getTime() - 
-      stringToDate($(b).text().replace('...', ''), true).getTime()
-    })) {
+        return stringToDate($(a).text().replace('...', ''), true).getTime() -
+          stringToDate($(b).text().replace('...', ''), true).getTime()
+      })) {
       const children = getHeadingChildren($(heading)).reverse()
       $('#pop').append($(heading))
-      children.forEach((x) => {$(heading).after($(x))})
+      children.forEach((x) => {
+        $(heading).after($(x))
+      })
     }
     // save()
     return newtask
@@ -715,7 +783,10 @@ function search(skiplinks) {
     searchtext = searchtext.slice(0, searchtext.length - 1)
   }
   searchtext = searchtext.replace('  ', ' ');
-  const searches = data.flop.concat([{'title':'pop', 'text':data.pop}])
+  const searches = data.flop.concat([{
+    'title': 'pop',
+    'text': data.pop
+  }])
   const matches = []
   let children
   for (let search of searches) {
@@ -727,11 +798,11 @@ function search(skiplinks) {
       if (stripChildren($(child)).includes(searchtext)) {
         // add to matches
         if (skiplinks == true &&
-        $(child).text().includes('[[' + searchtext)) {
+          $(child).text().includes('[[' + searchtext)) {
           // test for links
           continue
         } else if (skiplinks == 'deadline' &&
-        !stripChildren($(child)).includes('>')) {
+          !stripChildren($(child)).includes('>')) {
           // finds only deadlines
           continue
         } else {
@@ -774,8 +845,10 @@ function gotosearch(el) {
   } else {
     // load flop and switch lists
     focusarea = $('#flop')
-    loadedlist = data.flop.map((x) => {return x.title}).indexOf(
-    el.attr('title'))
+    loadedlist = data.flop.map((x) => {
+      return x.title
+    }).indexOf(
+      el.attr('title'))
     loadlist()
   }
   // find the matching element
@@ -830,12 +903,17 @@ function updatedeadlines() {
   $('.placeholder').remove()
   $('.buffer').remove()
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
-  (x) => {return $(x).attr('folded') == 'true'})
+    (x) => {
+      return $(x).attr('folded') == 'true'
+    })
   // uncollapses then recollapses to prevent weirdness
   for (heading of collapselist) {
     togglefold($(heading), false)
   }
-  for (list of data.flop.concat([{'title':'pop', 'text':$('#pop').html()}])) {
+  for (list of data.flop.concat([{
+      'title': 'pop',
+      'text': $('#pop').html()
+    }])) {
     $('#test').empty()
     $('#test').html(list.text)
     for (let deadline of $('#test').find('.deadline')) {
@@ -847,7 +925,7 @@ function updatedeadlines() {
       const heading = dateToHeading(stringToDate(date))
       const duedate = createBlankTask()
       // take out deadline
-      duedate.text(text.slice(0, index) + text.slice(endindex)) 
+      duedate.text(text.slice(0, index) + text.slice(endindex))
       duedate.addClass('duedate')
       $(heading).after(duedate)
     }
@@ -856,15 +934,16 @@ function updatedeadlines() {
     togglefold($(heading), false)
   }
   today = new Date()
-  today.setHours(0); today.setMinutes(0); today.setSeconds(0); 
+  today.setHours(0);
+  today.setMinutes(0);
+  today.setSeconds(0);
   today.setMilliseconds(0)
   for (heading of $('#pop').children().filter('.dateheading')) {
     // add in relative dates underneath
     const newelt = createBlankTask()
     newelt.text(datesToRelative(
-      today, 
-      stringToDate(stripChildren($(heading)), true))
-    )
+      today,
+      stringToDate(stripChildren($(heading)), true)))
     newelt.addClass('placeholder')
     newelt.removeClass('in')
     $(heading).before(newelt)
@@ -876,7 +955,7 @@ function updatedeadlines() {
   for (list in $('#loads').children().toArray()) {
     // clears out empty lists
     if (
-      $($('#loads').children()[list]).val() == '' && 
+      $($('#loads').children()[list]).val() == '' &&
       data.flop[list].text == '' &&
       loadedlist != list
     ) {
@@ -937,7 +1016,7 @@ function saveTask() {
     return
   }
   if (
-    selected.val().slice(0, 2) == '# ' && 
+    selected.val().slice(0, 2) == '# ' &&
     savetask.parents().filter('#pop').length != 0
   ) {
     alert('create new dates by searching them')
@@ -966,22 +1045,22 @@ function saveTask() {
     if (endindex == -1) {
       endindex = selected.val().length
       addspace = true
-    }
-    else endindex += index
+    } else endindex += index
     if (
-      stringToDate(selected.val().slice(index + 1, endindex)) == 
+      stringToDate(selected.val().slice(index + 1, endindex)) ==
       'Invalid Date'
     ) {
       alert('invalid date entered')
       selected.val(
-        selected.val().slice(0, index) + 
+        selected.val().slice(0, index) +
         selected.val().slice(endindex)
       )
     } else {
       selected.val(
-        selected.val().slice(0, index) + 
-        '>' + 
-        dateToString(stringToDate(selected.val().slice(index + 1, endindex))) + 
+        selected.val().slice(0, index) +
+        '>' +
+        dateToString(stringToDate(selected.val().slice(index + 1,
+        endindex))) +
         selected.val().slice(endindex)
       )
       if (addspace) {
@@ -1003,13 +1082,13 @@ function saveTask() {
   let newstr = ''
   let start = 0
   const modecloses = []
-  for (let i = 0; i < htmlstr.length; i ++) {
+  for (let i = 0; i < htmlstr.length; i++) {
     // test for mode modecloses
     let modeclosed = false
     for (modeclose of modecloses) {
       // test for matches
       if (htmlstr.slice(i, i + modeclose.length) ==
-      modeclose) {
+        modeclose) {
         // close span
         i += modeclose.length
         newstr += htmlstr.slice(start, i) + '</span>'
@@ -1025,10 +1104,10 @@ function saveTask() {
     for (lineinner of Object.keys(lineinners)) {
       // test for a match
       if (htmlstr.slice(i, i + lineinner.length) == lineinner &&
-      htmlstr.slice(i).includes(lineinners[lineinner][0])) {
+        htmlstr.slice(i).includes(lineinners[lineinner][0])) {
         // add in a span to the list and where it splits
         newstr += htmlstr.slice(start, i) + '<span class=\'' +
-        lineinners[lineinner][1] + '\'>'
+          lineinners[lineinner][1] + '\'>'
         start = i
         i += lineinner.length
         modecloses.push(lineinners[lineinner][0])
@@ -1047,24 +1126,25 @@ function saveTask() {
     savetask.html(savetask.html().slice(2))
   } else if (savetask.hasClass('h2') == true) {
     savetask.html(savetask.html().slice(3))
-  } if (savetask.hasClass('h3') == true) {
+  }
+  if (savetask.hasClass('h3') == true) {
     savetask.html(savetask.html().slice(4))
   }
   const wordlist = stripChildren(savetask).split(' ')
   for (word in wordlist) {
-    if (wordlist[word].slice(1, wordlist[word].length - 1).includes('.') && 
-    stringToDate(wordlist[word]) == 'Invalid Date') { 
-      let match = false 
-    for (patt of [/\.+/, /\d*\.\d*/]) { 
-        if (patt.test(wordlist[word]) == true) { 
+    if (wordlist[word].slice(1, wordlist[word].length - 1).includes('.') &&
+      stringToDate(wordlist[word]) == 'Invalid Date') {
+      let match = false
+      for (patt of [/\.+/, /\d*\.\d*/]) {
+        if (patt.test(wordlist[word]) == true) {
           match = true
         }
       }
       if (match == false) {
         // format as a url
-        savetask.html(savetask.html().replace(wordlist[word], 
-        '<span class="weblink"><a href="' + wordlist[word] + '" title="' + 
-        wordlist[word] + '">§</a></span>')); 
+        savetask.html(savetask.html().replace(wordlist[word],
+          '<span class="weblink"><a href="' + wordlist[word] + '" title="' +
+          wordlist[word] + '">§</a></span>'));
       }
     }
   }
@@ -1095,27 +1175,28 @@ function select(el, scroll) {
     } else {
       parent = $(el)
     }
+    if (selected != undefined) {
+      try {
+        getFrame(selected).find(":not(span)").addBack().contents().filter(
+          function() {
+            return this.nodeType == 3;
+          }).remove();
+        $('#pop').append('<span class="buffer" style="height:75%"></span>')
+        if ($('#flop').html().length > 0) {
+          $('#flop').append('<span class="buffer" style="height:75%"></span>')
+        }
+      } catch (err) {}
+    }
     if (scroll != false) {
       // only execute if not clicked
       parent.scrollTop(0)
-      parent.scrollTop(Number(selected.offset().top) - 
-      Number(parent.offset().top))
+      parent.scrollTop(Number(selected.offset().top) -
+        Number(parent.offset().top) - 50)
     }
   } else if ($(el).parent().attr('id') == 'context-menu') {
     // do nothing (context)
   } else {
     selected = undefined
-  }
-  if (selected != undefined) {
-    try {
-      getFrame(selected).find(":not(span)").addBack().contents().filter(function() {
-        return this.nodeType == 3;
-      }).remove();
-      $('#pop').append('<span class="buffer" style="height:75%"></span>')
-      if ($('#flop').html().length > 0) {
-        $('#flop').append('<span class="buffer" style="height:75%"></span>')
-      }
-    } catch (err) {}
   }
 }
 
@@ -1144,8 +1225,8 @@ function stripChildren(el, mode) {
 function isSubtask(el) {
   // tests inline spans until it gets one, otherwise returns true
   for (lineinner of [
-    'link', 'italic', 'bold', 'bold-italic', 'deadline', 'weblink'
-  ]) {
+      'link', 'italic', 'bold', 'bold-italic', 'deadline', 'weblink'
+    ]) {
     if (el.hasClass(lineinner) == true) {
       return false
       break
@@ -1213,8 +1294,8 @@ function editTask() {
     while (selected.val().charAt(selected.val().length - 1) == '\n') {
       selected.val(selected.val().slice(0, selected.val().length - 1))
     }
-    if (selected.prev().prev().text().charAt(0) == '•' && 
-    selected.val() == '') {
+    if (selected.prev().prev().text().charAt(0) == '•' &&
+      selected.val() == '') {
       // continue lists
       selected.val('• ' + selected.val())
     }
@@ -1244,7 +1325,7 @@ function newTask(subtask) {
   if (selected[0].tagName == 'P' && selected.hasClass('in')) {
     // blank
     e.append(newspan)
-  } else if (selected[0].tagName =='SPAN' && subtask == true) {
+  } else if (selected[0].tagName == 'SPAN' && subtask == true) {
     // subtask
     e.append(newspan)
   } else if (['SPAN'].includes(selected[0].tagName)) {
@@ -1260,28 +1341,31 @@ function toggleSomeday() {
 }
 
 function archiveAll() {
-  $('span').filter('#flop .complete').toArray().forEach((x) =>
-  {select(x); archiveTask()})
+  $('span').filter('#flop .complete').toArray().forEach((x) => {
+    select(x);
+    archiveTask()
+  })
 }
 
 function archiveTask(dated) {
   // archives the selected Flop to the current day
   let heading
   const day = $(dateToHeading(stringToDate('t')))
-  const childText = getHeadingChildren(day).map((x) =>
-  {return $(x).text()})
+  const childText = getHeadingChildren(day).map((x) => {
+    return $(x).text()
+  })
   if ((childText.includes('completed') == true ||
-  childText.includes('completed ...') == true) == false) {
+      childText.includes('completed ...') == true) == false) {
     // add in an extra heading
     heading = $('<span class=\'in h2\' folded=\'false\'>' +
-    'completed ...</span>')
+      'completed ...</span>')
     heading.attr('ondragstart', 'dragTask(event)')
     heading.attr('ondragover', 'draggingOver(event)')
     heading.attr('ondrop', 'dropTask(event)')
     heading.attr('draggable', 'true')
     if (getHeadingChildren(day).length >= 1) {
       getHeadingChildren(day)[
-      getHeadingChildren(day).length - 1].after(heading)
+        getHeadingChildren(day).length - 1].after(heading)
     } else {
       day.after(heading)
     }
@@ -1311,13 +1395,13 @@ function toggleComplete() {
     return
   }
   const text = stripChildren(selected).split(' ')
-  if (!selected.hasClass('complete') && 
-  /~\d[d|w|m|y]/.test(text[text.length - 1])) {
+  if (!selected.hasClass('complete') &&
+    /~\d[d|w|m|y]/.test(text[text.length - 1])) {
     const date = new Date()
     const lastchar = text[text.length - 1].charAt(
-    text[text.length - 1].length - 1)
-    const amount = Number(text[text.length - 1].slice(1, 
-    text[text.length - 1].length - 1))
+      text[text.length - 1].length - 1)
+    const amount = Number(text[text.length - 1].slice(1,
+      text[text.length - 1].length - 1))
     if (lastchar == 'd') {
       date.setDate(Number(date.getDate()) + amount)
     } else if (lastchar == 'w') {
@@ -1353,7 +1437,9 @@ function startTimer() {
     timer.start(timertext * 60)
     time = timertext * 60000
   } else if (timertext.includes(':')) {
-    split = timertext.split(':').map((x) => {return Number(x)})
+    split = timertext.split(':').map((x) => {
+      return Number(x)
+    })
     timer.start(split[0] * 60 + split[1])
   }
   $('#timerent').blur()
@@ -1385,11 +1471,11 @@ function dragTask(evt) {
   //start drag
   if (selected[0].tagName == 'TEXTAREA') {
     return; // stops from dragging edited subtasks
-  } else if (stringToDate(selected.text()) != 'Invalid Date' && 
-  selected.parents().toArray().includes($('#pop')[0]) == true) {
+  } else if (stringToDate(selected.text()) != 'Invalid Date' &&
+    selected.parents().toArray().includes($('#pop')[0]) == true) {
     return; // stops from reordering dates
   }
-	// plaintext alternative? for compatibility?
+  // plaintext alternative? for compatibility?
   //specify allowed transfer
   evt.dataTransfer.effectAllowed = 'move'
 }
@@ -1398,13 +1484,13 @@ function dragTask(evt) {
 function dropTask(evt) {
   if (selected[0].tagName == 'TEXTAREA') {
     return
-  } else if (stringToDate(selected.text()) != 'Invalid Date' && 
-  selected.parents().toArray().includes($('#pop')[0]) == true) {
+  } else if (stringToDate(selected.text()) != 'Invalid Date' &&
+    selected.parents().toArray().includes($('#pop')[0]) == true) {
     return; // stops from reordering dates
   }
   let children = []
   if (selected.hasClass('h1') || selected.hasClass('h2') ||
-  selected.hasClass('h3')) {
+    selected.hasClass('h3')) {
     // drop all the tasks
     children = getHeadingChildren(selected)
   }
@@ -1416,8 +1502,8 @@ function dropTask(evt) {
       getHeadingChildren($(evt.target))[
         getHeadingChildren($(evt.target)).length - 1].after(selected)
     }
-  } else if (evt.target.tagName == 'P' && 
-  $(evt.target).hasClass('in')) {
+  } else if (evt.target.tagName == 'P' &&
+    $(evt.target).hasClass('in')) {
     if (evt.altKey == true) {
       if (evt.metaKey == true) {
         $(evt.target).prepend(selected)
@@ -1427,12 +1513,14 @@ function dropTask(evt) {
     } else {
       $(evt.target).append(selected)
     }
-  } else if (evt.target.tagName == 'SPAN' && 
-  $(evt.target).hasClass('in')) {
+  } else if (evt.target.tagName == 'SPAN' &&
+    $(evt.target).hasClass('in')) {
     if (evt.altKey == true) {
       if (evt.metaKey == true) {
         const subtasks = $(evt.target).children().toArray().filter(
-          (x) => {if (isSubtask($(x)) == true) return true}
+          (x) => {
+            if (isSubtask($(x)) == true) return true
+          }
         )
         if (subtasks.length == 0) {
           $(evt.target).append(selected)
@@ -1450,7 +1538,7 @@ function dropTask(evt) {
       }
     }
   }
-  for (i = children.length - 1; i >= 0; i --) {
+  for (i = children.length - 1; i >= 0; i--) {
     // append each child after
     selected.after(children[i])
   }
@@ -1459,17 +1547,21 @@ function dropTask(evt) {
 
 function toggleSubtasks() {
   if (selected.hasClass('h1') || selected.hasClass('h2') ||
-  selected.hasClass('h3')) {
+    selected.hasClass('h3')) {
     togglefold(selected)
   } else {
     if (getChildren(selected) != '') {
       // hide subitems
       const e = selected
       if (e.hasClass('folded') == true) {
-      e.children().toArray().forEach((x) => {$(x).show()})
-      e.html(stripChildren(e, 'html').slice(0, -4) + getChildren(e))
+        e.children().toArray().forEach((x) => {
+          $(x).show()
+        })
+        e.html(stripChildren(e, 'html').slice(0, -4) + getChildren(e))
       } else if (e.hasClass('folded') == false) {
-        e.children().toArray().forEach((x) => {$(x).hide()})
+        e.children().toArray().forEach((x) => {
+          $(x).hide()
+        })
         e.html(stripChildren(e, 'html') + ' ...' + getChildren(e))
       }
       e.toggleClass('folded')
@@ -1496,7 +1588,7 @@ function getHeadingChildren(el) {
   }
   const children = el.parent().children().filter('.in')
   const start = children.toArray().indexOf(el[0]) + 1
-  for (let i = start; i < children.length; i ++) {
+  for (let i = start; i < children.length; i++) {
     let toggle = true
     for (fold of folds[thisclass]) {
       if ($(children[i]).hasClass(fold) == true) {
@@ -1504,10 +1596,14 @@ function getHeadingChildren(el) {
       }
     }
     if (toggle == false) {
-      return children.toArray().slice(start, i).map((x) => {return $(x)})
+      return children.toArray().slice(start, i).map((x) => {
+        return $(x)
+      })
     }
   }
-  return children.toArray().slice(start).map((x) => {return $(x)})
+  return children.toArray().slice(start).map((x) => {
+    return $(x)
+  })
 }
 
 // toggle fold of a heading
@@ -1602,7 +1698,7 @@ function context(e) {
   }
   e.preventDefault()
   if (
-    $(e.target)[0].tagName == 'TEXTAREA' && 
+    $(e.target)[0].tagName == 'TEXTAREA' &&
     !$(e.target).hasClass('selected')
   ) {
     // select list
@@ -1615,40 +1711,140 @@ function context(e) {
   };
   $('#context-menu').show()
   options = {
-    '#context-newlist': [['TEXTAREA', 'DIV'], ['selected', 'unselected', 
-      'loads']],
-    '#context-toggledrags': [['TEXTAREA'], ['selected', 'unselected']],
-    '#context-deletelist': [['TEXTAREA'], ['selected', 'unselected']],
-    '#context-reset': [['BUTTON', 'DIV'], ['opts']],
-    '#context-switchUser': [['BUTTON', 'DIV'], ['opts']],
-    '#context-upload': [['BUTTON', 'DIV'], ['opts']],
-    '#context-download': [['BUTTON', 'DIV'], ['opts']],
-    '#context-divider': [['SPAN'], ['in']],
-    '#context-toggleComplete': [['SPAN'],['in']],
-    '#context-toggleSomeday': [['SPAN'],['in']],
-    '#context-toggleimportant': [['SPAN'],['in']],
-    '#context-weekdaysToggle': [['BUTTON'], ['opts']],
-    '#context-toggleHelp': [['BUTTON', 'P'], ['opts', 'help']],
-    '#context-editTask': [['SPAN'], ['in']],
-    '#context-archiveTask': [['SPAN'], ['in']],
-    '#context-newTask': [['SPAN', 'P'], ['in', 'buffer']],
-    '#context-newSubtask': [['SPAN'], ['in']],
-    '#context-deleteTask': [['SPAN'], ['in']],
-    '#context-indentTask': [['SPAN'], ['in']],
-    '#context-unIndentTask': [['SPAN'], ['in']],
-    '#context-toggleSubtasks' : [['SPAN'], ['in']],
-    '#context-archiveComplete' : [['SPAN', 'P'], ['in']],
-    '#context-clearEmptyHeadlines' : [['P'], ['in']],
-    '#context-toggleButs' : [['BUTTON'], ['opts']],
-    '#context-styleDefault' : [['BUTTON'], ['opts']],
-    '#context-styleJason' : [['BUTTON'], ['opts']],
-    '#context-styleLight' : [['BUTTON'], ['opts']],
-    '#context-stylePink' : [['BUTTON'], ['opts']],
-    '#context-styleGreen' : [['BUTTON'], ['opts']],
-    '#context-changeDate1' : [['BUTTON'], ['opts']],
-    '#context-changeDate2' : [['BUTTON'], ['opts']],
-    '#context-changeDate3' : [['BUTTON'], ['opts']],
-    '#context-clearEmptyDates' : [['BUTTON'], ['opts']],
+    '#context-newlist': [
+      ['TEXTAREA', 'DIV'],
+      ['selected', 'unselected',
+        'loads'
+      ]
+    ],
+    '#context-toggledrags': [
+      ['TEXTAREA'],
+      ['selected', 'unselected']
+    ],
+    '#context-deletelist': [
+      ['TEXTAREA'],
+      ['selected', 'unselected']
+    ],
+    '#context-reset': [
+      ['BUTTON', 'DIV'],
+      ['opts']
+    ],
+    '#context-switchUser': [
+      ['BUTTON', 'DIV'],
+      ['opts']
+    ],
+    '#context-upload': [
+      ['BUTTON', 'DIV'],
+      ['opts']
+    ],
+    '#context-download': [
+      ['BUTTON', 'DIV'],
+      ['opts']
+    ],
+    '#context-divider': [
+      ['SPAN'],
+      ['in']
+    ],
+    '#context-toggleComplete': [
+      ['SPAN'],
+      ['in']
+    ],
+    '#context-toggleSomeday': [
+      ['SPAN'],
+      ['in']
+    ],
+    '#context-toggleimportant': [
+      ['SPAN'],
+      ['in']
+    ],
+    '#context-weekdaysToggle': [
+      ['BUTTON'],
+      ['opts']
+    ],
+    '#context-toggleHelp': [
+      ['BUTTON', 'P'],
+      ['opts', 'help']
+    ],
+    '#context-editTask': [
+      ['SPAN'],
+      ['in']
+    ],
+    '#context-archiveTask': [
+      ['SPAN'],
+      ['in']
+    ],
+    '#context-newTask': [
+      ['SPAN', 'P'],
+      ['in', 'buffer']
+    ],
+    '#context-newSubtask': [
+      ['SPAN'],
+      ['in']
+    ],
+    '#context-deleteTask': [
+      ['SPAN'],
+      ['in']
+    ],
+    '#context-indentTask': [
+      ['SPAN'],
+      ['in']
+    ],
+    '#context-unIndentTask': [
+      ['SPAN'],
+      ['in']
+    ],
+    '#context-toggleSubtasks': [
+      ['SPAN'],
+      ['in']
+    ],
+    '#context-archiveComplete': [
+      ['SPAN', 'P'],
+      ['in']
+    ],
+    '#context-clearEmptyHeadlines': [
+      ['P'],
+      ['in']
+    ],
+    '#context-toggleButs': [
+      ['BUTTON'],
+      ['opts']
+    ],
+    '#context-styleDefault': [
+      ['BUTTON'],
+      ['opts']
+    ],
+    '#context-styleJason': [
+      ['BUTTON'],
+      ['opts']
+    ],
+    '#context-styleLight': [
+      ['BUTTON'],
+      ['opts']
+    ],
+    '#context-stylePink': [
+      ['BUTTON'],
+      ['opts']
+    ],
+    '#context-styleGreen': [
+      ['BUTTON'],
+      ['opts']
+    ],
+    '#context-changeDate1': [
+      ['BUTTON'],
+      ['opts']
+    ],
+    '#context-changeDate2': [
+      ['BUTTON'],
+      ['opts']
+    ],
+    '#context-changeDate3': [
+      ['BUTTON'],
+      ['opts']
+    ],
+    '#context-clearEmptyDates': [
+      ['BUTTON'],
+      ['opts']
+    ],
   }
   for (option of Object.keys(options)) {
     let showoption = false
@@ -1667,9 +1863,9 @@ function context(e) {
     }
   }
   $('#context-menu').css('top', Math.min(e.pageY,
-  window.innerHeight - $('#context-menu').height()) - 20)
+    window.innerHeight - $('#context-menu').height()) - 20)
   $('#context-menu').css('left', Math.min(e.pageX,
-  window.innerWidth - $('#context-menu').width()) - 40)
+    window.innerWidth - $('#context-menu').width()) - 40)
 }
 
 function gotolink(e) {
@@ -1681,8 +1877,8 @@ function gotolink(e) {
 // # KEY COMMANDS
 
 function isHeading(el) {
-  if (el.hasClass('h1') == true || el.hasClass('h2') == true || 
-  el.hasClass('h3') == true) {
+  if (el.hasClass('h1') == true || el.hasClass('h2') == true ||
+    el.hasClass('h3') == true) {
     return true
   } else {
     return false
@@ -1695,16 +1891,18 @@ function selectRandom() {
   if (selected != undefined && isHeading(selected) == true) {
     headinglist = getHeadingChildren(selected)
   } else if (selected != undefined && getChildren(selected).length > 0) {
-    headinglist = selected.children().filter((x) => 
-    {return isSubtask($(x))})
+    headinglist = selected.children().filter((x) => {
+      return isSubtask($(x))
+    })
   } else if (selected == undefined ||
-  selected.hasClass('in') == true) {
+    selected.hasClass('in') == true) {
     headinglist = $('#flop').children().toArray()
   }
   if (headinglist.length > 0) {
-    headinglist = headinglist.filter((x) => 
-    {if ($(x).hasClass('complete') == false && 
-    $(x).hasClass('taskselect') == false) return true})
+    headinglist = headinglist.filter((x) => {
+      if ($(x).hasClass('complete') == false &&
+        $(x).hasClass('taskselect') == false) return true
+    })
     if (headinglist.length > 0) {
       select($(headinglist[
         Math.floor(Math.random() * (headinglist.length))
@@ -1720,7 +1918,7 @@ function clicked(ev) {
   $(document).scrollTop(0); // fixes weird shit
   $('#context-menu').hide()
   if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
-  ev.target.tagName != 'TEXTAREA') {
+    ev.target.tagName != 'TEXTAREA') {
     saveTask()
   }
   // buttons
@@ -1751,8 +1949,8 @@ function clicked(ev) {
     $('#popsnd')[0].play()
   } else if ($(ev.target).attr('id') == 'newHeadingFlopBut') {
     if (selected == undefined ||
-    selected.parents().toArray().includes($('#pop')[0]) ||
-    selected.attr('id') == 'pop') {
+      selected.parents().toArray().includes($('#pop')[0]) ||
+      selected.attr('id') == 'pop') {
       const newtask = createBlankTask()
       $('#flop').append(newtask)
       select(newtask)
@@ -1812,7 +2010,7 @@ function clicked(ev) {
     newTask()
   } else if ($(ev.target).attr('id') == 'flopBut') {
     if (selected == undefined || selected.parents().toArray().includes(
-    $('#flop')[0]) == false) {
+        $('#flop')[0]) == false) {
       // insert after selected
       try {
         select($('#flop').children().$('#flop').children().length - 1)
@@ -1821,30 +2019,32 @@ function clicked(ev) {
       }
     }
     newTask()
-  // other clicks
+    // other clicks
   } else if ($(ev.target).hasClass('link') == true) {
     // search the task
     $('#searchbar').val($(ev.target).text().slice(2, -2))
     search(true)
   } else if ($(ev.target).hasClass('deadline') == true) {
     select(dateToHeading(stringToDate(
-    $(ev.target).text().slice(1))))
+      $(ev.target).text().slice(1))))
   } else if ($(ev.target).hasClass('duedate') == true) {
     // jump to deadline
     $('#searchbar').val(stripChildren($(ev.target)))
     search('deadline')
   } else if (
     ($(ev.target).parents().toArray().includes($('#flop')[0]) == true ||
-    $(ev.target).parents().toArray().includes($('#pop')[0]) == true ||
-    ['flop', 'pop'].includes($(ev.target).attr('id')) == true) &&
-    ['bold', 'italic', 'bold-italic'].includes(
-    $(ev.target).attr('class')) == false
+      $(ev.target).parents().toArray().includes($('#pop')[0]) == true || [
+        'flop', 'pop'
+      ].includes($(ev.target).attr('id')) == true) && ['bold', 'italic',
+      'bold-italic'
+    ].includes(
+      $(ev.target).attr('class')) == false
   ) {
     // select allowable elements
     select(ev.target, false)
   } else if (
-  ['bold', 'italic', 'bold-italic'].includes(
-  $(ev.target).attr('class')) == true) {
+    ['bold', 'italic', 'bold-italic'].includes(
+      $(ev.target).attr('class')) == true) {
     select($(ev.target).parent(), false)
   } else if ($(ev.target).hasClass('dropdown-item') == true) {
     eval($(ev.target).attr('function'))
@@ -1856,7 +2056,7 @@ function clicked(ev) {
 function taskAbove() {
   // returns task above
   if (selected.prev()[0] == undefined &&
-  selected.parent()[0].tagName == 'SPAN') {
+    selected.parent()[0].tagName == 'SPAN') {
     return selected.parent()
   } else if (selected.prev()[0] != undefined) {
     let returntask = selected.prev()
@@ -1882,7 +2082,7 @@ function taskBelow() {
     }
     return returntask
   } else if (selected.next()[0] == undefined &&
-  selected.parent().next()[0] != undefined) {
+    selected.parent().next()[0] != undefined) {
     // end of parent item
     return selected.parent().next()
   } else if (selected.next()[0] != undefined) {
@@ -1897,18 +2097,18 @@ function taskBelow() {
 function moveTask(direction) {
   if (selected.hasClass('dateheading')) return
   if (direction == 'pop' &&
-  selected.parents().toArray().includes($('#flop')[0]) == true) {
+    selected.parents().toArray().includes($('#flop')[0]) == true) {
     $('#searchbar').val('d:')
     $('#searchbar').focus()
     movetask = selected
   } else if (direction == 'flop' &&
-  selected.parents().toArray().includes($('#pop')[0])) {
+    selected.parents().toArray().includes($('#pop')[0])) {
     $('#flop').append(selected)
   } else if (direction == 'down') {
     // move the task down
     const oldselect = selected
     while (taskBelow() != undefined &&
-    taskBelow().css('display') == 'none') {
+      taskBelow().css('display') == 'none') {
       select(taskBelow())
     }
     select(taskBelow())
@@ -1922,7 +2122,7 @@ function moveTask(direction) {
     // move the task up
     const oldselect = selected
     while (taskAbove() != undefined &&
-    taskAbove().css('display') == 'none') {
+      taskAbove().css('display') == 'none') {
       select(taskAbove())
     }
     select(taskAbove())
@@ -1939,16 +2139,16 @@ function moveTask(direction) {
 function dblclick(ev) {
   if (
     ($(ev.target).hasClass('in') ||
-    $(ev.target).hasClass('selected') ||
-    $(ev.target).hasClass('buffer') ||
-    $(ev.target).hasClass('unselected')) &&
+      $(ev.target).hasClass('selected') ||
+      $(ev.target).hasClass('buffer') ||
+      $(ev.target).hasClass('unselected')) &&
     ev.target.tagName != 'TEXTAREA' &&
     window.innerWidth < 600
   ) {
     context(ev)
   } else if (
     $(ev.target).hasClass('in') &&
-    ev.target.tagName != 'TEXTAREA' && 
+    ev.target.tagName != 'TEXTAREA' &&
     $(ev.target).hasClass('dateheading') == false
   ) {
     if (ev.target.tagName == 'P') {
@@ -1957,13 +2157,13 @@ function dblclick(ev) {
       editTask()
     }
   } else if (
-  ['bold', 'italic', 'bold-italic'].includes(
-  $(ev.target).attr('class')) == true) {
+    ['bold', 'italic', 'bold-italic'].includes(
+      $(ev.target).attr('class')) == true) {
     select($(ev.target).parent())
     editTask()
   } else if (
-    ($(ev.target).hasClass('selected') == true || 
-    $(ev.target).hasClass('unselected') == true)
+    ($(ev.target).hasClass('selected') == true ||
+      $(ev.target).hasClass('unselected') == true)
   ) {
     dragsoff()
   } else if ($(ev.target).hasClass('loads') == true) {
@@ -1976,10 +2176,10 @@ function keycomms(evt) {
     return
   }
   // makes sure to unselect on proper things
-  if ($(':focus')[0] != undefined && 
-  $(':focus')[0].tagName == 'INPUT') select()
+  if ($(':focus')[0] != undefined &&
+    $(':focus')[0].tagName == 'INPUT') select()
   if (evt.key == 'Escape' && selected != undefined &&
-  selected[0].tagName == 'TEXTAREA') {
+    selected[0].tagName == 'TEXTAREA') {
     evt.preventDefault()
     const exp = /^(•*)(\s*)$/
     if (exp.test(selected.val()) == true) {
@@ -1991,11 +2191,11 @@ function keycomms(evt) {
       saveTask()
     }
   } else if (evt.key == 'Enter' && $(':focus').attr('id') ==
-  'searchbar') {
+    'searchbar') {
     // focus on searchbar and find it
     if ($('#searchbar').val().slice(0, 2) == 'd:') {
       const date = dateToHeading(
-      stringToDate($('#searchbar').val().slice(2)))
+        stringToDate($('#searchbar').val().slice(2)))
       select(date)
       $('#searchbar').val('')
       $('#searchbar').blur()
@@ -2034,18 +2234,18 @@ function keycomms(evt) {
     evt.preventDefault()
     toggledrags()
   } else if (selected != undefined && evt.key == 'Enter' &&
-  !evt.altKey && !evt.shiftKey) {
+    !evt.altKey && !evt.shiftKey) {
     // swap editing
     evt.preventDefault()
     if (selected[0].tagName == 'TEXTAREA') {
       saveTask()
-    } else if (selected[0].tagName == 'SPAN' && 
-    selected.hasClass('dateheading') == false) {
+    } else if (selected[0].tagName == 'SPAN' &&
+      selected.hasClass('dateheading') == false) {
       evt.preventDefault()
       editTask()
     }
   } else if (selected != undefined && evt.key == 'Enter' &&
-  evt.altKey == true) {
+    evt.altKey == true) {
     evt.preventDefault()
     // new task if it's in textarea then save task
     if (selected[0].tagName == 'TEXTAREA') {
@@ -2057,13 +2257,13 @@ function keycomms(evt) {
       newTask()
     }
   } else if (!evt.metaKey && !evt.altKey && !evt.ctrlKey &&
-  selected != undefined && selected[0].tagName == 'TEXTAREA') {
+    selected != undefined && selected[0].tagName == 'TEXTAREA') {
     // modify the height of the textarea to hold everything
     updateHeight()
   } else if (evt.key == 'r' && evt.ctrlKey == true) {
     selectRandom()
   } else if (selected != undefined && selected[0].tagName !=
-  'TEXTAREA') {
+    'TEXTAREA') {
     if (evt.key == 'Backspace') {
       deleteTask()
     } else if (evt.key == '‘') {
@@ -2084,18 +2284,19 @@ function keycomms(evt) {
     } else if (evt.key == 'i') {
       toggleImportant()
     } else if (evt.key == 'ArrowRight' &&
-    evt.altKey == true) {
+      evt.altKey == true) {
       // insert afterwards
       // TODO: find the date of today
-        // const today = getDate(today)
+      // const today = getDate(today)
       moveTask('pop')
     } else if (evt.key == 'ArrowLeft' &&
-    evt.altKey == true) {
+      evt.altKey == true) {
       // insert afterwards
       moveTask('flop')
     }
-  } if (selected != undefined && selected[0].tagName != 'TEXTAREA'
-  && !event.metaKey && !event.ctrlKey && !event.altKey) {
+  }
+  if (selected != undefined && selected[0].tagName != 'TEXTAREA' &&
+    !event.metaKey && !event.ctrlKey && !event.altKey) {
     // key comms without modifier keys
     // TODO fix to make it so they skip over hidden tasks
     // TODO make so that tasks which don't have subtasks aren't folded
@@ -2108,8 +2309,8 @@ function keycomms(evt) {
       }
     } else if (evt.key == 'ArrowDown') {
       while (
-        taskBelow() != undefined && 
-        taskBelow().css('display') == 'none' && 
+        taskBelow() != undefined &&
+        taskBelow().css('display') == 'none' &&
         taskBelow().hasClass('in')
       ) {
         select(taskBelow())
@@ -2118,19 +2319,19 @@ function keycomms(evt) {
         select(taskBelow())
       }
     } else if (evt.key == 'ArrowRight' &&
-    selected.parents().toArray().includes($('#flop')[0])) {
+      selected.parents().toArray().includes($('#flop')[0])) {
       // go over and select pop
       // TODO: find the date of today
       // const today = getDate(today)
       select($('#pop').children().toArray()[
-      $('#pop').children().toArray().length - 1])
+        $('#pop').children().toArray().length - 1])
     } else if (evt.key == 'ArrowLeft' &&
-    selected.parents().toArray().includes($('#pop')[0])) {
+      selected.parents().toArray().includes($('#pop')[0])) {
       // go over and select pop
       // TODO: find the date of today
       // const today = getDate(today)
       select($('#flop').children().toArray()[
-      $('#flop').children().toArray().length - 1])
+        $('#flop').children().toArray().length - 1])
     } else if (['{', '}'].includes(evt.key)) {
       if (selected.attr('folded') == 'false') {
         collapseAll('false')
@@ -2141,7 +2342,7 @@ function keycomms(evt) {
       // toggle folding
       toggleSubtasks();
     } else if (evt.key == 'Enter' && evt.altKey == true &&
-    evt.shiftKey == true) {
+      evt.shiftKey == true) {
       newTask(true) // create subtask
     } else if (evt.key == 'Enter' && evt.altKey == true) {
       newTask() // new task
@@ -2161,8 +2362,7 @@ function reloadpage() {
   let selectframe, selectindex
   if (selected != undefined) {
     selectframe = getFrame(selected)
-    selectindex = selectframe.find('span').toArray(
-      ).indexOf(selected[0])
+    selectindex = selectframe.find('span').toArray().indexOf(selected[0])
   }
   load()
   $('#pop').empty()
