@@ -845,7 +845,6 @@ function updatedeadlines() {
   for (heading of $('#pop').children().filter('.dateheading')) {
     // add in relative dates underneath
     const newelt = createBlankTask()
-    let headingtext = $(heading).text().replace('...', '')
     newelt.text(datesToRelative(
       today, 
       stringToDate(headingtext, true))
