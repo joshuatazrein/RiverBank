@@ -847,7 +847,7 @@ function updatedeadlines() {
     const newelt = createBlankTask()
     newelt.text(datesToRelative(
       today, 
-      stringToDate(headingtext, true))
+      stringToDate(stripChildren(heading), true))
     )
     newelt.addClass('placeholder')
     newelt.removeClass('in')
