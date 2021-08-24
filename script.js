@@ -212,19 +212,6 @@ function loadlist() { //updates the list display
 }
 
 function updateSizes() {
-  // updates the text sizes of each list
-  let height = 0
-  $('#texttest').css('font-family', 'var(--font), serif')
-  $('#texttest').css('font-size', $('#loads').css('font-size'))
-  $('#texttest').css('font-weight', 'bold')
-  for (list of $('#loads').children()) {
-    $('#texttest').html($(list).val())
-    $('#texttest').css('width', $(list).width() + 'px')
-    $(list).css('height', $('#texttest').height() + 'px')
-  }
-  $('#texttest').css('font-family', '')
-  $('#texttest').css('font-size', '')
-  $('#texttest').css('font-weight', '')
   for (list of [
     [$('#timerent')[0], 6], 
     [$('#searchbar')[0], 5],
@@ -238,6 +225,7 @@ function updateSizes() {
   )) {
     // update entries
     let fontsize = 24
+    if (window.innerWidth < 600) fontsize = 16
     while ($(list[0]).width() / (fontsize / 2) < list[1]) {
       fontsize -= 1
     }
@@ -249,6 +237,19 @@ function updateSizes() {
       $(x).text($(x).text().replace(/\s\((.*)\)/, ''))
     })
   }
+  // updates the text sizes of each list
+  let height = 0
+  $('#texttest').css('font-family', 'var(--font), serif')
+  $('#texttest').css('font-weight', 'bold')
+  for (list of $('#loads').children()) {
+    $('#texttest').css('font-size', $(list).css('font-size'))
+    $('#texttest').html($(list).val())
+    $('#texttest').css('width', $(list).width() + 'px')
+    $(list).css('height', $('#texttest').height() + 'px')
+  }
+  $('#texttest').css('font-family', '')
+  $('#texttest').css('font-size', '')
+  $('#texttest').css('font-weight', '')
 }
 
 // picks a new loadlist
@@ -271,6 +272,15 @@ function finalsave() {
 // Storing data:
 function save() {
   savedata = JSON.parse(JSON.stringify(data))
+  // update height of loads
+  const leftcol = $($('.leftcolumn')[0])
+  const loadsheight = leftcol.height() - 
+    leftcol.children().filter(':not(#loads):visible').toArray().reduce((total, x) => {
+      console.log($(x).height());
+      return total + $(x).height();
+    }, 0) - 25
+  console.log(leftcol.height(), loadsheight);
+  $('#loads').css('height', loadsheight + 'px')
   $('textarea.in').remove()
   if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
   selected.parent().hasClass('in')) {
@@ -307,13 +317,19 @@ function save() {
   // save data
   data.pop = $('#pop').html()
   if (loadedlist != undefined) {
-    data.flop[loadedlist].text = $('#flop').html()
     try {
-      data.flop[loadedlist].title = $('#loads').children()[loadedlist].value
+      data.flop[loadedlist].text = $('#flop').html()
+      try {
+        data.flop[loadedlist].title = $('#loads').children()[loadedlist].value
+      } catch (TypeError) {
+        data.flop[loadedlist].title = ''
+      }
+      data.loadedlist = loadedlist
     } catch (TypeError) {
-      data.flop[loadedlist].title = ''
+      data.loadedlist = 0
+      loadedlist = 0
+      loadlist()
     }
-    data.loadedlist = loadedlist
   }
   dataString = JSON.stringify(data)
   localStorage.setItem('data', dataString)
@@ -1555,6 +1571,10 @@ function toggleButs() {
     $('#optionsbut').css('margin', '5px calc(50% - 10px)')
     $(':root').css('--butheight', '-10px')
   }
+  if (window.innerWidth < 600) {
+    // hide unnecessary buts
+    $('.mobilehide').hide()
+  }
   save()
 }
 
@@ -2194,6 +2214,10 @@ function loadpage(setload) {
     $('#searchbar').before($('#optionsbut'))
     $('#optionsbut').css('margin', '5px calc(50% - 10px)')
     $(':root').css('--butheight', '-10px')
+  }
+  if (window.innerWidth < 600) {
+    // hide unnecessary buts
+    $('.mobilehide').hide()
   }
   $('.taskselect').removeClass('taskselect')
   updateSizes()

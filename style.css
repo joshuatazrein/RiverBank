@@ -66,7 +66,9 @@ button {
 .title {
   font-family: var(--menufont);
   color: var(--textcolor);
-  margin: 0;
+  margin: 0 -5px;
+  padding: 0;
+  width: calc(100% + 10px);
   text-align: center;
   border-bottom: 1px solid var(--bdcolor);
   overflow: hidden;
@@ -165,8 +167,10 @@ audio {
   position: absolute;
   height: 40%;
   margin: 0;
+  padding: 0;
   bottom: 0;
-  width: calc(100% - 10px);
+  left: 0;
+  width: 100%;
   border-top: 1px solid var(--bdcolor);
 }
 
@@ -340,11 +344,13 @@ span.list {
 }
 
 .loads {
+  position: relative;
   background-color: transparent;
   overflow-y: scroll;
   overflow-x: hidden;
-  height: 100%;
   width: 100%;
+  height: initial;
+  margin: 0;
 }
 
 .selected {
@@ -410,13 +416,12 @@ span.list {
 @media only screen and (max-width: 600px) {
   body {
     font-size: 24px;
-    margin: 15px 0;
+    height: 100vh;
     position: relative;
   }
   .container {
-    border-top: 1px solid var(--bdcolor);
+    height: calc(100vh - 80px);
     border-bottom: 1px solid var(--bdcolor);
-    height: calc(100vh - 30px);
   }
   .listcontainer {
     height: 100%;
@@ -424,36 +429,39 @@ span.list {
   }
   .floplist {
     width: calc(100%);
-    height: calc(50vh - 25px);
+    height: 48%;
     border-bottom: 1px solid var(--bdcolor);
     border-left: 1px solid var(--bdcolor);
     border-right: none;
   }
   .poplist {
     width: 100%;
-    height: calc(50vh - 25px);
+    height: 48%;
     float: none;
     clear: left;
     border-left: 1px solid var(--bdcolor);
   }
   #help {
     font-size: 14px;
-    height: 10%;
+    height: 20%;
     overflow-wrap: break-word;
   }
-  #flop {
-    height: calc(100% - var(--butheight) - 12px);
-  }
-  #pop {
+  .rendered {
     height: calc(100% - var(--butheight) - 12px);
   }
   .loads {
-    font-size: 16px;
+    margin-left: -5px;
+    width: calc(100% + 10px);
+  }
+  .loads textarea {
+    margin-left: 0;
+    width: 100%;
+    padding: 0;
   }
   .leftcolumn {
     width: 15%;
     font-size: 12px;
-    height: calc(100vh - 60px);
+    height: calc(100% - 25px);
   }
   input {
     font-size: 24px;
@@ -461,7 +469,11 @@ span.list {
   }
   button {
     font-size: 14px !important;
-    padding: 3px 2px;
+  }
+  .leftcolumn button {
+    width: calc(50% - 5px);
+    padding: 3px;
+    margin: 2px;
   }
   .dropdown-item {
     font-size: 24px !important;
