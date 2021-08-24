@@ -236,7 +236,6 @@ function updateSizes() {
       return [$(x)[0], textlength / 2 + 2.5]
     })
   )) {
-    console.log(list);
     // update entries
     let fontsize = 24
     while ($(list[0]).width() / (fontsize / 2) < list[1]) {
@@ -1385,7 +1384,6 @@ function dropTask(evt) {
     return
   } else if (stringToDate(selected.text()) != 'Invalid Date' && 
   selected.parents().toArray().includes($('#pop')[0]) == true) {
-    console.log(stringToDate(selected.text()))
     return; // stops from reordering dates
   }
   let children = []
@@ -1449,7 +1447,6 @@ function toggleSubtasks() {
     togglefold(selected)
   } else {
     if (getChildren(selected) != '') {
-      console.log('folding');
       // hide subitems
       const e = selected
       if (e.hasClass('folded') == true) {
