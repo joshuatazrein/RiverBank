@@ -1295,15 +1295,7 @@ function editTask() {
 
 function createBlankTask() {
   const savetask = $('<span class="in"></span>')
-  savetask.draggable({
-    drag: dragTask(event, ui),
-    helper: 'original'
-  })
-  savetask.droppable({
-    drop: function(event, ui) {
-      dropTask(event, ui)
-    }
-  })
+  savetask.attr('draggable', 'true')
   return savetask
 }
 
@@ -1459,7 +1451,6 @@ function timertest(ev) {
 
 //start of drag
 function dragTask(evt) {
-  console.log('dragtask');
   select(evt.target, false)
   //start drag
   if (selected[0].tagName == 'TEXTAREA') {
@@ -1474,8 +1465,7 @@ function dragTask(evt) {
 }
 
 //dropping
-function dropTask(event, ui) {
-  console.log('dropped');
+function dropTask(evt) {
   if (selected[0].tagName == 'TEXTAREA') {
     return
   } else if (stringToDate(selected.text()) != 'Invalid Date' &&
@@ -2379,6 +2369,24 @@ function loadpage(setload) {
     $(document).on('dblclick', event, dblclick)
     $(window).resize(updateSizes)
     window.addEventListener('focus', reloadpage)
+    $(window).on('dragstart', function(event) {
+      if ($(event.target).hasClass('selected') ||
+        $(event.target).hasClass('unselected')) {
+        dragList(event)
+      } else {
+        dragTask(event)
+      }
+    })
+    $(window).attr('ondragover', 'draggingOver(event)')
+    $(window).on('drop', function(event) {
+      console.log('dropping');
+      if ($(event.target).hasClass('selected') ||
+        $(event.target).hasClass('unselected')) {
+        dropList(event)
+      } else {
+        dropTask(event)
+      }
+    })
   }
   $('#pop').html(data.pop)
   // loads data
