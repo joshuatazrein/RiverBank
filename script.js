@@ -2377,7 +2377,8 @@ function loadpage(setload) {
         dragTask(event)
       }
     })
-    $(window).on('touchmove', function(event) {
+    $(window).on('touchstart', function(event) {
+      alert('dragging')
       if ($(event.target).hasClass('selected') ||
         $(event.target).hasClass('unselected')) {
         dragList(event)
@@ -2387,15 +2388,6 @@ function loadpage(setload) {
     })
     $(window).attr('ondragover', 'draggingOver(event)')
     $(window).on('drop', function(event) {
-      console.log('dropping');
-      if ($(event.target).hasClass('selected') ||
-        $(event.target).hasClass('unselected')) {
-        dropList(event)
-      } else {
-        dropTask(event)
-      }
-    })
-    $(window).on('touchend', function(event) {
       console.log('dropping');
       if ($(event.target).hasClass('selected') ||
         $(event.target).hasClass('unselected')) {
