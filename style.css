@@ -87,6 +87,12 @@ span span:not(.bold):not(.bold-italic):not(.italic):not(.link):not(.deadline) {
   opacity: 0.85;
 }
 
+textarea.sublist {
+  padding-left: 0.5em;
+  font-size: 0.85em !important;
+  opacity: 0.85;
+}
+
 span.list span:not(.bold):not(.bold-italic):not(.italic):not(.link):not(.deadline) {
   padding-left: 0.5em;
 }
@@ -210,6 +216,10 @@ input {
 }
 
 span.folded {
+  opacity: 0.7;
+}
+
+textarea.folded {
   opacity: 0.7;
 }
 

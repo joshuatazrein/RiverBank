@@ -56,7 +56,7 @@ timer.on('end', function() {
 //# DRAG BEHAVIOR
 
 //start of drag
-function dragStarted(evt) {
+function dragList(evt) {
   //start drag
   loadedlistobj = evt.target
   //set data - sets drag data
@@ -72,7 +72,7 @@ function draggingOver(evt) {
 }
 
 //dropping
-function dropped(evt) {
+function dropList(evt) {
   //drop
   evt.preventDefault()
   evt.stopPropagation()
@@ -93,35 +93,34 @@ function dropped(evt) {
     data.flop[index].text = $('#test').html()
     save()
     loadedlist = index
-    loadlist()
+    loadList()
     return
   }
-  loadedlist = loads.indexOf(evt.target)
-  if (loads.indexOf(loadedlistobj) > loads.indexOf(evt.target)) {
-    data.flop.splice(loads.indexOf(evt.target), 0,
-      data.flop[loads.indexOf(loadedlistobj)])
-  } else {
-    data.flop.splice(loads.indexOf(evt.target) + 1, 0,
-      data.flop[loads.indexOf(loadedlistobj)])
-  }
+  data.flop.splice(loads.indexOf(evt.target) + 1, 0,
+    data.flop[loads.indexOf(loadedlistobj)])
   // take out old item
   if (loads.indexOf(loadedlistobj) > loads.indexOf(evt.target)) {
     data.flop.splice(loads.indexOf(loadedlistobj) + 1, 1)
+    loadedlist = loads.indexOf(evt.target) + 1
   } else {
     data.flop.splice(loads.indexOf(loadedlistobj), 1)
+    loadedlist = loads.indexOf(evt.target)
   }
   for (let i = 0; i < loads.length; i++) {
     loads[i].value = data.flop[i].title
+    $(loads[i]).removeClass('sublist')
+    if ($(loads[i]).val().slice(0, 2) == '- ') $(loads[i]).addClass('sublist')
   }
   if (data.hidebuts == 'true') {
     $('.butbar').hide()
   }
-  loadlist()
+  $(':focus').blur()
+  loadList()
 }
 
 //enable you to edit titles
 function toggledrags() {
-  loads = Array.from($('#loads').children())
+  loads = $('#loads').children().toArray()
   if (dragsenabled === true) {
     loads.forEach((i) => {
       i.setAttribute('draggable', 'false')
@@ -132,14 +131,20 @@ function toggledrags() {
     $(loads[loadedlist]).val('')
     $(loads[loadedlist]).val(oldval)
     $(document).scrollTop(0); // fixes weird shit
+
     save()
   } else {
-    loads.forEach((i) => {
-      i.setAttribute('draggable', 'true')
+    loads.forEach((x) => {
+      $(x).attr('draggable', 'true')
     })
     dragsenabled = true
     $(':focus').blur()
     $(document).scrollTop(0); // fixes weird shit
+    if ($(loads[loadedlist]).val().slice(0, 2) == '- ') {
+      $(loads[loadedlist]).addClass('sublist')
+    } else {
+      $(loads[loadedlist]).removeClass('sublist')
+    }
     save()
   }
   updateSizes()
@@ -187,14 +192,19 @@ function newlist(title, text) {
   if (dragsenabled == 'true') {
     newthing.attr('draggable', 'true')
   }
-  newthing.attr('ondragstart', 'dragStarted(event)')
+  newthing.attr('ondragstart', 'dragList(event)')
   newthing.attr('ondragover', 'draggingOver(event)')
-  newthing.attr('ondrop', 'dropped(event)')
+  newthing.attr('ondrop', 'dropList(event)')
   $('#loads').append(newthing)
   loadedlist = document.getElementById('loads').children.length - 1
-  loadlist(); // load last element in list
-  dragsoff()
+  loadList(); // load last element in list
   $('#loads').children()[loadedlist].focus()
+  if ($(loads[loadedlist]).val().slice(0, 2) == '- ') {
+    $(loads[loadedlist]).addClass('sublist')
+  } else {
+    $(loads[loadedlist]).removeClass('sublist')
+  }
+  dragsoff()
 }
 
 // remove list from display and data
@@ -206,19 +216,53 @@ function deletelist() {
     $('#flop').empty()
     loadedlist = 0
     save()
-    loadlist()
+    loadList()
   }
 }
 
-function loadlist() { //updates the list display
-  loads = Array.from($('#loads').children())
+function loadList() { //updates the list display
+  loads = $('#loads').children().toArray()
   loads.forEach(function(i) {
-    i.setAttribute('class', 'unselected')
+    $(i).removeClass('selected')
+    $(i).addClass('unselected')
   })
-  document.getElementById('loads').children[loadedlist].setAttribute(
-    'class', 'selected')
+  $(loads[loadedlist]).removeClass('unselected')
+  $(loads[loadedlist]).addClass('selected')
   $('#flop').html(data.flop[loadedlist].text)
   $('.taskselect').removeClass('taskselect')
+  save()
+}
+
+function toggleFoldList() {
+  // folds list into sublists
+  let sublist = Number(loadedlist) + 1
+  const children = $('#loads').children().toArray()
+  if ($(children[sublist]).hasClass('sublist')) {
+    // toggle folded and "..."
+    $(children[loadedlist]).toggleClass('folded')
+    const val = $(children[loadedlist]).val()
+    if (
+      $(children[loadedlist]).hasClass('folded') &&
+      val.slice(val.length - 4, val.length) != ' ...'
+    ) {
+      $(children[loadedlist]).val(val + ' ...')
+    } else if (
+      !$(children[loadedlist]).hasClass('folded') &&
+      val.slice(val.length - 4, val.length) == ' ...'
+    ) {
+      $(children[loadedlist]).val(val.slice(0, val.length - 4))
+    }
+  }
+  while ($(children[sublist]).hasClass('sublist')) {
+    // toggle shown
+    if ($(children[sublist]).is(':visible')) {
+      $(children[sublist]).hide()
+    } else {
+      $(children[sublist]).show()
+    }
+    sublist += 1
+
+  }
   save()
 }
 
@@ -273,7 +317,7 @@ function loadthis() {
   }
   loads = Array.from($('#loads').children())
   loadedlist = loads.indexOf(this)
-  loadlist(this)
+  loadList(this)
 }
 
 function finalsave() {
@@ -344,7 +388,7 @@ function save() {
     } catch (TypeError) {
       data.loadedlist = 0
       loadedlist = 0
-      loadlist()
+      loadList()
     }
   }
   dataString = JSON.stringify(data)
@@ -376,6 +420,15 @@ function clearEmptyDates() {
       if (!$(heading).hasClass('complete')) {
         $(heading).addClass('complete')
         $(heading).prev().addClass('complete') // also to date header
+        if (stringToDate($(heading).text(), true).getTime() == 
+          stringToDate('t').getTime() - 86400000) {
+          const today = dateToHeading(stringToDate('t'))
+          // if it's the previous day
+          getHeadingChildren(today).filter(
+            'span:not(.complete):not(.event)').toArray().forEach(function() {
+              $(today).after($(this))
+            })
+        }
       }
     }
   })
@@ -442,6 +495,7 @@ function uploadData(async) {
         uploading = false
         if (reloading == true) {
           reloading = false 
+          console.log('reloading from upload');
           reloadpage()
         }
       }
@@ -454,7 +508,6 @@ function uploadData(async) {
     xhr.send(newdata)
   } catch (err) {
     // pass
-    console.log(err)
   }
 }
 
@@ -866,7 +919,7 @@ function gotosearch(el) {
       return x.title
     }).indexOf(
       el.attr('title'))
-    loadlist()
+    loadList()
   }
   // find the matching element
   focused = $(focusarea.find('span.in')[el.attr('index')])
@@ -1514,8 +1567,15 @@ function dropTask(evt) {
       getHeadingChildren($(evt.target))[
         getHeadingChildren($(evt.target)).length - 1].after(selected)
     }
-  } else if (evt.target.tagName == 'P' &&
-    $(evt.target).hasClass('in')) {
+  } else if ($(evt.target).hasClass('buffer')) {
+    // dropped onto buffer
+    if (evt.metaKey == true) {
+      $(evt.target).parent().prepend(selected)
+    } else {
+      $(evt.target).before(selected)
+    }
+  } else if (evt.target.tagName == 'P' && $(evt.target).hasClass('in')) {
+    // drop task at beginning
     if (evt.altKey == true) {
       if (evt.metaKey == true) {
         $(evt.target).prepend(selected)
@@ -1527,6 +1587,7 @@ function dropTask(evt) {
     }
   } else if (evt.target.tagName == 'SPAN' &&
     $(evt.target).hasClass('in')) {
+    // dropping task (according to key commands)
     if (evt.altKey == true) {
       if (evt.metaKey == true) {
         const subtasks = $(evt.target).children().toArray().filter(
@@ -1734,6 +1795,10 @@ function context(e) {
       ['selected', 'unselected']
     ],
     '#context-deletelist': [
+      ['TEXTAREA'],
+      ['selected', 'unselected']
+    ],
+    '#context-toggleFoldList': [
       ['TEXTAREA'],
       ['selected', 'unselected']
     ],
@@ -2060,6 +2125,9 @@ function clicked(ev) {
     select($(ev.target).parent(), false)
   } else if ($(ev.target).hasClass('dropdown-item') == true) {
     eval($(ev.target).attr('function'))
+  } else if ($(ev.target).hasClass('selected') || $(ev.target).hasClass('unselected')) {
+    ev.preventDefault() // fixes mobile behavior
+    select()
   } else {
     select()
   }
@@ -2067,41 +2135,62 @@ function clicked(ev) {
 
 function taskAbove() {
   // returns task above
-  if (selected.prev()[0] == undefined &&
+  let returntask
+  if ((selected.prev()[0] == undefined || !selected.prev().hasClass('in')) &&
     selected.parent()[0].tagName == 'SPAN') {
-    return selected.parent()
+    returntask = selected.parent()
   } else if (selected.prev()[0] != undefined) {
-    let returntask = selected.prev()
-    while (returntask.hasClass('in') == false) {
-      returntask = returntask.prev()
-    }
-    return returntask
+    returntask = selected.prev()
   } // nonedisplays are not selected
+  while (returntask[0] != undefined && returntask.hasClass('in') == false) {
+    returntask = returntask.prev()
+  }
+  if (returntask[0] != undefined && !returntask.is(':visible' )) {
+    // while invisible
+    select(returntask)
+    return taskAbove()
+  } else if (returntask[0] == undefined || returntask.hasClass('in') == false) {
+    return selected
+  } else {
+    return returntask
+  }
 }
 
 function taskBelow() {
   // returns task below
+  let returntask
   if (getChildren(selected) != '') {
+    // subtasks
+    let child = false
     for (child of selected.children()) {
       if (isSubtask($(child)) == true) {
-        return $(child)
+        returntask = $(child)
+        child = true
+        break
       }
     }
-    // if no subtasks
-    let returntask = selected.next()
-    while (returntask.hasClass('in') == false) {
-      returntask = returntask.next()
+    if (!child) {
+       // if no subtasks, regular next task
+      returntask = selected.next()
     }
-    return returntask
   } else if (selected.next()[0] == undefined &&
     selected.parent().next()[0] != undefined) {
     // end of parent item
-    return selected.parent().next()
+    returntask = selected.parent().next()
   } else if (selected.next()[0] != undefined) {
-    let returntask = selected.next()
-    while (returntask.hasClass('in') == false) {
-      returntask = returntask.next()
-    }
+    // regular next task
+    returntask = selected.next()
+  }
+  while (returntask[0] != undefined && returntask.hasClass('in') == false) {
+    returntask = returntask.next()
+  }
+  if (returntask[0] != undefined && !returntask.is(':visible' )) {
+    // while invisible
+    select(returntask)
+    return taskBelow()
+  } else if (returntask[0] == undefined || !returntask.hasClass('in')) {
+    return selected
+  } else {
     return returntask
   }
 }
@@ -2238,7 +2327,7 @@ function keycomms(evt) {
       $('.taskselect').removeClass('taskselect')
     }
     loadedlist = oldload
-    loadlist()
+    loadList()
   } else if (
     selected == undefined && evt.key == 'Enter' &&
     $(':focus').hasClass('selected')
@@ -2256,8 +2345,16 @@ function keycomms(evt) {
       evt.preventDefault()
       editTask()
     }
-  } else if (selected != undefined && evt.key == 'Enter' &&
-    evt.altKey == true) {
+  } else if (selected != undefined && evt.key == 'Enter' && evt.altKey == true &&
+    evt.metaKey == true) {
+    evt.preventDefault()
+    // new task if it's in textarea then save task
+    if (selected[0].tagName == 'TEXTAREA') {
+      saveTask()
+    }
+    select(taskAbove())
+    newTask()
+  } else if (selected != undefined && evt.key == 'Enter' && evt.altKey == true) {
     evt.preventDefault()
     // new task if it's in textarea then save task
     if (selected[0].tagName == 'TEXTAREA') {
@@ -2283,8 +2380,10 @@ function keycomms(evt) {
     } else if (evt.key == '“') {
       indentTask(false)
     } else if (evt.key == 'ArrowUp' && evt.altKey == true) {
+      evt.preventDefault()
       moveTask('up')
     } else if (evt.key == 'ArrowDown' && evt.altKey == true) {
+      evt.preventDefault()
       moveTask('down')
     } else if (evt.key == ' ') {
       evt.preventDefault();
@@ -2313,23 +2412,11 @@ function keycomms(evt) {
     // TODO fix to make it so they skip over hidden tasks
     // TODO make so that tasks which don't have subtasks aren't folded
     if (evt.key == 'ArrowUp') {
-      while (taskAbove() != undefined && taskAbove().css('display') == 'none') {
-        select(taskAbove())
-      }
-      if (taskAbove() != undefined) {
-        select(taskAbove())
-      }
+      evt.preventDefault()
+      select(taskAbove())
     } else if (evt.key == 'ArrowDown') {
-      while (
-        taskBelow() != undefined &&
-        taskBelow().css('display') == 'none' &&
-        taskBelow().hasClass('in')
-      ) {
-        select(taskBelow())
-      }
-      if (taskBelow() != undefined && taskBelow().hasClass('in')) {
-        select(taskBelow())
-      }
+      evt.preventDefault()
+      select(taskBelow())
     } else if (evt.key == 'ArrowRight' &&
       selected.parents().toArray().includes($('#flop')[0])) {
       // go over and select pop
@@ -2370,7 +2457,7 @@ function getFrame(task) {
 }
 
 function reloadpage() {
-  if (uploading == true && loading == false) {
+  if (uploading == true) {
     reloading = true
     return
   }
@@ -2415,9 +2502,21 @@ function loadpage(setload) {
   for (i of data.flop) {
     newlist(i.title, i.text)
   }
+  const children = $('#loads').children().toArray()
+  for (i in children) {
+    // remember folding
+    const val = $(children[i]).val()
+    if (val.slice(val.length - 4) == ' ...') {
+      $(children[i]).removeClass('folded')
+      loadedlist = i
+      loadList()
+      toggleFoldList()
+    }
+  }
   loadedlist = oldload
-  loadlist()
+  loadList()
   $('#searchbar').val('')
+  // show buttons and help right
   if (data.help == 'show') $('#help').show()
   if (data.help == 'hide') $('#help').hide()
   if (data.hidebuts == 'false') {
@@ -2432,8 +2531,9 @@ function loadpage(setload) {
     $(':root').css('--butheight', '-10px')
   }
   if (window.innerWidth < 600) {
-    // hide unnecessary buts
+    // hide unnecessary buts and show good ones
     $('.mobilehide').hide()
+    $('button:not(".mobilehide")').show()
   }
   $('.taskselect').removeClass('taskselect')
   updateSizes()
