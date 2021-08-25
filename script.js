@@ -92,7 +92,7 @@ function dropList(evt) {
     }
     data.flop[index].text = $('#test').html()
     save()
-    loadedlist = index
+    loadedlist = Number(index)
     loadList()
     return
   }
@@ -915,10 +915,10 @@ function gotosearch(el) {
   } else {
     // load flop and switch lists
     focusarea = $('#flop')
-    loadedlist = data.flop.map((x) => {
+    loadedlist = Number(data.flop.map((x) => {
       return x.title
     }).indexOf(
-      el.attr('title'))
+      el.attr('title')))
     loadList()
   }
   // find the matching element
@@ -2319,7 +2319,7 @@ function keycomms(evt) {
   } else if (evt.key == 'z' && evt.ctrlKey == true) {
     data = JSON.parse(JSON.stringify(savedata))
     select()
-    const oldload = loadedlist
+    const oldload = Number(loadedlist)
     $('#pop').html(data.pop)
     $('#loads').empty()
     for (list of data.flop) {
@@ -2495,7 +2495,7 @@ function loadpage(setload) {
   let oldload
   if (setload == false) {
     // fixes weird loadlist glitch
-    oldload = loadedlist
+    oldload = Number(loadedlist)
   } else {
     oldload = Number(data.loadedlist)
   }
@@ -2508,12 +2508,12 @@ function loadpage(setload) {
     const val = $(children[i]).val()
     if (val.slice(val.length - 4) == ' ...') {
       $(children[i]).removeClass('folded')
-      loadedlist = i
+      loadedlist = Number(i)
       loadList()
       toggleFoldList()
     }
   }
-  loadedlist = oldload
+  loadedlist = Number(oldload)
   loadList()
   $('#searchbar').val('')
   // show buttons and help right
