@@ -54,23 +54,22 @@ timer.on('end', function() {
 //# DRAG BEHAVIOR
 
 //start of drag
-function dragStarted(evt) {
+function dragList(event) {
   //start drag
-  loadedlistobj = evt.target
-  //set data - sets drag data
-  evt.dataTransfer.setData('text/plain', evt.target.value)
+  loadedlistobj = event.target
   //specify allowed transfer
-  evt.dataTransfer.effectAllowed = 'move'
 }
 
 //passing over stuff
 function draggingOver(evt) {
   //drag over
+  console.log('dragging over');
   evt.preventDefault()
 }
 
 //dropping
-function dropped(evt) {
+function dropList(evt) {
+  console.log('droplist');
   //drop
   evt.preventDefault()
   evt.stopPropagation()
@@ -180,12 +179,11 @@ function newlist(title, text) {
   newthing.val(newobj.title)
   newthing.addClass('unselected listtitle')
   newthing.on('click', loadthis)
+  newthing.attr('ondrop', 'dropList(event)')
+  newthing.attr('ondragover', 'draggingOver(event)')
   if (dragsenabled == 'true') {
     newthing.attr('draggable', 'true')
   }
-  newthing.attr('ondragstart', 'dragStarted(event)')
-  newthing.attr('ondragover', 'draggingOver(event)')
-  newthing.attr('ondrop', 'dropped(event)')
   $('#loads').append(newthing)
   loadedlist = document.getElementById('loads').children.length - 1
   loadlist(); // load last element in list
@@ -272,12 +270,6 @@ function loadthis() {
   loadlist(this)
 }
 
-function finalsave() {
-  // select()
-  // save()
-  // uploadData(true) // makes sure it gets saved
-}
-
 // Storing data:
 function save() {
   savedata = JSON.parse(JSON.stringify(data))
@@ -286,10 +278,8 @@ function save() {
   const loadsheight = leftcol.height() -
     leftcol.children().filter(':not(#loads):visible').toArray().reduce((total,
       x) => {
-      console.log($(x).height());
       return total + $(x).height();
     }, 0) - 25
-  console.log(leftcol.height(), loadsheight);
   $('#loads').css('height', loadsheight + 'px')
   $('textarea.in').remove()
   if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
@@ -1305,9 +1295,6 @@ function editTask() {
 
 function createBlankTask() {
   const savetask = $('<span class="in"></span>')
-  savetask.attr('ondragstart', 'dragTask(event)')
-  savetask.attr('ondragover', 'draggingOver(event)')
-  savetask.attr('ondrop', 'dropTask(event)')
   savetask.attr('draggable', 'true')
   return savetask
 }
@@ -1359,9 +1346,6 @@ function archiveTask(dated) {
     // add in an extra heading
     heading = $('<span class=\'in h2\' folded=\'false\'>' +
       'completed ...</span>')
-    heading.attr('ondragstart', 'dragTask(event)')
-    heading.attr('ondragover', 'draggingOver(event)')
-    heading.attr('ondrop', 'dropTask(event)')
     heading.attr('draggable', 'true')
     if (getHeadingChildren(day).length >= 1) {
       getHeadingChildren(day)[
@@ -2385,7 +2369,41 @@ function loadpage(setload) {
     $(document).on('dblclick', event, dblclick)
     $(window).resize(updateSizes)
     window.addEventListener('focus', reloadpage)
-    $(window).on('beforeunload', finalsave)
+    $(window).on('dragstart', function(event) {
+      if ($(event.target).hasClass('selected') ||
+        $(event.target).hasClass('unselected')) {
+        dragList(event)
+      } else {
+        dragTask(event)
+      }
+    })
+    $(window).on('touchmove', function(event) {
+      if ($(event.target).hasClass('selected') ||
+        $(event.target).hasClass('unselected')) {
+        dragList(event)
+      } else {
+        dragTask(event)
+      }
+    })
+    $(window).attr('ondragover', 'draggingOver(event)')
+    $(window).on('drop', function(event) {
+      console.log('dropping');
+      if ($(event.target).hasClass('selected') ||
+        $(event.target).hasClass('unselected')) {
+        dropList(event)
+      } else {
+        dropTask(event)
+      }
+    })
+    $(window).on('touchend', function(event) {
+      console.log('dropping');
+      if ($(event.target).hasClass('selected') ||
+        $(event.target).hasClass('unselected')) {
+        dropList(event)
+      } else {
+        dropTask(event)
+      }
+    })
   }
   $('#pop').html(data.pop)
   // loads data
