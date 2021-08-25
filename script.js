@@ -1410,7 +1410,6 @@ function toggleComplete() {
       const date = stringToDate(text[text.length - 1].slice(1), false, true)
       const heading = dateToHeading(date)
       const newtask = selected.clone()
-      newtask.toggleClass('complete')
       if (
         !getHeadingChildren($(heading)).map((x) => {
           return $(x).text()
