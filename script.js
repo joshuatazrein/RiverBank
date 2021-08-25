@@ -352,6 +352,7 @@ function save() {
   // backup data to the server after setting localstorage data
   uploadData()
   updatedeadlines()
+  $(document).scrollTop(0) // fixes scroll
 }
 
 function clearEmptyDates() {
