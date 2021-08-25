@@ -1,6 +1,5 @@
 // changes
 var loadedlist
-var data
 var selected
 var focused
 var dragsenabled = false
@@ -14,6 +13,8 @@ var searchwidth = 10
 var movetask
 var fileinput
 var loadedlistobj
+var uploading
+var reloading
 var linestarts = {
   '# ': 'h1',
   '## ': 'h2',
@@ -130,6 +131,7 @@ function toggledrags() {
     const oldval = $(loads[loadedlist]).val()
     $(loads[loadedlist]).val('')
     $(loads[loadedlist]).val(oldval)
+    $(document).scrollTop(0); // fixes weird shit
     save()
   } else {
     loads.forEach((i) => {
@@ -137,6 +139,7 @@ function toggledrags() {
     })
     dragsenabled = true
     $(':focus').blur()
+    $(document).scrollTop(0); // fixes weird shit
     save()
   }
   updateSizes()
@@ -287,10 +290,8 @@ function save() {
   const loadsheight = leftcol.height() -
     leftcol.children().filter(':not(#loads):visible').toArray().reduce((total,
       x) => {
-      console.log($(x).height());
       return total + $(x).height();
     }, 0) - 25
-  console.log(leftcol.height(), loadsheight);
   $('#loads').css('height', loadsheight + 'px')
   $('textarea.in').remove()
   if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
@@ -371,6 +372,10 @@ function clearEmptyDates() {
       $(heading).attr('folded') == 'false'
     ) {
       togglefold($(heading))
+      if (!$(heading).hasClass('complete')) {
+        $(heading).addClass('complete')
+        $(heading).prev().addClass('complete') // also to date header
+      }
     }
   })
   save()
@@ -424,6 +429,7 @@ function reset() {
 function uploadData(async) {
   // uploads data to server
   try {
+    uploading = true
     const blob = new Blob([JSON.stringify(data)], {
       type: "text/plain"
     })
@@ -431,7 +437,13 @@ function uploadData(async) {
     newdata.append("upfile", blob)
     const xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function() {
-      if (this.readyState == 4) {}
+      if (this.readyState == 4) {
+        uploading = false
+        if (reloading == true) {
+          reloading = false 
+          reloadpage()
+        }
+      }
     }
     if (async ==true) {
       xhr.open("POST", "upload.php", false)
@@ -637,7 +649,6 @@ function stringToDate(string, weekday, future) {
     // analyze as a weekday string
     weekday = weekdaysNum[string.split(/(\+|-|\s)/)[0]]
     if (future == true) {
-      console.log('future');
       date.setDate(date.getDate() + 1)
     }
     while (date.getDay() != weekday) {
@@ -921,7 +932,9 @@ function updatedeadlines() {
     }])) {
     $('#test').empty()
     $('#test').html(list.text)
-    for (let deadline of $('#test').find('.deadline')) {
+    for (let deadline of $('#test').find('.deadline').filter(function() {
+        return !$(this).parent().hasClass('complete')  
+      })) {
       // append under heading
       const text = stripChildren($($(deadline).parent()))
       const index = text.search('>')
@@ -1008,6 +1021,7 @@ function indentTask(indent) {
 function saveTask() {
   // analyze format of task and create new <span> elt for it
   const savetask = selected.prev() // looks at item before it
+  selected.prev().attr('class', 'in')
   if (selected.val() == '') {
     selected.remove()
     savetask.remove()
@@ -1064,8 +1078,7 @@ function saveTask() {
       selected.val(
         selected.val().slice(0, index) +
         '>' +
-        dateToString(stringToDate(selected.val().slice(index + 1,
-        endindex))) +
+        dateToString(stringToDate(selected.val().slice(index + 1,endindex))) + 
         selected.val().slice(endindex)
       )
       if (addspace) {
@@ -1421,6 +1434,7 @@ function toggleComplete() {
   }
   selected.toggleClass('complete')
   save()
+  clearEmptyDates()
 }
 
 function toggleImportant() {
@@ -2355,6 +2369,10 @@ function getFrame(task) {
 }
 
 function reloadpage() {
+  if (uploading == true && loading == false) {
+    reloading = true
+    return
+  }
   // reselect old select
   let selectframe, selectindex
   if (selected != undefined) {
@@ -2422,6 +2440,7 @@ function loadpage(setload) {
   // go to today
   updatedeadlines()
   select(dateToHeading(stringToDate('t')))
+  loading = false
 }
 
 loadpage()

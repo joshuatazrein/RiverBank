@@ -74,8 +74,7 @@ button {
   overflow: hidden;
 }
 
-span:not(.bold), span:not(.bold-italic), span:not(.deadline), 
-span:not(.link), span:not(.italic) {
+span:not(.bold):not(.bold-italic):not(.deadline):not(.link):not(.italic) {
   display: inline-block;
   width: calc(100% - 25px);
   padding-bottom: 5px;
@@ -83,14 +82,13 @@ span:not(.link), span:not(.italic) {
   padding-left: 5px;
 }
 
-span span:not(.bold), span span:not(.bold-italic), 
-span span:not(.italic), span span:not(.link), span span:not(.deadline) {
+span span:not(.bold):not(.bold-italic):not(.italic):not(.link):not(.deadline) {
   padding-left: 1em;
+  font-size: 85%;
+  opacity: 0.85;
 }
 
-span.list span:not(.bold), span.list span:not(.bold-italic), 
-span.list span:not(.italic), span.list span:not(.link), 
-span.list span:not(.deadline) {
+span.list span:not(.bold):not(.bold-italic):not(.italic):not(.link):not(.deadline) {
   padding-left: 0.5em;
 }
 
@@ -244,7 +242,7 @@ p.dropdown-item {
 }
 
 span.complete {
-  opacity: 0.3;
+  opacity: 0.3 !important;
 }
 
 span.important {
