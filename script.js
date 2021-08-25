@@ -6,6 +6,7 @@ var focused
 var dragsenabled = false
 var rendered = false
 var increase = true
+var inprogress
 var time
 var pause
 var updated = false
@@ -612,7 +613,7 @@ function dateToString(date, weekday) {
   return datestr
 }
 
-function stringToDate(string, weekday) {
+function stringToDate(string, weekday, future) {
   // maps a date-search string to a specific date heading
   if (weekday == true) {
     // chop off weekday
@@ -635,6 +636,10 @@ function stringToDate(string, weekday) {
   ) {
     // analyze as a weekday string
     weekday = weekdaysNum[string.split(/(\+|-|\s)/)[0]]
+    if (future == true) {
+      console.log('future');
+      date.setDate(date.getDate() + 1)
+    }
     while (date.getDay() != weekday) {
       date.setDate(date.getDate() + 1)
     }
@@ -1396,30 +1401,23 @@ function toggleComplete() {
   }
   const text = stripChildren(selected).split(' ')
   if (!selected.hasClass('complete') &&
-    /~\d[d|w|m|y]/.test(text[text.length - 1])) {
-    const date = new Date()
-    const lastchar = text[text.length - 1].charAt(
-      text[text.length - 1].length - 1)
-    const amount = Number(text[text.length - 1].slice(1,
-      text[text.length - 1].length - 1))
-    if (lastchar == 'd') {
-      date.setDate(Number(date.getDate()) + amount)
-    } else if (lastchar == 'w') {
-      date.setDate(Number(date.getDate()) + (amount * 7))
-    } else if (lastchar == 'm') {
-      date.setMonth(Number(date.getMonth()) + amount)
-    } else if (lastchar == 'y') {
-      date.setFullYear(Number(date.getFullYear()) + amount)
-    }
-    const heading = dateToHeading(date)
-    const newtask = createBlankTask()
-    newtask.text(selected.text())
-    if (
-      !getHeadingChildren($(heading)).map((x) => {
-        return $(x).text()
-      }).includes(selected.text())
-    ) {
-      $(heading).after(newtask)
+    /^~/.test(text[text.length - 1])) {
+    if (stringToDate(text[text.length - 1].slice(1)) == 'Invalid Date') {
+      alert('invalid repeat date')
+      selected.text(text.slice(0, text.length - 1) + 
+        getChildren(selected))
+    } else {
+      const date = stringToDate(text[text.length - 1].slice(1), false, true)
+      const heading = dateToHeading(date)
+      const newtask = createBlankTask()
+      newtask.text(selected.text())
+      if (
+        !getHeadingChildren($(heading)).map((x) => {
+          return $(x).text()
+        }).includes(selected.text())
+      ) {
+        $(heading).after(newtask)
+      }
     }
   }
   selected.toggleClass('complete')
