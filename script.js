@@ -2377,6 +2377,22 @@ function loadpage(setload) {
         dragTask(event)
       }
     })
+    $(window).on('touchstart', function(event) {
+      if ($(event.target).hasClass('selected') ||
+        $(event.target).hasClass('unselected')) {
+        dragList(event)
+      } else {
+        dragTask(event)
+      }
+    })
+    $(window).on('touchend', function(event) {
+      if ($(event.target).hasClass('selected') ||
+        $(event.target).hasClass('unselected')) {
+        dropList(event)
+      } else {
+        dropTask(event)
+      }
+    })
     $(window).attr('ondragover', 'draggingOver(event)')
     $(window).on('drop', function(event) {
       console.log('dropping');
