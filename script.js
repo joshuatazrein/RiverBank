@@ -1296,7 +1296,7 @@ function editTask() {
 function createBlankTask() {
   const savetask = $('<span class="in"></span>')
   savetask.draggable({
-    drag: dragTask(event, ui),
+    drag: function(event, ui) {dragTask(event, ui)},
     helper: 'original'
   })
   savetask.droppable({
