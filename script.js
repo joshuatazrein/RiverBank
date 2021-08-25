@@ -1458,7 +1458,7 @@ function timertest(ev) {
 }
 
 //start of drag
-function dragTask(evt) {
+function dragTask(evt, ui) {
   console.log('dragtask');
   select(evt.target, false)
   //start drag
