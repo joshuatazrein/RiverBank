@@ -2378,19 +2378,12 @@ function loadpage(setload) {
       }
     })
     $(window).on('touchstart', function(event) {
+      alert('dragging')
       if ($(event.target).hasClass('selected') ||
         $(event.target).hasClass('unselected')) {
         dragList(event)
       } else {
         dragTask(event)
-      }
-    })
-    $(window).on('touchend', function(event) {
-      if ($(event.target).hasClass('selected') ||
-        $(event.target).hasClass('unselected')) {
-        dropList(event)
-      } else {
-        dropTask(event)
       }
     })
     $(window).attr('ondragover', 'draggingOver(event)')
