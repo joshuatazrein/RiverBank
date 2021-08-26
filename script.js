@@ -2126,8 +2126,8 @@ function clicked(ev) {
   } else if ($(ev.target).hasClass('dropdown-item') == true) {
     eval($(ev.target).attr('function'))
   } else if ($(ev.target).hasClass('selected') || $(ev.target).hasClass('unselected')) {
-    ev.preventDefault() // fixes mobile behavior
     select()
+    $(':focus').blur()
   } else {
     select()
   }
