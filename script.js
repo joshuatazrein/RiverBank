@@ -2493,7 +2493,7 @@ function reloadpage() {
   }
   // reselect old select
   let selectframe, selectindex
-  if (selected != undefined) {
+  if (selected != undefined && selected[0].tagName == 'SPAN') {
     selectframe = getFrame(selected)
     selectindex = selectframe.find('span').toArray().indexOf(selected[0])
   }

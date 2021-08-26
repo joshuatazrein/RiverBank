@@ -88,6 +88,7 @@ span:not(.list) {
 span.list {
   text-indent: -0.5em;
   padding-left: calc(0.5em + 5px);
+  width: calc(100% - 25px) !important;
 }
 
 span.note {
