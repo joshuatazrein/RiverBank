@@ -76,7 +76,7 @@ button {
 
 span:not(.bold):not(.bold-italic):not(.deadline):not(.link):not(.italic) {
   display: inline-block;
-  width: calc(100% - 20px);
+  width: calc(100% - 10px);
   padding-bottom: 5px;
   padding-top: 2px;
 }
@@ -88,6 +88,14 @@ span:not(.list) {
 span.list {
   text-indent: -0.5em;
   padding-left: calc(0.5em + 5px);
+}
+
+span.note {
+  font-size: .6em;
+  text-indent: calc(-1.3em);
+  padding-left: calc(1.3em + 5px);
+  width: calc(100% - 30px) !important;
+  font-family: 'Courier New';
 }
 
 span span:not(.bold):not(.bold-italic):not(.italic):not(.link):not(.deadline) {
@@ -273,11 +281,10 @@ span span:not(.list) {
 
 span.event {
   background-color: var(--event);
-  display: inline-block;
   border-radius: 3px;
   margin-bottom: 5px;
   padding-left: 5px;
-  width: calc(100% - 15px);
+  width: calc(100% - 10px) !important;
 }
 
 span.link, span.bold, span.italic, span.bold-italic, 

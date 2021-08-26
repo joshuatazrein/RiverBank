@@ -21,6 +21,7 @@ var linestarts = {
   '### ': 'h3',
   '•': 'list',
   '@': 'event',
+  '-': 'note'
 }
 var lineinners = {
   '_*': ['*_', 'bold-italic'],
@@ -484,6 +485,7 @@ function uploadData(async) {
   // uploads data to server
   try {
     uploading = true
+    console.log('uploading currently')
     const blob = new Blob([JSON.stringify(data)], {
       type: "text/plain"
     })
@@ -497,6 +499,8 @@ function uploadData(async) {
           reloading = false 
           console.log('reloading from upload');
           reloadpage()
+        } else {
+          console.log('finished uploading')
         }
       }
     }
@@ -2316,6 +2320,7 @@ function keycomms(evt) {
     }
   } else if (evt.key == 'Enter' && $(':focus').attr('id') ==
     'searchbar') {
+    evt.preventDefault()
     // focus on searchbar and find it
     if ($('#searchbar').val().slice(0, 2) == 'd:') {
       const date = dateToHeading(
