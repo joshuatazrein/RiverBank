@@ -79,7 +79,15 @@ span:not(.bold):not(.bold-italic):not(.deadline):not(.link):not(.italic) {
   width: calc(100% - 25px);
   padding-bottom: 5px;
   padding-top: 2px;
+}
+
+span:not(.list) {
   padding-left: 5px;
+}
+
+span.list {
+  text-indent: -0.5em;
+  padding-left: calc(0.5em + 5px);
 }
 
 span span:not(.bold):not(.bold-italic):not(.italic):not(.link):not(.deadline) {
@@ -280,11 +288,6 @@ span.weblink, span.deadline {
 
 span.deadline {
   color: var(--duedatecolor);
-}
-
-span.list {
-  text-indent: -0.5em;
-  padding-left: calc(0.5em + 5px);
 }
 
 .topbar {
