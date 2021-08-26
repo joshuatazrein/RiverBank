@@ -586,6 +586,15 @@ function toggleWeekdays() {
   save()
 }
 
+function toggleHeadingAlign() {
+  console.log(data.headingalign);
+  if (data.headingalign == 'left') data.headingalign = 'center'
+  else data.headingalign = 'left'
+  save()
+  document.documentElement.style.setProperty('--headingalign', 
+    data.headingalign)
+}
+
 function toggleWeekdayFormat() {
   // changes between 1 and 3 letter date formats
   const weekdaytransdict = {
@@ -1262,8 +1271,17 @@ function select(el, scroll) {
     if (scroll != false) {
       // only execute if not clicked
       parent.scrollTop(0)
-      parent.scrollTop(Number(selected.offset().top) -
-        Number(parent.offset().top) - 50)
+      if (!selected.hasClass('dateheading') && !isHeading(selected)) {
+        parent.scrollTop(Number(selected.offset().top) -
+          Number(getFrame(selected).offset().top) - 
+          getFrame(selected).height() / 2)
+      } else if (selected.hasClass('dateheading')) {
+        parent.scrollTop(Number(selected.prev().offset().top) - 
+          Number(getFrame(selected).offset().top))
+      } else if (isHeading(selected)) {
+        parent.scrollTop(Number(selected.offset().top) - 
+          Number(getFrame(selected).offset().top))
+      }
     }
   } else if ($(el).parent().attr('id') == 'context-menu') {
     // do nothing (context)
@@ -1886,6 +1904,10 @@ function context(e) {
       ['BUTTON'],
       ['opts']
     ],
+    '#context-toggleHeadingAlign': [
+      ['BUTTON'],
+      ['opts']
+    ],
     '#context-styleDefault': [
       ['BUTTON'],
       ['opts']
@@ -2127,7 +2149,8 @@ function clicked(ev) {
     eval($(ev.target).attr('function'))
   } else if ($(ev.target).hasClass('selected') || $(ev.target).hasClass('unselected')) {
     select()
-    $(':focus').blur()
+    if (window.innerWidth < 600) $(':focus').blur()
+    else if ($(ev.target).hasClass('unselected')) dragson()
   } else {
     select()
   }
@@ -2417,8 +2440,7 @@ function keycomms(evt) {
     } else if (evt.key == 'ArrowDown') {
       evt.preventDefault()
       select(taskBelow())
-    } else if (evt.key == 'ArrowRight' &&
-      selected.parents().toArray().includes($('#flop')[0])) {
+    } else if (evt.key == 'ArrowRight' && Array().includes($('#flop')[0])) {
       // go over and select pop
       // TODO: find the date of today
       // const today = getDate(today)
@@ -2459,6 +2481,7 @@ function getFrame(task) {
 function reloadpage() {
   if (uploading == true) {
     reloading = true
+    console.log('uploading in prog; returning reupload')
     return
   }
   // reselect old select
@@ -2490,6 +2513,9 @@ function loadpage(setload) {
     window.addEventListener('focus', reloadpage)
     $(window).on('beforeunload', finalsave)
   }
+  if (!data.headingalign) data.headingalign = 'center'
+  document.documentElement.style.setProperty('--headingalign', 
+    data.headingalign)
   $('#pop').html(data.pop)
   // loads data
   let oldload
@@ -2515,6 +2541,7 @@ function loadpage(setload) {
   }
   loadedlist = Number(oldload)
   loadList()
+  dragson()
   $('#searchbar').val('')
   // show buttons and help right
   if (data.help == 'show') $('#help').show()

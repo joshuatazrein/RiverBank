@@ -79,10 +79,11 @@ span:not(.bold):not(.bold-italic):not(.deadline):not(.link):not(.italic) {
   width: calc(100% - 25px);
   padding-bottom: 5px;
   padding-top: 2px;
+  padding-left: 5px;
 }
 
 span span:not(.bold):not(.bold-italic):not(.italic):not(.link):not(.deadline) {
-  padding-left: 1em;
+  padding-left: calc(1em + 5px);
   font-size: 85%;
   opacity: 0.85;
 }
@@ -401,9 +402,10 @@ span.list {
 .h1, .h2, .h3 {
   margin-top: 0.5em;
   display: inline-block;
-  text-align: center;
+  text-align: var(--headingalign);
   line-height: 1em;
   font-family: var(--font), serif;
+  width: 100%;
 }
 
 .dateheading {
@@ -414,7 +416,7 @@ span.list {
 }
 
 .placeholder {
-  text-align: center;
+  text-align: var(--headingalign);
   font-family: var(--butfont);
   font-size: 12px;
   padding: 0;
