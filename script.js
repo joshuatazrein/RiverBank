@@ -15,6 +15,7 @@ var fileinput
 var loadedlistobj
 var uploading
 var reloading
+var xhr
 var linestarts = {
   '# ': 'h1',
   '## ': 'h2',
@@ -491,7 +492,8 @@ function uploadData(async) {
     })
     const newdata = new FormData()
     newdata.append("upfile", blob)
-    const xhr = new XMLHttpRequest()
+    if (xhr) xhr.abort() // cancels previous uploads to overwrite
+    xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function() {
       if (this.readyState == 4) {
         uploading = false
