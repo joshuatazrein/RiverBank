@@ -1155,8 +1155,11 @@ function removesliders() {
 function saveTask() {
   // analyze format of task and create new <span> elt for it
   const savetask = selected.prev() // looks at item before it
-  selected.prev().attr('class', 'in')
-  if (selected.val() == '') {
+  selected.next().remove() // removes appended children
+  console.log([selected.val()])
+  if (['', '• ', '- ', '# ', '## ', '### ', '@', '@ '
+    ].includes(selected.val()) || 
+    /^•\s$/.test(selected.val())) {
     selected.remove()
     savetask.remove()
     return
@@ -1464,6 +1467,14 @@ function editTask() {
     el.after(newelt)
     el.hide()
     select(newelt)
+    console.log(getChildren(el));
+    if (getChildren(el) == '') {
+      selected.after('<span style="display:none;"></span>')
+      console.log('0height');
+    } else {
+      // appends children after
+      selected.after('<span>' + getChildren(el) + '</span>') 
+    }
     selected.focus()
     selected.val(stripChildren(el))
     // add back hashtags
@@ -1513,7 +1524,7 @@ function newTask(subtask) {
     const children = getHeadingChildren(selected)
     select(children[children.length - 1])
   }
-  e = selected
+  let e = selected
   if (selected[0].tagName == 'P' && selected.hasClass('in')) {
     // blank before buffer
     $(e.children()[e.children().length - 1]).before(newspan)
@@ -1523,6 +1534,7 @@ function newTask(subtask) {
   } else if (['SPAN'].includes(selected[0].tagName)) {
     // regular task
     e.after(newspan)
+    updatedeadlines()
   }
   select(newspan)
   editTask()
@@ -1853,7 +1865,7 @@ function toggleButs() {
     $('#optionsbut').css('margin', '')
     data.hidebuts = 'false'
     $(':root').css('--butheight', $('#flopbuts').height() + 'px')
-  } else {
+  } else if (window.innerWidth > 600) {
     $('.butbar').hide()
     data.hidebuts = 'true'
     $('#searchbar').before($('#optionsbut'))
@@ -2112,7 +2124,7 @@ function selectRandom() {
 function clicked(ev) {
   $(document).scrollTop(0); // fixes weird shit
   $('#context-menu').hide()
-  if (ev.target.tagName == 'TEXTAREA') {
+  if (ev.target.tagName == 'TEXTAREA' && !$(ev.target).hasClass('listtitle')) {
     return
   } else if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
     ev.target.tagName != 'TEXTAREA') {
@@ -2246,10 +2258,12 @@ function clicked(ev) {
     select($(ev.target).parent(), false)
   } else if ($(ev.target).hasClass('dropdown-item') == true) {
     eval($(ev.target).attr('function'))
-  } else if ($(ev.target).hasClass('selected') || $(ev.target).hasClass('unselected')) {
+  } else if ($(ev.target).hasClass('listtitle')) {
     select()
     if (window.innerWidth < 600) $(':focus').blur()
-    else if ($(ev.target).hasClass('unselected')) dragson()
+    if ($(ev.target).hasClass('unselected')) {
+      dragson()
+    }
   } else {
     select()
   }
@@ -2295,10 +2309,17 @@ function taskBelow() {
        // if no subtasks, regular next task
       returntask = selected.next()
     }
-  } else if (selected.next()[0] == undefined &&
-    selected.parent().next()[0] != undefined) {
+  } else if (selected.next()[0] == undefined) {
     // end of parent item
-    returntask = selected.parent().next()
+    const parents = selected.parents().toArray()
+    returntask = $(parents[0]).next()
+    let i = 0
+    while (!returntask[0]) {
+      i += 1
+      if (['flop', 'pop'].includes($(parents[i]).attr('id'))) return
+      if (!(parents[i])) return
+      else returntask = $(parents[i]).next()
+    }
   } else if (selected.next()[0] != undefined) {
     // regular next task
     returntask = selected.next()
@@ -2318,45 +2339,28 @@ function taskBelow() {
 }
 
 function moveTask(direction) {
+  if (!selected) return
   if (selected.hasClass('dateheading')) return
-  if (direction == 'pop' &&
-    selected.parents().toArray().includes($('#flop')[0]) == true) {
+  if (direction == 'pop') {
     $('#searchbar').val('d:')
     $('#searchbar').focus()
     movetask = selected
   } else if (direction == 'flop' &&
-    selected.parents().toArray().includes($('#pop')[0])) {
+    getFrame(selected).attr('id') == 'pop') {
     $('#flop').append(selected)
   } else if (direction == 'down') {
     // move the task down
-    const oldselect = selected
-    while (taskBelow() != undefined &&
-      taskBelow().css('display') == 'none') {
-      select(taskBelow())
-    }
-    select(taskBelow())
-    if (selected != undefined) {
-      selected.after(oldselect)
-      select(oldselect)
-    } else {
-      select(oldselect)
-    }
+    if (taskBelow()) taskBelow().after(selected)
+    else select(selected)
   } else if (direction == 'up') {
     // move the task up
-    const oldselect = selected
-    while (taskAbove() != undefined &&
-      taskAbove().css('display') == 'none') {
-      select(taskAbove())
-    }
-    select(taskAbove())
-    if (selected != undefined) {
-      selected.before(oldselect)
-      select(oldselect)
-    } else {
-      select(oldselect)
-    }
+    if (taskAbove()) taskAbove().before(selected)
+    else select(selected)
   }
   save()
+  if (selected.is(':visible')) select(selected)
+  else select()
+  console.log(selected, 'finished');
 }
 
 function dblclick(ev) {
@@ -2679,8 +2683,12 @@ function loadpage(setload) {
   }
   if (window.innerWidth < 600) {
     // hide unnecessary buts and show good ones
+    $('.butbar').show()
+    $('#editbuts').append($('#optionsbut'))
+    $('#optionsbut').css('margin', '')
+    $(':root').css('--butheight', $('#flopbuts').height() + 'px')
     $('.mobilehide').hide()
-    $('button:not(".mobilehide")').show()
+    $('button:not(.mobilehide)').show()
   }
   $('.taskselect').removeClass('taskselect')
   updateSizes()

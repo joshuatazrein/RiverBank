@@ -202,13 +202,13 @@ audio {
 }
 
 #help span {
-  padding-left: 5px;
-  width: calc(100% - 5px);
+  padding-left: 7px;
+  width: calc(100% - 7px);
 }
 
 #help {
   font: inherit;
-  font-size: 18px;
+  font-size: 20px;
   background-color: inherit;
   color: var(--textcolor);
   overflow-y: scroll;
