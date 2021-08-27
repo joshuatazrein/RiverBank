@@ -2104,6 +2104,7 @@ function selectRandom() {
 }
 
 function clicked(ev) {
+  console.log('clicked', ev.target); 
   $(document).scrollTop(0); // fixes weird shit
   $('#context-menu').hide()
   if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
