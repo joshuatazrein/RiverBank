@@ -2357,7 +2357,7 @@ function moveTask(direction) {
 }
 
 function dblclick(ev) {
-  console.log(ev.target);
+  if ($(ev.target)[0].tagName == 'TEXTAREA') return
   if (
     ($(ev.target).hasClass('in') ||
       $(ev.target).hasClass('selected') ||
