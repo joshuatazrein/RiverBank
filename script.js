@@ -16,6 +16,8 @@ var loadedlistobj
 var uploading
 var reloading
 var xhr
+var slider
+var durslider
 var linestarts = {
   '# ': 'h1',
   '## ': 'h2',
@@ -1087,12 +1089,12 @@ function mod12(val) {
 
 function dragTime(el) {
   console.log('dragtime');
-  var slider = $('<input type="range" min="-12" max="12" value="0"' + 
+  slider = $('<input type="range" min="-12" max="12" value="0"' + 
     ' class="slider slider-vert">')
   $(document.body).append(slider)
   slider.css('top', el.offset().top + 5)
   slider.css('left', el.offset().left - 60)
-  var durslider = $(
+  durslider = $(
     '<input type="range" min="-12" max="12" value="0" class="slider">')
   $(document.body).append(durslider)
   durslider.css('top', el.offset().top + 25)
@@ -1100,15 +1102,17 @@ function dragTime(el) {
   const splitlist = el.text().split('-')
   let durval
   // cleans out nonrounded values
-  if (!/:30/.test(splitlist[0]) && !/^\d$/.test(splitlist[0])) {
+  if (!/\d+:30/.test(splitlist[0]) && !/^\d+$/.test(splitlist[0])) {
+    console.log(/\d+:30/.test(splitlist[0]), !/^\d$/.test(splitlist[0]), 'tests');
     splitlist[0] = splitlist[0].split(':')[0] + ':30'
     console.log('fail');
   }
   const origvalue = Number(splitlist[0].replace(':30', '.5'))
   if (splitlist[1]) {
     // set endpoint if it exists
-    if (!/:30/.test(splitlist[1]) && !/^\d$/.test(splitlist[1])) splitlist[1] = 
-      splitlist[1].split(':')[0] + ':30'
+    if (!/:30/.test(splitlist[1]) && !/^\d+$/.test(splitlist[1])) {
+      splitlist[1] = splitlist[1].split(':')[0] + ':30'
+    }
     durval = Number(splitlist[1].replace(':30', '.5'))
   } else durval = origvalue
   slider.on('input', function() {
@@ -1131,18 +1135,21 @@ function dragTime(el) {
     else el.text(splitlist[0] + '-' + 
       String(durchangeval).replace('.5', ':30'))
   })
-  $(document).on('mouseup', function() {
+  durslider.on('mouseup', function() {
     slider.remove()
     durslider.remove()
     save()
-    $(document).on('mouseup', function() {})
   })
-  $(document).on('dragstart', function() {
+  slider.on('mouseup', function() {
     slider.remove()
     durslider.remove()
     save()
-    $(document).on('dragstart', function() {})
   })
+}
+
+function removesliders() {
+  slider.remove()
+  durslider.remove()
 }
 
 function saveTask() {
@@ -1331,6 +1338,7 @@ function saveTask() {
 }
 
 function select(el, scroll) {
+  if (slider) removesliders() // removes sliders
   if ($(el).hasClass('buffer')) {
     select(getFrame($(el)), scroll)
     return
@@ -2369,6 +2377,7 @@ function dblclick(ev) {
     ev.target.tagName != 'TEXTAREA' &&
     !$(ev.target).hasClass('dateheading')
   ) {
+    select($(ev.target))
     editTask()
   } else if (
     ['bold', 'italic', 'bold-italic'].includes(
@@ -2581,6 +2590,7 @@ function reloadpage() {
   test.onreadystatechange = function () {
     if (this.readyState == 4) {
       data = JSON.parse(this.responseText)
+      console.log(data.pop)
       reloadpage2()
     }
   }
