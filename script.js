@@ -1137,6 +1137,13 @@ function dragTime(el) {
     slider.remove()
     durslider.remove()
     save()
+    $(document).on('mouseup', function() {})
+  })
+  $(document).on('dragstart', function() {
+    slider.remove()
+    durslider.remove()
+    save()
+    $(document).on('dragstart', function() {})
   })
 }
 
@@ -1277,7 +1284,7 @@ function saveTask() {
     savetask.addClass('folded')
   }
   savetask.html(newstr)
-  if (savetask) {
+  try {
     // fixing weird glitch
     const wordlist = savetask.html().split(' ')
     for (word in wordlist) {
@@ -1302,6 +1309,9 @@ function saveTask() {
         console.log(savetask.html());
       }
     }
+  } catch (err) {
+    // skip it if it doesn't work
+    console.log(savetask.html(), 'split didn\'t work');
   }
   // take away hashtags
   if (savetask.hasClass('h1') == true) {
