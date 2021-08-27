@@ -18,6 +18,7 @@ var reloading
 var xhr
 var slider
 var durslider
+var stopwatch
 var linestarts = {
   '# ': 'h1',
   '## ': 'h2',
@@ -414,7 +415,10 @@ function clearEmptyDates() {
       stringToDate($(heading).text(), true).getTime() < today.getTime() &&
       $(heading).attr('folded') == 'false'
     ) {
-      togglefold($(heading))
+      if (!getHeadingChildren($(heading)).map((x) => 
+        {return x[0]}).includes(selected[0])) {
+        togglefold($(heading))
+      }
       if (!$(heading).hasClass('complete')) {
         $(heading).addClass('complete')
         $(heading).prev().addClass('complete') // also to date header
@@ -497,6 +501,7 @@ function uploadData(async) {
           console.log('reloading from upload');
           reloadpage()
         }
+        console.log('upload complete');
       }
     }
     if (async ==true) {
@@ -1629,30 +1634,49 @@ function toggleImportant() {
 }
 
 function startTimer() {
-  timertext = $('#timerent').val()
-  if (!timertext.includes(':')) {
-    timer.start(timertext * 60)
-    time = timertext * 60000
-  } else if (timertext.includes(':')) {
-    split = timertext.split(':').map((x) => {
-      return Number(x)
-    })
-    timer.start(split[0] * 60 + split[1])
+  if ($('#timerent').val() == '') {
+    var timertime = new Date().getTime()
+    $('#timerent').val('0:00')
+    if (stopwatch) clearInterval(stopwatch)
+    stopwatch = setInterval(function() {
+      const curtime = new Date().getTime() - timertime
+      let minutes = Math.floor(curtime / 60000); // minutes
+      let secs = Math.floor(Math.ceil(((curtime) - minutes * 60000)) / 1000)
+      $('#timerent').val(String(minutes) + ':' +
+        String(secs).padStart(2, 0))
+    }, 1000)
+  } else {
+    timertext = $('#timerent').val()
+    if (!timertext.includes(':')) {
+      timer.start(timertext * 60)
+      time = timertext * 60000
+    } else if (timertext.includes(':')) {
+      split = timertext.split(':').map((x) => {
+        return Number(x)
+      })
+      timer.start(split[0] * 60 + split[1])
+    }
   }
   $('#timerent').blur()
+}
+
+function stopTimer() {
+  timer.stop()
+  if (stopwatch) clearInterval(stopwatch)
+  $('#timerent').blur()
+  $('#timerent').val('')
 }
 
 function timertest(ev) {
   if (ev.key == 'Enter') {
     startTimer()
   } else if (ev.key == 'Escape') {
-    timer.stop()
-    $('#timerent').blur()
-    $('#timerent').val('')
+    stopTimer()
   } else if (ev.key == ' ') {
     ev.preventDefault()
     if (pause == false) {
       timer.pause()
+      if (stopwatch) clearInterval(stopwatch)
       $('#timerent').blur()
       pause = true
     } else {
@@ -2177,19 +2201,19 @@ function clicked(ev) {
     $('#searchbar').val('d:')
     $('#searchbar').focus()
   } else if ($(ev.target).attr('id') == 'timer25But') {
-    timer.stop()
+    stopTimer()
     $('#timerent').val('25:00')
     startTimer()
   } else if ($(ev.target).attr('id') == 'timer15But') {
-    timer.stop()
+    stopTimer()
     $('#timerent').val('15:00')
     startTimer()
   } else if ($(ev.target).attr('id') == 'timer5But') {
-    timer.stop()
+    stopTimer()
     $('#timerent').val('5:00')
     startTimer()
   } else if ($(ev.target).attr('id') == 'timer+2But') {
-    timer.stop()
+    stopTimer()
     if ($('#timerent').val().split(':').length > 1) {
       $('#timerent').val(
         String(Number($('#timerent').val().split(':')[0]) + 2) +
@@ -2200,7 +2224,7 @@ function clicked(ev) {
     }
     startTimer()
   } else if ($(ev.target).attr('id') == 'timer-2But') {
-    timer.stop()
+    stopTimer()
     if ($('#timerent').val().split(':').length > 1) {
       $('#timerent').val(
         String(Number($('#timerent').val().split(':')[0]) - 2) +
@@ -2213,7 +2237,7 @@ function clicked(ev) {
   } else if ($(ev.target).attr('id') == 'timerStartBut') {
     startTimer()
   } else if ($(ev.target).attr('id') == 'timerStopBut') {
-    timer.stop()
+    stopTimer()
   } else if ($(ev.target).attr('id') == 'popBut') {
     if (selected == undefined) {
       select(dateToHeading(stringToDate('t')))
@@ -2609,7 +2633,7 @@ function reloadpage() {
 }
 
 function reloadpage2() {
-  console.log(data.flop[loadedlist].text.replace(' ondragstart="dragTask(event)" ondragover="draggingOver(event)" ondrop="dropTask(event)" draggable="true"', ''));
+  console.log(['downloaded', data.flop[loadedlist].text]);
   // reselect old select
   let selectframe, selectindex
   if (selected != undefined && selected[0].tagName == 'SPAN') {
