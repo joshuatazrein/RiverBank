@@ -18,33 +18,46 @@
       <div>
         <p id='username'></p>
       </div>
-      <div class='butbar' id='editbuts'>
-        <button class='opts' id='optionsbut'>...</button>
-        <button id='moveUpBut' title='move up'>↑</button>
-        <button id='moveDownBut' title='move down'>↓</button>
-        <button id='editTaskBut' title='edit'>o</button>
-        <button id='deleteTaskBut' title='delete'>x</button>
-        <button id='archiveTaskBut' title='complete'>!</button>
+      <div class='butbar'>
+        <div class='butbar'>
+          <button function="moveTask('up')" title='move up'>↑</button>
+          <button function="moveTask('down')" title='move down'>↓</button>
+          <button function="editTask()" title='edit'>o</button>
+          <button function="deleteTask()" title='delete'>x</button>
+          <button function="archiveTask(true)" title='complete'>!</button>
+        </div>
+        <div class='mobilehide butbar'>
+          <button title='unfold' function='toggleSubtasks()'>[</button>
+          <button title='fold' function='toggleSubtasks()'>]</button>
+          <button title='unindent' function='indentTask(false)'>{</button>
+          <button title='indent' function='indentTask(true)'>}</button>
+        </div>
+        <div class='butbar' id='editbuts'>
+          <button title='options' class='opts' id='optionsbut' function='context(ev)'>OPTIONS</button>
+          <button title='set task type' id='typebut' function='setOptions()'>TYPE</button>
+        </div>
+        <div class='mobilehide butbar'>
+          <button id='timer25But' title='25 minutes'>25</button>
+          <button id='timer15But' title='15 minutes'>15</button>
+          <button id='timer5But' title='5 minutes'>5</button>
+          <button id='timer+2But' title='+2 minutes'>+2</button>
+          <button id='timer-2But' title='-2 minutes'>-2</button>
+        </div>
+        <div class='butbar'>
+          <button id='timerStartBut' title='start timer' style='font-family: monospace'>&#9654;</button>
+          <button id='timerStopBut' title='stop timer'>■</button>
+        </div>
       </div>
+      <input id='timerent' placeholder="timer" />
       <div>
         <input id='searchbar' placeholder="search (d: date)">
         <div id='searchbar-results' class='dropdown' style='position:absolute'></div>
       </div>
-      <div class='butbar'>
-        <button class='mobilehide' id='timer25But' title='25 minutes'>25</button>
-        <button class='mobilehide' id='timer15But' title='15 minutes'>15</button>
-        <button class='mobilehide' id='timer5But' title='5 minutes'>5</button>
-        <button class='mobilehide' id='timer+2But' title='+2 minutes'>+2</button>
-        <button class='mobilehide' id='timer-2But' title='-2 minutes'>-2</button>
-        <button id='timerStartBut' title='start timer' style='font-family: monospace'>&#9654;</button>
-        <button id='timerStopBut' title='stop timer'>■</button>
-      </div>
-      <input id='timerent' placeholder="timer" />
       <p class='title' id='lists'>LISTS</p>
       <div class='butbar'>
-        <button id='addListBut' title='new list'>+</button>
-        <button id='deleteListBut' title='delete list'>x</button>
-        <button id='editListBut' title='edit list'>o</button>
+        <button function="newlist()" title='new list'>+</button>
+        <button function="deletelist()" title='delete list'>x</button>
+        <button function="dragsoff()" title='edit list'>o</button>
       </div>
       <div id='loads' class='loads' onfocusout='dragson()'> <!-- this is used to store list names -->
       </div>
@@ -127,8 +140,8 @@
         <div class='butbar' id='flopbuts'>
           <button class='flopbut' id='flopBut' title='new task in bank'>+ BANK</button>
           <button id='newHeadingFlopBut' title='new heading in bank'>+#</button>
-          <button id='randomBut' title='select random flop'>?</button>
-          <button id='movePopBut' title='move task to river'>→</button>
+          <button function="selectRandom()" title='select random flop'>?</button>
+          <button function="moveTask('pop')" title='move task to river'>→</button>
         </div>
         <p id='flop' class='rendered in' ondrop='dropTask(event)' ondragover='draggingOver(event)'></p>
         <div style='height: 500px;'></div>
@@ -136,7 +149,7 @@
       </div>
       <div class='poplist'>
         <div class='butbar'>
-          <button id='moveFlopBut' title='move task to bank'>←</button>
+          <button function="moveTask('flop')" title='move task to bank'>←</button>
           <button id='todayBut' title='jump to today'>today</button>
           <button id='addDateBut' title='add date'>+#</button>
           <button class='flopbut' id='popBut' title='new task in river'>+ RIVER</button>
@@ -189,6 +202,17 @@
     <p function='changeDateFormat("mm/dd/yyyy")' class='dropdown-item' id='context-changeDate2'>dates: mm/dd/yyyy</p>
     <p function='changeDateFormat("yyyy-mm-dd")' class='dropdown-item' id='context-changeDate3'>dates: yyyy-mm-dd</p>
 
+  </nav>
+  <nav id='settype-menu'>
+    <p class='dropdown-item' title='set h1' function='setTask("h1")'># h1</p>
+    <p class='dropdown-item'  title='set h2' function='setTask("h2")'>## h2</p>
+    <p class='dropdown-item'  title='set h3' function='setTask("h3")'>### h3</p>
+    <p class='dropdown-item'  title='set event' function='setTask("event")'>@ event</p>
+    <p class='dropdown-item' title='set repeat' function='setTask("repeat")'>~ repeat</p>
+    <p class='dropdown-item' title='set deadline' function='setTask("deadline")'>> deadline</p>
+    <p class='dropdown-item' title='set list' function='setTask("list")'>• list</p>
+    <p class='dropdown-item' title='set note' function='setTask("note")'>- note</p>
+    <p class='dropdown-item' title='set blank' function='setTask("")'>_ blank</p>
   </nav>
   <!-- sounds -->
   <script type='text/javascript' src='script.js'></script>

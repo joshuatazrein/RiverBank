@@ -42,16 +42,10 @@ button {
   min-width: 17px;
 }
 
-.opts {
-  height: 100%;
-  margin: 2px;
-}
-
 .butbar {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  margin: 5px 0;
 }
 
 .flopbut {
@@ -251,14 +245,14 @@ input {
   color: var(--textcolor);
 }
 
-#context-menu {
+nav {
   position: absolute;
   background-color: var(--contextcolor);
   z-index: 1;
   font: inherit;
   display: none;
   color: var(--contextfontcolor);
-  padding: 10px 20px;
+  padding: 5px;
 }
 
 span.folded {

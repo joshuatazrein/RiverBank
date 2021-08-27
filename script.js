@@ -3,8 +3,6 @@ var loadedlist
 var selected
 var focused
 var dragsenabled = false
-var rendered = false
-var increase = true
 var inprogress
 var time
 var pause
@@ -415,7 +413,8 @@ function clearEmptyDates() {
       stringToDate($(heading).text(), true).getTime() < today.getTime() &&
       $(heading).attr('folded') == 'false'
     ) {
-      if (!getHeadingChildren($(heading)).map((x) => 
+      if (getHeadingChildren($(heading)).length > 0 &&
+        !getHeadingChildren($(heading)).map((x) => 
         {return x[0]}).includes(selected[0])) {
         togglefold($(heading))
       }
@@ -1345,6 +1344,15 @@ function saveTask() {
   save()
 }
 
+function getHeading(el) {
+  // gets the heading
+  while (el.parent()[0].tagName != 'P') el = el.parent()
+  let heading = el.prev()
+  while (heading[0] && !isHeading($(heading))) heading = $(heading).prev()
+  if ($(heading).hasClass('dateheading')) return $(heading).prev()
+  else return $(heading)
+}
+
 function select(el, scroll) {
   if (slider) removesliders() // removes sliders
   if ($(el).hasClass('buffer')) {
@@ -1379,9 +1387,19 @@ function select(el, scroll) {
       // only execute if not clicked
       parent.scrollTop(0)
       if (!selected.hasClass('dateheading') && !isHeading(selected)) {
-        parent.scrollTop(Number(selected.offset().top) -
-          Number(getFrame(selected).offset().top) - 
-          getFrame(selected).height() / 2)
+        if (getHeading(selected)[0] && 
+        Number(getHeading(selected).offset().top) + parent.height() / 2 >
+        Number(selected.offset().top)) {
+          // scroll to heading
+          parent.scrollTop(Number(getHeading(selected).offset().top) - 
+          Number(getFrame(selected).offset().top))
+        } else {
+          // if more than halfway down the page
+          console.log('this');
+          parent.scrollTop(Number(selected.offset().top) - 
+            Number(parent.offset().top) -
+            parent.height() / 2)
+        }
       } else if (selected.hasClass('dateheading')) {
         parent.scrollTop(Number(selected.prev().offset().top) - 
           Number(getFrame(selected).offset().top))
@@ -1556,7 +1574,8 @@ function archiveAll() {
   })
 }
 
-function archiveTask(dated) {
+function archiveTask(play) {
+  if (play == true) {$('#popsnd')[0].play(); console.log('playing');}
   // archives the selected Flop to the current day
   let heading
   const day = $(dateToHeading(stringToDate('t')))
@@ -2102,6 +2121,13 @@ function context(e) {
     window.innerWidth - $('#context-menu').width()) - 40)
 }
 
+function setOptions() {
+  console.log($('#typebut'));
+  $('#settype-menu').css('top', $('#typebut').offset().top)
+  $('#settype-menu').css('left', $('#typebut').offset().left)
+  $('#settype-menu').show()
+}
+
 function gotolink(e) {
   textstr = e.text().slice(2, -2)
   $('#searchbar').val(textstr)
@@ -2145,9 +2171,38 @@ function selectRandom() {
   }
 }
 
+function setTask(type) {
+  if (!selected || selected.hasClass('dateheading')) return
+  const list = selected.text().split(' ').filter((x) => {return x != ''})
+  console.log(list);
+  if (type == 'deadline') {
+    if (!/\>/.test(list[list.length - 1])) {
+      selected.text(selected.text() + ' >')
+    } else {
+      selected.text(list.slice(0, list.length - 1).join(' ') + ' >')
+    }
+    editTask()
+  } else if (type == 'repeat') {
+    if (!/~/.test(list[list.length - 1])) {
+      selected.text(selected.text() + ' ~')
+    } else {
+      selected.text(list.slice(0, list.length - 1).join(' ') + ' ~')
+    }
+    editTask()
+  } else {
+    selected.attr('class', 'in ' + type)
+    if (type == 'list' && !/•\s/.test(selected.text().slice(0, 2))) {
+      selected.text('• ' + selected.text())
+    } else if (type == 'note' && /\-\s/.test(selected.text().slice(0, 2))) {
+      selected.text('- ' + selected.text())
+    }
+    save()
+  }
+}
+
 function clicked(ev) {
   $(document).scrollTop(0); // fixes weird shit
-  $('#context-menu').hide()
+  $('nav').hide()
   if (ev.target.tagName == 'TEXTAREA' && !$(ev.target).hasClass('listtitle')) {
     return
   } else if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
@@ -2157,31 +2212,6 @@ function clicked(ev) {
     return
   } else if ($(ev.target).hasClass('buffer')) {
     select(getFrame($(ev.target)), false)
-  } else if ($(ev.target).attr('id') == 'optionsbut') {
-    context(ev)
-  } else if ($(ev.target).attr('id') == 'moveUpBut') {
-    moveTask('up')
-  } else if ($(ev.target).attr('id') == 'moveDownBut') {
-    moveTask('down')
-  } else if ($(ev.target).attr('id') == 'movePopBut') {
-    moveTask('pop')
-  } else if ($(ev.target).attr('id') == 'randomBut') {
-    selectRandom()
-  } else if ($(ev.target).attr('id') == 'addListBut') {
-    newlist()
-  } else if ($(ev.target).attr('id') == 'deleteListBut') {
-    deletelist()
-  } else if ($(ev.target).attr('id') == 'editListBut') {
-    dragsoff()
-  } else if ($(ev.target).attr('id') == 'moveFlopBut') {
-    moveTask('flop')
-  } else if ($(ev.target).attr('id') == 'editTaskBut') {
-    editTask()
-  } else if ($(ev.target).attr('id') == 'deleteTaskBut') {
-    deleteTask()
-  } else if ($(ev.target).attr('id') == 'archiveTaskBut') {
-    archiveTask()
-    $('#popsnd')[0].play()
   } else if ($(ev.target).attr('id') == 'newHeadingFlopBut') {
     if (selected == undefined ||
       selected.parents().toArray().includes($('#pop')[0]) ||
@@ -2255,6 +2285,8 @@ function clicked(ev) {
     }
     newTask()
     // other clicks
+  } else if ($(ev.target)[0].tagName == 'BUTTON') {
+    eval($(ev.target).attr('function')) // execute button functions
   } else if ($(ev.target).hasClass('link') == true) {
     // search the task
     $('#searchbar').val($(ev.target).text().slice(2, -2))
@@ -2280,8 +2312,12 @@ function clicked(ev) {
   } else if (!isSubtask($(ev.target))) {
     // select parents of 
     select($(ev.target).parent(), false)
-  } else if ($(ev.target).hasClass('dropdown-item') == true) {
+  } else if ($(ev.target).hasClass('dropdown-item')) {
+    const oldselect = selected
     eval($(ev.target).attr('function'))
+    if (selected && selected[0].tagName != 'TEXTAREA') {
+      select(oldselect)
+    }
   } else if ($(ev.target).hasClass('listtitle')) {
     select()
     if (window.innerWidth < 600) $(':focus').blur()
@@ -2302,14 +2338,14 @@ function taskAbove() {
   } else if (selected.prev()[0] != undefined) {
     returntask = selected.prev()
   } // nonedisplays are not selected
-  while (returntask[0] != undefined && returntask.hasClass('in') == false) {
+  while (returntask != undefined && returntask.hasClass('in') == false) {
     returntask = returntask.prev()
   }
-  if (returntask[0] != undefined && !returntask.is(':visible' )) {
+  if (returntask != undefined && !returntask.is(':visible' )) {
     // while invisible
     select(returntask)
     return taskAbove()
-  } else if (returntask[0] == undefined || returntask.hasClass('in') == false) {
+  } else if (!returntask || returntask.hasClass('in') == false) {
     return selected
   } else {
     return returntask
@@ -2618,7 +2654,9 @@ function reloadpage() {
     const test = new XMLHttpRequest();
     test.onreadystatechange = function () {
       if (this.readyState == 4) {
-        data = JSON.parse(this.responseText)
+        try {
+          data = JSON.parse(this.responseText)
+        } catch (err) {}
         reloadpage2() //fixing things to be di
       }
     }
