@@ -74,11 +74,33 @@ button {
   overflow: hidden;
 }
 
-span:not(.bold):not(.bold-italic):not(.deadline):not(.link):not(.italic) {
+span:not(.bold):not(.bold-italic):not(.deadline):not(.link):not(.italic):not(.timing):not(.weblink) {
   display: inline-block;
   width: calc(100% - 10px);
   padding-bottom: 5px;
   padding-top: 2px;
+}
+
+.slider, .slider-vert {
+  -webkit-appearance: none;
+  background: transparent;
+  border: transparent;
+  position: absolute;
+  width: 100px;
+}
+
+.slider-vert {
+  transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 10px;
+  height: 10px;
+  background: var(--select);
+  border-radius: 100%;
 }
 
 span:not(.list) {
@@ -99,7 +121,7 @@ span.note {
   font-family: 'Courier New';
 }
 
-span span:not(.bold):not(.bold-italic):not(.italic):not(.link):not(.deadline) {
+span span:not(.bold):not(.bold-italic):not(.italic):not(.link):not(.deadline):not(.timing) {
   padding-left: calc(1em + 5px);
   font-size: 85%;
   opacity: 0.85;
@@ -111,7 +133,7 @@ textarea.sublist {
   opacity: 0.85;
 }
 
-span.list span:not(.bold):not(.bold-italic):not(.italic):not(.link):not(.deadline) {
+span.list span:not(.bold):not(.bold-italic):not(.italic):not(.link):not(.deadline):not(.timing) {
   padding-left: 0.5em;
 }
 
@@ -292,6 +314,20 @@ span.link, span.bold, span.italic, span.bold-italic,
 span.weblink, span.deadline {
   padding-left: 0 !important;
   display: inline;
+}
+
+span.weblink {
+  color: var(--select)
+}
+
+span.timing {
+  background-color: var(--event);
+  display: inline;
+  border-radius: 5px;
+  padding: 0 2px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 80%;
+  font-weight: bold;
 }
 
 span.deadline {

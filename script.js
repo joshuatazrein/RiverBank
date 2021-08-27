@@ -1087,6 +1087,56 @@ function indentTask(indent) {
   }
 }
 
+function mod12(val) {
+  if (val > 12.9) return val - 12
+  else if (val < 1) return val + 12
+  else return val
+}
+
+function dragTime(el) {
+  console.log('dragtime');
+  var slider = $('<input type="range" min="-12" max="12" value="0"' + 
+    ' class="slider slider-vert">')
+  $(document.body).append(slider)
+  slider.css('top', el.offset().top + 5)
+  slider.css('left', el.offset().left - 60)
+  var durslider = $(
+    '<input type="range" min="-12" max="12" value="0" class="slider">')
+  $(document.body).append(durslider)
+  durslider.css('top', el.offset().top + 25)
+  durslider.css('left', el.offset().left - 45 + el.width() / 2)
+  const splitlist = el.text().split('-')
+  let durval
+  const origvalue = Number(splitlist[0].replace(':30', '.5'))
+  if (splitlist[1]) {
+    // set endpoint if it exists
+    durval = Number(splitlist[1].replace(':30', '.5'))
+  }
+  slider.on('input', function() {
+    if (durslider) durslider.remove()
+    let changeval = mod12(origvalue + slider.val() / 2)
+    if (durval) {
+      durchangeval = mod12(durval + slider.val() / 2)
+      el.text(String(changeval).replace('.5', ':30') + '-' + 
+        String(durchangeval).replace('.5', ':30'))
+    } else {
+      el.text(String(changeval).replace('.5', ':30'))
+    }
+  })
+  durslider.on('input', function() {
+    if (slider) slider.remove()
+    durchangeval = mod12(durval + durslider.val() / 2)
+    if (durchangeval < origvalue && durslider.val() < 0) return // prevent earlier
+    el.text(splitlist[0] + '-' + 
+      String(durchangeval).replace('.5', ':30'))
+  })
+  $(document).on('mouseup', function() {
+    slider.remove()
+    durslider.remove()
+    save()
+  })
+}
+
 function saveTask() {
   // analyze format of task and create new <span> elt for it
   const savetask = selected.prev() // looks at item before it
@@ -1166,7 +1216,7 @@ function saveTask() {
   }
   // add in line inners
   let htmlstr = selected.val()
-  let newstr = ''
+  let newstr = '' // newstr is the gradually added string with classes
   let start = 0
   const modecloses = []
   for (let i = 0; i < htmlstr.length; i++) {
@@ -1204,10 +1254,49 @@ function saveTask() {
   }
   newstr += htmlstr.slice(start)
   newstr += getChildren(el)
+  if (selected.val().charAt(0) == '@') {
+    // process event signs
+    const list = newstr.split(' ')
+    console.log(list[0]);
+    if (/@\d(.*)/.test(list[0])) {
+      console.log('match');
+      // replace with timing object with times
+      const timing = $('<span class="timing"></span>')
+      timing.text(list[0].slice(1))
+      list[0] = timing[0].outerHTML
+      console.log(list[0]);
+      newstr = list.join(' ')
+    } else {
+      newstr = newstr.slice(1)
+    }
+  }
   if (savetask.hasClass('folded') == 'true') {
     savetask.addClass('folded')
   }
   savetask.html(newstr)
+  const wordlist = savetask.html().split(' ')
+  for (word in wordlist) {
+    // add in weblinks
+    if (wordlist[word].slice(1, wordlist[word].length - 1).includes('.') &&
+      stringToDate(wordlist[word]) == 'Invalid Date') {
+      let match = false
+      for (patt of [/^\.+$/, /\d+\.\d+/]) {
+        if (patt.test(wordlist[word]) == true) {
+          match = true
+        }
+      }
+      if (match == false) {
+        console.log('matching');
+        // format as a url
+        // wordlist[word] = '<span class="weblink"><a href="' + wordlist[word] + 
+        //   '" title="' + wordlist[word] + '">§</a></span>'
+        wordlist[word] = '<span class="weblink" title="' + wordlist[word] + 
+          '">' + wordlist[word] + '</span>'
+      }
+      savetask.html(wordlist.join(' '))
+      console.log(savetask.html());
+    }
+  }
   // take away hashtags
   if (savetask.hasClass('h1') == true) {
     savetask.html(savetask.html().slice(2))
@@ -1216,24 +1305,6 @@ function saveTask() {
   }
   if (savetask.hasClass('h3') == true) {
     savetask.html(savetask.html().slice(4))
-  }
-  const wordlist = stripChildren(savetask).split(' ')
-  for (word in wordlist) {
-    if (wordlist[word].slice(1, wordlist[word].length - 1).includes('.') &&
-      stringToDate(wordlist[word]) == 'Invalid Date') {
-      let match = false
-      for (patt of [/\.+/, /\d*\.\d*/]) {
-        if (patt.test(wordlist[word]) == true) {
-          match = true
-        }
-      }
-      if (match == false) {
-        // format as a url
-        savetask.html(savetask.html().replace(wordlist[word],
-          '<span class="weblink"><a href="' + wordlist[word] + '" title="' +
-          wordlist[word] + '">§</a></span>'));
-      }
-    }
   }
   selected.remove()
   savetask.show()
@@ -1321,7 +1392,7 @@ function stripChildren(el, mode) {
 function isSubtask(el) {
   // tests inline spans until it gets one, otherwise returns true
   for (lineinner of [
-      'link', 'italic', 'bold', 'bold-italic', 'deadline', 'weblink'
+      'link', 'italic', 'bold', 'bold-italic', 'deadline', 'weblink', 'timing'
     ]) {
     if (el.hasClass(lineinner) == true) {
       return false
@@ -1374,15 +1445,18 @@ function editTask() {
     selected.focus()
     selected.val(stripChildren(el))
     // add back hashtags
-    if (el.hasClass('h1') == true) {
+    if (el.hasClass('h1')) {
       selected.val('# ' + selected.val())
       el.removeClass('h1')
-    } else if (el.hasClass('h2') == true) {
+    } else if (el.hasClass('h2')) {
       selected.val('## ' + selected.val())
       el.removeClass('h2')
-    } else if (el.hasClass('h3') == true) {
+    } else if (el.hasClass('h3')) {
       selected.val('### ' + selected.val())
       el.removeClass('h3')
+    } else if (el.hasClass('event')) {
+      selected.val(('@') + selected.val())
+      el.removeClass('event')
     }
     while (selected.val().charAt(0) == '\n') {
       selected.val(selected.val().slice(1))
@@ -2129,6 +2203,14 @@ function clicked(ev) {
     // search the task
     $('#searchbar').val($(ev.target).text().slice(2, -2))
     search(true)
+  } else if ($(ev.target).hasClass('weblink')) {
+    let title = $(ev.target).attr('title')
+    if (!title.includes('https://www.')) title = 'https://www.' + title
+    else if (!title.includes('https://')) title = 'https://' + title
+    window.location = title
+  } else if ($(ev.target).hasClass('timing')) {
+    // timing generate for thing
+    dragTime($(ev.target))
   } else if ($(ev.target).hasClass('deadline') == true) {
     select(dateToHeading(stringToDate(
       $(ev.target).text().slice(1))))
@@ -2136,20 +2218,11 @@ function clicked(ev) {
     // jump to deadline
     $('#searchbar').val(stripChildren($(ev.target)))
     search('deadline')
-  } else if (
-    ($(ev.target).parents().toArray().includes($('#flop')[0]) == true ||
-      $(ev.target).parents().toArray().includes($('#pop')[0]) == true || [
-        'flop', 'pop'
-      ].includes($(ev.target).attr('id')) == true) && ['bold', 'italic',
-      'bold-italic'
-    ].includes(
-      $(ev.target).attr('class')) == false
-  ) {
+  } else if (getFrame($(ev.target)) && isSubtask($(ev.target))) {
     // select allowable elements
     select(ev.target, false)
-  } else if (
-    ['bold', 'italic', 'bold-italic'].includes(
-      $(ev.target).attr('class')) == true) {
+  } else if (!isSubtask($(ev.target))) {
+    // select parents of 
     select($(ev.target).parent(), false)
   } else if ($(ev.target).hasClass('dropdown-item') == true) {
     eval($(ev.target).attr('function'))
@@ -2267,6 +2340,7 @@ function moveTask(direction) {
 }
 
 function dblclick(ev) {
+  console.log(ev.target);
   if (
     ($(ev.target).hasClass('in') ||
       $(ev.target).hasClass('selected') ||
@@ -2279,8 +2353,9 @@ function dblclick(ev) {
   } else if (
     $(ev.target).hasClass('in') &&
     ev.target.tagName != 'TEXTAREA' &&
-    $(ev.target).hasClass('dateheading') == false
+    !$(ev.target).hasClass('dateheading')
   ) {
+    console.log('newtask');
     if (ev.target.tagName == 'P') {
       newTask()
     } else {
