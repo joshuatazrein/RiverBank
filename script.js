@@ -2591,7 +2591,7 @@ function reloadpage() {
     if (this.readyState == 4) {
       data = JSON.parse(this.responseText)
       console.log(data.pop.replace(/<span(.+)>/, '<span>'))
-      reloadpage2()
+      reloadpage2() //fixing things to be di
     }
   }
   test.open(
