@@ -1332,12 +1332,15 @@ function saveTask() {
 }
 
 function select(el, scroll) {
+  if ($(el).hasClass('buffer')) {
+    select(getFrame($(el)), scroll)
+    return
+  }
   $(document).scrollTop(0); // fixes weird shit
   // switch selection
   if (selected != undefined) {
     selected.removeClass('taskselect')
   }
-  console.log(el);
   if (el != undefined && $(el).hasClass('in') == true) {
     selected = $(el)
     selected.addClass('taskselect')
@@ -2106,13 +2109,14 @@ function clicked(ev) {
     ev.target.tagName != 'TEXTAREA') {
     console.log('saving task');
     saveTask()
+    select($(ev.target), false)
     return
   } else if ($(ev.target).hasClass('buffer')) {
     select(getFrame($(ev.target)), false)
+  } else if (ev.target.tagName == 'TEXTAREA' && 
+    selected[0].tagName == 'TEXTAREA') {
     return
-  }
-  // buttons
-  if ($(ev.target).attr('id') == 'optionsbut') {
+  } else if ($(ev.target).attr('id') == 'optionsbut') {
     context(ev)
   } else if ($(ev.target).attr('id') == 'moveUpBut') {
     moveTask('up')
