@@ -986,7 +986,6 @@ function datesToRelative(a, b) {
 function updatedeadlines() {
   $('.duedate').remove()
   $('.placeholder').remove()
-  $('.buffer').remove()
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
     (x) => {
       return $(x).attr('folded') == 'true'
@@ -1035,9 +1034,11 @@ function updatedeadlines() {
     newelt.removeClass('in')
     $(heading).before(newelt)
   }
-  $('#pop').append('<span class="buffer" style="height:75%"></span>')
-  if ($('#flop').html().length > 0) {
+  if (!$('#flop').children().filter('.buffer')[0]) {
     $('#flop').append('<span class="buffer" style="height:75%"></span>')
+  }
+  if (!$('#pop').children().filter('.buffer')[0]) {
+    $('#pop').append('<span class="buffer" style="height:75%"></span>')
   }
   for (list in $('#loads').children().toArray()) {
     // clears out empty lists
@@ -1111,7 +1112,7 @@ function dragTime(el) {
   if (splitlist[1]) {
     // set endpoint if it exists
     durval = Number(splitlist[1].replace(':30', '.5'))
-  }
+  } else durval = origvalue
   slider.on('input', function() {
     if (durslider) durslider.remove()
     let changeval = mod12(origvalue + slider.val() / 2)
@@ -1318,10 +1319,10 @@ function saveTask() {
 function select(el, scroll) {
   $(document).scrollTop(0); // fixes weird shit
   // switch selection
-  $('.buffer').remove()
   if (selected != undefined) {
     selected.removeClass('taskselect')
   }
+  console.log(el);
   if (el != undefined && $(el).hasClass('in') == true) {
     selected = $(el)
     selected.addClass('taskselect')
@@ -1339,10 +1340,6 @@ function select(el, scroll) {
           function() {
             return this.nodeType == 3;
           }).remove();
-        $('#pop').append('<span class="buffer" style="height:75%"></span>')
-        if ($('#flop').html().length > 0) {
-          $('#flop').append('<span class="buffer" style="height:75%"></span>')
-        }
       } catch (err) {}
     }
     if (scroll != false) {
@@ -1493,8 +1490,8 @@ function newTask(subtask) {
   }
   e = selected
   if (selected[0].tagName == 'P' && selected.hasClass('in')) {
-    // blank
-    e.append(newspan)
+    // blank before buffer
+    $(e.children()[e.children().length - 1]).before(newspan)
   } else if (selected[0].tagName == 'SPAN' && subtask == true) {
     // subtask
     e.append(newspan)
@@ -1877,9 +1874,6 @@ function context(e) {
   } else {
     select($(e.target), false)
   }
-  if ($(e.target).hasClass('buffer')) {
-    $('.buffer').remove();
-  };
   $('#context-menu').show()
   options = {
     '#context-newlist': [
@@ -2091,14 +2085,16 @@ function selectRandom() {
 }
 
 function clicked(ev) {
-  if ($(ev.target).hasClass('buffer')) {
-    $('.buffer').remove();
-  };
   $(document).scrollTop(0); // fixes weird shit
   $('#context-menu').hide()
   if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
     ev.target.tagName != 'TEXTAREA') {
+    console.log('saving task');
     saveTask()
+    return
+  } else if ($(ev.target).hasClass('buffer')) {
+    select(getFrame($(ev.target)), false)
+    return
   }
   // buttons
   if ($(ev.target).attr('id') == 'optionsbut') {
@@ -2218,7 +2214,7 @@ function clicked(ev) {
     // jump to deadline
     $('#searchbar').val(stripChildren($(ev.target)))
     search('deadline')
-  } else if (getFrame($(ev.target)) && isSubtask($(ev.target))) {
+  } else if (getFrame($(ev.target)) && $(ev.target).hasClass('in')) {
     // select allowable elements
     select(ev.target, false)
   } else if (!isSubtask($(ev.target))) {
@@ -2350,17 +2346,14 @@ function dblclick(ev) {
     window.innerWidth < 600
   ) {
     context(ev)
+  } else if (selected.hasClass('in') && selected[0].tagName == 'P') {
+    newTask()
   } else if (
     $(ev.target).hasClass('in') &&
     ev.target.tagName != 'TEXTAREA' &&
     !$(ev.target).hasClass('dateheading')
   ) {
-    console.log('newtask');
-    if (ev.target.tagName == 'P') {
-      newTask()
-    } else {
-      editTask()
-    }
+    editTask()
   } else if (
     ['bold', 'italic', 'bold-italic'].includes(
       $(ev.target).attr('class')) == true) {
@@ -2555,6 +2548,8 @@ function keycomms(evt) {
 }
 
 function getFrame(task) {
+  if (task.attr('id') == 'flop') return $('#flop')
+  else if (task.attr('id') == 'pop') return $('#pop')
   const parents = task.parents().toArray()
   if (parents.includes($('#flop')[0])) return $('#flop')
   else if (parents.includes($('#pop')[0])) return $('#pop')
