@@ -127,6 +127,12 @@ span span:not(.bold):not(.bold-italic):not(.italic):not(.link):not(.deadline):no
   opacity: 0.85;
 }
 
+span span.note {
+  font-size: 0.64em !important;
+  opacity: 0.85;
+  text-indent: calc(-1.5em + 5px) !important;
+}
+
 textarea.sublist {
   padding-left: 0.5em;
   font-size: 0.85em !important;

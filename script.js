@@ -322,12 +322,6 @@ function loadthis() {
   loadList(this)
 }
 
-function finalsave() {
-  // select()
-  // save()
-  // uploadData(true) // makes sure it gets saved
-}
-
 // Storing data:
 function save() {
   savedata = JSON.parse(JSON.stringify(data))
@@ -1108,9 +1102,16 @@ function dragTime(el) {
   durslider.css('left', el.offset().left - 45 + el.width() / 2)
   const splitlist = el.text().split('-')
   let durval
+  // cleans out nonrounded values
+  if (!/:30/.test(splitlist[0]) && !/^\d$/.test(splitlist[0])) {
+    splitlist[0] = splitlist[0].split(':')[0] + ':30'
+    console.log('fail');
+  }
   const origvalue = Number(splitlist[0].replace(':30', '.5'))
   if (splitlist[1]) {
     // set endpoint if it exists
+    if (!/:30/.test(splitlist[1]) && !/^\d$/.test(splitlist[1])) splitlist[1] = 
+      splitlist[1].split(':')[0] + ':30'
     durval = Number(splitlist[1].replace(':30', '.5'))
   } else durval = origvalue
   slider.on('input', function() {
@@ -2580,13 +2581,28 @@ function reloadpage() {
     console.log('uploading in prog; returning reupload')
     return
   }
+  const test = new XMLHttpRequest();
+  test.onreadystatechange = function () {
+    if (this.readyState == 4) {
+      data = JSON.parse(this.responseText)
+      reloadpage2()
+    }
+  }
+  test.open(
+    'POST', 
+    'users/' + document.cookie.split(';')[0].split('=')[1] + '.json'
+  )
+  test.send()
+}
+
+function reloadpage2() {
+  console.log('reloading page 2');
   // reselect old select
   let selectframe, selectindex
   if (selected != undefined && selected[0].tagName == 'SPAN') {
     selectframe = getFrame(selected)
     selectindex = selectframe.find('span').toArray().indexOf(selected[0])
   }
-  load()
   $('#pop').empty()
   $('#flop').empty()
   $('#loads').empty()
@@ -2607,7 +2623,6 @@ function loadpage(setload) {
     $(document).on('dblclick', event, dblclick)
     $(window).resize(updateSizes)
     window.addEventListener('focus', reloadpage)
-    $(window).on('beforeunload', finalsave)
   }
   if (!data.headingalign) data.headingalign = 'center'
   document.documentElement.style.setProperty('--headingalign', 

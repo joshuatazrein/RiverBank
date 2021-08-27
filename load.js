@@ -87,7 +87,7 @@ function load() {
       }
     }
     test.open(
-      'GET', 
+      'POST', 
       'users/' + document.cookie.split(';')[0].split('=')[1] + '.json', 
       false
     )
