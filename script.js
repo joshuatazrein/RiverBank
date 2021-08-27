@@ -480,7 +480,6 @@ function uploadData(async) {
   // uploads data to server
   try {
     uploading = true
-    console.log('uploading currently')
     const blob = new Blob([JSON.stringify(data)], {
       type: "text/plain"
     })
@@ -496,7 +495,6 @@ function uploadData(async) {
           console.log('reloading from upload');
           reloadpage()
         } else {
-          console.log('finished uploading')
         }
       }
     }
