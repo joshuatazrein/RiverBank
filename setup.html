@@ -19,7 +19,7 @@
         <p id='username'></p>
       </div>
       <div class='butbar'>
-        <div class='butbar'>
+        <div class='butbar' id='movebuts'>
           <button function="moveTask('up')" title='move up'>↑</button>
           <button function="moveTask('down')" title='move down'>↓</button>
           <button function="editTask()" title='edit'>o</button>
@@ -32,7 +32,7 @@
           <button title='unindent' function='indentTask(false)'>{</button>
           <button title='indent' function='indentTask(true)'>}</button>
         </div>
-        <div class='butbar' id='editbuts'>
+        <div class='butbar mobilehide' id='editbuts'>
           <button title='options' class='opts' id='optionsbut' function='context(ev)'>OPTIONS</button>
           <button title='set task type' id='typebut' function='setOptions()'>TYPE</button>
         </div>
@@ -54,7 +54,7 @@
         <div id='searchbar-results' class='dropdown' style='position:absolute'></div>
       </div>
       <p class='title' id='lists'>LISTS</p>
-      <div class='butbar'>
+      <div class='butbar' id='listbuts'>
         <button function="newlist()" title='new list'>+</button>
         <button function="deletelist()" title='delete list'>x</button>
         <button function="dragsoff()" title='edit list'>o</button>
@@ -208,10 +208,10 @@
     <p class='dropdown-item'  title='set h2' function='setTask("h2")'>## h2</p>
     <p class='dropdown-item'  title='set h3' function='setTask("h3")'>### h3</p>
     <p class='dropdown-item'  title='set event' function='setTask("event")'>@ event</p>
-    <p class='dropdown-item' title='set repeat' function='setTask("repeat")'>~ repeat</p>
-    <p class='dropdown-item' title='set deadline' function='setTask("deadline")'>> deadline</p>
     <p class='dropdown-item' title='set list' function='setTask("list")'>• list</p>
     <p class='dropdown-item' title='set note' function='setTask("note")'>- note</p>
+    <p class='dropdown-item' title='set repeat' function='setTask("repeat")'>~ repeat</p>
+    <p class='dropdown-item' title='set deadline' function='setTask("deadline")'>> deadline</p>
     <p class='dropdown-item' title='set blank' function='setTask("")'>_ blank</p>
   </nav>
   <!-- sounds -->

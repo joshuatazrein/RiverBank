@@ -1032,10 +1032,10 @@ function updatedeadlines() {
     $(heading).before(newelt)
   }
   if (!$('#flop').children().filter('.buffer')[0]) {
-    $('#flop').append('<span class="buffer" style="height:75%"></span>')
+    $('#flop').append('<span class="buffer" style="height:90%"></span>')
   }
   if (!$('#pop').children().filter('.buffer')[0]) {
-    $('#pop').append('<span class="buffer" style="height:75%"></span>')
+    $('#pop').append('<span class="buffer" style="height:90%"></span>')
   }
   for (list in $('#loads').children().toArray()) {
     // clears out empty lists
@@ -2746,11 +2746,11 @@ function loadpage(setload) {
   if (window.innerWidth < 600) {
     // hide unnecessary buts and show good ones
     $('.butbar').show()
-    $('#editbuts').append($('#optionsbut'))
-    $('#optionsbut').css('margin', '')
+    $('#movebuts').append($('#optionsbut'))
+    $('#optionsbut').text('...')
     $(':root').css('--butheight', $('#flopbuts').height() + 'px')
-    $('.mobilehide').hide()
-    $('button:not(.mobilehide)').show()
+    $('.butbar.mobilehide').hide()
+    $('button').show()
   }
   $('.taskselect').removeClass('taskselect')
   updateSizes()

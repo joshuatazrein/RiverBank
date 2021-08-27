@@ -526,10 +526,16 @@ span.deadline {
   button {
     font-size: 14px !important;
   }
-  .leftcolumn button {
+  .leftcolumn .butbar button {
     width: calc(50% - 5px);
     padding: 3px;
     margin: 2px;
+  }
+  #listbuts button {
+    width: calc(33% - 5px);
+  }
+  .leftcolumn .butbar {
+    width: 100%;
   }
   .dropdown-item {
     font-size: 24px !important;
