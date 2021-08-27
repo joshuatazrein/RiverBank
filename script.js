@@ -2605,8 +2605,7 @@ function reloadpage() {
 }
 
 function reloadpage2() {
-  console.log('reloading page 2');
-  console.log(data.flop[loadedlist].text);
+  console.log(data.flop[loadedlist].text.replace(' ondragstart="dragTask(event)" ondragover="draggingOver(event)" ondrop="dropTask(event)" draggable="true"', ''));
   // reselect old select
   let selectframe, selectindex
   if (selected != undefined && selected[0].tagName == 'SPAN') {
