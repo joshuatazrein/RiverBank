@@ -494,7 +494,6 @@ function uploadData(async) {
           reloading = false 
           console.log('reloading from upload');
           reloadpage()
-        } else {
         }
       }
     }
@@ -2105,17 +2104,15 @@ function selectRandom() {
 function clicked(ev) {
   $(document).scrollTop(0); // fixes weird shit
   $('#context-menu').hide()
-  if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
+  if (ev.target.tagName == 'TEXTAREA') {
+    return
+  } else if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
     ev.target.tagName != 'TEXTAREA') {
-    console.log('saving task');
     saveTask()
     select($(ev.target), false)
     return
   } else if ($(ev.target).hasClass('buffer')) {
     select(getFrame($(ev.target)), false)
-  } else if (ev.target.tagName == 'TEXTAREA' && 
-    selected[0].tagName == 'TEXTAREA') {
-    return
   } else if ($(ev.target).attr('id') == 'optionsbut') {
     context(ev)
   } else if ($(ev.target).attr('id') == 'moveUpBut') {
