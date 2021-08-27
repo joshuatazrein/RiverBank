@@ -2586,23 +2586,27 @@ function reloadpage() {
     console.log('uploading in prog; returning reupload')
     return
   }
-  const test = new XMLHttpRequest();
-  test.onreadystatechange = function () {
-    if (this.readyState == 4) {
-      data = JSON.parse(this.responseText)
-      console.log(data.pop.replace(/\<span(.+)\>/, '<span>'))
-      reloadpage2() //fixing things to be di
+  try {
+    const test = new XMLHttpRequest();
+    test.onreadystatechange = function () {
+      if (this.readyState == 4) {
+        data = JSON.parse(this.responseText)
+        reloadpage2() //fixing things to be di
+      }
     }
+    test.open(
+      'POST', 
+      'users/' + document.cookie.split(';')[0].split('=')[1] + '.json'
+    )
+    test.send()
+  } catch(syntaxError) {
+    reloadpage2()
   }
-  test.open(
-    'POST', 
-    'users/' + document.cookie.split(';')[0].split('=')[1] + '.json'
-  )
-  test.send()
 }
 
 function reloadpage2() {
   console.log('reloading page 2');
+  console.log(data.flop[loadedlist].text);
   // reselect old select
   let selectframe, selectindex
   if (selected != undefined && selected[0].tagName == 'SPAN') {
