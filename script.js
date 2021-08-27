@@ -1116,7 +1116,7 @@ function dragTime(el) {
   slider.on('input', function() {
     if (durslider) durslider.remove()
     let changeval = mod12(origvalue + slider.val() / 2)
-    if (durval) {
+    if (durval != origvalue) {
       durchangeval = mod12(durval + slider.val() / 2)
       el.text(String(changeval).replace('.5', ':30') + '-' + 
         String(durchangeval).replace('.5', ':30'))
@@ -1127,8 +1127,10 @@ function dragTime(el) {
   durslider.on('input', function() {
     if (slider) slider.remove()
     durchangeval = mod12(durval + durslider.val() / 2)
-    if (durchangeval < origvalue && durslider.val() < 0) return // prevent earlier
-    el.text(splitlist[0] + '-' + 
+    // prevent earlier
+    if (durchangeval < origvalue && durslider.val() < 0) return 
+    else if (durchangeval == origvalue) el.text(splitlist[0])
+    else el.text(splitlist[0] + '-' + 
       String(durchangeval).replace('.5', ':30'))
   })
   $(document).on('mouseup', function() {
@@ -1275,27 +1277,30 @@ function saveTask() {
     savetask.addClass('folded')
   }
   savetask.html(newstr)
-  const wordlist = savetask.html().split(' ')
-  for (word in wordlist) {
-    // add in weblinks
-    if (wordlist[word].slice(1, wordlist[word].length - 1).includes('.') &&
-      stringToDate(wordlist[word]) == 'Invalid Date') {
-      let match = false
-      for (patt of [/^\.+$/, /\d+\.\d+/]) {
-        if (patt.test(wordlist[word]) == true) {
-          match = true
+  if (savetask) {
+    // fixing weird glitch
+    const wordlist = savetask.html().split(' ')
+    for (word in wordlist) {
+      // add in weblinks
+      if (wordlist[word].slice(1, wordlist[word].length - 1).includes('.') &&
+        stringToDate(wordlist[word]) == 'Invalid Date') {
+        let match = false
+        for (patt of [/^\.+$/, /\d+\.\d+/]) {
+          if (patt.test(wordlist[word]) == true) {
+            match = true
+          }
         }
+        if (match == false) {
+          console.log('matching');
+          // format as a url
+          // wordlist[word] = '<span class="weblink"><a href="' + wordlist[word] + 
+          //   '" title="' + wordlist[word] + '">§</a></span>'
+          wordlist[word] = '<span class="weblink" title="' + wordlist[word] + 
+            '">' + wordlist[word] + '</span>'
+        }
+        savetask.html(wordlist.join(' '))
+        console.log(savetask.html());
       }
-      if (match == false) {
-        console.log('matching');
-        // format as a url
-        // wordlist[word] = '<span class="weblink"><a href="' + wordlist[word] + 
-        //   '" title="' + wordlist[word] + '">§</a></span>'
-        wordlist[word] = '<span class="weblink" title="' + wordlist[word] + 
-          '">' + wordlist[word] + '</span>'
-      }
-      savetask.html(wordlist.join(' '))
-      console.log(savetask.html());
     }
   }
   // take away hashtags
