@@ -1313,6 +1313,7 @@ function saveTask() {
   } catch (err) {
     // skip it if it doesn't work
     console.log(savetask.html(), 'split didn\'t work');
+    return
   }
   // take away hashtags
   if (savetask.hasClass('h1') == true) {
@@ -2104,7 +2105,6 @@ function selectRandom() {
 }
 
 function clicked(ev) {
-  console.log('clicked', ev.target); 
   $(document).scrollTop(0); // fixes weird shit
   $('#context-menu').hide()
   if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
