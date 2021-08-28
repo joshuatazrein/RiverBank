@@ -22,6 +22,10 @@
   font-weight: bold;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font: 24px var(--font), serif;
   width: 100vw;
@@ -80,7 +84,7 @@ span:not(.bold):not(.bold-italic):not(.deadline):not(.link):not(.italic):not(.ti
   background: transparent;
   border: transparent;
   position: absolute;
-  width: 100px;
+  width: 400px;
 }
 
 .slider-vert {
@@ -91,8 +95,8 @@ span:not(.bold):not(.bold-italic):not(.deadline):not(.link):not(.italic):not(.ti
 .slider::-webkit-slider-thumb {
   appearance: none;
   -webkit-appearance: none;
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   background: var(--select);
   border-radius: 100%;
 }
@@ -119,22 +123,18 @@ span span:not(.bold):not(.bold-italic):not(.italic):not(.link):not(.deadline):no
   padding-left: calc(1em + 5px);
   font-size: 85%;
   opacity: 0.85;
+  width: calc(100% - 25px) !important;
 }
 
 span span.note {
   font-size: 0.64em !important;
   opacity: 0.85;
-  text-indent: calc(-1.5em + 5px) !important;
 }
 
 textarea.sublist {
   padding-left: 0.5em;
   font-size: 0.85em !important;
   opacity: 0.85;
-}
-
-span.list span:not(.bold):not(.bold-italic):not(.italic):not(.link):not(.deadline):not(.timing) {
-  padding-left: 0.5em;
 }
 
 .duedate {
@@ -196,8 +196,12 @@ audio {
 }
 
 #help span {
-  padding-left: 7px;
-  width: calc(100% - 7px);
+  width: calc(100% - 8px);
+  padding: 2px 4px;
+}
+
+#help span.command {
+  border-bottom: 1px solid grey;
 }
 
 #help {
@@ -467,6 +471,23 @@ span.deadline {
   font-size: 12px;
   padding: 0;
   margin: 0 0 0 0;
+}
+
+#help span.left, #help span.right {
+  vertical-align: top;
+  display: inline-block;
+  border-bottom: none;
+  /* width: calc(50% - 10px); */
+  /* min-width: 50px; */
+}
+
+#help span.left {
+  text-align: left;
+}
+
+#help span.right {
+  text-align: right;
+  font-style: italic;
 }
 
 @media only screen and (max-width: 600px) {

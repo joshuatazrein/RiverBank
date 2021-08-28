@@ -35,6 +35,8 @@ var lineinners = {
 var savedata
 var weekdaysStr
 var weekdaysNum
+var filtered
+var filteredlist
 
 //# TIMER
 var timer = new Timer({
@@ -133,8 +135,6 @@ function toggledrags() {
     const oldval = $(loads[loadedlist]).val()
     $(loads[loadedlist]).val('')
     $(loads[loadedlist]).val(oldval)
-    $(document).scrollTop(0); // fixes weird shit
-
     save()
   } else {
     loads.forEach((x) => {
@@ -224,6 +224,7 @@ function deletelist() {
 }
 
 function loadList() { //updates the list display
+  unfilter()
   loads = $('#loads').children().toArray()
   loads.forEach(function(i) {
     $(i).removeClass('selected')
@@ -304,6 +305,7 @@ function updateSizes() {
   for (list of $('#loads').children()) {
     $('#texttest').css('font-size', $(list).css('font-size'))
     $('#texttest').html($(list).val())
+    if ($(list).val() == '') $('#texttest'.html($('&nbsp;')))
     $('#texttest').css('width', $(list).width() + 'px')
     $(list).css('height', $('#texttest').height() + 'px')
   }
@@ -324,8 +326,9 @@ function loadthis() {
 }
 
 // Storing data:
-function save() {
-  savedata = JSON.parse(JSON.stringify(data))
+function save(undo) {
+  unfilter()
+  if (undo == true) savedata = JSON.parse(JSON.stringify(data))
   // update height of loads
   const leftcol = $($('.leftcolumn')[0])
   const loadsheight = leftcol.height() -
@@ -408,31 +411,35 @@ function clearEmptyDates() {
     ) date.remove()
   }
   const today = stringToDate('t')
-  $('#pop').children().filter('.dateheading').toArray().forEach((heading) => {
-    if (
-      stringToDate($(heading).text(), true).getTime() < today.getTime() &&
-      $(heading).attr('folded') == 'false'
-    ) {
-      if (getHeadingChildren($(heading)).length > 0 &&
-        !getHeadingChildren($(heading)).map((x) => 
-        {return x[0]}).includes(selected[0])) {
-        togglefold($(heading))
-      }
-      if (!$(heading).hasClass('complete')) {
-        $(heading).addClass('complete')
-        $(heading).prev().addClass('complete') // also to date header
-        if (stringToDate($(heading).text(), true).getTime() == 
-          stringToDate('t').getTime() - 86400000) {
-          const today = dateToHeading(stringToDate('t'))
-          // if it's the previous day
-          getHeadingChildren(today).filter(
-            'span:not(.complete):not(.event)').toArray().forEach(function() {
-              $(today).after($(this))
-            })
+  try {
+    $('#pop').children().filter('.dateheading').toArray().forEach((heading) => {
+      if (
+        stringToDate($(heading).text(), true).getTime() < today.getTime() &&
+        $(heading).attr('folded') == 'false'
+      ) {
+        if (getHeadingChildren($(heading)).length > 0 &&
+          !getHeadingChildren($(heading)).map((x) => 
+          {return x[0]}).includes(selected[0])) {
+          togglefold($(heading))
+        }
+        if (!$(heading).hasClass('complete')) {
+          $(heading).addClass('complete')
+          $(heading).prev().addClass('complete') // also to date header
+          if (stringToDate($(heading).text(), true).getTime() == 
+            stringToDate('t').getTime() - 86400000) {
+            const today = dateToHeading(stringToDate('t'))
+            // if it's the previous day
+            getHeadingChildren(today).filter(
+              'span:not(.complete):not(.event)').toArray().forEach(function() {
+                $(today).after($(this))
+              })
+          }
         }
       }
-    }
-  })
+    })
+  } catch (err) {
+    // prevents loadpage error
+  }
   save()
 }
 
@@ -484,13 +491,14 @@ function reset() {
 function uploadData(async) {
   // uploads data to server
   try {
+    // cancels previous uploads to overwrite
+    if (uploading == true) xhr.abort()
     uploading = true
     const blob = new Blob([JSON.stringify(data)], {
       type: "text/plain"
     })
     const newdata = new FormData()
     newdata.append("upfile", blob)
-    if (xhr) xhr.abort() // cancels previous uploads to overwrite
     xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function() {
       if (this.readyState == 4) {
@@ -888,12 +896,16 @@ function search(skiplinks) {
           // finds only deadlines
           continue
         } else {
-          // add it
-          matches.push({
-            'title': search.title,
-            'text': stripChildren($(child)),
-            'index': children.toArray().indexOf(child)
-          })
+          if (skiplinks != 'complete' && $(child).hasClass('complete')) {
+            continue
+          } else {
+            // add it
+            matches.push({
+              'title': search.title,
+              'text': stripChildren($(child)),
+              'index': children.toArray().indexOf(child)
+            })
+          }
         }
       }
     }
@@ -1073,7 +1085,7 @@ function deleteTask() {
   }
   selected.remove()
   select(newselect)
-  save()
+  save(true)
   clearEmptyDates()
 }
 
@@ -1097,12 +1109,12 @@ function dragTime(el) {
     ' class="slider slider-vert">')
   $(document.body).append(slider)
   slider.css('top', el.offset().top + 5)
-  slider.css('left', el.offset().left - 60)
+  slider.css('left', el.offset().left - 210)
   durslider = $(
     '<input type="range" min="-12" max="12" value="0" class="slider">')
   $(document.body).append(durslider)
   durslider.css('top', el.offset().top + 25)
-  durslider.css('left', el.offset().left - 45 + el.width() / 2)
+  durslider.css('left', el.offset().left - 195 + el.width() / 2)
   const splitlist = el.text().split('-')
   let durval
   // cleans out nonrounded values
@@ -1295,6 +1307,10 @@ function saveTask() {
   if (savetask.hasClass('folded') == 'true') {
     savetask.addClass('folded')
   }
+  newstr = newstr.replace(
+    /\_(.*)\_/, "$1").replace(
+    /\*(.*)\*/, "$1").replace(
+    /\_*(.*)\*_/, "$1")
   savetask.html(newstr)
   try {
     // fixing weird glitch
@@ -1341,7 +1357,7 @@ function saveTask() {
   if (selected.parent()[0].tagName == 'SPAN') {
     selected.parent().attr('draggable', 'true')
   }
-  save()
+  save(true)
 }
 
 function getHeading(el) {
@@ -1354,6 +1370,7 @@ function getHeading(el) {
 }
 
 function select(el, scroll) {
+  console.log(el);
   if (slider) removesliders() // removes sliders
   if ($(el).hasClass('buffer')) {
     select(getFrame($(el)), scroll)
@@ -1385,27 +1402,43 @@ function select(el, scroll) {
     }
     if (scroll != false) {
       // only execute if not clicked
+      const oldscroll = parent.scrollTop()
       parent.scrollTop(0)
+      const scrolltime = 300
+      parent.stop(true)
       if (!selected.hasClass('dateheading') && !isHeading(selected)) {
         if (getHeading(selected)[0] && 
         Number(getHeading(selected).offset().top) + parent.height() / 2 >
         Number(selected.offset().top)) {
           // scroll to heading
-          parent.scrollTop(Number(getHeading(selected).offset().top) - 
-          Number(getFrame(selected).offset().top))
+          const scrolllocation = Number(
+            getHeading(selected).offset().top) - 
+            Number(getFrame(selected).offset().top)
+          parent.scrollTop(oldscroll)
+          parent.animate({
+            scrollTop: scrolllocation
+            }, scrolltime)
         } else {
           // if more than halfway down the page
-          console.log('this');
-          parent.scrollTop(Number(selected.offset().top) - 
+          const scrolllocation = Number(selected.offset().top) - 
             Number(parent.offset().top) -
-            parent.height() / 2)
+            parent.height() / 2
+          parent.scrollTop(oldscroll)
+          parent.animate({
+            scrollTop: scrolllocation}, scrolltime)
         }
       } else if (selected.hasClass('dateheading')) {
-        parent.scrollTop(Number(selected.prev().offset().top) - 
-          Number(getFrame(selected).offset().top))
+        const scrolllocation = Number(selected.prev().offset().top) - 
+          Number(getFrame(selected).offset().top)
+        parent.scrollTop(oldscroll)
+        parent.animate({
+          scrollTop: scrolllocation}, scrolltime)
       } else if (isHeading(selected)) {
-        parent.scrollTop(Number(selected.offset().top) - 
-          Number(getFrame(selected).offset().top))
+        const scrolllocation = Number(selected.offset().top) - 
+          Number(getFrame(selected).offset().top)
+        parent.scrollTop(oldscroll)
+        parent.animate({
+          scrollTop: scrolllocation}, scrolltime)
       }
     }
   } else if ($(el).parent().attr('id') == 'context-menu') {
@@ -1471,7 +1504,7 @@ function updateHeight() {
   if (selected.val() == '') {
     selected.css('height', '1em')
   } else {
-    $('#texttest').text(selected.val())
+    $('#texttest').text(selected.val() + ' x')
     $('#texttest').css('width', selected.width() + 'px')
     $('#texttest').css('padding-left', selected.css('padding-left'))
     selected.css('height', $('#texttest').height() + 'px')
@@ -1499,7 +1532,15 @@ function editTask() {
       selected.after('<span>' + getChildren(el) + '</span>') 
     }
     selected.focus()
-    selected.val(stripChildren(el))
+    // (el).html()
+    el.html(el.html().replace(
+      /<span class="italic">(.*)<\/span>/, 
+      '<span class="italic">_$1_</span>').replace(
+      /<span class="bold">(.*)<\/span>/, 
+      '<span class="bold">*$1*</span>').replace(
+      /<span class="bold-italic">(.*)<\/span>/,
+      '<span class="bold-italic">_*$1*_</span>'))
+    selected.val(stripChildren(el)) 
     // add back hashtags
     if (el.hasClass('h1')) {
       selected.val('# ' + selected.val())
@@ -1911,8 +1952,10 @@ function toggleButs() {
   } else if (window.innerWidth > 600) {
     $('.butbar').hide()
     data.hidebuts = 'true'
-    $('#searchbar').before($('#optionsbut'))
-    $('#optionsbut').css('margin', '5px calc(50% - 10px)')
+    $('#username').after($('#optionsbut'))
+    console.log(String($('#optionsbut').width() / 2));
+    $('#optionsbut').css('margin-left', 'calc(50% - ' + 
+      String($('#optionsbut').width() / 2) + 'px)')
     $(':root').css('--butheight', '-10px')
   }
   if (window.innerWidth < 600) {
@@ -1936,8 +1979,7 @@ function toggleHelp() {
 function setStyle(style) {
   data.style = style
   save()
-  uploadData(true)
-  reloadpage()
+  location.reload()
 }
 
 function context(e) {
@@ -2029,6 +2071,9 @@ function context(e) {
     '#context-newSubtask': [
       ['SPAN'],
       ['in']
+    ],
+    '#context-goToToday': [
+      ['SPAN', 'P'], ['in', 'buffer']
     ],
     '#context-deleteTask': [
       ['SPAN'],
@@ -2191,9 +2236,16 @@ function setTask(type) {
     editTask()
   } else {
     selected.attr('class', 'in ' + type)
-    if (type == 'list' && !/•\s/.test(selected.text().slice(0, 2))) {
+    if (['-', '•'].includes(selected.text().charAt(0))) {
+      // remove bullet or list
+      selected.text(selected.text().slice(1))
+      if (selected.text().charAt(0) == ' ') {
+        selected.text(selected.text().slice(1))
+      }
+    }
+    if (type == 'list') {
       selected.text('• ' + selected.text())
-    } else if (type == 'note' && /\-\s/.test(selected.text().slice(0, 2))) {
+    } else if (type == 'note') {
       selected.text('- ' + selected.text())
     }
     save()
@@ -2243,7 +2295,7 @@ function clicked(ev) {
     $('#timerent').val('5:00')
     startTimer()
   } else if ($(ev.target).attr('id') == 'timer+2But') {
-    stopTimer()
+    timer.stop()
     if ($('#timerent').val().split(':').length > 1) {
       $('#timerent').val(
         String(Number($('#timerent').val().split(':')[0]) + 2) +
@@ -2254,7 +2306,7 @@ function clicked(ev) {
     }
     startTimer()
   } else if ($(ev.target).attr('id') == 'timer-2But') {
-    stopTimer()
+    timer.stop()
     if ($('#timerent').val().split(':').length > 1) {
       $('#timerent').val(
         String(Number($('#timerent').val().split(':')[0]) - 2) +
@@ -2315,7 +2367,8 @@ function clicked(ev) {
   } else if ($(ev.target).hasClass('dropdown-item')) {
     const oldselect = selected
     eval($(ev.target).attr('function'))
-    if (selected && selected[0].tagName != 'TEXTAREA') {
+    if (selected && selected[0].tagName != 'TEXTAREA' &&
+      (evt.target).attr('id') != 'context-goToToday') {
       select(oldselect)
     }
   } else if ($(ev.target).hasClass('listtitle')) {
@@ -2417,7 +2470,7 @@ function moveTask(direction) {
     if (taskAbove()) taskAbove().before(selected)
     else select(selected)
   }
-  save()
+  save(true)
   if (selected.is(':visible')) select(selected)
   else select()
   console.log(selected, 'finished');
@@ -2458,6 +2511,17 @@ function dblclick(ev) {
   }
 }
 
+function unfilter() {
+  // show everything which is filtered
+  if (filtered == true) {
+    filteredlist.forEach((x) => {$(x).show()})
+    filtered = false
+    filteredlist = []
+    updatedeadlines()
+    $('#searchbar').val('')
+  }
+}
+
 function keycomms(evt) {
   if (['Control', 'Command', 'Shift', 'Alt'].includes(evt.key)) {
     return
@@ -2471,12 +2535,15 @@ function keycomms(evt) {
     const exp = /^(•*)(\s*)$/
     if (exp.test(selected.val()) == true) {
       selected.prev().remove()
+      const taskabove = taskAbove()
       selected.remove()
-      select()
+      select(taskabove)
     } else {
       // select current task if cancelling
       saveTask()
     }
+  } else if (evt.key == 't' && evt.ctrlKey) {
+    select(dateToHeading(stringToDate('t')))
   } else if (evt.key == 'Enter' && $(':focus').attr('id') ==
     'searchbar') {
     evt.preventDefault()
@@ -2492,6 +2559,16 @@ function keycomms(evt) {
         movetask = undefined
       }
       save()
+    } else if ($('#searchbar').val().charAt(0) == '#') {
+      const searchstr = $('#searchbar').val()
+      filtered = true
+      filteredlist = $('#pop').find('span.in:visible').toArray().concat(
+        $('#flop').find('span.in:visible').toArray(), 
+        $('.placeholder:visible').toArray(), 
+        $('.deadline:visible').toArray()).filter((x) => {
+        return !stripChildren($(x)).includes(searchstr)})
+      console.log(filteredlist)
+      filteredlist.forEach((x) => {$(x).hide()})
     } else {
       search()
     }
@@ -2499,10 +2576,12 @@ function keycomms(evt) {
     timertest(evt);
   } else if (evt.key == 'Escape') {
     // cancel select
+    evt.preventDefault()
     $('#searchbar').val('')
     $('#searchbar-results').hide()
     $(':focus').blur()
     select()
+    if (filtered == true) unfilter()
   } else if (evt.key == 'z' && evt.ctrlKey == true) {
     data = JSON.parse(JSON.stringify(savedata))
     select()
@@ -2556,6 +2635,8 @@ function keycomms(evt) {
     selected != undefined && selected[0].tagName == 'TEXTAREA') {
     // modify the height of the textarea to hold everything
     updateHeight()
+  } else if ($(':focus').hasClass('listtitle')) {
+    updateSizes()
   } else if (evt.key == 'r' && evt.ctrlKey == true) {
     selectRandom()
   } else if (selected != undefined && selected[0].tagName !=
@@ -2598,7 +2679,23 @@ function keycomms(evt) {
     // key comms without modifier keys
     // TODO fix to make it so they skip over hidden tasks
     // TODO make so that tasks which don't have subtasks aren't folded
-    if (evt.key == 'ArrowUp') {
+    
+    if (evt.key == 'ArrowUp' && evt.shiftKey) {
+      evt.preventDefault()
+      while (taskAbove() && !isHeading(taskAbove())) {
+        console.log(taskBelow());
+        if (taskAbove()[0] == selected[0]) break
+        select(taskAbove())
+      }
+      select(taskAbove())
+    } else if (evt.key == 'ArrowDown' && evt.shiftKey) {
+      evt.preventDefault()
+      while (taskBelow() && !isHeading(taskBelow())) {
+        if (taskBelow()[0] == selected[0]) break
+        select(taskBelow())
+      }
+      select(taskAbove())
+    } else if (evt.key == 'ArrowUp') {
       evt.preventDefault()
       select(taskAbove())
     } else if (evt.key == 'ArrowDown') {
@@ -2739,8 +2836,9 @@ function loadpage(setload) {
     $(':root').css('--butheight', $('#flopbuts').height() + 'px')
   } else {
     $('.butbar').hide()
-    $('#searchbar').before($('#optionsbut'))
-    $('#optionsbut').css('margin', '5px calc(50% - 10px)')
+    $('#username').after($('#optionsbut'))
+    $('#optionsbut').css('margin-left', 'calc(50% - ' + 
+      String($('#optionsbut').width() / 2) + 'px)')
     $(':root').css('--butheight', '-10px')
   }
   if (window.innerWidth < 600) {
@@ -2759,6 +2857,7 @@ function loadpage(setload) {
   updatedeadlines()
   select(dateToHeading(stringToDate('t')))
   loading = false
+  $(document).scrollTop(0)
 }
 
 loadpage()

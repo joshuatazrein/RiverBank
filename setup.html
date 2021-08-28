@@ -44,14 +44,14 @@
           <button id='timer-2But' title='-2 minutes'>-2</button>
         </div>
         <div class='butbar'>
-          <button id='timerStartBut' title='start timer' style='font-family: monospace'>&#9654;</button>
+          <button id='timerStartBut' title='start timer' style='font-family:monospace'>&#9654;</button>
           <button id='timerStopBut' title='stop timer'>■</button>
         </div>
       </div>
       <input id='timerent' placeholder="timer" />
       <div>
         <input id='searchbar' placeholder="search (d: date)">
-        <div id='searchbar-results' class='dropdown' style='position:absolute'></div>
+        <div id='searchbar-results' class='dropdown' style='position:absolute;'></div>
       </div>
       <p class='title' id='lists'>LISTS</p>
       <div class='butbar' id='listbuts'>
@@ -63,76 +63,67 @@
       </div>
       <p id='help' class='help'>
         <span class='h1'>help</span>
-        <span>
-          <span class='h2'>controls</span>
-          <span class='list'>• click: select task</span>
-          <span class='list'>• right-click: options</span>
-          <span class='list'>• doubleclick: edit task</span>
-          <span class='list'>• esc: unselect</span>
-          <span class='list'>• drag/drop: move after targer</span>
-          <span class='list'>• alt-drag/drop: move as subtask</span>
-          <span class='list'>• cmd-drag/drop: move before target</span>
-        </span>
-        <span>
-          <span class='h2'>commands</span>
-          <span class='list'>• return: edit/save</span>
-          <span class='list'>• alt-return: new task below</span>
-          <span class='list'>• alt-shift-return: new subtask</span>
-          <span class='list'>• delete: delete task</span>
-          <span class='list'>• up/down: select above/below</span>
-          <span class='list'>• right/left: select between lists</span>
-          <span class='list'>• alt-up/down: move up/down</span>
-          <span class='list'>• alt-right/left: move between lists</span>
-          <span class='list'>• [/]: fold/un</span>
-          <span class='list'>• alt-[/]: indent/un</span>
-          <span class='list'>• i: important/un</span>
-          <span class='list'>• space: complete/un</span>
-          <span class='list'>• shift-space: archive</span>
-        </span>
-        <span>
-          <span class='h2'>syntax</span>
-          <span class='h1'># h1</span>
-          <span class='h2'>## h2</span>
-          <span class='h3'>### h3</span>
-          <span class='list'>• list<span class='list'>• 2 spaces: indent</span></span>
-          <span class='italic'>_italic_</span><br>
-          <span class='bold'>*bold*</span><br>
-          <span class='bold-italic'>_*bold-italic*_</span><br>
-          <span class='link'>[[link (click to search)]]</span><br>
-          <span><span class='deadline'>>dd.mm.yyyy</span> deadline</span>
-          <span class='event'>@ 10a event
-            <span class='list'>• create or drag subtasks</span>
-          </span>
-          <span>~ repeating tasks (ex: ~1d, ~1w, ~M) - place at end of task</span>
-          <span>- sublist (add "- " to make a list a sublist and fold/unfold it under the list above)</span>
-        </span>
-        <span>
-          <span class='h2'>dates</span>
-          <span>Type "d:" into the search bar to search a date (toggle between short/long dates in options)</span>
-          <span class='list'>• M/Mon: monday</span>
-          <span class='list'>• T/Tue: tuesday</span>
-          <span class='list'>• W/Wed: wednesday</span>
-          <span class='list'>• R/Thu: thursday</span>
-          <span class='list'>• F/Fri: friday</span>
-          <span class='list'>• S/Sat: saturday</span>
-          <span class='list'>• U/Sun: sunday</span>
-          <span class='list'>• t: today's weekday</span>
-          <span class='list'>• +/-: change by time unit</span>
-          <span class='list'>• w: weeks</span>
-          <span class='list'>• m: months</span>
-          <span class='list'>• y: years</span>
-        </span>
-        <span>
-          <span class='h2'>examples</span>
-          <span class='list'>• replace M with Mon for long dates option</span>
-          <span class='list'>• d:M (next Monday)</span>
-          <span class='list'>• d:M1w (a week from Monday)</span>
-          <span class='list'>• d:M1m (the first Monday next month)</span>
-          <span class='list'>• d:M1m1w (a week after the first Monday of next month)</span>
-          <span class='list'>• d:M1y (the first Monday of next year)</span>
-          <span class='list'>• you can also type in a date (day, day & month, or day month & year) to find that date</span>
-          <span class='list'>• change between dd.mm.yyyy, yyyy-mm-dd, and mm/dd/yyyy formats in options</span><br><br>
-        </span>
+        <span class='h2'>controls</span>
+        <span class='command'><span class='left'>click</span><span class='right'>select task</span></span>
+        <span class='command'><span class='left'>right-click</span><span class='right'>options</span></span>
+        <span class='command'><span class='left'>doubleclick</span><span class='right'>edit task</span></span>
+        <span class='command'><span class='left'>esc</span><span class='right'>unselect</span></span>
+        <span class='command'><span class='left'>drag/drop</span><span class='right'>move after targer</span></span>
+        <span class='command'><span class='left'>option-drag/drop</span><span class='right'>move as subtask</span></span>
+        <span class='command'><span class='left'>cmd-drag/drop</span><span class='right'>move before target</span></span>
+        <span class='h2'>commands</span>
+        <span class='command'><span class='left'>return</span><span class='right'>edit/save</span></span>
+        <span class='command'><span class='left'>option-return</span><span class='right'>new task below</span></span>
+        <span class='command'><span class='left'>option-shift-return</span><span class='right'>new subtask</span></span>
+        <span class='command'><span class='left'>delete</span><span class='right'>delete task</span></span>
+        <span class='command'><span class='left'>up/down</span><span class='right'>select above/below</span></span>
+        <span class='command'><span class='left'>right/left</span><span class='right'>select between lists</span></span>
+        <span class='command'><span class='left'>option-up/down</span><span class='right'>move up/down</span></span>
+        <span class='command'><span class='left'>option-right/left</span><span class='right'>move between lists</span></span>
+        <span class='command'><span class='left'>[/]</span><span class='right'>fold/un</span></span>
+        <span class='command'><span class='left'>option-[/]</span><span class='right'>indent/un</span></span>
+        <span class='command'><span class='left'>i</span><span class='right'>important/un</span></span>
+        <span class='command'><span class='left'>space</span><span class='right'>complete/un</span></span>
+        <span class='command'><span class='left'>shift-space</span><span class='right'>archive</span></span>
+        <span class='command'><span class='left'>ctrl-t</span><span class='right'>go to today</span></span>
+        <span class='h2'>syntax</span>
+        <span class='command'><span class='left'># task</span><span class='right h1'>h1</span></span>
+        <span class='command'><span class='left'>## task</span><span class='right h2'>h2</span></span>
+        <span class='command'><span class='left'>### task</span><span class='right h3'>h3</span></span>
+        <span class='command'><span class='left'>• task</span><span class='right'>• list</span></span>
+        <span class='command'><span class='left'>- task</span><span class='right note' style='margin:0;'>- note</span></span>
+        <span class='command'><span class='left'>_text_</span><span class='right italic'>italic</span></span>
+        <span class='command'><span class='left'>*text* </span><span class='right h1'>bold</span></span>
+        <span class='command'><span class='left'>_*text*_ </span><span class='right bold-italic'>bold-italic</span></span>
+        <span class='command'><span class='left'>[[text]]</span><span class='right'><span class='link'>link</span> (click to search)</span></span>
+        <span class='command'><span class='left'>task >date</span><span class='right'><span class='deadline'>deadline</span> (click to jump to date)</span></span>
+        <span class='command'><span class='left'>@time task</span><span class='event'><span class='timing'>time</span>event (click on time to change)</span></span>
+        <span class='command'><span class='left'>task ~time</span><span class='right'>repeat (ex: ~1d, ~M or ~Mon, ~2w)</span></span>
+        <span class='command'><span class='left'>- list</span><span class='right'>sublist (right-click on parent list to fold)</span></span>
+        <span class='h2'>dates</span>
+        <span><span class='left'>Type "d:" into the search bar to search a date</span><span class='right'>(toggle between short/long dates in options)</span></span>
+        <span class='command'><span class='left'>M/Mon</span><span class='right'>monday</span></span>
+        <span class='command'><span class='left'>T/Tue</span><span class='right'>tuesday</span></span>
+        <span class='command'><span class='left'>W/Wed</span><span class='right'>wednesday</span></span>
+        <span class='command'><span class='left'>R/Thu</span><span class='right'>thursday</span></span>
+        <span class='command'><span class='left'>F/Fri</span><span class='right'>friday</span></span>
+        <span class='command'><span class='left'>S/Sat</span><span class='right'>saturday</span></span>
+        <span class='command'><span class='left'>U/Sun</span><span class='right'>sunday</span></span>
+        <span class='command'><span class='left'>t or 0d</span><span class='right'>today's weekday</span></span>
+        <span class='command'><span class='left'>#d/w/m/y</span><span class='right'>change by time unit</span></span>
+        <span class='command'><span class='left'>d</span><span class='right'>weeks</span></span>
+        <span class='command'><span class='left'>w</span><span class='right'>weeks</span></span>
+        <span class='command'><span class='left'>m</span><span class='right'>months</span></span>
+        <span class='command'><span class='left'>y</span><span class='right'>years</span></span>
+        <span class='h2'>examples</span>
+        <span class='command'><span class='left'>replace M with Mon for long dates option</span></span>
+        <span class='command'><span class='left'>d:M</span><span class='right'>next Monday)</span></span>
+        <span class='command'><span class='left'>d:M1w</span><span class='right'>a week from Monday)</span></span>
+        <span class='command'><span class='left'>d:M1m</span><span class='right'>the first Monday next month)</span></span>
+        <span class='command'><span class='left'>d:M1m1w</span><span class='right'>a week after the first Monday of next month)</span></span>
+        <span class='command'><span class='left'>d:M1y</span><span class='right'>the first Monday of next year)</span></span>
+        <span class='command'><span class='left'>you can also type in a date</span><span class='right'>day, day & month, or day month & year) to find that date</span></span>
+        <span><span class='left'>change between dd.mm.yyyy, yyyy-mm-dd, and mm/dd/yyyy formats in options</span></span><br><br>
       </p>
     </div>
     <div class='listcontainer'>
@@ -144,7 +135,7 @@
           <button function="moveTask('pop')" title='move task to river'>→</button>
         </div>
         <p id='flop' class='rendered in' ondrop='dropTask(event)' ondragover='draggingOver(event)'></p>
-        <div style='height: 500px;'></div>
+        <div style='height:500px;'></div>
         <p id='texttest'></p>
       </div>
       <div class='poplist'>
@@ -172,10 +163,11 @@
     <p function='toggleComplete()' class='dropdown-item' id='context-toggleComplete'>toggle complete (space)</p>
     <p function='toggleImportant()' class='dropdown-item' id='context-toggleimportant'>toggle important (i)</p>
     <p function='toggleSubtasks()' class='dropdown-item' id='context-toggleSubtasks'>toggle fold ([/])</p>
-    <p function='indentTask(true)' class='dropdown-item' id='context-indentTask'>indent (alt-])</p>
-    <p function='indentTask(false)' class='dropdown-item' id='context-unIndentTask'>unindent (alt-[)</p>
+    <p function='indentTask(true)' class='dropdown-item' id='context-indentTask'>indent (option-])</p>
+    <p function='indentTask(false)' class='dropdown-item' id='context-unIndentTask'>unindent (option-[)</p>
     <p function='archiveComplete()' class='dropdown-item' id='context-archiveComplete'>archive completed</p>
     <p function='clearEmptyHeadlines()' class='dropdown-item' id='context-clearEmptyHeadlines'>clear empty</p>
+    <p function='select(dateToHeading(stringToDate("t")))' class='dropdown-item' id='context-goToToday'>go to today</p>
 
     <p function='newlist()' class='dropdown-item' id='context-newlist'>new</p>
     <p function='toggledrags()' class='dropdown-item' id='context-toggledrags'>edit</p>

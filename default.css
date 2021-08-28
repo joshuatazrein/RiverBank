@@ -9,10 +9,10 @@
   --butborder: transparent;
   --menufont: Courier New;
   --bdcolor: grey;
-  --duedatecolor: rgb(255, 255, 140);
+  --duedatecolor: #53D2FF;
   --contextcolor: rgba(0, 0, 0, 0.8);
   --contextfontcolor: grey;
-  --important: firebrick;
+  --important: #53D2FF;
   --event: rgba(135,206,235,0.3);
   --date: rgb(135,206,235);
 }
