@@ -37,10 +37,14 @@ body {
   background-color: var(--background);
 }
 
+* {
+  box-sizing: border-box;
+}
+
 /* TITLES AND BUTTONS */
 
 button {
-  font-family: var(--butfont);
+  font-family: var(--butfont), monospace;
   color: var(--butcolor);
   background-color: var(--butbackground);
   border-radius: 6px;
@@ -156,7 +160,7 @@ p.dropdown-item {
 }
 
 .leftcolumn {
-  width: calc(20% - 5px);
+  width: 20vw;
   height: calc(100% - 5px);
   padding: 10px 5px;
   background-color: inherit;
@@ -166,7 +170,7 @@ p.dropdown-item {
 }
 
 .listcontainer {
-  width: calc(80% - 5px);
+  width: 80vw;
   height: 100%;
   float: left;
 }
@@ -174,7 +178,7 @@ p.dropdown-item {
 /* PARAGRAPHS */
 
 .rendered {
-  height: calc(100vh - 23px - var(--butheight));
+  height: calc(100% - var(--butheight));
   width: 100%;
   margin: 0;
   overflow-y: scroll;
@@ -185,7 +189,7 @@ p.dropdown-item {
 }
 
 .floplist {
-  width: calc(50% - 15px);
+  width: 50%;
   height: 100vh;
   padding: 5px;
   float: left;
@@ -195,7 +199,7 @@ p.dropdown-item {
 }
 
 .poplist {
-  width: calc(50% - 15px);
+  width: 50%;
   height: 100vh;
   padding: 5px;
   float: left;
@@ -248,7 +252,6 @@ textarea {
 }
 
 textarea.selected, textarea.unselected {
-  width: calc(100% - 10px);
   height: calc(1em + 5px);
   margin: 1px 5px;
   display: inline-block;
@@ -264,13 +267,9 @@ textarea.selected, textarea.unselected {
 
 textarea.in {
   font: 80% var(--menufont), monospace;
-  width: calc(100% - 10px);
+  width: 100%;
   color: var(--textcolor);
   background: inherit;
-}
-
-span textarea.in {
-  padding-left: 1em;
 }
 
 #texttest {
@@ -312,7 +311,6 @@ textarea.sublist {
 /* # SPANS */
 
 span {
-  box-sizing: border-box;
   width: 100%;
   display: inline-block;
 }
@@ -413,7 +411,7 @@ span.dateheading {
 
 span.placeholder {
   text-align: var(--headingalign);
-  font-family: var(--butfont);
+  font-family: var(--butfont), monospace;
   font-size: 12px;
   padding: 0;
   margin: 0 0 0 0;
@@ -453,27 +451,18 @@ span.deadline {
 
 /* ## SUBSPANS */
 
-span span.in {
+span span.in, span textarea.in {
   margin-left: calc(0.5em - 5px);
   font-size: 0.85em;
   opacity: 0.85;
   text-indent: 0;
-  width: calc(100% + 0.5em + 5px);
+  width: calc(100% - 5px);
 }
 
-span.link, span.bold, span.italic, span.bold-italic, 
-span.weblink, span.deadline {
-  padding-left: 0 !important;
-  display: inline;
-}
-
-span.list span.in, span.note span.in {
+span.list span.in, span.note span.in,
+span.list textarea.in, span.note textarea.in {
   margin-left: -5px;
   width: calc(100% + 5px);
-}
-
-span span.event {
-  width: calc(100% + 0.5em);
 }
 
 span span.list {
@@ -488,10 +477,15 @@ span span.note {
   padding-left: 1em;
 }
 
+span.link, span.bold, span.italic, span.bold-italic, 
+span.weblink, span.deadline {
+  padding-left: 0 !important;
+  display: inline;
+}
+
 /* ## HELP SPANS */
 
 #help span {
-  width: calc(100% - 8px);
   padding: 2px 4px;
 }
 
@@ -524,55 +518,46 @@ span span.note {
   }
   #help {
     font-size: 14px;
-    height: 20%;
+    height: 30%;
     overflow-wrap: break-word;
   }
   .container {
     height: calc(100vh - 80px);
     border-bottom: 1px solid var(--bdcolor);
   }
-  .listcontainer {
-    height: 100%;
-    width: calc(85% - 25px);
-  }
-  .floplist {
-    width: calc(100%);
-    height: 48%;
-    border-bottom: 1px solid var(--bdcolor);
-    border-left: 1px solid var(--bdcolor);
-    border-right: none;
-  }
-  .poplist {
+  .floplist, .poplist {
     width: 100%;
-    height: 48%;
+    height: 50%;
     float: none;
     clear: left;
     border-left: 1px solid var(--bdcolor);
   }
-  .rendered {
-    height: calc(100% - var(--butheight) - 12px);
-    width: 100%;
+  .floplist {
+    border-bottom: 1px solid var(--bdcolor);
+    border-left: 1px solid var(--bdcolor);
+    border-right: none;
   }
   .loads {
     margin-left: -5px;
-    width: calc(100% + 10px);
+    width: calc(100% + 5px);
   }
   .loads textarea {
-    margin-left: 0;
-    width: 100%;
-    padding: 0;
+    width: calc(100% - 5px);
   }
   .leftcolumn {
-    width: 15%;
-    font-size: 12px;
-    height: calc(100% - 25px);
+    font-size: 24px;
+    height: 100%;
   }
   input {
     font-size: 24px;
-    width: calc(100% - 15px);
+    width: calc(100% - 10px);
+  }
+  #timerent {
+    font-size: 24px;
   }
   button {
-    font-size: 14px !important;
+    font-size: 18px !important;
+    min-width: 5vw;
   }
   .leftcolumn .butbar button {
     width: calc(50% - 5px);

@@ -271,27 +271,6 @@ function toggleFoldList() {
 }
 
 function updateSizes() {
-  for (list of [
-      [$('#timerent')[0], 6],
-      [$('#searchbar')[0], 5],
-      [$('#username')[0], $('#username').text().length / 2 + 2],
-      [$('#lists')[0], 7]
-    ].concat(
-      $('#loads').children().toArray().map((x) => {
-        let textlength = Math.max($(x).val().split(' ').map((x) => {
-          return x.length
-        }))
-        return [$(x)[0], textlength / 2 + 2.5]
-      })
-    )) {
-    // update entries
-    let fontsize = 24
-    if (window.innerWidth < 600) fontsize = 16
-    while ($(list[0]).width() / (fontsize / 2) < list[1]) {
-      fontsize -= 1
-    }
-    $(list).css('font-size', fontsize + 'px')
-  }
   // fix context menu for mobile
   if (window.innerWidth < 600) {
     $('.dropdown-item').toArray().forEach((x) => {
@@ -335,7 +314,7 @@ function save(undo) {
     leftcol.children().filter(':not(#loads):visible').toArray().reduce((total,
       x) => {
       return total + $(x).height();
-    }, 0) - 25
+    }, 0)
   $('#loads').css('height', loadsheight + 'px')
   $('textarea.in').remove()
   if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
@@ -411,6 +390,7 @@ function clearEmptyDates() {
     ) date.remove()
   }
   const today = stringToDate('t')
+  console.log('doing the thing');
   try {
     $('#pop').children().filter('.dateheading').toArray().forEach((heading) => {
       if (
@@ -428,10 +408,16 @@ function clearEmptyDates() {
           if (stringToDate($(heading).text(), true).getTime() == 
             stringToDate('t').getTime() - 86400000) {
             const today = dateToHeading(stringToDate('t'))
-            // if it's the previous day
-            getHeadingChildren(today).filter(
-              'span:not(.complete):not(.event)').toArray().forEach(function() {
-                $(today).after($(this))
+            console.log('yesterday')
+            const children = Array.from(getHeadingChildren(
+              $(heading)))
+            console.log(children, 'children');
+            children.filter((x) => {return x.hasClass('event')}).forEach(
+              (x) => {x.addClass('complete')})
+            children.filter((x) => {return !x.hasClass('complete')}
+              ).forEach((x) => {
+                console.log('aftering', $(today).text(), x.text())
+                x.show()
               })
           }
         }
@@ -439,6 +425,7 @@ function clearEmptyDates() {
     })
   } catch (err) {
     // prevents loadpage error
+    console.log('error', err);
   }
   save()
 }
@@ -858,7 +845,7 @@ function dateToHeading(date) {
         $(heading).after($(x))
       })
     }
-    // save()
+    save()
     return newtask
   } else {
     return heading1
@@ -1081,7 +1068,9 @@ function updatedeadlines() {
       drop: function(event, ui) {
         ui.draggable.css('top', '0')
         ui.draggable.css('left', '0')
+        select(ui.draggable[0], false)
         dropTask(event, ui.draggable[0])
+        select(ui.draggable[0])
       }
     })
     $('span.in').attr('dragstart', '')
@@ -1137,6 +1126,19 @@ function mod12(val) {
   else return val
 }
 
+function compareTimes(a, b) {
+  // compares prev/after times based on 6h before
+  if (a >= 6) {
+    // 6-12
+    if (b > a) return 1
+    else return -1 // same counts as before
+  } else {
+    // 1-6
+    if (b > a && b < mod12(a - 6)) return 1
+    else return -1
+  }
+}
+
 function dragTime(el) {
   console.log('dragtime');
   slider = $('<input type="range" min="-12" max="12" value="0"' + 
@@ -1181,17 +1183,18 @@ function dragTime(el) {
     if (slider) slider.remove()
     durchangeval = mod12(durval + durslider.val() / 2)
     // prevent earlier
-    if (durchangeval < origvalue && durslider.val() < 0) return 
-    else if (durchangeval == origvalue) el.text(splitlist[0])
+    if (durchangeval == origvalue) el.text(splitlist[0])
+    else if (compareTimes(origvalue, durchangeval) < 0 && 
+      durslider.val() < 0) return 
     else el.text(splitlist[0] + '-' + 
       String(durchangeval).replace('.5', ':30'))
   })
-  durslider.on('mouseup', function() {
+  durslider.on('mouseup touchend', function() {
     slider.remove()
     durslider.remove()
     save()
   })
-  slider.on('mouseup', function() {
+  slider.on('mouseup touchend', function() {
     slider.remove()
     durslider.remove()
     save()
@@ -1439,7 +1442,7 @@ function select(el, scroll) {
       const oldscroll = parent.scrollTop()
       parent.scrollTop(0)
       const scrolltime = 300
-      parent.stop(true)
+      parent.stop(true) // clear queue
       if (!selected.hasClass('dateheading') && !isHeading(selected)) {
         if (getHeading(selected)[0] && 
         Number(getHeading(selected).offset().top) + parent.height() / 2 >
@@ -1536,14 +1539,11 @@ function getChildren(el) {
 }
 
 function updateHeight() {
-  if (selected.val() == '') {
-    selected.css('height', '1em')
-  } else {
-    $('#texttest').text(selected.val() + ' x')
-    $('#texttest').css('width', selected.width() + 'px')
-    $('#texttest').css('padding-left', selected.css('padding-left'))
-    selected.css('height', $('#texttest').height() + 'px')
-  }
+  // $('#texttest').font(selected.css('font'))
+  $('#texttest').text(selected.val() + ' x')
+  $('#texttest').css('width', selected.width() + 'px')
+  $('#texttest').css('padding', selected.css('padding'))
+  selected.css('height', $('#texttest').height() + 'px')
 }
 
 function editTask() {
@@ -1558,7 +1558,7 @@ function editTask() {
     el.after(newelt)
     el.hide()
     select(newelt)
-    console.log(getChildren(el));
+    selected.focus()
     if (getChildren(el) == '') {
       selected.after('<span style="display:none;"></span>')
       console.log('0height');
@@ -1566,7 +1566,6 @@ function editTask() {
       // appends children after
       selected.after('<span>' + getChildren(el) + '</span>') 
     }
-    selected.focus()
     // (el).html()
     el.html(el.html().replace(
       /<span class="italic">(.*)<\/span>/, 
@@ -1602,6 +1601,7 @@ function editTask() {
       selected.val('• ' + selected.val())
     }
     updateHeight()
+    selected.focus() // for mobile i guess
   }
 }
 
@@ -1691,7 +1691,7 @@ function archiveTask(play) {
   } else {
     selected.hide()
   }
-  save()
+  save(true)
 }
 
 function toggleComplete() {
@@ -1766,6 +1766,7 @@ function timertest(ev) {
   if (ev.key == 'Enter') {
     startTimer()
   } else if (ev.key == 'Escape') {
+    evt.preventDefault()
     stopTimer()
   } else if (ev.key == ' ') {
     ev.preventDefault()
@@ -1804,6 +1805,9 @@ function dropTask(evt, obj) {
     el = obj
   } else {
     el = evt.target
+  }
+  if (el.tagName == 'SPAN' && !isSubtask($(el))) {
+    el = $(el).parent()
   }
   if (selected[0].tagName == 'TEXTAREA') {
     return
@@ -1874,7 +1878,6 @@ function dropTask(evt, obj) {
     // append each child after
     selected.after(children[i])
   }
-  select(selected)
   save()
 }
 
@@ -1993,14 +1996,14 @@ function toggleButs() {
     $('#optionsbut').css('margin', '')
     data.hidebuts = 'false'
     $(':root').css('--butheight', $('#flopbuts').height() + 'px')
-  } else if (window.innerWidth > 600) {
+  } else {
     $('.butbar').hide()
     data.hidebuts = 'true'
     $('#username').after($('#optionsbut'))
     console.log(String($('#optionsbut').width() / 2));
     $('#optionsbut').css('margin-left', 'calc(50% - ' + 
       String($('#optionsbut').width() / 2) + 'px)')
-    $(':root').css('--butheight', '-10px')
+    $(':root').css('--butheight', '0px')
   }
   if (window.innerWidth < 600) {
     // hide unnecessary buts
@@ -2023,6 +2026,7 @@ function toggleHelp() {
 function setStyle(style) {
   data.style = style
   save()
+  uploadData(false)
   location.reload()
 }
 
@@ -2142,11 +2146,11 @@ function context(e, mobile) {
     ],
     '#context-archiveComplete': [
       ['SPAN', 'P'],
-      ['in']
+      ['in', 'buffer']
     ],
     '#context-clearEmptyHeadlines': [
-      ['P'],
-      ['in']
+      ['P', 'SPAN'],
+      ['in', 'buffer']
     ],
     '#context-toggleButs': [
       ['BUTTON'],
@@ -2637,6 +2641,7 @@ function keycomms(evt) {
     }
     loadedlist = oldload
     loadList()
+    dragsoff()
   } else if (
     selected == undefined && evt.key == 'Enter' &&
     $(':focus').hasClass('selected')
@@ -2738,13 +2743,17 @@ function keycomms(evt) {
         if (taskBelow()[0] == selected[0]) break
         select(taskBelow())
       }
-      select(taskAbove())
+      select(taskBelow())
     } else if (evt.key == 'ArrowUp') {
       evt.preventDefault()
       select(taskAbove())
     } else if (evt.key == 'ArrowDown') {
       evt.preventDefault()
       select(taskBelow())
+    } else if (evt.key == 'ArrowRight') {
+      select(dateToHeading(stringToDate('t')))
+    } else if (evt.key == 'ArrowLeft') {
+      select($('#flop').children()[0])
     } else if (evt.key == 'ArrowRight' && Array().includes($('#flop')[0])) {
       // go over and select pop
       // TODO: find the date of today
@@ -2774,7 +2783,10 @@ function keycomms(evt) {
       newTask() // new task
     }
   }
-  if (evt.key == 'Escape') $(document).scrollTop(0); // fixes scrolling
+  if (evt.key == 'Escape') {
+    evt.preventDefault()
+    $(document).scrollTop(0) // fixes scrolling
+  }
 }
 
 function getFrame(task) {
@@ -2883,16 +2895,13 @@ function loadpage(setload) {
     $('#username').after($('#optionsbut'))
     $('#optionsbut').css('margin-left', 'calc(50% - ' + 
       String($('#optionsbut').width() / 2) + 'px)')
-    $(':root').css('--butheight', '-10px')
+    $(':root').css('--butheight', '0px')
   }
   if (window.innerWidth < 600) {
-    // hide unnecessary buts and show good ones
-    $('.butbar').show()
-    $('#movebuts').append($('#optionsbut'))
+    // hide unnecessary buts
+    $('.mobilehide').hide()
     $('#optionsbut').text('...')
-    $(':root').css('--butheight', $('#flopbuts').height() + 'px')
-    $('.butbar.mobilehide').hide()
-    $('button').show()
+    $('#typebut').text('*')
   }
   $('.taskselect').removeClass('taskselect')
   updateSizes()

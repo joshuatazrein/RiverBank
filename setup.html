@@ -35,7 +35,7 @@
           <button title='unindent' function='indentTask(false)'>{</button>
           <button title='indent' function='indentTask(true)'>}</button>
         </div>
-        <div class='butbar mobilehide' id='editbuts'>
+        <div class='butbar' id='editbuts'>
           <button title='options' class='opts' id='optionsbut' function='context(ev)'>OPTIONS</button>
           <button title='set task type' id='typebut' function='setOptions()'>TYPE</button>
         </div>
@@ -71,7 +71,7 @@
         <span class='command'><span class='left'>right-click</span><span class='right'>options</span></span>
         <span class='command'><span class='left'>doubleclick</span><span class='right'>edit task</span></span>
         <span class='command'><span class='left'>esc</span><span class='right'>unselect</span></span>
-        <span class='command'><span class='left'>drag/drop</span><span class='right'>move after targer</span></span>
+        <span class='command'><span class='left'>drag/drop</span><span class='right'>move after target</span></span>
         <span class='command'><span class='left'>option-drag/drop</span><span class='right'>move as subtask</span></span>
         <span class='command'><span class='left'>cmd-drag/drop</span><span class='right'>move before target</span></span>
         <span class='h2'>commands</span>
@@ -80,13 +80,14 @@
         <span class='command'><span class='left'>option-shift-return</span><span class='right'>new subtask</span></span>
         <span class='command'><span class='left'>delete</span><span class='right'>delete task</span></span>
         <span class='command'><span class='left'>up/down</span><span class='right'>select above/below</span></span>
-        <span class='command'><span class='left'>right/left</span><span class='right'>select between lists</span></span>
+        <span class='command'><span class='left'>right/left</span><span class='right'>select between bank & river</span></span>
+        <span class='command'><span class='left'>shift-up/down</span><span class='right'>select heading above/below</span></span>
         <span class='command'><span class='left'>option-up/down</span><span class='right'>move up/down</span></span>
-        <span class='command'><span class='left'>option-right/left</span><span class='right'>move between lists</span></span>
-        <span class='command'><span class='left'>[/]</span><span class='right'>fold/un</span></span>
-        <span class='command'><span class='left'>option-[/]</span><span class='right'>indent/un</span></span>
-        <span class='command'><span class='left'>i</span><span class='right'>important/un</span></span>
-        <span class='command'><span class='left'>space</span><span class='right'>complete/un</span></span>
+        <span class='command'><span class='left'>option-right/left</span><span class='right'>move between bank & river</span></span>
+        <span class='command'><span class='left'>[/]</span><span class='right'>fold/unfold</span></span>
+        <span class='command'><span class='left'>option-[/]</span><span class='right'>indent/unindent</span></span>
+        <span class='command'><span class='left'>i</span><span class='right'>important/unimportant</span></span>
+        <span class='command'><span class='left'>space</span><span class='right'>complete/uncomplete</span></span>
         <span class='command'><span class='left'>shift-space</span><span class='right'>archive</span></span>
         <span class='command'><span class='left'>ctrl-t</span><span class='right'>go to today</span></span>
         <span class='h2'>syntax</span>
@@ -94,15 +95,15 @@
         <span class='command'><span class='left'>## task</span><span class='right h2'>h2</span></span>
         <span class='command'><span class='left'>### task</span><span class='right h3'>h3</span></span>
         <span class='command'><span class='left'>• task</span><span class='right'>• list</span></span>
-        <span class='command'><span class='left'>- task</span><span class='right note' style='margin:0;'>- note</span></span>
+        <span class='command'><span class='left'>- task</span><span class='right note'>- note</span></span>
         <span class='command'><span class='left'>_text_</span><span class='right italic'>italic</span></span>
         <span class='command'><span class='left'>*text* </span><span class='right h1'>bold</span></span>
         <span class='command'><span class='left'>_*text*_ </span><span class='right bold-italic'>bold-italic</span></span>
-        <span class='command'><span class='left'>[[text]]</span><span class='right'><span class='link'>link</span> (click to search)</span></span>
-        <span class='command'><span class='left'>task >date</span><span class='right'><span class='deadline'>deadline</span> (click to jump to date)</span></span>
-        <span class='command'><span class='left'>@time task</span><span class='event'><span class='timing'>time</span>event (click on time to change)</span></span>
-        <span class='command'><span class='left'>task ~time</span><span class='right'>repeat (ex: ~1d, ~M or ~Mon, ~2w)</span></span>
-        <span class='command'><span class='left'>- list</span><span class='right'>sublist (right-click on parent list to fold)</span></span>
+        <span class='command'><span class='left'>[[text]]</span><span class='right'><span class='link'>link</span><br>(click to search)</span></span>
+        <span class='command'><span class='left'>task >date</span><span class='right'><span class='deadline'>deadline</span> <br>(click to jump to date)</span></span>
+        <span class='command'><span class='left'>@time task</span><span class='event'><span class='timing'>time</span>event <br>(click on time to change)</span></span>
+        <span class='command'><span class='left'>task ~time</span><span class='right'>repeat <br>(ex: ~1d, ~M or ~Mon, ~2w)</span></span>
+        <span class='command'><span class='left'>- list</span><span class='right'>sublist <br>(right-click on parent list to fold)</span></span>
         <span class='h2'>dates</span>
         <span><span class='left'>Type "d:" into the search bar to search a date</span><span class='right'>(toggle between short/long dates in options)</span></span>
         <span class='command'><span class='left'>M/Mon</span><span class='right'>monday</span></span>
@@ -120,11 +121,11 @@
         <span class='command'><span class='left'>y</span><span class='right'>years</span></span>
         <span class='h2'>examples</span>
         <span class='command'><span class='left'>replace M with Mon for long dates option</span></span>
-        <span class='command'><span class='left'>d:M</span><span class='right'>next Monday)</span></span>
-        <span class='command'><span class='left'>d:M1w</span><span class='right'>a week from Monday)</span></span>
-        <span class='command'><span class='left'>d:M1m</span><span class='right'>the first Monday next month)</span></span>
-        <span class='command'><span class='left'>d:M1m1w</span><span class='right'>a week after the first Monday of next month)</span></span>
-        <span class='command'><span class='left'>d:M1y</span><span class='right'>the first Monday of next year)</span></span>
+        <span class='command'><span class='left'>d:M</span><span class='right'>next Monday</span></span>
+        <span class='command'><span class='left'>d:M1w</span><span class='right'>a week from Monday</span></span>
+        <span class='command'><span class='left'>d:M1m</span><span class='right'>the first Monday next month</span></span>
+        <span class='command'><span class='left'>d:M1m1w</span><span class='right'>a week after the first Monday of next month</span></span>
+        <span class='command'><span class='left'>d:M1y</span><span class='right'>the first Monday of next year</span></span>
         <span class='command'><span class='left'>you can also type in a date</span><span class='right'>day, day & month, or day month & year) to find that date</span></span>
         <span><span class='left'>change between dd.mm.yyyy, yyyy-mm-dd, and mm/dd/yyyy formats in options</span></span><br><br>
       </p>
