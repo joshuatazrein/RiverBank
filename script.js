@@ -1065,10 +1065,16 @@ function updatedeadlines() {
     // insert mobiledrag elements
     $('span.in').prepend(
       '<span class="mobhandle"></span>')
-    $('.mobhandle').on('touchstart', dragTask)
-    $('.mobhandle').on('touchmove', draggingOver)
-    $('.mobhandle').on('touchend', dropTask)
-    $('.mobhandle').attr('draggable', true)
+    $('span.in').draggable({handle: '.mobhandle'})
+    $('span.in').droppable({
+      accept: 'span.in', 
+      hoverClass: 'drop-hover',
+      drop: function(event, ui) {
+        ui.draggable.css('top', '0')
+        ui.draggable.css('left', '0')
+        dropTask(event, ui.draggable[0])
+      }
+    })
     $('span.in').attr('ondragstart', '')
     $('span.in').attr('ondragover', '')
     $('span.in').attr('ondrop', '')
@@ -1777,7 +1783,14 @@ function dragTask(evt, mobile) {
 }
 
 //dropping
-function dropTask(evt) {
+function dropTask(evt, obj) {
+  console.log('dropping', obj);
+  let el
+  if (obj) {
+    el = obj
+  } else {
+    el = evt.target
+  }
   if (selected[0].tagName == 'TEXTAREA') {
     return
   } else if (stringToDate(selected.text()) != 'Invalid Date' &&
@@ -1790,55 +1803,55 @@ function dropTask(evt) {
     // drop all the tasks
     children = getHeadingChildren(selected)
   }
-  if ($(evt.target).attr('folded') == 'true') {
-    togglefold($(evt.target))
-    if (getHeadingChildren($(evt.target)).length == 0) {
-      $(evt.target).after(selected)
+  if ($(el).attr('folded') == 'true') {
+    togglefold($(el))
+    if (getHeadingChildren($(el)).length == 0) {
+      $(el).after(selected)
     } else {
-      getHeadingChildren($(evt.target))[
-        getHeadingChildren($(evt.target)).length - 1].after(selected)
+      getHeadingChildren($(el))[
+        getHeadingChildren($(el)).length - 1].after(selected)
     }
-  } else if ($(evt.target).hasClass('buffer')) {
+  } else if ($(el).hasClass('buffer')) {
     // dropped onto buffer
     if (evt.metaKey == true) {
-      $(evt.target).parent().prepend(selected)
+      $(el).parent().prepend(selected)
     } else {
-      $(evt.target).before(selected)
+      $(el).before(selected)
     }
-  } else if (evt.target.tagName == 'P' && $(evt.target).hasClass('in')) {
+  } else if (el.tagName == 'P' && $(el).hasClass('in')) {
     // drop task at beginning
     if (evt.altKey == true) {
       if (evt.metaKey == true) {
-        $(evt.target).prepend(selected)
+        $(el).prepend(selected)
       } else {
-        $(evt.target).append(selected)
+        $(el).append(selected)
       }
     } else {
-      $(evt.target).append(selected)
+      $(el).append(selected)
     }
-  } else if (evt.target.tagName == 'SPAN' &&
-    $(evt.target).hasClass('in')) {
+  } else if (el.tagName == 'SPAN' &&
+    $(el).hasClass('in')) {
     // dropping task (according to key commands)
     if (evt.altKey == true) {
       if (evt.metaKey == true) {
-        const subtasks = $(evt.target).children().toArray().filter(
+        const subtasks = $(el).children().toArray().filter(
           (x) => {
             if (isSubtask($(x)) == true) return true
           }
         )
         if (subtasks.length == 0) {
-          $(evt.target).append(selected)
+          $(el).append(selected)
         } else {
           $(subtasks[0]).prepend(selected)
         }
       } else {
-        $(evt.target).append(selected)
+        $(el).append(selected)
       }
     } else {
       if (evt.metaKey == true) {
-        $(evt.target).before(selected)
+        $(el).before(selected)
       } else {
-        $(evt.target).after(selected)
+        $(el).after(selected)
       }
     }
   }
