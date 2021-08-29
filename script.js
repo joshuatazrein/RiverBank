@@ -1064,8 +1064,14 @@ function updatedeadlines() {
   if (window.innerWidth < 600) {
     // insert mobiledrag elements
     $('span.in').prepend(
-      '<span class="mobhandle" ontouchstart="context(event, true)"' + 
-      '></span>')
+      '<span class="mobhandle"></span>')
+    $('.mobhandle').on('touchstart', dragTask)
+    $('.mobhandle').on('touchmove', draggingOver)
+    $('.mobhandle').on('touchend', dropTask)
+    $('.mobhandle').attr('draggable', true)
+    $('span.in').attr('ondragstart', '')
+    $('span.in').attr('ondragover', '')
+    $('span.in').attr('ondrop', '')
   }
 }
 
@@ -1375,7 +1381,9 @@ function getHeading(el) {
 }
 
 function select(el, scroll) {
-  console.log(el);
+  if (el && 
+    $(el)[0].tagName == 'SPAN' && !isSubtask($(el))) el = $(el).parent()
+  console.log('selecting', el);
   if (slider) removesliders() // removes sliders
   if ($(el).hasClass('buffer')) {
     select(getFrame($(el)), scroll)
@@ -1479,7 +1487,7 @@ function isSubtask(el) {
   // tests inline spans until it gets one, otherwise returns true
   for (lineinner of [
       'link', 'italic', 'bold', 'bold-italic', 'deadline', 'weblink', 'timing',
-      
+      'mobhandle'
     ]) {
     if (el.hasClass(lineinner) == true) {
       return false
@@ -1753,8 +1761,9 @@ function timertest(ev) {
 }
 
 //start of drag
-function dragTask(evt) {
-  select(evt.target, false)
+function dragTask(evt, mobile) {
+  console.log('dragtasking');
+  if (!mobile) select(evt.target, false)
   //start drag
   if (selected[0].tagName == 'TEXTAREA') {
     return; // stops from dragging edited subtasks
@@ -1989,21 +1998,23 @@ function setStyle(style) {
 }
 
 function context(e, mobile) {
+  console.log('context');
   if (selected != undefined && selected[0].tagName == 'TEXTAREA') {
     saveTask()
   }
+  let target = e.target
   if (mobile == true) {
-    e.target = $(e.target).parent()[0]
+    target = $(e.target).parent()[0]
   }
   e.preventDefault()
   if (
-    $(e.target)[0].tagName == 'TEXTAREA' &&
-    !$(e.target).hasClass('selected')
+    $(target)[0].tagName == 'TEXTAREA' &&
+    !$(target).hasClass('selected')
   ) {
     // select list
-    e.target.click()
+    target.click()
   } else {
-    select($(e.target), false)
+    select($(target), false)
   }
   $('#context-menu').show()
   options = {
@@ -2155,9 +2166,9 @@ function context(e, mobile) {
   }
   for (option of Object.keys(options)) {
     let showoption = false
-    if (options[option][0].includes(e.target.tagName)) {
+    if (options[option][0].includes(target.tagName)) {
       for (cls of options[option][1]) {
-        if ($(e.target).hasClass(cls) == true) {
+        if ($(target).hasClass(cls) == true) {
           showoption = true
           break
         }
@@ -2373,6 +2384,9 @@ function clicked(ev) {
   } else if (!isSubtask($(ev.target))) {
     // select parents of 
     select($(ev.target).parent(), false)
+    if ($(ev.target).hasClass('mobhandle')) {
+      context(ev, true)
+    }
   } else if ($(ev.target).hasClass('dropdown-item')) {
     const oldselect = selected
     eval($(ev.target).attr('function'))
@@ -2487,16 +2501,7 @@ function moveTask(direction) {
 
 function dblclick(ev) {
   if ($(ev.target)[0].tagName == 'TEXTAREA') return
-  if (
-    ($(ev.target).hasClass('in') ||
-      $(ev.target).hasClass('selected') ||
-      $(ev.target).hasClass('buffer') ||
-      $(ev.target).hasClass('unselected')) &&
-    ev.target.tagName != 'TEXTAREA' &&
-    window.innerWidth < 600
-  ) {
-    context(ev)
-  } else if (selected.hasClass('in') && selected[0].tagName == 'P') {
+  if (selected.hasClass('in') && selected[0].tagName == 'P') {
     newTask()
   } else if (
     $(ev.target).hasClass('in') &&
