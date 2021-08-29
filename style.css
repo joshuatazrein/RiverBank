@@ -492,18 +492,6 @@ span span.note {
   padding-left: 1em;
 }
 
-span span.mobhandle {
-  border: 1px solid var(--select);
-  height: 15px !important;
-  width: 15px !important;
-  border-radius: 100%;
-  padding: 0;
-  margin: 3px;
-  position: absolute;
-  top: 0.25em;
-  right: 0;
-}
-
 /* ## HELP SPANS */
 
 #help span {
@@ -610,15 +598,26 @@ span span.mobhandle {
   .drop-hover {
     background-color: #333;
   }
+  span span.mobhandle {
+    border: 1px solid var(--select);
+    height: 20px !important;
+    width: 20px !important;
+    border-radius: 100%;
+    padding: 0;
+    margin: 3px;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
   /* add the padding-right to subspan widths */
   span.in {
-    padding-right: 20px;
+    padding-right: 25px;
   }
   span.list span.in, span.note span.in {
-    width: calc(100% + 25px);
+    width: calc(100% + 5px + 25px);
   }
   span span.event {
-    width: calc(100% + 0.5em + 5px);
+    width: calc(100% + 0.5em + 5px + 25px);
   }
 }
 
