@@ -995,6 +995,7 @@ function datesToRelative(a, b) {
 function updatedeadlines() {
   $('.duedate').remove()
   $('.placeholder').remove()
+  $('.mobhandle').remove()
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
     (x) => {
       return $(x).attr('folded') == 'true'
@@ -1060,6 +1061,12 @@ function updatedeadlines() {
       $($('#loads').children()[list]).remove()
     }
   }
+  if (window.innerWidth < 600) {
+    // insert mobiledrag elements
+    $('span.in').prepend(
+      '<span class="mobhandle" ontouchstart="context(event)"' + 
+      '></span>')
+  }
 }
 
 function deleteTask() {
@@ -1119,7 +1126,8 @@ function dragTime(el) {
   let durval
   // cleans out nonrounded values
   if (!/\d+:30/.test(splitlist[0]) && !/^\d+$/.test(splitlist[0])) {
-    console.log(/\d+:30/.test(splitlist[0]), !/^\d$/.test(splitlist[0]), 'tests');
+    console.log(/\d+:30/.test(splitlist[0]), !/^\d$/.test(splitlist[0]), 
+    'tests');
     splitlist[0] = splitlist[0].split(':')[0] + ':30'
     console.log('fail');
   }
@@ -1327,9 +1335,6 @@ function saveTask() {
         }
         if (match == false) {
           console.log('matching');
-          // format as a url
-          // wordlist[word] = '<span class="weblink"><a href="' + wordlist[word] + 
-          //   '" title="' + wordlist[word] + '">§</a></span>'
           wordlist[word] = '<span class="weblink" title="' + wordlist[word] + 
             '">' + wordlist[word] + '</span>'
         }
@@ -1473,7 +1478,8 @@ function stripChildren(el, mode) {
 function isSubtask(el) {
   // tests inline spans until it gets one, otherwise returns true
   for (lineinner of [
-      'link', 'italic', 'bold', 'bold-italic', 'deadline', 'weblink', 'timing'
+      'link', 'italic', 'bold', 'bold-italic', 'deadline', 'weblink', 'timing',
+      
     ]) {
     if (el.hasClass(lineinner) == true) {
       return false
@@ -2611,8 +2617,8 @@ function keycomms(evt) {
       evt.preventDefault()
       editTask()
     }
-  } else if (selected != undefined && evt.key == 'Enter' && evt.altKey == true &&
-    evt.metaKey == true) {
+  } else if (selected != undefined && evt.key == 'Enter' && 
+    evt.altKey == true && evt.metaKey == true) {
     evt.preventDefault()
     // new task if it's in textarea then save task
     if (selected[0].tagName == 'TEXTAREA') {
@@ -2620,7 +2626,8 @@ function keycomms(evt) {
     }
     select(taskAbove())
     newTask()
-  } else if (selected != undefined && evt.key == 'Enter' && evt.altKey == true) {
+  } else if (selected != undefined && evt.key == 'Enter' && 
+    evt.altKey == true) {
     evt.preventDefault()
     // new task if it's in textarea then save task
     if (selected[0].tagName == 'TEXTAREA') {
