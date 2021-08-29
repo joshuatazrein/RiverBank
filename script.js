@@ -1073,15 +1073,10 @@ function updatedeadlines() {
         select(ui.draggable[0])
       }
     })
-    $('span.in').attr('dragstart', '')
-    $('span.in').attr('dragover', '')
-    $('span.in').attr('drop', '')
-    $('span.in').attr('draggable', 'false')
   } else {
-    $('span.in').attr('draggable', 'true')
-    $('span.in').attr('dragstart', 'dragTask(event)')
-    $('span.in').attr('dragover', 'draggingOver(event)')
-    $('span.in').attr('drop', 'dropTask(event)')
+    $('span.in').on('dragstart', dragTask)
+    $('span.in').on('dragover', draggingOver)
+    $('span.in').on('drop', dropTask)
   }
 }
 
@@ -1542,7 +1537,6 @@ function updateHeight() {
   // $('#texttest').font(selected.css('font'))
   $('#texttest').text(selected.val() + ' x')
   $('#texttest').css('width', selected.width() + 'px')
-  $('#texttest').css('padding', selected.css('padding'))
   selected.css('height', $('#texttest').height() + 'px')
 }
 
@@ -1607,9 +1601,6 @@ function editTask() {
 
 function createBlankTask() {
   const savetask = $('<span class="in"></span>')
-  savetask.attr('ondragstart', 'dragTask(event)')
-  savetask.attr('ondragover', 'draggingOver(event)')
-  savetask.attr('ondrop', 'dropTask(event)')
   savetask.attr('draggable', 'true')
   return savetask
 }
@@ -1807,7 +1798,7 @@ function dropTask(evt, obj) {
     el = evt.target
   }
   if (el.tagName == 'SPAN' && !isSubtask($(el))) {
-    el = $(el).parent()
+    el = $(el).parent()[0]
   }
   if (selected[0].tagName == 'TEXTAREA') {
     return
@@ -2908,6 +2899,7 @@ function loadpage(setload) {
   clearEmptyDates()
   // go to today
   updatedeadlines()
+  $('#pop').scrollTop(0)
   select(dateToHeading(stringToDate('t')))
   loading = false
   $(document).scrollTop(0)

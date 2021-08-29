@@ -265,19 +265,12 @@ textarea.selected, textarea.unselected {
 
 /* EDITING */
 
-textarea.in {
+textarea.in, #texttest {
   font: 80% var(--menufont), monospace;
   width: 100%;
   color: var(--textcolor);
   background: inherit;
-}
-
-#texttest {
-  margin: 0;
-  font: 80% var(--menufont), monospace;
-  width: calc(100% - 5px);
-  color: var(--textcolor);
-  background: inherit;
+  line-height: 1.25em;
 }
 
 textarea.sublist {
