@@ -313,24 +313,21 @@ textarea.sublist {
 
 span {
   box-sizing: border-box;
-  width: calc(100% - 10px);
+  width: 100%;
   display: inline-block;
 }
 
 span.in {
   padding-bottom: 5px;
   padding-top: 2px;
-  position: relative;
   padding-left: 5px;
+  padding-right: 5px;
+  position: relative;
 }
 
 .taskselect {
   border: 1px solid var(--select);
   border-radius: 5px;
-}
-
-span.taskselect {
-  width: calc(100% - 8px);
 }
 
 span.bold, span.bold-italic, span.deadline, span.link, span.italic,
@@ -410,7 +407,6 @@ span.bold-italic {
 
 span.dateheading {
   color: var(--date);
-  width: 100%;
   margin: 0;
   padding-top: 0;
 }
@@ -600,24 +596,32 @@ span span.note {
   }
   span span.mobhandle {
     border: 1px solid var(--select);
-    height: 20px !important;
-    width: 20px !important;
+    height: 30px !important;
+    width: 30px !important;
     border-radius: 100%;
     padding: 0;
-    margin: 3px;
+    margin: 1px;
     position: absolute;
     top: 0;
-    right: 0;
+    right: 10px;
+  }
+  span span span.mobhandle {
+    height: 20px !important;
+    width: 20px !important;
+    right: 15px;
   }
   /* add the padding-right to subspan widths */
   span.in {
-    padding-right: 25px;
+    padding-right: 40px;
+  }
+  span.in span.in {
+    width: calc(100% + 5px + 40px - 0.5em);
   }
   span.list span.in, span.note span.in {
-    width: calc(100% + 5px + 25px);
+    width: calc(100% + 5px + 40px);
   }
   span span.event {
-    width: calc(100% + 0.5em + 5px + 25px);
+    width: calc(100% + 0.5em + 40px);
   }
 }
 
