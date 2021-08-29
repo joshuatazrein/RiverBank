@@ -1343,7 +1343,8 @@ function saveTask() {
   newstr = newstr.replace(
     /\_(.*)\_/, "$1").replace(
     /\*(.*)\*/, "$1").replace(
-    /\_*(.*)\*_/, "$1")
+    /\_*(.*)\*_/, "$1").replace(
+    '\n', '<br>').replace(/\s/, ' ')
   savetask.html(newstr)
   try {
     // fixing weird glitch
@@ -1568,7 +1569,7 @@ function editTask() {
       '<span class="bold">*$1*</span>').replace(
       /<span class="bold-italic">(.*)<\/span>/,
       '<span class="bold-italic">_*$1*_</span>'))
-    selected.val(stripChildren(el)) 
+    selected.val(stripChildren(el).replace('<br>', '\n')) 
     // add back hashtags
     if (el.hasClass('h1')) {
       selected.val('# ' + selected.val())
