@@ -1063,21 +1063,27 @@ function updatedeadlines() {
   }
   if (window.innerWidth < 600) {
     // insert mobiledrag elements
-    $('span.in').prepend(
-      '<span class="mobhandle"></span>')
-    $('span.in').draggable({handle: '.mobhandle'})
+    $('span.in').draggable({
+      delay: 400,
+      axis: 'y',
+      containment: 'window',
+      revert: true,
+      scrollSpeed: 10
+    })
     $('span.in').droppable({
       accept: 'span.in', 
       hoverClass: 'drop-hover',
+      greedy: true,
       drop: function(event, ui) {
         ui.draggable.css('top', '0')
         ui.draggable.css('left', '0')
         dropTask(event, ui.draggable[0])
       }
     })
-    $('span.in').attr('ondragstart', '')
-    $('span.in').attr('ondragover', '')
-    $('span.in').attr('ondrop', '')
+    $('span.in').attr('dragstart', '')
+    $('span.in').attr('dragover', '')
+    $('span.in').attr('drop', '')
+    $('span.in').attr('draggable', 'false')
   }
 }
 
@@ -1768,7 +1774,7 @@ function timertest(ev) {
 
 //start of drag
 function dragTask(evt, mobile) {
-  console.log('dragtasking');
+  console.log('dragtasking', evt, mobile);
   if (!mobile) select(evt.target, false)
   //start drag
   if (selected[0].tagName == 'TEXTAREA') {
@@ -1784,7 +1790,6 @@ function dragTask(evt, mobile) {
 
 //dropping
 function dropTask(evt, obj) {
-  console.log('dropping', obj);
   let el
   if (obj) {
     el = obj
@@ -1859,6 +1864,7 @@ function dropTask(evt, obj) {
     // append each child after
     selected.after(children[i])
   }
+  select(selected)
   save()
 }
 
