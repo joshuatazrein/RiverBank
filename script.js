@@ -1064,7 +1064,7 @@ function updatedeadlines() {
   if (window.innerWidth < 600) {
     // insert mobiledrag elements
     $('span.in').prepend(
-      '<span class="mobhandle" ontouchstart="context(event)"' + 
+      '<span class="mobhandle" ontouchstart="context(event, true)"' + 
       '></span>')
   }
 }
@@ -1988,9 +1988,12 @@ function setStyle(style) {
   location.reload()
 }
 
-function context(e) {
+function context(e, mobile) {
   if (selected != undefined && selected[0].tagName == 'TEXTAREA') {
     saveTask()
+  }
+  if (mobile == true) {
+    e.target = $(e.target).parent()[0]
   }
   e.preventDefault()
   if (
