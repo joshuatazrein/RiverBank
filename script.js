@@ -1063,12 +1063,16 @@ function updatedeadlines() {
   }
   if (window.innerWidth < 600) {
     // insert mobiledrag elements
+    $('span.in').prepend(
+      '<span class="mobhandle"></span>')
     $('span.in').draggable({
-      delay: 400,
+      handle: '.mobhandle',
       axis: 'y',
       containment: 'window',
       revert: true,
-      scrollSpeed: 10
+      scrollSpeed: 10,
+      refreshPositions: true,
+      zIndex: 1
     })
     $('span.in').droppable({
       accept: 'span.in', 
@@ -1779,6 +1783,7 @@ function timertest(ev) {
 
 //start of drag
 function dragTask(evt) {
+  if (window.innerWidth < 600) return
   select(evt.target, false)
   //start drag
   if (selected[0].tagName == 'TEXTAREA') {
@@ -1863,6 +1868,7 @@ function dropTask(evt, obj) {
         $(el).after(selected)
       }
     }
+    $('.drop-hover').removeClass('drop-hover')
   }
   for (i = children.length - 1; i >= 0; i--) {
     // append each child after

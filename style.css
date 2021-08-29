@@ -610,5 +610,15 @@ span span.mobhandle {
   .drop-hover {
     background-color: #333;
   }
+  /* add the padding-right to subspan widths */
+  span.in {
+    padding-right: 20px;
+  }
+  span.list span.in, span.note span.in {
+    width: calc(100% + 25px);
+  }
+  span span.event {
+    width: calc(100% + 0.5em + 5px);
+  }
 }
 
