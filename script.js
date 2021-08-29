@@ -1084,6 +1084,11 @@ function updatedeadlines() {
     $('span.in').attr('dragover', '')
     $('span.in').attr('drop', '')
     $('span.in').attr('draggable', 'false')
+  } else {
+    $('span.in').attr('draggable', 'true')
+    $('span.in').attr('dragstart', 'dragTask(event)')
+    $('span.in').attr('dragover', 'draggingOver(event)')
+    $('span.in').attr('drop', 'dropTask(event)')
   }
 }
 
@@ -1773,9 +1778,8 @@ function timertest(ev) {
 }
 
 //start of drag
-function dragTask(evt, mobile) {
-  console.log('dragtasking', evt, mobile);
-  if (!mobile) select(evt.target, false)
+function dragTask(evt) {
+  select(evt.target, false)
   //start drag
   if (selected[0].tagName == 'TEXTAREA') {
     return; // stops from dragging edited subtasks
