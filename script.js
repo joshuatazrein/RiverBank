@@ -17,6 +17,7 @@ var xhr
 var slider
 var durslider
 var stopwatch
+var copieditem
 var linestarts = {
   '# ': 'h1',
   '## ': 'h2',
@@ -1097,10 +1098,22 @@ function updatedeadlines() {
       }
     })
   } else {
-    $('span.in').on('dragstart', dragTask)
-    $('span.in').on('dragover', draggingOver)
-    $('span.in').on('drop', dropTask)
+    for (span of $('.in').toArray()) {
+      $(span)[0].outerHTML = $(span)[0].outerHTML.replace(
+        'ondragover="draggingOver(event)"', '').replace(
+        'ondrop="dropTask(event)"', '').replace(
+        'dragstart="" dragover="" drop=""', '')
+    }
+    $('span.in').removeClass('ui-draggable')
+    $('span.in').removeClass('ui-droppable')
+    $('span.in').removeClass('ui-draggable-handle')
+    $('span.in').removeClass('ui-draggable-dragging')
+    $('span.in').removeClass('ui-droppable-active')
   }
+}
+
+function testfunc() {
+  console.log('dragging');
 }
 
 function deleteTask() {
@@ -1437,7 +1450,7 @@ function select(el, scroll) {
   $(document).scrollTop(0); // fixes weird shit
   // switch selection
   if (selected != undefined) {
-    selected.removeClass('taskselect')
+    $('.taskselect').removeClass('taskselect')
   }
   if (el != undefined && $(el).hasClass('in') == true) {
     selected = $(el)
@@ -1568,6 +1581,9 @@ function getChildren(el) {
 function updateHeight() {
   // $('#texttest').font(selected.css('font'))
   $('#texttest').text(selected.val() + ' x')
+  $('#texttest').css('font', selected.css('font'))
+  $('#texttest').css('font-size', selected.css('font-size'))
+  $('#texttest').css('padding', selected.css('padding'))
   $('#texttest').css('width', selected.width() + 'px')
   selected.css('height', $('#texttest').height() + 5 + 'px')
 }
@@ -1575,9 +1591,9 @@ function updateHeight() {
 function editTask() {
   el = selected
   if (selected.hasClass('dateheading') == true) return
-  if (selected.parent()[0].tagName == 'SPAN') {
-    selected.parent().attr('draggable', 'false')
-  }
+  // if (selected.parent()[0].tagName == 'SPAN') {
+  //   selected.parent().attr('draggable', 'false')
+  // }
   if (selected != undefined) {
     $('#context-menu').hide()
     const newelt = $('<textarea class=\'in edit\'></textarea>')
@@ -1634,6 +1650,9 @@ function editTask() {
 function createBlankTask() {
   const savetask = $('<span class="in"></span>')
   savetask.attr('draggable', 'true')
+  savetask.attr('ondragstart', 'dragTask(event)')
+  savetask.attr('ondragover', 'draggingOver(event)')
+  savetask.attr('ondrop', 'dropTask(event)')
   return savetask
 }
 
@@ -1808,8 +1827,10 @@ function timertest(ev) {
 
 //start of drag
 function dragTask(evt) {
+  if (evt.data) {
+    select(evt.data.task, false)
+  } else select(evt.target, false)
   if (window.innerWidth < 600) return
-  select(evt.target, false)
   //start drag
   if (selected[0].tagName == 'TEXTAREA') {
     return; // stops from dragging edited subtasks
@@ -1824,6 +1845,7 @@ function dragTask(evt) {
 
 //dropping
 function dropTask(evt, obj) {
+  console.log(evt);
   let el
   if (obj) {
     el = obj
@@ -2740,6 +2762,17 @@ function keycomms(evt) {
       evt.altKey == true) {
       // insert afterwards
       moveTask('flop')
+    } else if (evt.key == 'c' && evt.metaKey) {
+      copieditem = selected.clone()
+    } else if (evt.key == 'x' && evt.metaKey) {
+      copieditem = selected
+    } else if (evt.key == 'v' && evt.metaKey) {
+      if (copieditem) {
+        selected.after(copieditem)
+        select(selected.next())
+        copieditem = undefined
+        save()
+      }
     }
   }
   if (selected != undefined && selected[0].tagName != 'TEXTAREA' &&
