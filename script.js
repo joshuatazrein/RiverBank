@@ -421,31 +421,32 @@ function clearEmptyDates() {
   try {
     $('#pop').children().filter('.dateheading').toArray().forEach((heading) => {
       if (
-        stringToDate($(heading).text(), true).getTime() < today.getTime() &&
-        $(heading).attr('folded') == 'false'
+        stringToDate($(heading).text(), true).getTime() < today.getTime()
       ) {
-        if (getHeadingChildren($(heading)).length > 0 &&
-          !getHeadingChildren($(heading)).map((x) => 
-          {return x[0]}).includes(selected[0])) {
-          togglefold($(heading))
-        }
-        if (!$(heading).hasClass('complete')) {
-          $(heading).addClass('complete')
-          $(heading).prev().addClass('complete') // also to date header
-          if (stringToDate($(heading).text(), true).getTime() == 
-            stringToDate('t').getTime() - 86400000) {
-            const today = dateToHeading(stringToDate('t'))
-            console.log('yesterday')
-            const children = Array.from(getHeadingChildren(
-              $(heading)))
-            console.log(children, 'children');
-            children.filter((x) => {return x.hasClass('event')}).forEach(
-              (x) => {x.addClass('complete')})
-            children.filter((x) => {return !x.hasClass('complete')}
-              ).forEach((x) => {
-                console.log('aftering', $(today).text(), x.text())
-                x.show()
-              })
+        if (
+          !(selected && getHeading(selected, true)[0] == $(heading)[0]) &&
+          !(getHeading(selected, true) && 
+          getHeading(selected, true) == $(heading)[0])
+        ) {
+          // move uncompleted tasks to today and fold/complete all tasks
+          if (!($(heading).hasClass('complete'))) 
+            $(heading).addClass('complete')
+          if (($(heading).attr('folded') == 'false')) 
+            togglefold($(heading), false)
+          const children = getHeadingChildren($(heading))
+          const daychildren = getHeadingChildren(dateToHeading(
+            stringToDate('t')))
+          const curday = $(daychildren[daychildren.length - 1])
+          for (child of children) {
+            if ($(child).hasClass('event') && 
+              !$(child).hasClass('complete')) $(child).addClass('complete')
+            else if (!$(child).hasClass('complete')) {
+              curday.after($(child))
+              $(child).show()
+            } else {
+              const incomp = $(child).find('span.in:not(.complete)')
+              for (subchild of incomp) curday.after($(subchild))
+            }
           }
         }
       }
