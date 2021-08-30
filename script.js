@@ -440,7 +440,7 @@ function clearEmptyDates() {
           for (child of children) {
             if ($(child).hasClass('event') && 
               !$(child).hasClass('complete')) $(child).addClass('complete')
-            else if (!$(child).hasClass('complete')) {
+            else if (!$(child).hasClass('complete') && !isHeading($(child))) {
               curday.after($(child))
               $(child).show()
             } else {
