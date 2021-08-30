@@ -1009,7 +1009,7 @@ function updatedeadlines() {
   $('.mobhandle').remove()
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
     (x) => {
-      return $(x).attr('folded') == 'true'
+      return $(x).attr('folded') == 'true' && !$(x).hasClass('taskselect')
     })
   // uncollapses then recollapses to prevent weirdness
   for (heading of collapselist) {
@@ -1097,6 +1097,10 @@ function updatedeadlines() {
         select(ui.draggable[0])
       }
     })
+    $('span.in').attr('ondragstart', '')
+    $('span.in').attr('ondragover', '')
+    $('span.in').attr('ondrop', '')
+    $('span.in').attr('draggable', 'false')
   } else {
     $('span.in').attr('ondragstart', 'dragTask(event)')
     $('span.in').attr('ondragover', 'draggingOver(event)')
@@ -1428,6 +1432,7 @@ function saveTask() {
     selected.parent().attr('draggable', 'true')
   }
   save(true)
+  updatedeadlines()
 }
 
 function getHeading(el) {
@@ -1442,7 +1447,6 @@ function getHeading(el) {
 function select(el, scroll) {
   if (el && 
     $(el)[0].tagName == 'SPAN' && !isSubtask($(el))) el = $(el).parent()
-  console.log('selecting', el);
   if (slider) removesliders() // removes sliders
   if ($(el).hasClass('buffer')) {
     select(getFrame($(el)), scroll)
@@ -1528,7 +1532,6 @@ function stripChildren(el, mode) {
   // retrieve text from only the parent span and any of its formatting
   const testelt = el.clone()
   testelt.html(testelt.html().replace(/<br>/g, '\n'))
-  console.log(testelt.html(),' stripchildren');
   for (child of testelt.children()) {
     // strip the subtasks
     if (isSubtask($(child)) == true) {
@@ -1987,13 +1990,16 @@ function togglefold(e, saving) {
   for (child of getHeadingChildren(e)) {
     // fold everything
     if (e.attr('folded') == 'false') {
-      child.hide()
+      if (saving === undefined) child.hide(500)
+      else child.hide()
     } else {
       // if unfolding, keep folded headings folded
       if (child.attr('folded') == 'true') {
         keepfolded.push(child)
       }
-      child.show()
+      if (saving === undefined) {
+        child.show(500)
+      } else child.show()
     }
   }
   if (e.attr('folded') == 'true') {
@@ -2059,10 +2065,10 @@ function toggleHelp() {
 
 function setStyle(style) {
   data.style = style
+  console.log(data.style);
   save()
   uploadData(false)
-  load()
-  reloadpage()
+  location.reload()
 }
 
 function context(e, mobile) {
@@ -2349,6 +2355,14 @@ function clicked(ev) {
   $('nav').hide()
   if (ev.target.tagName == 'TEXTAREA' && !$(ev.target).hasClass('listtitle')) {
     return
+  } else if ($(ev.target).hasClass('dropdown-item')) {
+    console.log('clicked on dropdown');
+    const oldselect = selected
+    eval($(ev.target).attr('function'))
+    if (selected && selected[0].tagName != 'TEXTAREA' &&
+      (evt.target).attr('id') != 'context-goToToday') {
+      select(oldselect)
+    }
   } else if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
     ev.target.tagName != 'TEXTAREA') {
     saveTask()
@@ -2458,13 +2472,6 @@ function clicked(ev) {
     select($(ev.target).parent(), false)
     if ($(ev.target).hasClass('mobhandle')) {
       context(ev, true)
-    }
-  } else if ($(ev.target).hasClass('dropdown-item')) {
-    const oldselect = selected
-    eval($(ev.target).attr('function'))
-    if (selected && selected[0].tagName != 'TEXTAREA' &&
-      (evt.target).attr('id') != 'context-goToToday') {
-      select(oldselect)
     }
   } else if ($(ev.target).hasClass('listtitle')) {
     select()
