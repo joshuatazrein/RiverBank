@@ -1098,22 +1098,23 @@ function updatedeadlines() {
       }
     })
   } else {
-    for (span of $('.in').toArray()) {
-      $(span)[0].outerHTML = $(span)[0].outerHTML.replace(
-        'ondragover="draggingOver(event)"', '').replace(
-        'ondrop="dropTask(event)"', '').replace(
-        'dragstart="" dragover="" drop=""', '')
-    }
-    $('span.in').removeClass('ui-draggable')
-    $('span.in').removeClass('ui-droppable')
-    $('span.in').removeClass('ui-draggable-handle')
-    $('span.in').removeClass('ui-draggable-dragging')
-    $('span.in').removeClass('ui-droppable-active')
+    $('span.in').attr('ondragstart', 'dragTask(event)')
+    $('span.in').attr('ondragover', 'draggingOver(event)')
+    $('span.in').attr('ondrop', 'dropTask(event)')
+    $('span.in').attr('draggable', 'true')
+    // for (span of $('.in').toArray()) {
+    //   $(span)[0].outerHTML = $(span)[0].outerHTML.replace(
+    //     'ondragover=""', 'ondragover="draggingOver(event)"').replace(
+    //     'ondrop=""', 'ondrop="dropTask(event)"').replace(
+    //     'ondragstart=""', 'ondragstart="dragTask(event)"').replace(
+    //     'dragstart="" dragover="" drop=""', '')
+    // }
+    // $('span.in').removeClass('ui-draggable')
+    // $('span.in').removeClass('ui-droppable')
+    // $('span.in').removeClass('ui-draggable-handle')
+    // $('span.in').removeClass('ui-draggable-dragging')
+    // $('span.in').removeClass('ui-droppable-active')
   }
-}
-
-function testfunc() {
-  console.log('dragging');
 }
 
 function deleteTask() {
@@ -1827,9 +1828,7 @@ function timertest(ev) {
 
 //start of drag
 function dragTask(evt) {
-  if (evt.data) {
-    select(evt.data.task, false)
-  } else select(evt.target, false)
+  select(evt.target, false)
   if (window.innerWidth < 600) return
   //start drag
   if (selected[0].tagName == 'TEXTAREA') {
@@ -1845,7 +1844,6 @@ function dragTask(evt) {
 
 //dropping
 function dropTask(evt, obj) {
-  console.log(evt);
   let el
   if (obj) {
     el = obj
