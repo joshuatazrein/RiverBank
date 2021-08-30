@@ -271,6 +271,26 @@ function toggleFoldList() {
 }
 
 function updateSizes() {
+  for (list of [
+    [$('#timerent')[0], 6],
+    [$('#searchbar')[0], 5],
+    [$('#username')[0], $('#username').text().length / 2 + 2],
+    [$('#lists')[0], 7]
+  ].concat(
+    $('#loads').children().toArray().map((x) => {
+      let textlength = Math.max($(x).val().split(' ').map((x) => {
+        return x.length
+      }))
+      return [$(x)[0], textlength / 2 + 2.5]
+    })
+  )) {
+    // update entries
+    let fontsize = 24
+    while ($(list[0]).width() / (fontsize / 2) < list[1]) {
+      fontsize -= 1
+    }
+    $(list).css('font-size', fontsize + 'px')
+  }
   // fix context menu for mobile
   if (window.innerWidth < 600) {
     $('.dropdown-item').toArray().forEach((x) => {
@@ -354,23 +374,26 @@ function save(undo) {
     }
   }
   // save data
-  data.pop = $('#pop').html()
+  let newdata = JSON.parse(JSON.stringify(data)) // copies data
+  newdata.pop = $('#pop').html()
   if (loadedlist != undefined) {
     try {
-      data.flop[loadedlist].text = $('#flop').html()
+      newdata.flop[loadedlist].text = $('#flop').html()
       try {
-        data.flop[loadedlist].title = $('#loads').children()[loadedlist].value
+        newdata.flop[loadedlist].title = $('#loads').children()[loadedlist].value
       } catch (TypeError) {
-        data.flop[loadedlist].title = ''
+        newdata.flop[loadedlist].title = ''
       }
-      data.loadedlist = loadedlist
+      newdata.loadedlist = loadedlist
     } catch (TypeError) {
-      data.loadedlist = 0
+      newdata.loadedlist = 0
       loadedlist = 0
       loadList()
     }
   }
-  dataString = JSON.stringify(data)
+  dataString = JSON.stringify(newdata)
+  if (dataString == JSON.stringify(data)) return // stops redundancies
+  data = JSON.parse(dataString)
   localStorage.setItem('data', dataString)
   // backup data to the server after setting localstorage data
   uploadData()
@@ -1320,6 +1343,10 @@ function saveTask() {
     }
   }
   newstr += htmlstr.slice(start)
+  console.log(newstr);
+  newstr = newstr.replace(
+    /\n/g, '<br>').replace(/\s/g, ' ')
+  console.log(newstr, getChildren(el));
   newstr += getChildren(el)
   if (selected.val().charAt(0) == '@') {
     // process event signs
@@ -1343,8 +1370,7 @@ function saveTask() {
   newstr = newstr.replace(
     /\_(.*)\_/, "$1").replace(
     /\*(.*)\*/, "$1").replace(
-    /\_*(.*)\*_/, "$1").replace(
-    '\n', '<br>').replace(/\s/, ' ')
+    /\_*(.*)\*_/, "$1")
   savetask.html(newstr)
   try {
     // fixing weird glitch
@@ -1488,6 +1514,7 @@ function setText(el) {
 function stripChildren(el, mode) {
   // retrieve text from only the parent span and any of its formatting
   const testelt = el.clone()
+  testelt.html(testelt.html().replace(/<br>/g, '\n'))
   for (child of testelt.children()) {
     // strip the subtasks
     if (isSubtask($(child)) == true) {
@@ -1495,6 +1522,9 @@ function stripChildren(el, mode) {
     } else if ($(child).hasClass('weblink') == true) {
       $(child).html($($(child).children()[0]).attr('href'))
     }
+  }
+  while (testelt.text().charAt(testelt.text().length - 1) == '\n') {
+    testelt.text(testelt.text().slice(0, testelt.text().length - 1))
   }
   if (mode == undefined) {
     return testelt.text()
@@ -1509,7 +1539,7 @@ function isSubtask(el) {
       'link', 'italic', 'bold', 'bold-italic', 'deadline', 'weblink', 'timing',
       'mobhandle'
     ]) {
-    if (el.hasClass(lineinner) == true) {
+    if (el.hasClass(lineinner) == true || el.hasClass('in') == false) {
       return false
       break
     }
@@ -1531,6 +1561,7 @@ function getChildren(el) {
       break
     }
   }
+  while (newstr.slice(0, 4) == '<br>') newstr = newstr.slice(4)
   return newstr
 }
 
@@ -1538,7 +1569,7 @@ function updateHeight() {
   // $('#texttest').font(selected.css('font'))
   $('#texttest').text(selected.val() + ' x')
   $('#texttest').css('width', selected.width() + 'px')
-  selected.css('height', $('#texttest').height() + 'px')
+  selected.css('height', $('#texttest').height() + 5 + 'px')
 }
 
 function editTask() {
@@ -1569,7 +1600,7 @@ function editTask() {
       '<span class="bold">*$1*</span>').replace(
       /<span class="bold-italic">(.*)<\/span>/,
       '<span class="bold-italic">_*$1*_</span>'))
-    selected.val(stripChildren(el).replace('<br>', '\n')) 
+      selected.val(stripChildren(el)) 
     // add back hashtags
     if (el.hasClass('h1')) {
       selected.val('# ' + selected.val())
