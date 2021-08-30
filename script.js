@@ -18,6 +18,7 @@ var slider
 var durslider
 var stopwatch
 var copieditem
+var prevupload
 var linestarts = {
   '# ': 'h1',
   '## ': 'h2',
@@ -307,7 +308,7 @@ function updateSizes() {
     $('#texttest').html($(list).val())
     if ($(list).val() == '') $('#texttest'.html($('&nbsp;')))
     $('#texttest').css('width', $(list).width() + 'px')
-    $(list).css('height', $('#texttest').height() + 'px')
+    $(list).css('height', $('#texttest').height() + 5 + 'px')
   }
   $('#texttest').css('font-family', '')
   $('#texttest').css('font-size', '')
@@ -327,7 +328,7 @@ function loadthis() {
 
 // Storing data:
 function save(undo) {
-  unfilter()
+  unfilter(false)
   if (undo == true) savedata = JSON.parse(JSON.stringify(data))
   // update height of loads
   const leftcol = $($('.leftcolumn')[0])
@@ -392,20 +393,22 @@ function save(undo) {
       loadList()
     }
   }
-  dataString = JSON.stringify(newdata)
-  if (dataString == JSON.stringify(data)) return // stops redundancies
+  const dataString = JSON.stringify(newdata)
+  const prevData = JSON.stringify(data)
   data = JSON.parse(dataString)
-  localStorage.setItem('data', dataString)
-  // backup data to the server after setting localstorage data
-  uploadData()
-  updatedeadlines()
   $(document).scrollTop(0) // fixes scroll
+  if (dataString != prevData) { // stops redundancies
+    localStorage.setItem('data', dataString)
+    // backup data to the server after setting localstorage data
+    uploadData()
+  }
+  updatedeadlines()
 }
 
 function clearEmptyDates() {
   $('.placeholder').remove()
   // take away empty dates
-  const dateslist = $('#pop').children().filter('.h1')
+  const dateslist = $('#pop').children().filter('.dateheading')
   for (date of dateslist) {
     if (
       getHeadingChildren($(date)).length == 0 &&
@@ -500,6 +503,14 @@ function reset() {
 }
 
 function uploadData(async) {
+  if (JSON.stringify(data) == prevupload) { // prevents duplicatees
+    if (reloading == true) {
+      reloading = false
+      console.log('reloading from upload')
+      reloadpage()
+    }
+    return
+  }
   // uploads data to server
   try {
     // cancels previous uploads to overwrite
@@ -519,6 +530,7 @@ function uploadData(async) {
           console.log('reloading from upload');
           reloadpage()
         }
+        prevupload = JSON.stringify(data)
         console.log('upload complete');
       }
     }
@@ -1009,7 +1021,7 @@ function updatedeadlines() {
   $('.mobhandle').remove()
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
     (x) => {
-      return $(x).attr('folded') == 'true' && !$(x).hasClass('taskselect')
+      return $(x).attr('folded') == 'true'
     })
   // uncollapses then recollapses to prevent weirdness
   for (heading of collapselist) {
@@ -1097,10 +1109,6 @@ function updatedeadlines() {
         select(ui.draggable[0])
       }
     })
-    $('span.in').attr('ondragstart', '')
-    $('span.in').attr('ondragover', '')
-    $('span.in').attr('ondrop', '')
-    $('span.in').attr('draggable', 'false')
   } else {
     $('span.in').attr('ondragstart', 'dragTask(event)')
     $('span.in').attr('ondragover', 'draggingOver(event)')
@@ -1432,16 +1440,19 @@ function saveTask() {
     selected.parent().attr('draggable', 'true')
   }
   save(true)
-  updatedeadlines()
 }
 
-function getHeading(el) {
+function getHeading(el, actual) {
+  if (!el) return
   // gets the heading
-  while (el.parent()[0].tagName != 'P') el = el.parent()
+  try {
+    while (el.parent()[0].tagName != 'P') el = el.parent()
+  } catch(TypeError) {return}
   let heading = el.prev()
   while (heading[0] && !isHeading($(heading))) heading = $(heading).prev()
-  if ($(heading).hasClass('dateheading')) return $(heading).prev()
-  else return $(heading)
+  if ($(heading).hasClass('dateheading') && 
+    actual != true) return $(heading).prev() // actual bypasses placeholders
+  else if ($(heading)[0]) return $(heading)
 }
 
 function select(el, scroll) {
@@ -1476,6 +1487,9 @@ function select(el, scroll) {
           }).remove();
       } catch (err) {}
     }
+    if (!selected.is(':visible') && getHeading(selected)) {
+      togglefold($(getHeading(selected, true)))
+    }
     if (scroll != false) {
       // only execute if not clicked
       const oldscroll = parent.scrollTop()
@@ -1483,7 +1497,7 @@ function select(el, scroll) {
       const scrolltime = 300
       parent.stop(true) // clear queue
       if (!selected.hasClass('dateheading') && !isHeading(selected)) {
-        if (getHeading(selected)[0] && 
+        if (getHeading(selected) && 
         Number(getHeading(selected).offset().top) + parent.height() / 2 >
         Number(selected.offset().top)) {
           // scroll to heading
@@ -1679,7 +1693,6 @@ function newTask(subtask) {
   } else if (['SPAN'].includes(selected[0].tagName)) {
     // regular task
     e.after(newspan)
-    updatedeadlines()
   }
   select(newspan)
   editTask()
@@ -1951,6 +1964,7 @@ function getHeadingChildren(el) {
     'h2': ['h2', 'h1'],
     'h3': ['h3', 'h2', 'h1']
   }
+  el = $(el)
   let thisclass
   if (el.hasClass('h1') == true) {
     thisclass = 'h1'
@@ -2006,6 +2020,7 @@ function togglefold(e, saving) {
     for (heading of keepfolded) {
       // keep folded headings folded
       getHeadingChildren($(heading)).forEach((x) => {
+        $(x).stop(true)
         $(x).hide()
       })
     }
@@ -2064,11 +2079,14 @@ function toggleHelp() {
 }
 
 function setStyle(style) {
+  $('link[href="' + data.style + '"]').remove()
   data.style = style
   console.log(data.style);
   save()
-  uploadData(false)
-  location.reload()
+  $('head').append(
+    $("<link rel='stylesheet' type='text/css' href='" +
+    data.style + "' />")
+  );
 }
 
 function context(e, mobile) {
@@ -2360,8 +2378,18 @@ function clicked(ev) {
     const oldselect = selected
     eval($(ev.target).attr('function'))
     if (selected && selected[0].tagName != 'TEXTAREA' &&
-      (evt.target).attr('id') != 'context-goToToday') {
+      $(ev.target).attr('id') != 'context-goToToday') {
       select(oldselect)
+    }
+  } else if ($(ev.target).hasClass('listtitle')) {
+    console.log('working');
+    select()
+    if (window.innerWidth < 600) {
+      $(':focus').blur()
+      dragson()
+    }
+    if ($(ev.target).hasClass('unselected')) {
+      dragson()
     }
   } else if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
     ev.target.tagName != 'TEXTAREA') {
@@ -2472,12 +2500,6 @@ function clicked(ev) {
     select($(ev.target).parent(), false)
     if ($(ev.target).hasClass('mobhandle')) {
       context(ev, true)
-    }
-  } else if ($(ev.target).hasClass('listtitle')) {
-    select()
-    if (window.innerWidth < 600) $(':focus').blur()
-    if ($(ev.target).hasClass('unselected')) {
-      dragson()
     }
   } else {
     select()
@@ -2604,13 +2626,15 @@ function dblclick(ev) {
   }
 }
 
-function unfilter() {
+function unfilter(update) {
   // show everything which is filtered
   if (filtered == true) {
     filteredlist.forEach((x) => {$(x).show()})
     filtered = false
     filteredlist = []
-    updatedeadlines()
+    if (update != false) {
+      updatedeadlines()
+    }
     $('#searchbar').val('')
   }
 }
@@ -2887,17 +2911,18 @@ function reloadpage2() {
     selectframe = getFrame(selected)
     selectindex = selectframe.find('span').toArray().indexOf(selected[0])
   }
+  const oldscroll = $('#flop').scrollTop()
   $('#pop').empty()
   $('#flop').empty()
   $('#loads').empty()
-  loadpage(false)
+  loadpage(false, oldscroll)
   if (selectframe != undefined) {
     select($(selectframe.find('span').toArray()[selectindex]), false)
   }
   $(':focus').blur()
 }
 
-function loadpage(setload) {
+function loadpage(setload, oldscroll) {
   $('#username').text(document.cookie.split(';')[0].split('=')[1].split('_')[0])
   if (setload != false) {
     // prevents endless loading loop
@@ -2963,11 +2988,11 @@ function loadpage(setload) {
   updateSizes()
   clearEmptyDates()
   // go to today
-  updatedeadlines()
   $('#pop').scrollTop(0)
   $('#pop').scrollTop(
     $(dateToHeading(stringToDate('t'))).prev().offset().top - 
     $('#pop').offset().top)
+  if (oldscroll) $('#flop').scrollTop(oldscroll)
   select(dateToHeading(stringToDate('t')))
   loading = false
   $(document).scrollTop(0)
