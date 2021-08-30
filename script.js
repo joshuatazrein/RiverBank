@@ -1104,9 +1104,6 @@ function updatedeadlines() {
         'ondrop="dropTask(event)"', '').replace(
         'dragstart="" dragover="" drop=""', '')
     }
-    $('span.in').attr('ondragstart', 'dragTask(event)')
-    $('span.in').attr('ondragover', 'draggingOver(event)')
-    $('span.in').attr('ondrop', 'dropTask(event)')
     $('span.in').removeClass('ui-draggable')
     $('span.in').removeClass('ui-droppable')
     $('span.in').removeClass('ui-draggable-handle')
@@ -1433,7 +1430,6 @@ function saveTask() {
 }
 
 function getHeading(el) {
-  console.log(el);
   // gets the heading
   while (el.parent()[0].tagName != 'P') el = el.parent()
   let heading = el.prev()
@@ -1454,7 +1450,7 @@ function select(el, scroll) {
   $(document).scrollTop(0); // fixes weird shit
   // switch selection
   if (selected != undefined) {
-    selected.removeClass('taskselect')
+    $('.taskselect').removeClass('taskselect')
   }
   if (el != undefined && $(el).hasClass('in') == true) {
     selected = $(el)
@@ -1831,7 +1827,9 @@ function timertest(ev) {
 
 //start of drag
 function dragTask(evt) {
-  select(evt.target, false)
+  if (evt.data) {
+    select(evt.data.task, false)
+  } else select(evt.target, false)
   if (window.innerWidth < 600) return
   //start drag
   if (selected[0].tagName == 'TEXTAREA') {
@@ -1847,6 +1845,7 @@ function dragTask(evt) {
 
 //dropping
 function dropTask(evt, obj) {
+  console.log(evt);
   let el
   if (obj) {
     el = obj
@@ -2722,16 +2721,6 @@ function keycomms(evt) {
     } else {
       newTask()
     }
-  } else if (evt.key == 'c' && evt.metaKey && selected) {
-    // copy/paste functionality
-    copieditem = selected.clone()
-  } else if (evt.key == 'x' && evt.metaKey && selected) {
-    copieditem = selected
-  } else if (evt.key == 'v' && evt.metaKey && copieditem) {
-    selected.after(copieditem)
-    select(selected.next())
-    copieditem = undefined
-    save()
   } else if (!evt.metaKey && !evt.altKey && !evt.ctrlKey &&
     selected != undefined && selected[0].tagName == 'TEXTAREA') {
     // modify the height of the textarea to hold everything
