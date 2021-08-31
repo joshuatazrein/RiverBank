@@ -512,6 +512,8 @@ span.weblink, span.deadline {
   .container {
     height: calc(100vh - 80px);
     border-bottom: 1px solid var(--bdcolor);
+    color: var(--textcolor);
+    background: var(--background);
   }
   .floplist, .poplist {
     width: 100%;
@@ -525,11 +527,8 @@ span.weblink, span.deadline {
     border-left: 1px solid var(--bdcolor);
     border-right: none;
   }
-  .loads {
-    margin-left: -5px;
-    width: calc(100% + 5px);
-  }
   .loads textarea {
+    margin-left: -5px;
     width: calc(100% - 5px);
   }
   .leftcolumn {

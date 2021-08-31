@@ -288,6 +288,7 @@ function updateSizes() {
   )) {
     // update entries
     let fontsize = 24
+    if (window.innerWidth < 600) fontsize = 18
     while ($(list[0]).width() / (fontsize / 2) < list[1]) {
       fontsize -= 1
     }
@@ -417,16 +418,17 @@ function clearEmptyDates() {
     ) date.remove()
   }
   const today = stringToDate('t')
-  console.log('doing the thing');
+
   try {
     $('#pop').children().filter('.dateheading').toArray().forEach((heading) => {
       if (
         stringToDate($(heading).text(), true).getTime() < today.getTime()
       ) {
         if (
-          !(selected && getHeading(selected, true)[0] == $(heading)[0]) &&
-          !(getHeading(selected, true) && 
-          getHeading(selected, true) == $(heading)[0])
+          !selected ||
+          !(selected[0] == $(heading)[0] ||
+          (getHeading(selected, true) && 
+          getHeading(selected, true)[0] == $(heading)[0]))
         ) {
           // move uncompleted tasks to today and fold/complete all tasks
           if (!($(heading).hasClass('complete'))) 
@@ -434,18 +436,25 @@ function clearEmptyDates() {
           if (($(heading).attr('folded') == 'false')) 
             togglefold($(heading), false)
           const children = getHeadingChildren($(heading))
-          const daychildren = getHeadingChildren(dateToHeading(
-            stringToDate('t')))
-          const curday = $(daychildren[daychildren.length - 1])
+          const appends = []
           for (child of children) {
+            // test children of heading
             if ($(child).hasClass('event') && 
               !$(child).hasClass('complete')) $(child).addClass('complete')
             else if (!$(child).hasClass('complete') && !isHeading($(child))) {
-              curday.after($(child))
               $(child).show()
+              appends.push($(child))
             } else {
               const incomp = $(child).find('span.in:not(.complete)')
-              for (subchild of incomp) curday.after($(subchild))
+              for (subchild of incomp) appends.push($(subchild))
+            }
+          }
+          appends.push($('<span class="in h2">uncompleted</span>'))
+          const todayheading = $(dateToHeading(today))
+          if (appends.length > 1) {
+            // add uncompleted to after heading
+            for (child of appends) {
+              todayheading.after($(child))
             }
           }
         }
@@ -1094,9 +1103,18 @@ function updatedeadlines() {
       axis: 'y',
       containment: 'window',
       revert: true,
-      scrollSpeed: 10,
+      appendTo: $('#container'),
+      helper: 'clone',
       refreshPositions: true,
-      zIndex: 1
+      zIndex: 1,
+      addClasses: false,
+      start: function(event) {
+        // $(this).hide()
+        dragTask(event, $(this))
+      },
+      drag: function(event) {
+        mobileDragOver(event)
+      },
     })
     $('span.in').droppable({
       accept: 'span.in', 
@@ -1105,11 +1123,14 @@ function updatedeadlines() {
       drop: function(event, ui) {
         ui.draggable.css('top', '0')
         ui.draggable.css('left', '0')
-        select(ui.draggable[0], false)
         dropTask(event, ui.draggable[0])
         select(ui.draggable[0])
       }
     })
+    $('span.in').attr('ondragstart', '')
+    $('span.in').attr('ondragover', '')
+    $('span.in').attr('ondrop', '')
+    $('span.in').attr('draggable', 'false')
   } else {
     $('span.in').attr('ondragstart', 'dragTask(event)')
     $('span.in').attr('ondragover', 'draggingOver(event)')
@@ -1127,6 +1148,46 @@ function updatedeadlines() {
     // $('span.in').removeClass('ui-draggable-handle')
     // $('span.in').removeClass('ui-draggable-dragging')
     // $('span.in').removeClass('ui-droppable-active')
+  }
+}
+var dragtimer
+
+function mobileDragOver(event) {
+  const timertime = 3
+  const offsetwidth = 30
+  const scrollChange = 1
+  const flopoffset = $('#flop').offset().top
+  const flopheight = $('#flop').height()
+  const popoffset = $('#pop').offset().top
+  const popheight = $('#pop').height()
+  clearTimeout(dragtimer)
+  dragtimer = setTimeout(mobileDragOver, timertime, event)
+  if (
+    flopoffset + flopheight - offsetwidth < event.pageY &&
+    event.pageY < flopoffset + flopheight
+  ) {
+    // scroll down
+    $('#flop').scrollTop($('#flop').scrollTop() + scrollChange)
+  } else if (
+    flopoffset < event.pageY &&
+    event.pageY < flopoffset + offsetwidth
+  ) {
+    // scroll up
+    $('#flop').scrollTop($('#flop').scrollTop() - scrollChange)
+  } else if (
+    popoffset + popheight - offsetwidth < event.pageY &&
+    event.pageY < popoffset + popheight
+  ) {
+    // scroll down
+    $('#pop').scrollTop($('#pop').scrollTop() + scrollChange)
+  } else if (
+    popoffset < event.pageY &&
+    event.pageY < popoffset + offsetwidth
+  ) {
+    // scroll up
+    $('#pop').scrollTop($('#pop').scrollTop() - scrollChange)
+  } else {
+    clearTimeout(dragtimer)
   }
 }
 
@@ -1390,9 +1451,6 @@ function saveTask() {
       newstr = newstr.slice(1)
     }
   }
-  if (savetask.hasClass('folded') == 'true') {
-    savetask.addClass('folded')
-  }
   newstr = newstr.replace(
     /\_(.*)\_/, "$1").replace(
     /\*(.*)\*/, "$1").replace(
@@ -1434,6 +1492,8 @@ function saveTask() {
   if (savetask.hasClass('h3') == true) {
     savetask.html(savetask.html().slice(4))
   }
+  if (isHeading(savetask) && savetask.attr('folded') != 'true') 
+    savetask.attr('folded', 'false') // sets heading folds
   selected.remove()
   savetask.show()
   select(savetask)
