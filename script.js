@@ -278,15 +278,14 @@ function updateSizes() {
     [$('#searchbar')[0], 5],
     [$('#username')[0], $('#username').text().length / 2 + 2],
     [$('#lists')[0], 7]
-  ]
-  // ].concat(
-  //   $('#loads').children().toArray().map((x) => {
-  //     let textlength = Math.max($(x).val().split(' ').map((x) => {
-  //       return x.length
-  //     }))
-  //     return [$(x)[0], textlength / 2 + 2.5]
-  //   }))
-  ) {
+  ].concat(
+    $('#loads').children().toArray().map((x) => {
+      let textlength = Math.max($(x).val().split(' ').map((x) => {
+        return x.length
+      }))
+      return [$(x)[0], textlength / 2 + 2.5]
+    })
+  )) {
     // update entries
     let fontsize = 24
     if (window.innerWidth < 600) fontsize = 18
@@ -304,7 +303,6 @@ function updateSizes() {
   // updates the text sizes of each list
   let height = 0
   $('#texttest').css('font-family', 'var(--font), serif')
-  $('#testtest').css('word-wrap', 'break-word')
   $('#texttest').css('font-weight', 'bold')
   for (list of $('#loads').children()) {
     $('#texttest').css('font-size', $(list).css('font-size'))
@@ -401,7 +399,8 @@ function save(undo) {
   data = JSON.parse(dataString)
   $(document).scrollTop(0) // fixes scroll
   if (dataString != prevData) { // stops redundancies
-    // backup data to the server
+    localStorage.setItem('data', dataString)
+    // backup data to the server after setting localstorage data
     uploadData()
   }
   updatedeadlines()
@@ -441,9 +440,7 @@ function clearEmptyDates() {
           for (child of children) {
             // test children of heading
             if ($(child).hasClass('event') && 
-              !$(child).hasClass('complete')) {
-              toggleComplete(child) // completes it
-            }
+              !$(child).hasClass('complete')) $(child).addClass('complete')
             else if (!$(child).hasClass('complete') && !isHeading($(child))) {
               $(child).show()
               appends.push($(child))
@@ -452,12 +449,9 @@ function clearEmptyDates() {
               for (subchild of incomp) appends.push($(subchild))
             }
           }
+          appends.push($('<span class="in h2">uncompleted</span>'))
           const todayheading = $(dateToHeading(today))
           if (appends.length > 1) {
-            if (!getHeadingChildren(todayheading).map((x) => 
-            {return $(x).text()}).includes('uncompleted')) {
-              appends.push($('<span class="in h2">uncompleted</span>'))
-            }
             // add uncompleted to after heading
             for (child of appends) {
               todayheading.after($(child))
@@ -490,6 +484,7 @@ function upload() {
       // rewrite existing data with this
       data = JSON.parse(this.result)
       dataString = JSON.stringify(data)
+      localStorage.setItem('data', dataString)
       uploadData(true)
       reloadpage()
     })
@@ -511,6 +506,7 @@ function reset() {
   yes = confirm("Are you sure you want to reset?")
   if (yes == true) {
     data = JSON.parse(JSON.stringify(resetstring))
+    localStorage.setItem('data', JSON.stringify(data))
     uploadData()
     reloadpage()
   }
@@ -530,9 +526,12 @@ function uploadData(async) {
     // cancels previous uploads to overwrite
     if (uploading == true) xhr.abort()
     uploading = true
+    const blob = new Blob([JSON.stringify(data)], {
+      type: "text/plain"
+    })
+    const newdata = new FormData()
+    newdata.append("upfile", blob)
     xhr = new XMLHttpRequest()
-    const formdata = new FormData()
-    formdata.append('data', JSON.stringify(data))
     xhr.onreadystatechange = function() {
       if (this.readyState == 4) {
         uploading = false
@@ -553,7 +552,6 @@ function uploadData(async) {
     xhr.send(newdata)
   } catch (err) {
     // pass
-    console.log(err);
   }
 }
 
@@ -706,6 +704,7 @@ function changeDateFormat(format) {
     }
   }
   data.dateSplit = format
+  localStorage.setItem('data', JSON.stringify(data))
   uploadData(true)
   reloadpage()
 }
@@ -1498,9 +1497,8 @@ function saveTask() {
   selected.remove()
   savetask.show()
   select(savetask)
-  while (selected.parent()[0].tagName == 'SPAN') {
-    // disable drags
-    selected.parent().attr('draggable', 'false')
+  if (selected.parent()[0].tagName == 'SPAN') {
+    selected.parent().attr('draggable', 'true')
   }
   save(true)
 }
@@ -1676,10 +1674,6 @@ function editTask() {
   //   selected.parent().attr('draggable', 'false')
   // }
   if (selected != undefined) {
-    while (selected.parent()[0].tagName != 'P') {
-      // disable drags
-      selected.parent().attr('draggable', 'false')
-    }
     $('#context-menu').hide()
     const newelt = $('<textarea class=\'in edit\'></textarea>')
     el.after(newelt)
@@ -1820,43 +1814,34 @@ function archiveTask(play) {
   save(true)
 }
 
-function toggleComplete(task) {
-  // task is for autocompleting yesterday's events
+function toggleComplete() {
   if (selected[0].tagName == 'P') {
     return
   }
-  let completetask
-  if (!task) completetask = selected
-  else completetask = $(task)
-  const text = stripChildren(completetask).split(' ')
-  if (!completetask.hasClass('complete') &&
+  const text = stripChildren(selected).split(' ')
+  if (!selected.hasClass('complete') &&
     /^~/.test(text[text.length - 1])) {
     if (stringToDate(text[text.length - 1].slice(1)) == 'Invalid Date') {
       alert('invalid repeat date')
-      completetask.text(text.slice(0, text.length - 1) + 
-        getChildren(completetask))
+      selected.text(text.slice(0, text.length - 1) + 
+        getChildren(selected))
     } else {
       const date = stringToDate(text[text.length - 1].slice(1), false, true)
-      if (task) {
-        date.setDate(date.getDate() - 1)
-      }
       const heading = dateToHeading(date)
-      const newtask = completetask.clone()
+      const newtask = selected.clone()
       newtask.removeClass('complete')
       if (
         !getHeadingChildren($(heading)).map((x) => {
           return $(x).text()
-        }).includes(completetask.text())
+        }).includes(selected.text())
       ) {
         $(heading).after(newtask)
       }
     }
   }
-  completetask.toggleClass('complete')
-  if (!task) {
-    save()
-    clearEmptyDates()
-  }
+  selected.toggleClass('complete')
+  save()
+  clearEmptyDates()
 }
 
 function toggleImportant() {
