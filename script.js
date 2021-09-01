@@ -550,7 +550,7 @@ function uploadData(async) {
     } else {
       xhr.open("POST", "upload.php")
     }
-    xhr.send(newdata)
+    xhr.send(formdata)
   } catch (err) {
     // pass
     console.log(err);
