@@ -528,8 +528,10 @@ span.weblink, span.deadline {
     border-right: none;
   }
   .loads textarea {
-    margin-left: -5px;
-    width: calc(100% - 5px);
+    width: 100%;
+    margin-left: 0;
+    word-wrap: break-word;
+    font-size: 18px;
   }
   .leftcolumn {
     font-size: 24px;
