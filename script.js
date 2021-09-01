@@ -1034,9 +1034,11 @@ function updatedeadlines() {
   $('.duedate').remove()
   $('.placeholder').remove()
   $('.mobhandle').remove()
+  const today = stringToDate('t')
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
     (x) => {
-      return $(x).attr('folded') == 'true'
+      return $(x).attr('folded') == 'true' && 
+        stringToDate($(x).text(), true) != today        
     })
   // uncollapses then recollapses to prevent weirdness
   for (heading of collapselist) {
