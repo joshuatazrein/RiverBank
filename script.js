@@ -278,14 +278,15 @@ function updateSizes() {
     [$('#searchbar')[0], 5],
     [$('#username')[0], $('#username').text().length / 2 + 2],
     [$('#lists')[0], 7]
-  ].concat(
-    $('#loads').children().toArray().map((x) => {
-      let textlength = Math.max($(x).val().split(' ').map((x) => {
-        return x.length
-      }))
-      return [$(x)[0], textlength / 2 + 2.5]
-    })
-  )) {
+  ]
+  // ].concat(
+  //   $('#loads').children().toArray().map((x) => {
+  //     let textlength = Math.max($(x).val().split(' ').map((x) => {
+  //       return x.length
+  //     }))
+  //     return [$(x)[0], textlength / 2 + 2.5]
+  //   }))
+  ) {
     // update entries
     let fontsize = 24
     if (window.innerWidth < 600) fontsize = 18
@@ -304,6 +305,7 @@ function updateSizes() {
   let height = 0
   $('#texttest').css('font-family', 'var(--font), serif')
   $('#texttest').css('font-weight', 'bold')
+  $('#testtest').css('word-wrap', 'break-word')
   for (list of $('#loads').children()) {
     $('#texttest').css('font-size', $(list).css('font-size'))
     $('#texttest').html($(list).val())
@@ -440,7 +442,7 @@ function clearEmptyDates() {
           for (child of children) {
             // test children of heading
             if ($(child).hasClass('event') && 
-              !$(child).hasClass('complete')) $(child).addClass('complete')
+              !$(child).hasClass('complete')) toggleComplete(child)
             else if (!$(child).hasClass('complete') && !isHeading($(child))) {
               $(child).show()
               appends.push($(child))
@@ -449,9 +451,12 @@ function clearEmptyDates() {
               for (subchild of incomp) appends.push($(subchild))
             }
           }
-          appends.push($('<span class="in h2">uncompleted</span>'))
           const todayheading = $(dateToHeading(today))
           if (appends.length > 1) {
+            if (!getHeadingChildren(todayheading).map((x) => 
+            {return $(x).text()}).includes('uncompleted')) {
+              appends.push($('<span class="in h2">uncompleted</span>'))
+            }
             // add uncompleted to after heading
             for (child of appends) {
               todayheading.after($(child))
@@ -1497,7 +1502,8 @@ function saveTask() {
   selected.remove()
   savetask.show()
   select(savetask)
-  if (selected.parent()[0].tagName == 'SPAN') {
+  while (selected.parent()[0].tagName == 'SPAN') {
+    // disable drags
     selected.parent().attr('draggable', 'true')
   }
   save(true)
@@ -1679,6 +1685,10 @@ function editTask() {
     el.after(newelt)
     el.hide()
     select(newelt)
+    while (selected.parent()[0].tagName == 'SPAN') {
+      // disable drags
+      selected.parent().attr('draggable', 'false')
+    }
     selected.focus()
     if (getChildren(el) == '') {
       selected.after('<span style="display:none;"></span>')
@@ -1814,34 +1824,43 @@ function archiveTask(play) {
   save(true)
 }
 
-function toggleComplete() {
+function toggleComplete(task) {
+  // task is for autocompleting yesterday's events
   if (selected[0].tagName == 'P') {
     return
   }
-  const text = stripChildren(selected).split(' ')
-  if (!selected.hasClass('complete') &&
+  let completetask
+  if (!task) completetask = selected
+  else completetask = $(task)
+  const text = stripChildren(completetask).split(' ')
+  if (!completetask.hasClass('complete') &&
     /^~/.test(text[text.length - 1])) {
     if (stringToDate(text[text.length - 1].slice(1)) == 'Invalid Date') {
       alert('invalid repeat date')
-      selected.text(text.slice(0, text.length - 1) + 
-        getChildren(selected))
+      completetask.text(text.slice(0, text.length - 1) + 
+        getChildren(completetask))
     } else {
       const date = stringToDate(text[text.length - 1].slice(1), false, true)
+      if (task) {
+        date.setDate(date.getDate() - 1)
+      }
       const heading = dateToHeading(date)
-      const newtask = selected.clone()
+      const newtask = completetask.clone()
       newtask.removeClass('complete')
       if (
         !getHeadingChildren($(heading)).map((x) => {
           return $(x).text()
-        }).includes(selected.text())
+        }).includes(completetask.text())
       ) {
         $(heading).after(newtask)
       }
     }
   }
-  selected.toggleClass('complete')
-  save()
-  clearEmptyDates()
+  completetask.toggleClass('complete')
+  if (!task) {
+    save()
+    clearEmptyDates()
+  }
 }
 
 function toggleImportant() {
