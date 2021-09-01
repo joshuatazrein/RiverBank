@@ -531,10 +531,8 @@ function uploadData(async) {
     if (uploading == true) xhr.abort()
     uploading = true
     xhr = new XMLHttpRequest()
-    const formdata = new FormData()
-    formdata.append('data', JSON.stringify(data))
     xhr.onreadystatechange = function() {
-      if (this.readyState == 4) {
+      if (this.readyState == 4 && this.status == 200) {
         uploading = false
         if (reloading == true) {
           reloading = false 
@@ -546,11 +544,11 @@ function uploadData(async) {
       }
     }
     if (async ==true) {
-      xhr.open("POST", "upload.php", false)
+      xhr.open("GET", "upload.php?data=" + JSON.stringify(data), false)
     } else {
-      xhr.open("POST", "upload.php")
+      xhr.open("GET", "upload.php?data=" + JSON.stringify(data))
     }
-    xhr.send(formdata)
+    xhr.send()
   } catch (err) {
     // pass
     console.log(err);
