@@ -551,6 +551,11 @@ span.weblink, span.deadline {
     font-size: 18px !important;
     min-width: 5vw;
   }
+  div.leftcolumn div.butbar {
+    width: calc(100% + 10px);
+    margin: 0;
+    margin-left: -5px;
+  }
   .leftcolumn .butbar button {
     width: calc(50% - 5px);
     padding: 3px;
@@ -558,6 +563,7 @@ span.weblink, span.deadline {
   }
   #listbuts button {
     width: calc(33% - 5px);
+    margin: 1px;
   }
   .leftcolumn .butbar {
     width: 100%;
