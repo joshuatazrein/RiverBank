@@ -552,9 +552,9 @@ span.weblink, span.deadline {
     min-width: 5vw;
   }
   div.leftcolumn div.butbar {
-    width: calc(100% + 10px);
+    width: calc(100% + 6px);
     margin: 0;
-    margin-left: -5px;
+    margin-left: -3px;
   }
   .leftcolumn .butbar button {
     width: calc(50% - 5px);
