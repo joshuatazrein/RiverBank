@@ -19,7 +19,7 @@ function load() {
     console.log('testfile failed');
     // offline mode
     try {
-      data = JSON.parse(localStorage.getItem('data'))
+      // data = JSON.parse(localStorage.getItem('data'))
       $('head').append(
         $("<link rel='stylesheet' type='text/css' href='" +
         data.style + "' />")

@@ -1,6 +1,6 @@
 <?php
 $cookie = $_COOKIE['username'];
-fopen('users/' . $cookie . '.json', 'w');
-fwrite($_POST['data']);
+echo fopen('users/' . $cookie . '.json', 'w');
+echo fwrite($_POST['data']);
 close();
 ?>
