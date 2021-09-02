@@ -253,7 +253,7 @@ textarea {
 
 textarea.selected, textarea.unselected {
   height: calc(1em + 5px);
-  width: 100%;
+  margin: 1px 5px;
   display: inline-block;
   font: 100% var(--font), serif;
   font-weight: bold;
