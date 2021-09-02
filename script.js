@@ -531,11 +531,11 @@ function uploadData(async) {
     // cancels previous uploads to overwrite
     if (uploading == true) xhr.abort()
     uploading = true
-    const blob = new Blob([JSON.stringify(data)], {
-      type: "text/plain"
-    })
+    // const blob = new Blob([JSON.stringify(data)], {
+    //   type: "text/plain"
+    // })
     const newdata = new FormData()
-    newdata.append("upfile", blob)
+    newdata.append("data", JSON.stringify(data))
     xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function() {
       if (this.readyState == 4) {
@@ -1034,11 +1034,9 @@ function updatedeadlines() {
   $('.duedate').remove()
   $('.placeholder').remove()
   $('.mobhandle').remove()
-  const today = stringToDate('t')
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
     (x) => {
-      return $(x).attr('folded') == 'true' && 
-        stringToDate($(x).text(), true) != today        
+      return $(x).attr('folded') == 'true' 
     })
   // uncollapses then recollapses to prevent weirdness
   for (heading of collapselist) {
@@ -1069,7 +1067,7 @@ function updatedeadlines() {
   for (heading of collapselist) {
     togglefold($(heading), false)
   }
-  today = new Date()
+  const today = new Date()
   today.setHours(0);
   today.setMinutes(0);
   today.setSeconds(0);
