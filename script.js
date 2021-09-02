@@ -1034,11 +1034,9 @@ function updatedeadlines() {
   $('.duedate').remove()
   $('.placeholder').remove()
   $('.mobhandle').remove()
-  const today = stringToDate('t')
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
     (x) => {
-      return $(x).attr('folded') == 'true' && 
-        stringToDate($(x).text(), true) != today        
+      return $(x).attr('folded') == 'true'      
     })
   // uncollapses then recollapses to prevent weirdness
   for (heading of collapselist) {
@@ -1069,7 +1067,7 @@ function updatedeadlines() {
   for (heading of collapselist) {
     togglefold($(heading), false)
   }
-  const today = new Date()
+  today = new Date()
   today.setHours(0);
   today.setMinutes(0);
   today.setSeconds(0);
@@ -2121,7 +2119,7 @@ function togglefold(e, saving) {
       e.html(stripChildren(e).slice(0, -4) + getChildren(e))
     }
   }
-  if (saving === undefined) {
+  if (saving === undefined && !$(e).hasClass('dateheading')) {
     save()
   }
 }
