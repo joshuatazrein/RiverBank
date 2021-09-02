@@ -289,7 +289,7 @@ function updateSizes() {
   ) {
     // update entries
     let fontsize = 24
-    if (window.innerWidth < 600) fontsize = 18
+    if (window.innerWidth < 600) fontsize = 16
     while ($(list[0]).width() / (fontsize / 2) < list[1]) {
       fontsize -= 1
     }
@@ -420,7 +420,6 @@ function clearEmptyDates() {
     ) date.remove()
   }
   const today = stringToDate('t')
-
   try {
     $('#pop').children().filter('.dateheading').toArray().forEach((heading) => {
       if (
@@ -445,6 +444,7 @@ function clearEmptyDates() {
               !$(child).hasClass('complete')) toggleComplete(child)
             else if (!$(child).hasClass('complete') && !isHeading($(child))) {
               $(child).show()
+              $(child).attr('style', '')
               appends.push($(child))
             } else {
               const incomp = $(child).find('span.in:not(.complete)')
@@ -863,7 +863,7 @@ function stringToDate(string, weekday, future) {
   return date
 }
 
-function dateToHeading(date) {
+function dateToHeading(date, save) {
   if (date === undefined) return
   if (dateToString(date).includes('NaN')) return
   // find the matching date, or create if not
@@ -896,7 +896,7 @@ function dateToHeading(date) {
         $(heading).after($(x))
       })
     }
-    save()
+    if (save != false) save()
     return newtask
   } else {
     return heading1
@@ -1056,7 +1056,7 @@ function updatedeadlines() {
       const index = text.search('>')
       const endindex = index + text.slice(index).search(' ')
       const date = $(deadline).text().slice(1)
-      const heading = dateToHeading(stringToDate(date))
+      const heading = dateToHeading(stringToDate(date), false)
       const duedate = createBlankTask()
       // take out deadline
       duedate.text(text.slice(0, index) + text.slice(endindex))
