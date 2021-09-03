@@ -35,14 +35,13 @@ function signIn() {
       signIn()
     } else {
       // success
-      worked = true
       const inaweek = new Date();
       inaweek.setTime(inaweek.getTime() + 604800000);
       document.cookie = 'fname=' + xhr.responseText + '; expires=' + 
         inaweek.toUTCString();
       document.cookie = 'user=' + username + '; expires=' + 
         inaweek.toUTCString();
-      document.cookie = 'pw=' + username + '; expires=' + 
+      document.cookie = 'pw=' + password + '; expires=' + 
         inaweek.toUTCString();
       $.get(
         'users/' + xhr.responseText + '.json', 
@@ -93,7 +92,17 @@ function newUser(username, password) {
       pwtest: password
     },
     function (data, status, xhr) {
-      console.log(xhr.responseText);
+      // success
+      data = JSON.parse(JSON.stringify(resetstring))
+      const inaweek = new Date();
+      inaweek.setTime(inaweek.getTime() + 604800000);
+      document.cookie = 'fname=' + xhr.responseText + '; expires=' + 
+        inaweek.toUTCString();
+      document.cookie = 'user=' + username + '; expires=' + 
+        inaweek.toUTCString();
+      document.cookie = 'pw=' + password + '; expires=' + 
+        inaweek.toUTCString();
+      loadpage();
     }
   )
 }

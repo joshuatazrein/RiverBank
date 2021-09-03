@@ -3043,9 +3043,11 @@ function reload2() {
 }
 
 function loadpage(setload, oldscroll) {
+  // right after signing in
   let oldselect
   $('#username').text(getCookie('user'))
   if (setload != false) {
+    // initial loads (not called on reloads)
     $('head').append(
       $("<link rel='stylesheet' type='text/css' href='" +
       data.style + "' />")

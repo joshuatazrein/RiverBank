@@ -13,7 +13,7 @@ $sql2 = 'SELECT * FROM users WHERE user="' .
 $username . '"';
 $result = $conn->query($sql2);
 while ($row = $result->fetch_assoc()) {
-  echo $row["fname"] . ', ' . $row["user"] . ', ' . $row["pw"];
+  echo $row["fname"];
 }
 $conn->close();
 ?>
