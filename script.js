@@ -534,9 +534,9 @@ function uploadData(async) {
   // uploads data to server
   try {
     $.post("upload.php", {
-      datastr: JSON.stringify(data)
-    }, function(data, status, xhr) {
-      console.log(xhr.responseText);
+      datastr: JSON.stringify(data),
+    }, function() {
+      console.log('uploaded');
     });
     // cancels previous uploads to overwrite
     // if (uploading == true) xhr.abort()
