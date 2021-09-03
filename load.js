@@ -49,7 +49,7 @@ function signIn() {
         function (dataval, status, xhr2) {
           console.log(xhr2.responseText)
           data = JSON.parse(xhr2.responseText)
-          load2()
+          loadpage()
         }
       )
     }
@@ -119,23 +119,6 @@ function load() {
         alert('You did it, but it\'s all meaningless. There is no hope.')
       }
     }
-  }
-}
-
-function load2() {
-  // update the data after it loads
-  $('head').append(
-    $("<link rel='stylesheet' type='text/css' href='" +
-    data.style + "' />")
-  );
-  if (data.weekdays == 'M') {
-    weekdaysStr = {0:'U', 1:'M', 2:'T', 3:'W', 4:'R', 5:'F', 6:'S'}
-    weekdaysNum = {'U':0, 'M':1, 'T':2, 'W':3, 'R':4, 'F':5, 'S':6}
-  } else if (data.weekdays == 'Mon') {
-    weekdaysStr = {0:'Sun', 1:'Mon', 2:'Tue', 3:'Wed', 4:'Thu', 5:'Fri', 
-    6:'Sat'}
-    weekdaysNum = {'Sun':0, 'Mon':1, 'Tue':2, 'Wed':3, 'Thu':4, 'Fri':5, 
-    'Sat':6}
   }
 }
 

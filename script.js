@@ -3043,6 +3043,19 @@ function loadpage(setload, oldscroll) {
   $('#username').text(
     document.cookie.split(';')[0].split('=')[1].split('_')[0])
   if (setload != false) {
+    $('head').append(
+      $("<link rel='stylesheet' type='text/css' href='" +
+      data.style + "' />")
+    );
+    if (data.weekdays == 'M') {
+      weekdaysStr = {0:'U', 1:'M', 2:'T', 3:'W', 4:'R', 5:'F', 6:'S'}
+      weekdaysNum = {'U':0, 'M':1, 'T':2, 'W':3, 'R':4, 'F':5, 'S':6}
+    } else if (data.weekdays == 'Mon') {
+      weekdaysStr = {0:'Sun', 1:'Mon', 2:'Tue', 3:'Wed', 4:'Thu', 5:'Fri', 
+      6:'Sat'}
+      weekdaysNum = {'Sun':0, 'Mon':1, 'Tue':2, 'Wed':3, 'Thu':4, 'Fri':5, 
+      'Sat':6}
+    }
     // prevents endless loading loop
     $(document).on('keydown', keycomms)
     $(document).on('contextmenu', event, context)
@@ -3119,5 +3132,3 @@ function loadpage(setload, oldscroll) {
   }
   $(document).scrollTop(0)
 }
-
-loadpage()

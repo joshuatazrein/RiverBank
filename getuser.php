@@ -11,8 +11,8 @@ $sql = 'SELECT fname FROM users WHERE user="' .
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
   // output data of each row
-  while($row = $result->fetch_assoc()) {
-    echo "fname: " . $row["fname"];
+  while ($row = $result->fetch_assoc()) {
+    echo $row["fname"];
   }
 } else {
   echo "FAIL";
