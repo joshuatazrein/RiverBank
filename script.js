@@ -462,17 +462,21 @@ function clearEmptyDates() {
               for (subchild of incomp) appends.push($(subchild))
             }
           }
-          const todayheading = $(dateToHeading(today))
           if (appends.length > 0) {
+            let todayheading = getHeadingChildren($(dateToHeading(today)))[
+              getHeadingChildren($(dateToHeading(today))).length - 1] 
+              // hchildren
             if (!getHeadingChildren(todayheading).map((x) => { 
               return $(x).text() 
             }).includes('uncompleted')) {
-              appends.push($(
-                '<span class="in h2" folded="false">uncompleted</span>'))
+              const completespan = $(
+                '<span class="in h2" folded="false">uncompleted</span>')
+              todayheading.after(completespan)
+              todayheading = completespan
             }
             // add uncompleted to after heading
-            for (child of appends) {
-              todayheading.after($(child))
+            for (let appchild of appends) {
+              todayheading.after($(appchild))
             }
           }
         }
@@ -530,6 +534,7 @@ function reset() {
 
 function uploadData() {
   console.log('uploading');
+  console.log(JSON.stringify(data) == prevupload, 'upload test', JSON.stringify(data), prevupload);
   if (JSON.stringify(data) == prevupload) {
     console.log('equal');
     return
