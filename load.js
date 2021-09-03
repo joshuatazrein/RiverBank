@@ -20,8 +20,43 @@ function getCookie(cname) {
   return "";
 }
 
+function signIn() {
+  // keep prompting until they get it right
+  const username = prompt('Username:')
+  const password = prompt('Password:')
+  $.post('getuser.php', {
+    // trying data
+    usertest: username,
+    pwtest: password,
+  }, function(dataval, status, xhr) {
+    if (xhr.responseText == 'FAIL') {
+      // fail
+      alert('Username and password not recognized; try again.')
+      signIn()
+    } else {
+      // success
+      alert('success')
+      worked = true
+      document.cookie = 'fname=' + xhr.responseText + '; expires=' + 
+        inaweek.toUTCString();
+      document.cookie = 'user=' + username + '; expires=' + 
+        inaweek.toUTCString();
+      document.cookie = 'pw=' + username + '; expires=' + 
+        inaweek.toUTCString();
+      $.get(
+        'users/' + xhr.responseText + '.json', 
+        function (dataval, status, xhr2) {
+          console.log(xhr2.responseText);
+          data = JSON.parse(xhr2.responseText)
+        }
+      )
+    }
+  })
+}
+
 function load() {
   try {
+    // test for internet connection
     $.get('users/testfile.json')
   } catch (err) {
     console.log('testfile failed');
@@ -55,8 +90,8 @@ function load() {
     }
     return
   }
-  // try the current cookie
   try {
+    // try the current cookie
     const fname = getCookie('fname')
     if (fname == '') {throw 'no user loaded'}
     $.get(
@@ -68,45 +103,14 @@ function load() {
       }
     )
   } catch(err) {
+    // there are no cookies
     console.log(err);
     const newuser = confirm('Welcome to RiverBank! Press "OK" to create a new user or "Cancel" to sign in to your account.')
     var inaweek = new Date();
     inaweek.setTime(inaweek.getTime() + 604800000);
     if (!newuser) {
       // wanting to sign in
-      let worked = false
-      while (!worked) {
-        // keep prompting until they get it right
-        const username = prompt('Username:')
-        const password = prompt('Password:')
-        $.post('getuser.php', {
-          // trying data
-          usertest: username,
-          pwtest: password,
-        }, function(dataval, status, xhr) {
-          if (xhr.responseText == 'FAIL') {
-            // fail
-            alert('Username and password not recognized; try again.')
-          } else {
-            // success
-            alert('success')
-            worked = true
-            document.cookie = 'fname=' + xhr.responseText + '; expires=' + 
-              inaweek.toUTCString();
-            document.cookie = 'user=' + username + '; expires=' + 
-              inaweek.toUTCString();
-            document.cookie = 'pw=' + username + '; expires=' + 
-              inaweek.toUTCString();
-            $.get(
-              'users/' + xhr.responseText + '.json', 
-              function (dataval, status, xhr2) {
-                console.log(xhr2.responseText);
-                data = JSON.parse(xhr2.responseText)
-              }
-            )
-          }
-        })
-      }
+      signIn()
     } else {
       // create a new user
       var worked = false
@@ -116,8 +120,8 @@ function load() {
         alert('You did it, but it\'s all meaningless. There is no hope.')
       }
     }
-    
   }
+  // update the data
   $('head').append(
     $("<link rel='stylesheet' type='text/css' href='" +
     data.style + "' />")
