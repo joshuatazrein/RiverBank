@@ -85,9 +85,9 @@ function load() {
         pwtest: password,
       }, function(data, status, xhr) {
         console.log(xhr.responseText);
-        worked = true
       })
     }
+    worked = true
   }
   $('head').append(
     $("<link rel='stylesheet' type='text/css' href='" +
