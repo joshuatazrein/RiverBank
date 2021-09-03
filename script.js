@@ -533,8 +533,6 @@ function reset() {
 }
 
 function uploadData() {
-  console.log('uploading');
-  console.log(JSON.stringify(data) == prevupload, 'upload test', JSON.stringify(data), prevupload);
   if (JSON.stringify(data) == prevupload) {
     console.log('equal');
     return
@@ -542,6 +540,7 @@ function uploadData() {
   // uploads data to server
   try {
     if (uploading == false) {
+      console.log('uploading');
       uploading = true
       $.post("upload.php", {
         datastr: JSON.stringify(data),
