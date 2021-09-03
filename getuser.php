@@ -8,7 +8,9 @@ if ($conn->connect_error) {
 }
 $sql = 'SELECT fname WHERE user="' . $username . 
   '" AND pw="' . $password . '"';
+echo('SELECT fname WHERE user="' . $username . 
+'" AND pw="' . $password . '"');
 $result = $conn->query($sql);
 $row = $result->fetch_array(MYSQLI_NUM);
-print($row[0][0]);
+// print($row[0][0]);
 ?>
