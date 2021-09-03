@@ -66,7 +66,7 @@ function checkUser() {
         alert('That username is already taken. Please try again.')
         checkUser()
       } else {
-        newUser(username)
+        checkPass(username)
       }
     }
   )
@@ -158,7 +158,7 @@ function load() {
       signIn()
     } else {
       // create a new user
-      newuser()
+      checkUser()
     }
   }
 }
