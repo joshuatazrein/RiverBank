@@ -238,7 +238,9 @@ function loadList(saving) { //updates the list display
   $(loads[loadedlist]).addClass('selected')
   $('#flop').html(data.flop[loadedlist].text)
   $('.taskselect').removeClass('taskselect')
-  if (saving != false) { save() }
+  if (saving != false) {
+    save() 
+  }
 }
 
 function toggleFoldList() {
@@ -327,10 +329,6 @@ function loadthis(event) {
     console.log(selected);
     movetask = selected.detach()
     movetolist = false
-  }
-  if (loadedlist != undefined && loadedlist != this.value) {
-    select()
-    save()
   }
   loads = Array.from($('#loads').children())
   loadedlist = loads.indexOf(this)
