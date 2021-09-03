@@ -57,6 +57,9 @@ function signIn() {
 }
 
 function load() {
+  document.cookie = 'user=;expires=' + past + ';'
+  document.cookie = 'fname=;expires=' + past + ';'
+  document.cookie = 'pw=;expires=' + past + ';'
   try {
     // test for internet connection
     $.get('users/testfile.json')
