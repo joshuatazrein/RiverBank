@@ -519,14 +519,15 @@ span.weblink, span.deadline {
 
 @media only screen and (max-width: 600px) {
   .collapsed {
-    margin-left: calc(-15% + 5px);
+    margin-left: calc(-15% + 10px);
   }
   #collapsebut {
     margin-left:calc(100% - 30px);
     width: 15px !important;
   }
   .fullwidth {
-    width: calc(100% - 34px);
+    right: 0;
+    position: absolute;
   }
   #help {
     font-size: 14px;
@@ -555,8 +556,8 @@ span.weblink, span.deadline {
     border-right: none;
   }
   .loads {
-    width: calc(100% + 20px);
-    margin-left: -10px;
+    width: calc(100% + 10px);
+    margin-left: -5px;
   }
   .loads textarea {
     width: 100%;
