@@ -536,23 +536,23 @@ function uploadData(async) {
     // cancels previous uploads to overwrite
     if (uploading == true) xhr.abort()
     uploading = true
+    const newdata = new FormData()
     // const blob = new Blob([JSON.stringify(data)], {
     //   type: "text/plain"
     // })
-    const newdata = new FormData()
     // newdata.append("upfile", blob)
     newdata.append('data', JSON.stringify(data))
     xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function () {
       if (this.readyState == 4) {
-        uploading = false
-        if (reloading == true) {
-          reloading = false
-          console.log('reloading from upload');
-          reloadpage()
-        }
+        // uploading = false
+        // if (reloading == true) {
+        //   reloading = false
+        //   console.log('reloading from upload');
+        //   reloadpage()
+        // }
         prevupload = JSON.stringify(data)
-        console.log('upload complete');
+        console.log(this.responseText);
       }
     }
     if (async == true) {
@@ -560,9 +560,11 @@ function uploadData(async) {
     } else {
       xhr.open("POST", "upload.php")
     }
+    console.log(newdata)
     xhr.send(newdata)
   } catch (err) {
     // pass
+    console.log(err);
   }
 }
 
