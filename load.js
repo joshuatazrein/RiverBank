@@ -45,9 +45,6 @@ function load() {
     }
     return
   }
-  $.get('usertest.php', function(data, status, xhr) {
-    console.log(xhr.responseText);
-  })
   if (document.cookie === '') {
     var inaweek = new Date();
     inaweek.setTime(inaweek.getTime() + 604800000);
@@ -64,7 +61,7 @@ function load() {
   while (worked === false) {
     const newuser = confirm(
       'Current user is not recognized. Press "OK" to create ' + 
-      'a new user and "Cancel" to try again.'
+      'a new user and "Cancel" to try again.' 
     )
     if (newuser) {
       // worked = true

@@ -6,9 +6,10 @@ $conn = new mysqli('server204.web-hosting.com',
 if ($conn->connect_error) {
   die('Connection failed: ' . $conn->connect_error);
 }
-echo mysqli_query($conn, 
+mysqli_real_query($conn, 
 'SELECT fname
 FROM users
-WHERE user="' . $username . '" AND ' . 'pw="' . $password . '"'
-)
+WHERE user="' . $username . '" AND ' . 'pw="' . $password . '"');
+$result = mysqli_use_result($conn);
+echo json_encode(mysqli_fetch_all($result));
 ?>
