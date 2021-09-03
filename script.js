@@ -515,7 +515,6 @@ function upload() {
       data = JSON.parse(this.result)
       dataString = JSON.stringify(data)
       uploadData(true)
-      location.reload()
     })
     fileReader.readAsText(this.files[0])
   })
@@ -535,12 +534,11 @@ function reset() {
   yes = confirm("Are you sure you want to reset?")
   if (yes == true) {
     data = JSON.parse(JSON.stringify(resetstring))
-    uploadData()
-    location.reload()
+    uploadData(true)
   }
 }
 
-function uploadData() {
+function uploadData(reload) {
   if (JSON.stringify(data) == prevupload) {
     console.log('equal');
     return
@@ -555,6 +553,7 @@ function uploadData() {
       }, function(data, status, xhr) {
         prevupload = xhr.responseText
         uploading = false
+        if (reload == true) reload() // reloads page
       });
     }
   } catch (err) {
@@ -716,7 +715,6 @@ function changeDateFormat(format) {
   }
   data.dateSplit = format
   uploadData(true)
-  location.reload()
 }
 
 function dateToString(date, weekday) {
@@ -1041,8 +1039,7 @@ function updatedeadlines() {
   $('.mobhandle').remove()
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
     (x) => {
-      return ($(x).attr('folded') == 'true' &&
-        !$(x).hasClass('taskselect'))
+      return ($(x).attr('folded') == 'true')
     })
   // uncollapses then recollapses to prevent weirdness
   for (heading of collapselist) {
@@ -2066,8 +2063,8 @@ function toggleSubtasks() {
       }
       e.toggleClass('folded')
     }
+    save()
   }
-  save()
 }
 
 function getHeadingChildren(el) {
@@ -2153,7 +2150,7 @@ function togglefold(e, saving) {
       e.html(stripChildren(e).slice(0, -4) + getChildren(e))
     }
   }
-  if (saving === undefined && !$(e).hasClass('dateheading')) {
+  if (saving === undefined) {
     setTimeout(save, 600)
   }
 }
@@ -3004,13 +3001,42 @@ function getFrame(task) {
 }
 
 function reload() {
-  location.reload()
+  try {
+    $.get(
+      'users/' + document.cookie.split(';')[0].split('=')[1] + '.json', 
+      function (datastr, status, xhr) {
+        console.log('reloading:', xhr.responseText)
+        data = JSON.parse(xhr.responseText())
+        reload2()
+      })
+  } catch (err) {
+    console.log(err);
+    reload2()
+  }
 }
 
-
+function reload2() {
+  // reselect old select
+  let selectframe, selectindex
+  if (selected != undefined && selected[0].tagName == 'SPAN') {
+    selectframe = getFrame(selected)
+    selectindex = selectframe.find('span').toArray().indexOf(selected[0])
+  }
+  const oldscroll = $('#flop').scrollTop()
+  $('#pop').empty()
+  $('#flop').empty()
+  $('#loads').empty()
+  loadpage(false, oldscroll)
+  if (selectframe != undefined) {
+    select($(selectframe.find('span').toArray()[selectindex]), false)
+  }
+  $(':focus').blur()
+}
 
 function loadpage(setload, oldscroll) {
-  $('#username').text(document.cookie.split(';')[0].split('=')[1].split('_')[0])
+  let oldselect
+  $('#username').text(
+    document.cookie.split(';')[0].split('=')[1].split('_')[0])
   if (setload != false) {
     // prevents endless loading loop
     $(document).on('keydown', keycomms)
@@ -3019,6 +3045,8 @@ function loadpage(setload, oldscroll) {
     $(document).on('dblclick', event, dblclick)
     $(window).resize(updateSizes)
     window.addEventListener('focus', reload)
+  } else {
+    oldselect = selected
   }
   if (!data.headingalign) data.headingalign = 'center'
   document.documentElement.style.setProperty('--headingalign',
@@ -3079,8 +3107,11 @@ function loadpage(setload, oldscroll) {
     $(dateToHeading(stringToDate('t'))).prev().offset().top -
     $('#pop').offset().top)
   if (oldscroll) $('#flop').scrollTop(oldscroll)
-  select(dateToHeading(stringToDate('t')))
-  loading = false
+  if (!oldselect) {
+    select(dateToHeading(stringToDate('t')))
+  } else {
+    select(oldselect)
+  }
   $(document).scrollTop(0)
 }
 
