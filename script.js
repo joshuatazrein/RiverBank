@@ -13,7 +13,7 @@ var fileinput
 var loadedlistobj
 var uploading
 var reloading
-var xhr
+var currentupload
 var slider
 var durslider
 var stopwatch
@@ -523,48 +523,17 @@ function reset() {
 }
 
 function uploadData(async) {
-  if (JSON.stringify(data) == prevupload) { // prevents duplicatees
-    if (reloading == true) {
-      reloading = false
-      console.log('reloading from upload')
-      reloadpage()
-    }
+  if (JSON.stringify(data) == prevupload) {
     return
   }
   // uploads data to server
   try {
     $.post("upload.php", {
       datastr: JSON.stringify(data),
-    }, function() {
+    }, function(data, status, xhr) {
       console.log('uploaded');
+      prevupload = xhr.responseText
     });
-    // cancels previous uploads to overwrite
-    // if (uploading == true) xhr.abort()
-    // uploading = true
-    // const newdata = new FormData()
-    // // const blob = new Blob([JSON.stringify(data)], {
-    // //   type: "text/plain"
-    // // })
-    // // newdata.append("upfile", blob)
-    // xhr = new XMLHttpRequest()
-    // xhr.onreadystatechange = function () {
-    //   if (this.readyState == 4) {
-    //     // uploading = false
-    //     // if (reloading == true) {
-    //     //   reloading = false
-    //     //   console.log('reloading from upload');
-    //     //   reloadpage()
-    //     // }
-    //     prevupload = JSON.stringify(data)
-    //     console.log(this.responseText);
-    //   }
-    // }
-    // if (async == true) {
-    //   xhr.open("POST", "upload.php", false)
-    // } else {
-    //   xhr.open("POST", "upload.php")
-    // }
-    // xhr.send(JSON.stringify(data))
   } catch (err) {
     // pass
     console.log(err);
@@ -2991,11 +2960,6 @@ function getFrame(task) {
 }
 
 function reloadpage() {
-  if (uploading == true) {
-    reloading = true
-    console.log('uploading in prog; returning reupload')
-    return
-  }
   try {
     const test = new XMLHttpRequest();
     test.onreadystatechange = function () {
