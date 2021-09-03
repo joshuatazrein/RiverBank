@@ -1,5 +1,5 @@
 <?php
-$servername = 'localhost:3306';
+$servername = 'localhost';
 $username = 'joshcnd_joshua';
 $password = 'R1v3rB4nk!';
 $conn = new mysqli($servername, $username, $password);
