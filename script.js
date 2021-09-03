@@ -541,8 +541,6 @@ function uploadData(async) {
     //   type: "text/plain"
     // })
     // newdata.append("upfile", blob)
-    newdata.append('data', JSON.stringify(data))
-    console.log(newdata)
     xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function () {
       if (this.readyState == 4) {
@@ -561,7 +559,7 @@ function uploadData(async) {
     } else {
       xhr.open("POST", "upload.php")
     }
-    xhr.send(newdata)
+    xhr.send(JSON.stringify(data))
   } catch (err) {
     // pass
     console.log(err);
