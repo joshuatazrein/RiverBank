@@ -1823,7 +1823,7 @@ function archiveTask(play) {
     })
   }
   if (selected.hasClass('complete') == false) {
-    toggleComplete() // complete it
+    toggleComplete(selected) // complete it
   }
   heading.after(selected)
   // formatting
