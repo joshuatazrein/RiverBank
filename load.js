@@ -49,9 +49,9 @@ function load() {
         data.style + "' />")
       );
     }
-    var inaweek = new Date();
-    inaweek.setTime(inaweek.getTime() + 604800000);
-    document.cookie = 'username=_; expires=' + inaweek.toUTCString();
+    document.cookie = 'user='
+    document.cookie = 'fname=';
+    document.cookie = 'pw=';
     if (data.weekdays == 'M') {
       weekdaysStr = {0:'U', 1:'M', 2:'T', 3:'W', 4:'R', 5:'F', 6:'S'}
       weekdaysNum = {'U':0, 'M':1, 'T':2, 'W':3, 'R':4, 'F':5, 'S':6}
