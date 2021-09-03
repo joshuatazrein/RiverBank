@@ -57,6 +57,8 @@ function signIn() {
 }
 
 function load() {
+  const past = new Date().setTime(
+    new Date().getTime() - 10000000).toUTCString()
   document.cookie = 'user=;expires=' + past + ';'
   document.cookie = 'fname=;expires=' + past + ';'
   document.cookie = 'pw=;expires=' + past + ';'
