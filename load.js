@@ -92,32 +92,33 @@ function load() {
     }
     return
   }
-  try {
-    // try the current cookie
-    const fname = getCookie('fname')
-    if (fname == '') {throw 'no user loaded'}
-    $.get(
-      'users/' + getCookie('fname') + '.json', 
-      function (datastr, status, xhr) {
-        if (xhr.responseText == '') { throw 'no user loaded' }
-        console.log('loading correctly');
-        data = JSON.parse(xhr.responseText)
-      }
-    )
-  } catch(err) {
-    // there are no cookies
-    const newuser = confirm('Welcome to RiverBank! Press "OK" to create a new user or "Cancel" to sign in to your account.')
-    if (!newuser) {
-      // wanting to sign in
-      signIn()
-    } else {
-      // create a new user
-      var worked = false
-      while (!worked) {
-        const username = prompt('Please enter your new username:')
-        const password = prompt('Please enter your new password:')
-        alert('You did it, but it\'s all meaningless. There is no hope.')
-      }
+  // try the current cookie
+  const fname = getCookie('fname')
+  if (fname == '') {throw 'no user loaded'}
+  $.get(
+    'users/' + getCookie('fname') + '.json', 
+    function (datastr, status, xhr) {
+      console.log(status);
+      if (xhr.responseText == '') { throw 'no user loaded' }
+      data = JSON.parse(xhr.responseText)
+      loadpage()
+    }
+  )
+}
+
+function noCookies() {
+  // there are no cookies
+  const newuser = confirm('Welcome to RiverBank! Press "OK" to create a new user or "Cancel" to sign in to your account.')
+  if (!newuser) {
+    // wanting to sign in
+    signIn()
+  } else {
+    // create a new user
+    var worked = false
+    while (!worked) {
+      const username = prompt('Please enter your new username:')
+      const password = prompt('Please enter your new password:')
+      alert('You did it, but it\'s all meaningless. There is no hope.')
     }
   }
 }
