@@ -76,8 +76,10 @@ function load() {
         data.style + "' />")
       );
     }
-    const past = new Date().setTime(
-      new Date().getTime() - 10000000).toUTCString()
+    let past = new Date()
+    past.setTime(
+      past.getTime() - 10000000)
+    past = past.toUTCString()
     document.cookie = 'user=;expires=' + past + ';'
     document.cookie = 'fname=;expires=' + past + ';'
     document.cookie = 'pw=;expires=' + past + ';'

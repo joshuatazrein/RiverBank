@@ -500,9 +500,13 @@ function clearEmptyDates() {
 function switchUser() {
   // switches data and reloads page
   save()
-  const past = new Date()
-  past.setTime(past.getTime() - 86400000)
-  document.cookie = 'username=; expires=' + past.toUTCString()
+  let past = new Date()
+  past.setTime(
+    past.getTime() - 10000000)
+  past = past.toUTCString()
+  document.cookie = 'user=;expires=' + past + ';'
+  document.cookie = 'fname=;expires=' + past + ';'
+  document.cookie = 'pw=;expires=' + past + ';'
   location.reload()
 }
 
@@ -3040,8 +3044,7 @@ function reload2() {
 
 function loadpage(setload, oldscroll) {
   let oldselect
-  $('#username').text(
-    document.cookie.split(';')[0].split('=')[1].split('_')[0])
+  $('#username').text(getCookie('user'))
   if (setload != false) {
     $('head').append(
       $("<link rel='stylesheet' type='text/css' href='" +
