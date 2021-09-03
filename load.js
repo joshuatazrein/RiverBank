@@ -15,9 +15,6 @@ function load() {
       false
     )
     xml.send()
-    $.get('usertest.php', function(data, status, xhr) {
-      console.log(xhr.responseText);
-    })
   } catch (err) {
     console.log('testfile failed');
     // offline mode
@@ -48,6 +45,9 @@ function load() {
     }
     return
   }
+  $.get('usertest.php', function(data, status, xhr) {
+    console.log(xhr.responseText);
+  })
   if (document.cookie === '') {
     var inaweek = new Date();
     inaweek.setTime(inaweek.getTime() + 604800000);
