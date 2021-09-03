@@ -6,8 +6,8 @@ $conn = new mysqli('server204.web-hosting.com',
 if ($conn->connect_error) {
   die('Connection failed: ' . $conn->connect_error);
 }
-$sql = 'SELECT fname WHERE user="' . $username . 
-  '" AND pw="' . $password . '"';
+$sql = 'SELECT fname FROM "users" WHERE user="' . 
+  $username . '" AND pw="' . $password . '"';
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
   // output data of each row
