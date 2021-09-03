@@ -8,9 +8,14 @@ if ($conn->connect_error) {
 }
 $sql = 'SELECT fname WHERE user="' . $username . 
   '" AND pw="' . $password . '"';
-echo('SELECT fname WHERE user="' . $username . 
-'" AND pw="' . $password . '"');
 $result = $conn->query($sql);
-$row = $result->fetch_array(MYSQLI_NUM);
-// print($row[0][0]);
+if ($result->num_rows > 0) {
+  // output data of each row
+  while($row = $result->fetch_assoc()) {
+    echo "fname: " . $row["fname"];
+  }
+} else {
+  echo "0 results";
+}
+$conn->close();
 ?>
