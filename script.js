@@ -3007,12 +3007,13 @@ function getFrame(task) {
 function reload() {
   try {
     $.get(
-      'users/' + document.cookie.split(';')[0].split('=')[1] + '.json', 
+      'users/' + getCookie('fname') + '.json', 
       function (datastr, status, xhr) {
         console.log('reloading:', xhr.responseText)
         data = JSON.parse(xhr.responseText)
         reload2()
-      })
+      }
+    )
   } catch (err) {
     console.log(err);
     reload2()
