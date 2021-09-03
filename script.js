@@ -466,7 +466,7 @@ function clearEmptyDates() {
             let todayheading = getHeadingChildren($(dateToHeading(today)))[
               getHeadingChildren($(dateToHeading(today))).length - 1] 
               // hchildren
-            if (!getHeadingChildren(todayheading).map((x) => { 
+            if (!getHeadingChildren(getHeading(todayheading)).map((x) => { 
               return $(x).text() 
             }).includes('uncompleted')) {
               const completespan = $(
@@ -2146,7 +2146,7 @@ function togglefold(e, saving) {
     }
   }
   if (saving === undefined && !$(e).hasClass('dateheading')) {
-    save()
+    setTimeout(save, 600)
   }
 }
 
@@ -3065,7 +3065,6 @@ function loadpage(setload, oldscroll) {
   }
   $('.taskselect').removeClass('taskselect')
   updateSizes()
-  clearEmptyDates()
   // go to today
   $('#pop').scrollTop(0)
   $('#pop').scrollTop(
