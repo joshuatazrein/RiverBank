@@ -103,6 +103,7 @@ function load() {
       success: function (datastr, status, xhr) {
         if (xhr.responseText == '') { throw 'no user loaded' }
         data = JSON.parse(xhr.responseText)
+        loadpage()
       }, 
     })
   } catch (err) {
