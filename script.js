@@ -11,7 +11,7 @@ var searchwidth = 10
 var movetask
 var fileinput
 var loadedlistobj
-var uploading
+var uploading = false
 var reloading
 var currentupload
 var slider
