@@ -35,8 +35,9 @@ function signIn() {
       signIn()
     } else {
       // success
-      alert('success')
       worked = true
+      const inaweek = new Date();
+      inaweek.setTime(inaweek.getTime() + 604800000);
       document.cookie = 'fname=' + xhr.responseText + '; expires=' + 
         inaweek.toUTCString();
       document.cookie = 'user=' + username + '; expires=' + 
@@ -46,8 +47,9 @@ function signIn() {
       $.get(
         'users/' + xhr.responseText + '.json', 
         function (dataval, status, xhr2) {
-          console.log(xhr2.responseText);
+          console.log(xhr2.responseText)
           data = JSON.parse(xhr2.responseText)
+          load2()
         }
       )
     }
@@ -104,10 +106,7 @@ function load() {
     )
   } catch(err) {
     // there are no cookies
-    console.log(err);
     const newuser = confirm('Welcome to RiverBank! Press "OK" to create a new user or "Cancel" to sign in to your account.')
-    var inaweek = new Date();
-    inaweek.setTime(inaweek.getTime() + 604800000);
     if (!newuser) {
       // wanting to sign in
       signIn()
@@ -121,7 +120,10 @@ function load() {
       }
     }
   }
-  // update the data
+}
+
+function load2() {
+  // update the data after it loads
   $('head').append(
     $("<link rel='stylesheet' type='text/css' href='" +
     data.style + "' />")
