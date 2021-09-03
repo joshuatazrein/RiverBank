@@ -22,17 +22,7 @@ function getCookie(cname) {
 
 function load() {
   try {
-    // try the current cookie
-    const fname = getCookie('fname')
-    if (fname == '') {throw 'no user loaded'}
-    $.get(
-      'users/' + getCookie('fname') + '.json', 
-      function (datastr, status, xhr) {
-        if (xhr.responseText == '') { throw 'no user loaded' }
-        console.log('loading correctly');
-        data = JSON.parse(xhr.responseText)
-      }
-    )
+    $.get('users/testfile.json')
   } catch (err) {
     console.log('testfile failed');
     // offline mode
@@ -49,9 +39,11 @@ function load() {
         data.style + "' />")
       );
     }
-    document.cookie = 'user='
-    document.cookie = 'fname=';
-    document.cookie = 'pw=';
+    const past = new Date().setTime(
+      new Date().getTime() - 10000000).toUTCString()
+    document.cookie = 'user=;expires=' + past + ';'
+    document.cookie = 'fname=;expires=' + past + ';'
+    document.cookie = 'pw=;expires=' + past + ';'
     if (data.weekdays == 'M') {
       weekdaysStr = {0:'U', 1:'M', 2:'T', 3:'W', 4:'R', 5:'F', 6:'S'}
       weekdaysNum = {'U':0, 'M':1, 'T':2, 'W':3, 'R':4, 'F':5, 'S':6}
@@ -63,8 +55,20 @@ function load() {
     }
     return
   }
-  // no cookie
-  if (document.cookie === '') {
+  // try the current cookie
+  try {
+    const fname = getCookie('fname')
+    if (fname == '') {throw 'no user loaded'}
+    $.get(
+      'users/' + getCookie('fname') + '.json', 
+      function (datastr, status, xhr) {
+        if (xhr.responseText == '') { throw 'no user loaded' }
+        console.log('loading correctly');
+        data = JSON.parse(xhr.responseText)
+      }
+    )
+  } catch(err) {
+    console.log(err);
     const newuser = confirm('Welcome to RiverBank! Press "OK" to create a new user or "Cancel" to sign in to your account.')
     var inaweek = new Date();
     inaweek.setTime(inaweek.getTime() + 604800000);
