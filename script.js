@@ -172,7 +172,7 @@ function dragson() {
 // # DATA BEHAVIOR
 
 // new list
-function newlist(title, text) {
+function newlist(title, text, saving) {
   let savetitle
   if (title === undefined) {
     savetitle = ''
@@ -204,7 +204,7 @@ function newlist(title, text) {
   newthing.attr('ondrop', 'dropList(event)')
   $('#loads').append(newthing)
   loadedlist = document.getElementById('loads').children.length - 1
-  loadList(); // load last element in list
+  loadList(saving); // load last element in list
   $('#loads').children()[loadedlist].focus()
   if ($(loads[loadedlist]).val().slice(0, 2) == '- ') {
     $(loads[loadedlist]).addClass('sublist')
@@ -227,7 +227,7 @@ function deletelist() {
   }
 }
 
-function loadList() { //updates the list display
+function loadList(saving) { //updates the list display
   unfilter()
   loads = $('#loads').children().toArray()
   loads.forEach(function (i) {
@@ -238,7 +238,7 @@ function loadList() { //updates the list display
   $(loads[loadedlist]).addClass('selected')
   $('#flop').html(data.flop[loadedlist].text)
   $('.taskselect').removeClass('taskselect')
-  save()
+  if (saving != false) { save() }
 }
 
 function toggleFoldList() {
@@ -3001,7 +3001,7 @@ function reloadpage() {
     $.get(
       'users/' + document.cookie.split(';')[0].split('=')[1] + '.json',
       function(data, status, xhr) {
-        console.log(xhr.responseText)
+        data = JSON.parse(JSON.stringify(xhr.responseText))
         reloadpage2()
       }
     )
@@ -3053,7 +3053,7 @@ function loadpage(setload, oldscroll) {
     oldload = Number(data.loadedlist)
   }
   for (i of data.flop) {
-    newlist(i.title, i.text)
+    newlist(i.title, i.text, false) // don't save
   }
   const children = $('#loads').children().toArray()
   for (i in children) {
@@ -3062,12 +3062,12 @@ function loadpage(setload, oldscroll) {
     if (val.slice(val.length - 4) == ' ...') {
       $(children[i]).removeClass('folded')
       loadedlist = Number(i)
-      loadList()
+      loadList(false)
       toggleFoldList()
     }
   }
   loadedlist = Number(oldload)
-  loadList()
+  loadList(false)
   dragson()
   $('#searchbar').val('')
   // show buttons and help right
