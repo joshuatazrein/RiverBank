@@ -511,7 +511,8 @@ span.weblink, span.deadline {
 }
 
 #collapsebut {
-  margin-left:calc(100% - 19px);
+  right: 1px;
+  position: absolute;
   width: 15px !important;
 }
 
@@ -519,15 +520,13 @@ span.weblink, span.deadline {
 
 @media only screen and (max-width: 600px) {
   .collapsed {
-    margin-left: calc(-15% + 10px);
-  }
-  #collapsebut {
-    margin-left:calc(100% - 30px);
-    width: 15px !important;
+    margin-left: calc(-15% + 2px);
   }
   .fullwidth {
-    right: 0;
-    position: absolute;
+    width: calc(100% - 34px);
+  }
+  #collapsebut {
+    width: 15px !important;
   }
   #help {
     font-size: 14px;
