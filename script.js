@@ -409,15 +409,10 @@ function save(undo) {
       loadList()
     }
   }
-  const dataString = JSON.stringify(newdata)
-  const prevData = JSON.stringify(data)
   data = JSON.parse(dataString)
   $(document).scrollTop(0) // fixes scroll
-  if (dataString != prevData) { // stops redundancies
-    localStorage.setItem('data', dataString)
-    // backup data to the server after setting localstorage data
-    uploadData()
-  }
+  // backup data to the server after setting localstorage data
+  uploadData()
   // clean up styling
   $('span.in:visible').attr('style', '')
   updatedeadlines()
@@ -536,7 +531,7 @@ function reset() {
   }
 }
 
-function uploadData(async) {
+function uploadData() {
   if (JSON.stringify(data) == prevupload) {
     return
   }
