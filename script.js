@@ -533,33 +533,38 @@ function uploadData(async) {
   }
   // uploads data to server
   try {
+    $.post("upload.php", {
+      datastr: JSON.stringify(data)
+    }, function(data, status, xhr) {
+      console.log(xhr.responseText);
+    });
     // cancels previous uploads to overwrite
-    if (uploading == true) xhr.abort()
-    uploading = true
-    const newdata = new FormData()
-    // const blob = new Blob([JSON.stringify(data)], {
-    //   type: "text/plain"
-    // })
-    // newdata.append("upfile", blob)
-    xhr = new XMLHttpRequest()
-    xhr.onreadystatechange = function () {
-      if (this.readyState == 4) {
-        // uploading = false
-        // if (reloading == true) {
-        //   reloading = false
-        //   console.log('reloading from upload');
-        //   reloadpage()
-        // }
-        prevupload = JSON.stringify(data)
-        console.log(this.responseText);
-      }
-    }
-    if (async == true) {
-      xhr.open("POST", "upload.php", false)
-    } else {
-      xhr.open("POST", "upload.php")
-    }
-    xhr.send(JSON.stringify(data))
+    // if (uploading == true) xhr.abort()
+    // uploading = true
+    // const newdata = new FormData()
+    // // const blob = new Blob([JSON.stringify(data)], {
+    // //   type: "text/plain"
+    // // })
+    // // newdata.append("upfile", blob)
+    // xhr = new XMLHttpRequest()
+    // xhr.onreadystatechange = function () {
+    //   if (this.readyState == 4) {
+    //     // uploading = false
+    //     // if (reloading == true) {
+    //     //   reloading = false
+    //     //   console.log('reloading from upload');
+    //     //   reloadpage()
+    //     // }
+    //     prevupload = JSON.stringify(data)
+    //     console.log(this.responseText);
+    //   }
+    // }
+    // if (async == true) {
+    //   xhr.open("POST", "upload.php", false)
+    // } else {
+    //   xhr.open("POST", "upload.php")
+    // }
+    // xhr.send(JSON.stringify(data))
   } catch (err) {
     // pass
     console.log(err);
