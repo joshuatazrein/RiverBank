@@ -53,48 +53,41 @@ function load() {
     inaweek.setTime(inaweek.getTime() + 604800000);
     const username = prompt('enter username (or create new user): ');
     const password = prompt('enter password (or create new password): ');
-    document.cookie = 'username=' + username + '_' + password + 
-    '; expires=' + inaweek.toUTCString();
+    $.post('getuser.php', {
+      usertest: username,
+      pwtest: password,
+    }, function(data, status, xhr) {
+      console.log(xhr.responseText);
+    })
   }
   var worked = false
   while (worked === false) {
-    const test = new XMLHttpRequest();
-    test.onreadystatechange = function () {
-      if (this.readyState == 4) {
-        if (this.status != 200) {
-          // file not found
-          const newuser = confirm(
-            'Current user is not recognized. Create a new user? ' + 
-            '(Press Cancel to re-enter username & password)'
-          )
-          if (newuser) {
-            worked = true
-            data = JSON.parse(JSON.stringify(resetstring))
-          } else {
-            // reset cookies and try again
-            const inaweek = new Date()
-            inaweek.setTime(inaweek.getTime() + 604800000)
-            const past = new Date()
-            past.setTime(past.getTime() - 86400000)
-            const username = prompt('re-enter username: ')
-            const password = prompt('enter password: ')
-            document.cookie = 'username=; expires=' + past.toUTCString()
-            document.cookie = 'username=' + username + '_' + password + 
-              '; expires=' + inaweek.toUTCString()
-          }
-        } else {
-          // file found
-          worked = true
-          data = JSON.parse(this.responseText)
-        }
-      }
-    }
-    test.open(
-      'POST', 
-      'users/' + document.cookie.split(';')[0].split('=')[1] + '.json', 
-      false
+    const newuser = confirm(
+      'Current user is not recognized. Press "OK" to create ' + 
+      'a new user and "Cancel" to try again.'
     )
-    test.send()
+    if (newuser) {
+      // worked = true
+      // data = JSON.parse(JSON.stringify(resetstring))
+    } else {
+      // reset cookies and try again
+      const inaweek = new Date()
+      inaweek.setTime(inaweek.getTime() + 604800000)
+      const past = new Date()
+      past.setTime(past.getTime() - 86400000)
+      const username = prompt('re-enter username: ')
+      const password = prompt('enter password: ')
+      // document.cookie = 'username=; expires=' + past.toUTCString()
+      // document.cookie = 'username=' + username + '_' + password + 
+      //   '; expires=' + inaweek.toUTCString()
+      $.post('getuser.php', {
+        usertest: username,
+        pwtest: password,
+      }, function(data, status, xhr) {
+        console.log(xhr.responseText);
+        worked = true
+      })
+    }
   }
   $('head').append(
     $("<link rel='stylesheet' type='text/css' href='" +
