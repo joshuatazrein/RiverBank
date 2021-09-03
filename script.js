@@ -1102,6 +1102,10 @@ function updatedeadlines() {
       $($('#loads').children()[list]).remove()
     }
   }
+  updateSpanDrags()
+}
+
+function updateSpanDrags() {
   if (window.innerWidth < 600) {
     // insert mobiledrag elements
     $('span.in').prepend(
@@ -1158,6 +1162,7 @@ function updatedeadlines() {
     // $('span.in').removeClass('ui-droppable-active')
   }
 }
+
 var dragtimer
 
 function mobileDragOver(event) {
@@ -2166,7 +2171,6 @@ function toggleButs() {
     $('.butbar').hide()
     data.hidebuts = 'true'
     $('#username').after($('#optionsbut'))
-    console.log(String($('#optionsbut').width() / 2));
     $('#optionsbut').css('margin-left', 'calc(50% - ' +
       String($('#optionsbut').width() / 2) + 'px)')
     $(':root').css('--butheight', '0px')
@@ -3081,6 +3085,12 @@ function loadpage(setload, oldscroll) {
   // show buttons and help right
   if (data.help == 'show') $('#help').show()
   if (data.help == 'hide') $('#help').hide()
+  if (window.innerWidth < 600) {
+    // hide unnecessary buts
+    $('.mobilehide').hide()
+    $('#optionsbut').text('...')
+    $('#typebut').text('*')
+  }
   if (data.hidebuts == 'false') {
     $('.butbar').show()
     $('#editbuts').append($('#optionsbut'))
@@ -3092,12 +3102,6 @@ function loadpage(setload, oldscroll) {
     $('#optionsbut').css('margin-left', 'calc(50% - ' +
       String($('#optionsbut').width() / 2) + 'px)')
     $(':root').css('--butheight', '0px')
-  }
-  if (window.innerWidth < 600) {
-    // hide unnecessary buts
-    $('.mobilehide').hide()
-    $('#optionsbut').text('...')
-    $('#typebut').text('*')
   }
   $('.taskselect').removeClass('taskselect')
   updateSizes()

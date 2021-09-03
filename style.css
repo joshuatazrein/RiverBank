@@ -518,6 +518,16 @@ span.weblink, span.deadline {
 /* # MOBILE */
 
 @media only screen and (max-width: 600px) {
+  .collapsed {
+    margin-left: calc(-15% + 5px);
+  }
+  #collapsebut {
+    margin-left:calc(100% - 30px);
+    width: 15px !important;
+  }
+  .fullwidth {
+    width: calc(100% - 34px);
+  }
   #help {
     font-size: 14px;
     height: 30%;
