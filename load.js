@@ -15,6 +15,9 @@ function load() {
       false
     )
     xml.send()
+    $.get('usertest.php', function(data, status, xhr) {
+      console.log(xhr.responseText);
+    })
   } catch (err) {
     console.log('testfile failed');
     // offline mode
