@@ -15,7 +15,7 @@ if ($result->num_rows > 0) {
     echo "fname: " . $row["fname"];
   }
 } else {
-  echo "0 results";
+  echo "FAIL";
 }
 $conn->close();
 ?>
