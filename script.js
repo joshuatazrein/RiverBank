@@ -3006,7 +3006,7 @@ function reload() {
       'users/' + document.cookie.split(';')[0].split('=')[1] + '.json', 
       function (datastr, status, xhr) {
         console.log('reloading:', xhr.responseText)
-        data = JSON.parse(xhr.responseText())
+        data = JSON.parse(xhr.responseText)
         reload2()
       })
   } catch (err) {
