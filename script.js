@@ -538,7 +538,7 @@ function reset() {
   }
 }
 
-function uploadData(reload) {
+function uploadData(reloading) {
   if (JSON.stringify(data) == prevupload) {
     console.log('equal');
     return
@@ -553,7 +553,7 @@ function uploadData(reload) {
       }, function(data, status, xhr) {
         prevupload = xhr.responseText
         uploading = false
-        if (reload == true) reload() // reloads page
+        if (reloading == true) reload() // reloads page
       });
     }
   } catch (err) {
