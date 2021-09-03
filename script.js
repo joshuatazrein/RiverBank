@@ -528,12 +528,16 @@ function uploadData(async) {
   }
   // uploads data to server
   try {
-    $.post("upload.php", {
-      datastr: JSON.stringify(data),
-    }, function(data, status, xhr) {
-      console.log('uploaded');
-      prevupload = xhr.responseText
-    });
+    if (uploading == false) {
+      uploading = true
+      $.post("upload.php", {
+        datastr: JSON.stringify(data),
+      }, function(data, status, xhr) {
+        console.log('uploaded');
+        prevupload = xhr.responseText
+        uploading = false
+      });
+    }
   } catch (err) {
     // pass
     console.log(err);
