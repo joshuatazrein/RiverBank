@@ -89,7 +89,7 @@ function load() {
             alert('Username and password not recognized; try again.')
           } else {
             // success
-            console.log('success');
+            alert('success')
             worked = true
             document.cookie = 'fname=' + xhr.responseText + '; expires=' + 
               inaweek.toUTCString();
