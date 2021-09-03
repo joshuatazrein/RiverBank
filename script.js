@@ -409,13 +409,14 @@ function save(undo) {
       loadList()
     }
   }
-  data = JSON.parse(dataString)
+  data = JSON.parse(JSON.stringify(newdata))
   $(document).scrollTop(0) // fixes scroll
   // backup data to the server after setting localstorage data
   uploadData()
   // clean up styling
   $('span.in:visible').attr('style', '')
   updatedeadlines()
+  localStorage.setItem('data', JSON.stringify(data))
 }
 
 function clearEmptyDates() {
@@ -503,7 +504,6 @@ function upload() {
       // rewrite existing data with this
       data = JSON.parse(this.result)
       dataString = JSON.stringify(data)
-      localStorage.setItem('data', dataString)
       uploadData(true)
       location.reload()
     })
@@ -525,14 +525,15 @@ function reset() {
   yes = confirm("Are you sure you want to reset?")
   if (yes == true) {
     data = JSON.parse(JSON.stringify(resetstring))
-    localStorage.setItem('data', JSON.stringify(data))
     uploadData()
     location.reload()
   }
 }
 
 function uploadData() {
+  console.log('uploading');
   if (JSON.stringify(data) == prevupload) {
+    console.log('equal');
     return
   }
   // uploads data to server
@@ -542,14 +543,16 @@ function uploadData() {
       $.post("upload.php", {
         datastr: JSON.stringify(data),
       }, function(data, status, xhr) {
-        console.log('uploaded');
         prevupload = xhr.responseText
         uploading = false
       });
     }
   } catch (err) {
-    // pass
-    console.log(err);
+    uploading = false
+    // offline mode
+    console.log('failed');
+    localStorage.setItem('data', JSON.stringify(data))
+    prevupload = JSON.stringify(data)
   }
 }
 
@@ -702,7 +705,6 @@ function changeDateFormat(format) {
     }
   }
   data.dateSplit = format
-  localStorage.setItem('data', JSON.stringify(data))
   uploadData(true)
   location.reload()
 }
