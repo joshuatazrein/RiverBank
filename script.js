@@ -2997,6 +2997,8 @@ function reload() {
   location.reload()
 }
 
+
+
 function loadpage(setload, oldscroll) {
   $('#username').text(document.cookie.split(';')[0].split('=')[1].split('_')[0])
   if (setload != false) {
