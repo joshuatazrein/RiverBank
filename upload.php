@@ -5,8 +5,3 @@ $data = $_POST['data'];
 // file_put_contents('users/' . $cookie . '.json', $data);
 echo $_POST['datastr'];
 ?>
-
-// echo move_uploaded_file(
-//   $_FILES["upfile"]["tmp_name"], 
-//   'users/' . $cookie . '.json'
-// ) ? "OK" : "ERROR UPLOADING";
