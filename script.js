@@ -15,6 +15,7 @@ var uploading = false
 var reloading
 var currentupload
 var slider
+var movetolist = false
 var durslider
 var stopwatch
 var copieditem
@@ -320,7 +321,13 @@ function updateSizes() {
 }
 
 // picks a new loadlist
-function loadthis() {
+function loadthis(event) {
+  let movetask
+  if (movetolist == true) {
+    console.log(selected);
+    movetask = selected.detach()
+    movetolist = false
+  }
   if (loadedlist != undefined && loadedlist != this.value) {
     select()
     save()
@@ -328,6 +335,10 @@ function loadthis() {
   loads = Array.from($('#loads').children())
   loadedlist = loads.indexOf(this)
   loadList(this)
+  if (movetask) {
+    $('#flop > .buffer').before(movetask)
+    save()
+  }
 }
 
 // Storing data:
@@ -407,6 +418,8 @@ function save(undo) {
     // backup data to the server after setting localstorage data
     uploadData()
   }
+  // clean up styling
+  $('span.in:visible').attr('style', '')
   updatedeadlines()
 }
 
@@ -434,7 +447,6 @@ function clearEmptyDates() {
             getHeading(selected, true)[0] == $(heading)[0]))
         ) {
           // move uncompleted tasks to today and fold/complete all tasks
-          console.log('doing thing');
           if (!($(heading).hasClass('complete')))
             $(heading).addClass('complete')
           if (($(heading).attr('folded') == 'false'))
@@ -443,7 +455,9 @@ function clearEmptyDates() {
           const appends = []
           for (child of children) {
             // test children of heading
-            if ($(child).hasClass('event') &&
+            if (['uncompleted...', 'uncompleted'].includes($(child).text())) {
+              $(child).remove() // take out headings
+            } else if ($(child).hasClass('event') &&
               !$(child).hasClass('complete')) toggleComplete(child)
             else if (!$(child).hasClass('complete') && !isHeading($(child))) {
               $(child).show()
@@ -1020,7 +1034,8 @@ function updatedeadlines() {
   $('.mobhandle').remove()
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
     (x) => {
-      return $(x).attr('folded') == 'true'
+      return ($(x).attr('folded') == 'true' &&
+        !$(x).hasClass('taskselect'))
     })
   // uncollapses then recollapses to prevent weirdness
   for (heading of collapselist) {
@@ -1089,8 +1104,8 @@ function updatedeadlines() {
       '<span class="mobhandle"></span>')
     $('span.in').draggable({
       handle: '.mobhandle',
-      axis: 'y',
       containment: 'window',
+      axis: 'y',
       revert: true,
       appendTo: $('#container'),
       helper: 'clone',
@@ -1105,7 +1120,7 @@ function updatedeadlines() {
         mobileDragOver(event)
       },
     })
-    $('span.in').droppable({
+    $('span.in, textarea.listtitle').droppable({
       accept: 'span.in',
       hoverClass: 'drop-hover',
       greedy: true,
@@ -1937,6 +1952,15 @@ function dragTask(evt) {
   evt.dataTransfer.effectAllowed = 'move'
 }
 
+function togglecollapse() {
+  $('#leftcol').toggleClass('collapsed')
+  if ($('#leftcol').hasClass('collapsed')) {
+    $('.listcontainer').addClass('fullwidth')
+  } else {
+    $('.listcontainer').removeClass('fullwidth')
+  }
+}
+
 //dropping
 function dropTask(evt, obj) {
   let el
@@ -2227,6 +2251,9 @@ function context(e, mobile) {
       ['BUTTON', 'DIV'],
       ['opts']
     ],
+    '#context-moveToList': [
+      ['SPAN'], ['in']
+    ],
     '#context-divider': [
       ['SPAN'],
       ['in']
@@ -2411,6 +2438,10 @@ function selectRandom() {
   }
 }
 
+function moveToList() {
+  movetolist = true
+}
+
 function setTask(type) {
   if (!selected || selected.hasClass('dateheading')) return
   const list = stripChildren(selected).split(' ').filter((x) => {
@@ -2454,12 +2485,15 @@ function setTask(type) {
 }
 
 function clicked(ev) {
+  if (movetolist == true && !$(ev.target).hasClass('listtitle')) {
+    // cancels move to list
+    movetolist = false
+  }
   $(document).scrollTop(0); // fixes weird shit
   $('nav').hide()
   if (ev.target.tagName == 'TEXTAREA' && !$(ev.target).hasClass('listtitle')) {
     return
   } else if ($(ev.target).hasClass('dropdown-item')) {
-    console.log('clicked on dropdown');
     const oldselect = selected
     eval($(ev.target).attr('function'))
     if (selected && selected[0].tagName != 'TEXTAREA' &&
@@ -2467,8 +2501,6 @@ function clicked(ev) {
       select(oldselect)
     }
   } else if ($(ev.target).hasClass('listtitle')) {
-    console.log('working');
-    select()
     if (window.innerWidth < 600) {
       $(':focus').blur()
       dragson()
@@ -2476,6 +2508,7 @@ function clicked(ev) {
     if ($(ev.target).hasClass('unselected')) {
       dragson()
     }
+    if (movetolist != true) select()
   } else if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
     ev.target.tagName != 'TEXTAREA') {
     saveTask()
@@ -2965,27 +2998,20 @@ function getFrame(task) {
 
 function reloadpage() {
   try {
-    const test = new XMLHttpRequest();
-    test.onreadystatechange = function () {
-      if (this.readyState == 4) {
-        try {
-          data = JSON.parse(this.responseText)
-        } catch (err) { }
-        reloadpage2() //fixing things to be di
+    $.get(
+      'users/' + document.cookie.split(';')[0].split('=')[1] + '.json',
+      function(data, status, xhr) {
+        console.log(xhr.responseText)
+        reloadpage2()
       }
-    }
-    test.open(
-      'POST',
-      'users/' + document.cookie.split(';')[0].split('=')[1] + '.json'
     )
-    test.send()
-  } catch (syntaxError) {
+  } catch (err) {
+    console.log(err)
     reloadpage2()
   }
 }
 
 function reloadpage2() {
-  console.log(['downloaded', data.flop[loadedlist].text]);
   // reselect old select
   let selectframe, selectindex
   if (selected != undefined && selected[0].tagName == 'SPAN') {

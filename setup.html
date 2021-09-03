@@ -17,7 +17,10 @@
 </head>
 <body>
   <div class='container' id='container'>
-    <div class='leftcolumn'>
+    <div class='leftcolumn' id='leftcol'>
+      <div style='width:100%;padding-top:1px;'>
+        <button id='collapsebut' title='collapse menu' id='collapsebut' function='togglecollapse()'>≡</button>
+      </div>
       <div>
         <p id='username'></p>
       </div>
@@ -164,6 +167,7 @@
     <p function='archiveTask()' class='dropdown-item' id='context-archiveTask'>archive (shift-space)</p>
     <p function='' class='dropdown-item' id='context-divider'>————————————</p>
 
+    <p function='moveToList()' class='dropdown-item' id='context-moveToList'>move to list</p>
     <p function='toggleComplete()' class='dropdown-item' id='context-toggleComplete'>toggle complete (space)</p>
     <p function='toggleImportant()' class='dropdown-item' id='context-toggleimportant'>toggle important (i)</p>
     <p function='toggleSubtasks()' class='dropdown-item' id='context-toggleSubtasks'>toggle fold ([/])</p>

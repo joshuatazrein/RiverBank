@@ -162,7 +162,7 @@ p.dropdown-item {
 .leftcolumn {
   width: 20vw;
   height: calc(100% - 5px);
-  padding: 10px 5px;
+  padding: 0;
   background-color: inherit;
   position: relative;
   float:left;
@@ -247,12 +247,21 @@ textarea.folded {
   opacity: 0.7;
 }
 
+.collapsed {
+  margin-left: calc(-15% - 15px);
+}
+
+.fullwidth {
+  width: calc(100% - 25px);
+}
+
 textarea {
   resize: none;
 }
 
 textarea.selected, textarea.unselected {
   height: calc(1em + 5px);
+  width: 100%;
   margin: 1px 5px;
   display: inline-block;
   font: 100% var(--font), serif;
@@ -501,6 +510,11 @@ span.weblink, span.deadline {
   font-style: italic;
 }
 
+#collapsebut {
+  margin-left:calc(100% - 19px);
+  width: 15px !important;
+}
+
 /* # MOBILE */
 
 @media only screen and (max-width: 600px) {
@@ -514,6 +528,9 @@ span.weblink, span.deadline {
     border-bottom: 1px solid var(--bdcolor);
     color: var(--textcolor);
     background: var(--background);
+  }
+  #container > span.in {
+    width: 80%;
   }
   .floplist, .poplist {
     width: 100%;
