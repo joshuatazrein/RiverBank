@@ -57,13 +57,6 @@ function signIn() {
 }
 
 function load() {
-  let past = new Date()
-  past.setTime(
-    past.getTime() - 10000000)
-  past = past.toUTCString()
-  document.cookie = 'user=;expires=' + past + ';'
-  document.cookie = 'fname=;expires=' + past + ';'
-  document.cookie = 'pw=;expires=' + past + ';'
   try {
     // test for internet connection
     $.get('users/testfile.json')
@@ -113,6 +106,7 @@ function load() {
       }, 
     })
   } catch (err) {
+    console.log(err);
     // there are no cookies or the cookies failed
     const newuser = confirm('Welcome to RiverBank! Press "OK" to create a new user or "Cancel" to sign in to your account.')
     if (!newuser) {
