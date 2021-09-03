@@ -56,6 +56,48 @@ function signIn() {
   })
 }
 
+function checkUser() {
+  const username = prompt('Enter your new username:')
+  $.post(
+    'checkuser.php',
+    {usertest: username},
+    function (val, status, xhr) {
+      if (xhr.responseText == 'FAIL') {
+        alert('That username is already taken. Please try again.')
+        checkUser()
+      } else {
+        newUser(username)
+      }
+    }
+  )
+}
+
+function checkPass(username) {
+  // check password
+  const password = prompt('Enter your new password:')
+  const passcheck = prompt('Enter your password again:')
+  if (passcheck != password) {
+    alert('Passwords do not match; please try again.')
+    checkPass(username)
+  } else {
+    newUser(username, password)
+  }
+}
+
+function newUser(username, password) {
+  // create a new user, has passed the tests
+  $.post(
+    'setuser.php',
+    {
+      usertest: username,
+      pwtest: password
+    },
+    function (data, status, xhr) {
+      console.log(xhr.responseText);
+    }
+  )
+}
+
 function load() {
   try {
     // test for internet connection
@@ -92,6 +134,7 @@ function load() {
       weekdaysNum = {'Sun':0, 'Mon':1, 'Tue':2, 'Wed':3, 'Thu':4, 'Fri':5, 
       'Sat':6}
     }
+    loadpage()
     return
   }
   try {
@@ -115,12 +158,7 @@ function load() {
       signIn()
     } else {
       // create a new user
-      var worked = false
-      while (!worked) {
-        const username = prompt('Please enter your new username:')
-        const password = prompt('Please enter your new password:')
-        alert('You did it, but it\'s all meaningless. There is no hope.')
-      }
+      newuser()
     }
   }
 }
