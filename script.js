@@ -497,7 +497,7 @@ function switchUser() {
   const past = new Date()
   past.setTime(past.getTime() - 86400000)
   document.cookie = 'username=; expires=' + past.toUTCString()
-  reloadpage()
+  location.reload()
 }
 
 function upload() {
@@ -510,7 +510,7 @@ function upload() {
       dataString = JSON.stringify(data)
       localStorage.setItem('data', dataString)
       uploadData(true)
-      reloadpage()
+      location.reload()
     })
     fileReader.readAsText(this.files[0])
   })
@@ -532,7 +532,7 @@ function reset() {
     data = JSON.parse(JSON.stringify(resetstring))
     localStorage.setItem('data', JSON.stringify(data))
     uploadData()
-    reloadpage()
+    location.reload()
   }
 }
 
@@ -709,7 +709,7 @@ function changeDateFormat(format) {
   data.dateSplit = format
   localStorage.setItem('data', JSON.stringify(data))
   uploadData(true)
-  reloadpage()
+  location.reload()
 }
 
 function dateToString(date, weekday) {
@@ -2996,38 +2996,8 @@ function getFrame(task) {
   else if (parents.includes($('#pop')[0])) return $('#pop')
 }
 
-function reloadpage() {
-  try {
-    $.get(
-      'users/' + document.cookie.split(';')[0].split('=')[1] + '.json',
-      function(data, status, xhr) {
-        data = JSON.parse(JSON.stringify(xhr.responseText))
-        console.log('reloading');
-        reloadpage2()
-      }
-    )
-  } catch (err) {
-    console.log(err)
-    reloadpage2()
-  }
-}
-
-function reloadpage2() {
-  // reselect old select
-  let selectframe, selectindex
-  if (selected != undefined && selected[0].tagName == 'SPAN') {
-    selectframe = getFrame(selected)
-    selectindex = selectframe.find('span').toArray().indexOf(selected[0])
-  }
-  const oldscroll = $('#flop').scrollTop()
-  $('#pop').empty()
-  $('#flop').empty()
-  $('#loads').empty()
-  loadpage(false, oldscroll)
-  if (selectframe != undefined) {
-    select($(selectframe.find('span').toArray()[selectindex]), false)
-  }
-  $(':focus').blur()
+function reload() {
+  location.reload()
 }
 
 function loadpage(setload, oldscroll) {
@@ -3039,7 +3009,7 @@ function loadpage(setload, oldscroll) {
     $(document).on('click', event, clicked)
     $(document).on('dblclick', event, dblclick)
     $(window).resize(updateSizes)
-    window.addEventListener('focus', reloadpage)
+    window.addEventListener('focus', reload)
   }
   if (!data.headingalign) data.headingalign = 'center'
   document.documentElement.style.setProperty('--headingalign',
