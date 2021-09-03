@@ -463,20 +463,28 @@ function clearEmptyDates() {
             }
           }
           if (appends.length > 0) {
-            let todayheading = getHeadingChildren($(dateToHeading(today)))[
-              getHeadingChildren($(dateToHeading(today))).length - 1] 
-              // hchildren
-            if (!getHeadingChildren(getHeading(todayheading)).map((x) => { 
-              return $(x).text() 
-            }).includes('uncompleted')) {
-              const completespan = $(
-                '<span class="in h2" folded="false">uncompleted</span>')
-              todayheading.after(completespan)
-              todayheading = completespan
+            let todayheading = $(dateToHeading(today))
+            let lastchild
+            if (getHeadingChildren($(dateToHeading(today))).length > 0) {
+              if (!getHeadingChildren(todayheading).map((x) => { 
+                return $(x).text()
+              }).includes('uncompleted')) {
+                const completespan = $(
+                  '<span class="in h2" folded="false">uncompleted</span>')
+                $(lastchild).after(completespan)
+                lastchild = completespan
+              } else {
+                lastchild = getHeadingChildren(todayheading).find((x) => {
+                  return $(x).text() == 'uncompleted'
+                })
+              }
+            } else {
+              lastchild = $(dateToHeading(today))
             }
+            console.log(appends);
             // add uncompleted to after heading
             for (let appchild of appends) {
-              todayheading.after($(appchild))
+              lastchild.after($(appchild))
             }
           }
         }
