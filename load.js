@@ -96,16 +96,14 @@ function load() {
     // try the current cookie (synchronous request)
     const fname = getCookie('fname')
     if (fname == '') {throw 'no user loaded'}
-    $.ajax({
-      async: false,
-      type: 'GET',
-      url: 'users/' + getCookie('fname') + '.json', 
-      success: function (datastr, status, xhr) {
+    $.get(
+      'users/' + getCookie('fname') + '.json', 
+      function (datastr, status, xhr) {
         if (xhr.responseText == '') { throw 'no user loaded' }
         data = JSON.parse(xhr.responseText)
         loadpage()
-      }, 
-    })
+      }
+    )
   } catch (err) {
     console.log(err);
     // there are no cookies or the cookies failed
