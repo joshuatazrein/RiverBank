@@ -3002,6 +3002,7 @@ function reloadpage() {
       'users/' + document.cookie.split(';')[0].split('=')[1] + '.json',
       function(data, status, xhr) {
         data = JSON.parse(JSON.stringify(xhr.responseText))
+        console.log('reloading');
         reloadpage2()
       }
     )
