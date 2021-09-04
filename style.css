@@ -51,7 +51,7 @@ button {
   border-width: 1px;
   border-color: var(--butborder);
   padding: 4px;
-  min-width: 17px;
+  min-width: 24px;
 }
 
 .butbar {
@@ -600,7 +600,6 @@ span.weblink, span.deadline {
   }
   button {
     font-size: 18px !important;
-    min-width: 5vw;
   }
   div.leftcolumn div.butbar {
     width: calc(100% + 6px);

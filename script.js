@@ -339,10 +339,7 @@ function loadthis(event) {
   }
 }
 
-// Storing data:
-function save(undo) {
-  unfilter(false)
-  if (undo == true) savedata = JSON.parse(JSON.stringify(data))
+function clean() {
   // update height of loads
   const leftcol = $($('.leftcolumn')[0])
   const loadsheight = leftcol.height() -
@@ -388,6 +385,13 @@ function save(undo) {
       $(span).remove()
     }
   }
+}
+
+// Storing data:
+function save(undo) {
+  unfilter(false)
+  if (undo == true) savedata = JSON.parse(JSON.stringify(data))
+  clean()
   // save data
   let newdata = JSON.parse(JSON.stringify(data)) // copies data
   newdata.pop = $('#pop').html()
@@ -417,7 +421,7 @@ function save(undo) {
   localStorage.setItem('data', JSON.stringify(data))
 }
 
-function clearEmptyDates() {
+function clearEmptyDates(saving) {
   $('.placeholder').remove()
   // take away empty dates
   const dateslist = $('#pop').children().filter('.dateheading')
@@ -494,7 +498,7 @@ function clearEmptyDates() {
     // prevents loadpage error
     console.log('error', err);
   }
-  save()
+  if (saving != false) { save() }
 }
 
 function switchUser() {
@@ -3165,7 +3169,6 @@ function loadpage(setload, oldscroll) {
     $(':root').css('--butheight', '0px')
   }
   $('.taskselect').removeClass('taskselect')
-  updateSizes()
   // go to today
   $('#pop').scrollTop(0)
   $('#pop').scrollTop(
@@ -3173,12 +3176,15 @@ function loadpage(setload, oldscroll) {
     $('#pop').offset().top)
   if (oldscroll) $('#flop').scrollTop(oldscroll)
   console.log('got here');
+  $(document).scrollTop(0)
+  updateSizes()
+  clean()
+  clearEmptyDates()
   if (!oldselect) {
     select($(dateToHeading(stringToDate('t'))))
   } else {
     select(oldselect)
   }
-  $(document).scrollTop(0)
 }
 
 if (loadonstart) loadpage()

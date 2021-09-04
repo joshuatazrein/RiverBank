@@ -27,7 +27,6 @@
           <button function="moveTask('down')" title='move down'>↓</button>
           <button function="editTask()" title='edit'>o</button>
           <button function="deleteTask()" title='delete'>x</button>
-          <button function="archiveTask(true)" title='complete'>!</button>
         </div>
         <div class='mobilehide butbar'>
           <button title='unfold' function='toggleSubtasks()'>[</button>
@@ -150,6 +149,7 @@
           <button id='todayBut' title='jump to today'>today</button>
           <button id='addDateBut' title='add date'>+#</button>
           <button class='flopbut' id='popBut' title='new task in river'>+ RIVER</button>
+          <button function="archiveTask(true)" title='complete'>!</button>
         </div>
         <p id='pop' class='rendered in' ondrop='dropTask(event)' ondragover='draggingOver(event)'></p>
       </div>
