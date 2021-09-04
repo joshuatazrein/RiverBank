@@ -102,9 +102,48 @@ function newUser(username, password) {
         inaweek.toUTCString();
       document.cookie = 'pw=' + password + '; expires=' + 
         inaweek.toUTCString();
+      // create new file
+      uploadData();
       loadpage();
     }
   )
+}
+
+function uploadData(reloading) {
+  if (JSON.stringify(data) == prevupload) {
+    console.log('equal');
+    return
+  }
+  // uploads data to server
+  try {
+    if (uploading == false) {
+      console.log('uploading');
+      uploading = true
+      $.post("upload.php", {
+        datastr: JSON.stringify(data),
+      }, function(data, status, xhr) {
+        prevupload = xhr.responseText
+        uploading = false
+        if (reloading == true) reload() // reloads page
+      });
+    }
+  } catch (err) {
+    uploading = false
+    // offline mode
+    console.log('failed');
+    localStorage.setItem('data', JSON.stringify(data))
+    prevupload = JSON.stringify(data)
+  }
+}
+
+function resetCookies() {
+  let past = new Date()
+  past.setTime(
+    past.getTime() - 10000000)
+  past = past.toUTCString()
+  document.cookie = 'user=;expires=' + past + ';'
+  document.cookie = 'fname=;expires=' + past + ';'
+  document.cookie = 'pw=;expires=' + past + ';'
 }
 
 function load() {
@@ -127,13 +166,7 @@ function load() {
         data.style + "' />")
       );
     }
-    let past = new Date()
-    past.setTime(
-      past.getTime() - 10000000)
-    past = past.toUTCString()
-    document.cookie = 'user=;expires=' + past + ';'
-    document.cookie = 'fname=;expires=' + past + ';'
-    document.cookie = 'pw=;expires=' + past + ';'
+    resetCookies();
     if (data.weekdays == 'M') {
       weekdaysStr = {0:'U', 1:'M', 2:'T', 3:'W', 4:'R', 5:'F', 6:'S'}
       weekdaysNum = {'U':0, 'M':1, 'T':2, 'W':3, 'R':4, 'F':5, 'S':6}
@@ -172,4 +205,5 @@ function load() {
   }
 }
 
-load();
+resetCookies()
+load()
