@@ -548,9 +548,9 @@ function uploadData(reloading) {
     return
   }
   // uploads data to server
-  try {
+  if (!offlinemode) {
     if (uploading == false) {
-      console.log('uploading');
+      console.log('uploading', data);
       uploading = true
       $.post("upload.php", {
         datastr: JSON.stringify(data),
@@ -560,12 +560,13 @@ function uploadData(reloading) {
         if (reloading == true) reload() // reloads page
       });
     }
-  } catch (err) {
+  } else {
     uploading = false
     // offline mode
     console.log('failed');
     localStorage.setItem('data', JSON.stringify(data))
     prevupload = JSON.stringify(data)
+    if (reloading == true) reload() // reloads page
   }
 }
 
@@ -1526,9 +1527,11 @@ function saveTask() {
   selected.remove()
   savetask.show()
   select(savetask)
-  while (selected.parent()[0].tagName == 'SPAN') {
+  let parent = selected.parent()
+  while (parent[0].tagName == 'SPAN') {
     // disable drags
-    selected.parent().attr('draggable', 'true')
+    parent.attr('draggable', 'true')
+    parent = parent.parent()
   }
   save(true)
 }
@@ -1583,8 +1586,8 @@ function select(el, scroll) {
     }
     if (scroll != false) {
       // only execute if not clicked
+      parent = getFrame(selected)
       const oldscroll = parent.scrollTop()
-      parent.scrollTop(0)
       const scrolltime = 300
       parent.stop(true) // clear queue
       if (!selected.hasClass('dateheading') && !isHeading(selected)) {
@@ -1593,33 +1596,36 @@ function select(el, scroll) {
           Number(selected.offset().top)) {
           // scroll to heading
           const scrolllocation = Number(
+            oldscroll + 
             getHeading(selected).offset().top) -
             Number(getFrame(selected).offset().top)
-          parent.scrollTop(oldscroll)
           parent.animate({
             scrollTop: scrolllocation
           }, scrolltime)
         } else {
           // if more than halfway down the page
-          const scrolllocation = Number(selected.offset().top) -
+          const scrolllocation = Number(
+            oldscroll + 
+            selected.offset().top) -
             Number(parent.offset().top) -
             parent.height() / 2
-          parent.scrollTop(oldscroll)
           parent.animate({
             scrollTop: scrolllocation
           }, scrolltime)
         }
       } else if (selected.hasClass('dateheading')) {
-        const scrolllocation = Number(selected.prev().offset().top) -
+        const scrolllocation = Number(
+          oldscroll + 
+          selected.prev().offset().top) -
           Number(getFrame(selected).offset().top)
-        parent.scrollTop(oldscroll)
         parent.animate({
           scrollTop: scrolllocation
         }, scrolltime)
       } else if (isHeading(selected)) {
-        const scrolllocation = Number(selected.offset().top) -
+        const scrolllocation = Number(
+          oldscroll + 
+          selected.offset().top) -
           Number(getFrame(selected).offset().top)
-        parent.scrollTop(oldscroll)
         parent.animate({
           scrollTop: scrolllocation
         }, scrolltime)
@@ -1712,9 +1718,11 @@ function editTask() {
     el.after(newelt)
     el.hide()
     select(newelt)
-    while (selected.parent()[0].tagName == 'SPAN') {
+    let parent = selected.parent()
+    while (parent[0].tagName == 'SPAN') {
       // disable drags
-      selected.parent().attr('draggable', 'false')
+      parent.attr('draggable', 'false')
+      parent = parent.parent()
     }
     selected.focus()
     if (getChildren(el) == '') {
@@ -2503,7 +2511,8 @@ function clicked(ev) {
   }
   $(document).scrollTop(0); // fixes weird shit
   $('nav').hide()
-  if (ev.target.tagName == 'TEXTAREA' && !$(ev.target).hasClass('listtitle')) {
+  console.log(ev.target);
+  if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
     return
   } else if ($(ev.target).hasClass('dropdown-item')) {
     const oldselect = selected
@@ -2625,12 +2634,15 @@ function clicked(ev) {
   } else if (getFrame($(ev.target)) && $(ev.target).hasClass('in')) {
     // select allowable elements
     select(ev.target, false)
-  } else if (!isSubtask($(ev.target))) {
+  } else if (!isSubtask($(ev.target)) && $(ev.target).hasClass('in')) {
     // select parents of 
     select($(ev.target).parent(), false)
     if ($(ev.target).hasClass('mobhandle')) {
       context(ev, true)
     }
+  } else if ($(ev.target).attr('id') == 'searchbar') {
+    select()
+    // nothing; don't unselect
   } else {
     select()
   }
@@ -2718,14 +2730,14 @@ function moveTask(direction) {
   } else if (direction == 'down') {
     // move the task down
     if (taskBelow()) taskBelow().after(selected)
-    else select(selected)
+    else select(selected, false)
   } else if (direction == 'up') {
     // move the task up
     if (taskAbove()) taskAbove().before(selected)
-    else select(selected)
+    else select(selected, false)
   }
   save(true)
-  if (selected.is(':visible')) select(selected)
+  if (selected.is(':visible')) select(selected, false)
   else select()
   console.log(selected, 'finished');
 }
@@ -2774,8 +2786,6 @@ function keycomms(evt) {
     return
   }
   // makes sure to unselect on proper things
-  if ($(':focus')[0] != undefined &&
-    $(':focus')[0].tagName == 'INPUT') select()
   if (evt.key == 'Escape' && selected != undefined &&
     selected[0].tagName == 'TEXTAREA') {
     evt.preventDefault()
@@ -3008,13 +3018,17 @@ function getFrame(task) {
   else if (parents.includes($('#pop')[0])) return $('#pop')
 }
 
+function tutorial() {
+  $('#tutorial').show()
+}
+
 function uploadData(reloading) {
   if (JSON.stringify(data) == prevupload) {
     console.log('equal');
     return
   }
   // uploads data to server
-  try {
+  if (!offlinemode) {
     if (uploading == false) {
       console.log('uploading');
       uploading = true
@@ -3026,7 +3040,7 @@ function uploadData(reloading) {
         if (reloading == true) reload() // reloads page
       });
     }
-  } catch (err) {
+  } else {
     uploading = false
     // offline mode
     console.log('failed');
@@ -3036,8 +3050,12 @@ function uploadData(reloading) {
 }
 
 function reload() {
-  try {
-    $.get(
+  if (offlinemode) {
+    // skip upload
+    data = JSON.parse(localStorage.getItem('data'))
+    reload2()
+  } else {
+    $.post(
       'users/' + getCookie('fname') + '.json', 
       function (datastr, status, xhr) {
         console.log('reloading:', xhr.responseText)
@@ -3045,9 +3063,6 @@ function reload() {
         reload2()
       }
     )
-  } catch (err) {
-    console.log(err);
-    reload2()
   }
 }
 
@@ -3157,10 +3172,13 @@ function loadpage(setload, oldscroll) {
     $(dateToHeading(stringToDate('t'))).prev().offset().top -
     $('#pop').offset().top)
   if (oldscroll) $('#flop').scrollTop(oldscroll)
+  console.log('got here');
   if (!oldselect) {
-    select(dateToHeading(stringToDate('t')))
+    select($(dateToHeading(stringToDate('t'))))
   } else {
     select(oldselect)
   }
   $(document).scrollTop(0)
 }
+
+if (loadonstart) loadpage()

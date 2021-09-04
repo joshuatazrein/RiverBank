@@ -18,9 +18,6 @@
 <body>
   <div class='container' id='container'>
     <div class='leftcolumn' id='leftcol'>
-      <div style='width:100%;padding-top:1px;'>
-        <button id='collapsebut' title='collapse menu' id='collapsebut' function='togglecollapse()'>≡</button>
-      </div>
       <div>
         <p id='username'></p>
       </div>
@@ -69,6 +66,7 @@
       </div>
       <p id='help' class='help'>
         <span class='h1'>help</span>
+        <span class='h2'><button onclick='tutorial()' style='font-size:16px;'>click for tutorial</button></span>
         <span class='h2'>controls</span>
         <span class='command'><span class='left'>click</span><span class='right'>select task</span></span>
         <span class='command'><span class='left'>right-click</span><span class='right'>options</span></span>
@@ -136,6 +134,7 @@
     <div class='listcontainer'>
       <div class='floplist'>
         <div class='butbar' id='flopbuts'>
+          <button id='collapsebut' title='collapse menu' id='collapsebut' function='togglecollapse()'>≡</button>
           <button class='flopbut' id='flopBut' title='new task in bank'>+ BANK</button>
           <button id='newHeadingFlopBut' title='new heading in bank'>+#</button>
           <button function="selectRandom()" title='select random flop'>?</button>
@@ -159,7 +158,6 @@
   <div style='height:500px;background-color:transparent;'></div>
   <p id='test' style='display:none;position:absolute;'><p>
   <nav id="context-menu">
-
     <p function='editTask()' class='dropdown-item' id='context-editTask'>edit task (enter)</p>
     <p function='newTask()' class='dropdown-item' id='context-newTask'>new task (opt-enter)</p>
     <p function='newTask(subtask=true)' class='dropdown-item' id='context-newSubtask'>new subtask (shift-opt-enter)</p>
@@ -214,6 +212,30 @@
     <p class='dropdown-item' title='set deadline' function='setTask("deadline")'>> deadline</p>
     <p class='dropdown-item' title='set blank' function='setTask("")'>_ blank</p>
   </nav>
+  <div id='tutorial' style='display:none'>
+    <span class='banner'>tutorial <button style='top:-1.5em;position:relative;' onclick='$("#tutorial").hide()'>done</button></span>
+    <br><br><br>
+    <span class='h1'>lists</span>
+    <video controls class='tutorial-vid'><source  src="tutorial/new-list.m4v" type="video/mp4"></video>
+    <span class='h1'>tasks</span>
+    <video controls class='tutorial-vid'><source  src="tutorial/new-task.m4v" type="video/mp4"></video>
+    <span class='h1'>headings</span>
+    <video controls class='tutorial-vid'><source  src="tutorial/headings.m4v" type="video/mp4"></video>
+    <span class='h1'>subtasks</span>
+    <video controls class='tutorial-vid'><source  src="tutorial/subtasks.m4v" type="video/mp4"></video>
+    <span class='h1'>dragging</span>
+    <video controls class='tutorial-vid'><source  src="tutorial/drags.m4v" type="video/mp4"></video>
+    <span class='h1'>types</span>
+    <video controls class='tutorial-vid'><source  src="tutorial/format-tasks.m4v" type="video/mp4"></video>
+    <span class='h1'>styles</span>
+    <video controls class='tutorial-vid'><source  src="tutorial/inline-formatting.m4v" type="video/mp4"></video>
+    <span class='h1'>dates</span>
+    <video controls class='tutorial-vid'><source  src="tutorial/search.m4v" type="video/mp4"></video>
+    <span class='h1'>timer</span>
+    <video controls class='tutorial-vid'><source  src="tutorial/timer.m4v" type="video/mp4"></video>
+    <span class='h1'>buttons</span>
+    <video controls class='tutorial-vid'><source  src="tutorial/buttons.m4v" type="video/mp4"></video>
+  </div>
   <!-- sounds -->
   <script type='text/javascript' src='script.js'></script>
   <audio src='snd/pop.mp3' type='audio/mp3' id='popsnd'></audio>
