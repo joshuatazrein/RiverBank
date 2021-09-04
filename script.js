@@ -3008,6 +3008,33 @@ function getFrame(task) {
   else if (parents.includes($('#pop')[0])) return $('#pop')
 }
 
+function uploadData(reloading) {
+  if (JSON.stringify(data) == prevupload) {
+    console.log('equal');
+    return
+  }
+  // uploads data to server
+  try {
+    if (uploading == false) {
+      console.log('uploading');
+      uploading = true
+      $.post("upload.php", {
+        datastr: JSON.stringify(data),
+      }, function(data, status, xhr) {
+        prevupload = xhr.responseText
+        uploading = false
+        if (reloading == true) reload() // reloads page
+      });
+    }
+  } catch (err) {
+    uploading = false
+    // offline mode
+    console.log('failed');
+    localStorage.setItem('data', JSON.stringify(data))
+    prevupload = JSON.stringify(data)
+  }
+}
+
 function reload() {
   try {
     $.get(

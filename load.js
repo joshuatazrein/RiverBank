@@ -84,14 +84,14 @@ function checkPass(username) {
 }
 
 function newUser(username, password) {
-  // create a new user, has passed the tests
+  // create a new user, has passed the tests - makes file and adds to table
   $.post(
     'setuser.php',
     {
       usertest: username,
       pwtest: password
     },
-    function (data, status, xhr) {
+    function (val, status, xhr) {
       // success
       data = JSON.parse(JSON.stringify(resetstring))
       const inaweek = new Date();
@@ -103,37 +103,9 @@ function newUser(username, password) {
       document.cookie = 'pw=' + password + '; expires=' + 
         inaweek.toUTCString();
       // create new file
-      uploadData();
       loadpage();
     }
   )
-}
-
-function uploadData(reloading) {
-  if (JSON.stringify(data) == prevupload) {
-    console.log('equal');
-    return
-  }
-  // uploads data to server
-  try {
-    if (uploading == false) {
-      console.log('uploading');
-      uploading = true
-      $.post("upload.php", {
-        datastr: JSON.stringify(data),
-      }, function(data, status, xhr) {
-        prevupload = xhr.responseText
-        uploading = false
-        if (reloading == true) reload() // reloads page
-      });
-    }
-  } catch (err) {
-    uploading = false
-    // offline mode
-    console.log('failed');
-    localStorage.setItem('data', JSON.stringify(data))
-    prevupload = JSON.stringify(data)
-  }
 }
 
 function resetCookies() {
@@ -205,5 +177,4 @@ function load() {
   }
 }
 
-resetCookies()
 load()
