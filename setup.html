@@ -73,7 +73,7 @@
         <span class='command'><span class='left'>esc</span><span class='right'>unselect</span></span>
         <span class='command'><span class='left'>drag/drop</span><span class='right'>move after target</span></span>
         <span class='command'><span class='left'>option-drag/drop</span><span class='right'>move as subtask</span></span>
-        <span class='command'><span class='left'>cmd-drag/drop</span><span class='right'>move before target</span></span>
+        <span class='command'><span class='left'>command-drag/drop</span><span class='right'>move before target</span></span>
         <span class='h2'>commands</span>
         <span class='command'><span class='left'>return</span><span class='right'>edit/save</span></span>
         <span class='command'><span class='left'>option-return</span><span class='right'>new task below</span></span>
@@ -86,10 +86,11 @@
         <span class='command'><span class='left'>option-right/left</span><span class='right'>move between bank & river</span></span>
         <span class='command'><span class='left'>[/]</span><span class='right'>fold/unfold</span></span>
         <span class='command'><span class='left'>option-[/]</span><span class='right'>indent/unindent</span></span>
-        <span class='command'><span class='left'>i</span><span class='right'>important/unimportant</span></span>
+        <span class='command'><span class='left'>option-i</span><span class='right'>important/unimportant</span></span>
         <span class='command'><span class='left'>space</span><span class='right'>complete/uncomplete</span></span>
         <span class='command'><span class='left'>shift-space</span><span class='right'>archive</span></span>
-        <span class='command'><span class='left'>ctrl-t</span><span class='right'>go to today</span></span>
+        <span class='command'><span class='left'>control-t</span><span class='right'>go to today</span></span>
+        <span class='command'><span class='left'>control-f</span><span class='right'>search</span></span>
         <span class='h2'>syntax</span>
         <span class='command'><span class='left'># task</span><span class='right h1'>h1</span></span>
         <span class='command'><span class='left'>## task</span><span class='right h2'>h2</span></span>
@@ -158,19 +159,19 @@
   <div style='height:500px;background-color:transparent;'></div>
   <p id='test' style='display:none;position:absolute;'><p>
   <nav id="context-menu">
-    <p function='editTask()' class='dropdown-item' id='context-editTask'>edit task (enter)</p>
-    <p function='newTask()' class='dropdown-item' id='context-newTask'>new task (opt-enter)</p>
-    <p function='newTask(subtask=true)' class='dropdown-item' id='context-newSubtask'>new subtask (shift-opt-enter)</p>
-    <p function='deleteTask()' class='dropdown-item' id='context-deleteTask'>delete (del)</p>
-    <p function='archiveTask()' class='dropdown-item' id='context-archiveTask'>archive (shift-space)</p>
+    <p function='editTask()' class='dropdown-item' id='context-editTask'>edit task (return)</p>
+    <p function='newTask()' class='dropdown-item' id='context-newTask'>new task (option return)</p>
+    <p function='newTask(subtask=true)' class='dropdown-item' id='context-newSubtask'>new subtask (shift option return)</p>
+    <p function='deleteTask()' class='dropdown-item' id='context-deleteTask'>delete (delete)</p>
+    <p function='archiveTask()' class='dropdown-item' id='context-archiveTask'>archive (shift space)</p>
     <p function='' class='dropdown-item' id='context-divider'>————————————</p>
 
     <p function='moveToList()' class='dropdown-item' id='context-moveToList'>move to list</p>
     <p function='toggleComplete()' class='dropdown-item' id='context-toggleComplete'>toggle complete (space)</p>
-    <p function='toggleImportant()' class='dropdown-item' id='context-toggleimportant'>toggle important (i)</p>
-    <p function='toggleSubtasks()' class='dropdown-item' id='context-toggleSubtasks'>toggle fold ([/])</p>
-    <p function='indentTask(true)' class='dropdown-item' id='context-indentTask'>indent (option-])</p>
-    <p function='indentTask(false)' class='dropdown-item' id='context-unIndentTask'>unindent (option-[)</p>
+    <p function='toggleImportant()' class='dropdown-item' id='context-toggleimportant'>toggle important (option i)</p>
+    <p function='toggleSubtasks()' class='dropdown-item' id='context-toggleSubtasks'>toggle fold ([ or ])</p>
+    <p function='indentTask(true)' class='dropdown-item' id='context-indentTask'>indent (option ])</p>
+    <p function='indentTask(false)' class='dropdown-item' id='context-unIndentTask'>unindent (option [)</p>
     <p function='archiveComplete()' class='dropdown-item' id='context-archiveComplete'>archive completed</p>
     <p function='clearEmptyHeadlines()' class='dropdown-item' id='context-clearEmptyHeadlines'>clear empty</p>
     <p function='select(dateToHeading(stringToDate("t")))' class='dropdown-item' id='context-goToToday'>go to today</p>

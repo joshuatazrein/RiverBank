@@ -389,6 +389,8 @@ function clean() {
 
 // Storing data:
 function save(undo) {
+  const floptop = $('#flop').scrollTop()
+  const poptop = $('#pop').scrollTop()
   unfilter(false)
   if (undo == true) savedata = JSON.parse(JSON.stringify(data))
   clean()
@@ -419,6 +421,8 @@ function save(undo) {
   $('span.in:visible').attr('style', '')
   updatedeadlines()
   localStorage.setItem('data', JSON.stringify(data))
+  $('#flop').scrollTop(floptop)
+  $('#pop').scrollTop(poptop)
 }
 
 function clearEmptyDates(saving) {
@@ -1073,6 +1077,7 @@ function updatedeadlines() {
       // take out deadline
       duedate.text(text.slice(0, index) + text.slice(endindex))
       duedate.addClass('duedate')
+      duedate.removeClass('in')
       $(heading).after(duedate)
     }
   }
@@ -1226,25 +1231,17 @@ function mobileDragOver(event) {
 }
 
 function deleteTask() {
-  if (selected[0].tagName == 'P') {
+  if (selected[0].tagName == 'P' || selected.hasClass('dateheading')) {
     return
   }
-  let newselect = selected.next()
-  if (newselect.hasClass('buffer')) {
-    newselect = [undefined]
-  }
-  if (newselect[0] == undefined) {
-    newselect = selected.prev()
-  }
-  if (newselect[0] == undefined) {
-    newselect = selected.parent()
-  }
-  if (selected.hasClass('dateheading') == true) {
-    return; // prevents deleting dates
+  let newselect = taskBelow()
+  if (newselect[0] == selected[0]) {
+    newselect = taskAbove()
   }
   if (selected.attr('folded') == 'true') {
     // unfold deleted headings before deleting
     togglefold(selected)
+    setTimeout(null, 500)
   }
   selected.remove()
   select(newselect)
@@ -1553,7 +1550,7 @@ function getHeading(el, actual) {
   else if ($(heading)[0]) return $(heading)
 }
 
-function select(el, scroll) {
+function select(el, scroll, animate) {
   if (el &&
     $(el)[0].tagName == 'SPAN' && !isSubtask($(el))) el = $(el).parent()
   if (slider) removesliders() // removes sliders
@@ -1570,29 +1567,32 @@ function select(el, scroll) {
     selected = $(el)
     selected.addClass('taskselect')
     let parent
-    if (selected.parents().toArray().includes($('#flop')[0])) {
-      parent = $('#flop')
-    } else if (selected.parents().toArray().includes($('#pop')[0])) {
-      parent = $('#pop')
+    if (getFrame(selected)) {
+      parent = getFrame(selected)
     } else {
       parent = $(el)
     }
     if (selected != undefined) {
       try {
-        getFrame(selected).find(":not(span)").addBack().contents().filter(
+        parent.find(":not(span)").addBack().contents().filter(
           function () {
             return this.nodeType == 3;
           }).remove();
       } catch (err) { }
     }
-    if (!selected.is(':visible') && getHeading(selected)) {
-      togglefold($(getHeading(selected, true)))
-    }
     if (scroll != false) {
+      if (!selected.is(':visible') && getHeading(selected)) {
+        togglefold($(getHeading(selected, true)))
+      }
       // only execute if not clicked
       parent = getFrame(selected)
       const oldscroll = parent.scrollTop()
-      const scrolltime = 300
+      let scrolltime
+      if (animate != false) {
+        scrolltime = 300
+      } else {
+        scrolltime = 0
+      }
       parent.stop(true) // clear queue
       if (!selected.hasClass('dateheading') && !isHeading(selected)) {
         if (getHeading(selected) &&
@@ -1804,6 +1804,9 @@ function newTask(subtask) {
     // regular task
     e.after(newspan)
   }
+  if (selected.hasClass('dateheading')) {
+    updatedeadlines()
+  }
   select(newspan)
   editTask()
 }
@@ -1820,6 +1823,7 @@ function archiveAll() {
 }
 
 function archiveTask(play) {
+  const taskabove = taskAbove()
   if (play == true) { $('#popsnd')[0].play(); console.log('playing'); }
   // archives the selected Flop to the current day
   let heading
@@ -1851,7 +1855,7 @@ function archiveTask(play) {
     })
   }
   if (selected.hasClass('complete') == false) {
-    toggleComplete(selected) // complete it
+    selected.addClass('complete')
   }
   heading.after(selected)
   // formatting
@@ -1860,6 +1864,7 @@ function archiveTask(play) {
   } else {
     selected.hide()
   }
+  select(taskabove)
   save(true)
 }
 
@@ -2028,7 +2033,7 @@ function dropTask(evt, obj) {
   } else if (el.tagName == 'SPAN' &&
     $(el).hasClass('in')) {
     // dropping task (according to key commands)
-    if (evt.altKey == true) {
+    if (evt.altKey == true && $(evt.target).parent()[0].tagName != 'SPAN') {
       if (evt.metaKey == true) {
         const subtasks = $(el).children().toArray().filter(
           (x) => {
@@ -2542,13 +2547,13 @@ function clicked(ev) {
   } else if ($(ev.target).hasClass('buffer')) {
     select(getFrame($(ev.target)), false)
   } else if ($(ev.target).attr('id') == 'newHeadingFlopBut') {
-    if (selected == undefined ||
-      selected.parents().toArray().includes($('#pop')[0]) ||
-      selected.attr('id') == 'pop') {
-      const newtask = createBlankTask()
-      $('#flop').append(newtask)
+    if (selected == undefined || getFrame(selected).attr('id') != 'flop') {
+      // insert after selected
+      const newtask = $('<span class="in"></span>')
+      $('#flop').prepend(newtask)
       select(newtask)
-      editTask()
+      newTask()
+      newtask.remove()
     } else {
       newTask()
     }
@@ -2598,22 +2603,21 @@ function clicked(ev) {
   } else if ($(ev.target).attr('id') == 'timerStopBut') {
     stopTimer()
   } else if ($(ev.target).attr('id') == 'popBut') {
-    if (selected == undefined) {
+    if (selected == undefined || getFrame(selected).attr('id') != 'pop') {
       select(dateToHeading(stringToDate('t')))
     }
     newTask()
   } else if ($(ev.target).attr('id') == 'flopBut') {
-    if (selected == undefined || selected.parents().toArray().includes(
-      $('#flop')[0]) == false) {
+    if (selected == undefined || getFrame(selected).attr('id') != 'flop') {
       // insert after selected
-      try {
-        select($('#flop').children().$('#flop').children().length - 1)
-      } catch (IndexError) {
-        select($('#flop'))
-      }
+      const newtask = $('<span class="in"></span>')
+      $('#flop').prepend(newtask)
+      select(newtask)
+      newTask()
+      newtask.remove()
+    } else {
+      newTask()
     }
-    newTask()
-    // other clicks
   } else if ($(ev.target)[0].tagName == 'BUTTON') {
     eval($(ev.target).attr('function')) // execute button functions
   } else if ($(ev.target).hasClass('link') == true) {
@@ -2638,7 +2642,7 @@ function clicked(ev) {
   } else if (getFrame($(ev.target)) && $(ev.target).hasClass('in')) {
     // select allowable elements
     select(ev.target, false)
-  } else if (!isSubtask($(ev.target)) && $(ev.target).hasClass('in')) {
+  } else if (!isSubtask($(ev.target)) && ev.target.tagName == 'SPAN') {
     // select parents of 
     select($(ev.target).parent(), false)
     if ($(ev.target).hasClass('mobhandle')) {
@@ -2666,7 +2670,7 @@ function taskAbove() {
   }
   if (returntask != undefined && !returntask.is(':visible')) {
     // while invisible
-    select(returntask)
+    select(returntask, false)
     return taskAbove()
   } else if (!returntask || returntask.hasClass('in') == false) {
     return selected
@@ -2712,7 +2716,7 @@ function taskBelow() {
   }
   if (returntask[0] != undefined && !returntask.is(':visible')) {
     // while invisible
-    select(returntask)
+    select(returntask, false)
     return taskBelow()
   } else if (returntask[0] == undefined || !returntask.hasClass('in')) {
     return selected
@@ -2805,6 +2809,8 @@ function keycomms(evt) {
     }
   } else if (evt.key == 't' && evt.ctrlKey) {
     select(dateToHeading(stringToDate('t')))
+  } else if (evt.key == 'f' && evt.ctrlKey) {
+    $('#searchbar').focus()
   } else if (evt.key == 'Enter' && $(':focus').attr('id') ==
     'searchbar') {
     evt.preventDefault()
@@ -2881,8 +2887,16 @@ function keycomms(evt) {
     if (selected[0].tagName == 'TEXTAREA') {
       saveTask()
     }
-    select(taskAbove())
-    newTask()
+    if ($(taskAbove())[0] != selected[0]) {
+      select(taskAbove())
+      newTask()
+    } else {
+      const newspan = $('<span class="in">try task</span>')
+      selected.before(newspan)
+      select(newspan)
+      newTask()
+      newspan.remove()
+    }
   } else if (selected != undefined && evt.key == 'Enter' &&
     evt.altKey == true) {
     evt.preventDefault()
@@ -2905,8 +2919,11 @@ function keycomms(evt) {
     selectRandom()
   } else if (selected != undefined && selected[0].tagName !=
     'TEXTAREA') {
+    // console.log(evt.code);
     if (evt.key == 'Backspace') {
       deleteTask()
+    } else if (evt.code == 'KeyI' && evt.altKey) {
+      toggleImportant()
     } else if (evt.key == '‘') {
       indentTask(true)
     } else if (evt.key == '“') {
@@ -2924,8 +2941,6 @@ function keycomms(evt) {
       } else {
         toggleComplete()
       }
-    } else if (evt.key == 'i') {
-      toggleImportant()
     } else if (evt.key == 'ArrowRight' &&
       evt.altKey == true) {
       // insert afterwards
@@ -2959,14 +2974,14 @@ function keycomms(evt) {
       evt.preventDefault()
       while (taskAbove() && !isHeading(taskAbove())) {
         if (taskAbove()[0] == selected[0]) break
-        select(taskAbove())
+        select(taskAbove(), false)
       }
       select(taskAbove())
     } else if (evt.key == 'ArrowDown' && evt.shiftKey) {
       evt.preventDefault()
       while (taskBelow() && !isHeading(taskBelow())) {
         if (taskBelow()[0] == selected[0]) break
-        select(taskBelow())
+        select(taskBelow(), false)
       }
       select(taskBelow())
     } else if (evt.key == 'ArrowUp') {
@@ -3073,24 +3088,22 @@ function reload() {
 function reload2() {
   // reselect old select
   let selectframe, selectindex
-  if (selected != undefined && selected[0].tagName == 'SPAN') {
+  if (selected && selected[0].tagName == 'SPAN') {
     selectframe = getFrame(selected)
-    selectindex = selectframe.find('span').toArray().indexOf(selected[0])
+    selectindex = selectframe.find('span.in').toArray().indexOf(selected[0])
+  } else if (selected && getFrame(selected)) {
+    selectframe = getFrame(selected)
   }
-  const oldscroll = $('#flop').scrollTop()
+  const oldscroll = [$('#flop').scrollTop(), $('#pop').scrollTop()]
   $('#pop').empty()
   $('#flop').empty()
   $('#loads').empty()
-  loadpage(false, oldscroll)
-  if (selectframe != undefined) {
-    select($(selectframe.find('span').toArray()[selectindex]), false)
-  }
+  loadpage(false, oldscroll, [selectframe, selectindex])
   $(':focus').blur()
 }
 
-function loadpage(setload, oldscroll) {
+function loadpage(setload, oldscroll, oldselect) {
   // right after signing in
-  let oldselect
   $('#username').text(getCookie('user'))
   if (setload != false) {
     // initial loads (not called on reloads)
@@ -3114,8 +3127,6 @@ function loadpage(setload, oldscroll) {
     $(document).on('dblclick', event, dblclick)
     $(window).resize(updateSizes)
     window.addEventListener('focus', reload)
-  } else {
-    oldselect = selected
   }
   if (!data.headingalign) data.headingalign = 'center'
   document.documentElement.style.setProperty('--headingalign',
@@ -3174,16 +3185,23 @@ function loadpage(setload, oldscroll) {
   $('#pop').scrollTop(
     $(dateToHeading(stringToDate('t'))).prev().offset().top -
     $('#pop').offset().top)
-  if (oldscroll) $('#flop').scrollTop(oldscroll)
   console.log('got here');
   $(document).scrollTop(0)
   updateSizes()
   clean()
   clearEmptyDates()
-  if (!oldselect) {
-    select($(dateToHeading(stringToDate('t'))))
+  if (oldselect) {
+    console.log(oldselect);
+    if (oldselect[1])
+      select(oldselect[0].find('span.in').toArray()[oldselect[1]], false)
+    else if (oldselect[0])
+      select(oldselect[0])
   } else {
-    select(oldselect)
+    select($(dateToHeading(stringToDate('t'))), true, false)
+  }
+  if (oldscroll) { 
+    $('#flop').scrollTop(oldscroll[0]) 
+    $('#pop').scrollTop(oldscroll[1])
   }
 }
 
