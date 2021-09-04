@@ -21,6 +21,14 @@
       <div>
         <p id='username'></p>
       </div>
+      <div class='butbar' id='editbuts'>
+        <button title='options' class='opts' id='optionsbut' function='context(ev)'>...</button>
+        <button title='set task type' class='opts' id='typebut' function='setOptions()'>*</button>
+      </div>
+      <div>
+        <input id='searchbar' placeholder="search (d: date)">
+        <div id='searchbar-results' class='dropdown' style='position:absolute;'></div>
+      </div>
       <div class='butbar'>
         <div class='butbar' id='movebuts'>
           <button function="moveTask('up')" title='move up'>↑</button>
@@ -34,26 +42,20 @@
           <button title='unindent' function='indentTask(false)'>{</button>
           <button title='indent' function='indentTask(true)'>}</button>
         </div>
-        <div class='butbar' id='editbuts'>
-          <button title='options' class='opts' id='optionsbut' function='context(ev)'>OPTIONS</button>
-          <button title='set task type' id='typebut' function='setOptions()'>TYPE</button>
-        </div>
+      </div>
+      <input id='timerent' placeholder="timer" />
+      <div class='butbar'>
         <div class='mobilehide butbar'>
           <button id='timer25But' title='25 minutes'>25</button>
           <button id='timer15But' title='15 minutes'>15</button>
           <button id='timer5But' title='5 minutes'>5</button>
-          <button id='timer+2But' title='+2 minutes'>+2</button>
-          <button id='timer-2But' title='-2 minutes'>-2</button>
         </div>
         <div class='butbar'>
+          <button class='mobilehide' id='timer+2But' title='+2 minutes'>+2</button>
+          <button class='mobilehide' id='timer-2But' title='-2 minutes'>-2</button>
           <button id='timerStartBut' title='start timer' style='font-family:monospace'>&#9654;</button>
           <button id='timerStopBut' title='stop timer'>■</button>
         </div>
-      </div>
-      <input id='timerent' placeholder="timer" />
-      <div>
-        <input id='searchbar' placeholder="search (d: date)">
-        <div id='searchbar-results' class='dropdown' style='position:absolute;'></div>
       </div>
       <p class='title' id='lists'>LISTS</p>
       <div class='butbar' id='listbuts'>
@@ -131,7 +133,7 @@
         <span><span class='left'>change between dd.mm.yyyy, yyyy-mm-dd, and mm/dd/yyyy formats in options</span></span><br><br>
       </p>
     </div>
-    <div class='listcontainer'>
+    <div id='listcontainer'>
       <div class='floplist'>
         <div class='butbar' id='flopbuts'>
           <button id='collapsebut' title='collapse menu' id='collapsebut' function='togglecollapse()'>≡</button>
@@ -141,8 +143,6 @@
           <button function="moveTask('pop')" title='move task to river'>→</button>
         </div>
         <p id='flop' class='rendered in' ondrop='dropTask(event)' ondragover='draggingOver(event)'></p>
-        <div style='height:500px;'></div>
-        <p id='texttest'></p>
       </div>
       <div class='poplist'>
         <div class='butbar'>
@@ -153,10 +153,12 @@
           <button function="archiveTask(true)" title='complete'>!</button>
         </div>
         <p id='pop' class='rendered in' ondrop='dropTask(event)' ondragover='draggingOver(event)'></p>
+        <div style='height:1000px;'></div>
+        <p id='texttest'></p>
       </div>
     </div>
   </div>
-  <div style='height:500px;background-color:transparent;'></div>
+  <div style='height:1000px;background-color:transparent;'></div>
   <p id='test' style='display:none;position:absolute;'><p>
   <nav id="context-menu">
     <p function='editTask()' class='dropdown-item' id='context-editTask'>edit task (return)</p>
@@ -211,6 +213,8 @@
     <p class='dropdown-item' title='set note' function='setTask("note")'>- note</p>
     <p class='dropdown-item' title='set repeat' function='setTask("repeat")'>~ repeat</p>
     <p class='dropdown-item' title='set deadline' function='setTask("deadline")'>> deadline</p>
+    <p class='dropdown-item' title='toggle important' function='toggleImportant()'>! important</p>
+    <p class='dropdown-item' title='toggle maybe' function='toggleMaybe()'>? maybe</p>
     <p class='dropdown-item' title='set blank' function='setTask("")'>_ blank</p>
   </nav>
   <div id='tutorial' style='display:none'>
@@ -236,6 +240,8 @@
     <video controls class='tutorial-vid'><source  src="tutorial/timer.m4v" type="video/mp4"></video>
     <span class='h1'>buttons</span>
     <video controls class='tutorial-vid'><source  src="tutorial/buttons.m4v" type="video/mp4"></video>
+    <span class='h1'>mobile</span>
+    <video controls class='tutorial-vid'><source  src="tutorial/mobile.m4v" type="video/mp4"></video>
   </div>
   <!-- sounds -->
   <script type='text/javascript' src='script.js'></script>

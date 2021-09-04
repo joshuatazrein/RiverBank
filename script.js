@@ -21,6 +21,9 @@ var stopwatch
 var copieditem
 var prevupload
 var flopscrollsave
+var popscrollsave
+var dropabove = false
+var dropinside = false
 var linestarts = {
   '# ': 'h1',
   '## ': 'h2',
@@ -38,7 +41,19 @@ var lineinners = {
 }
 var savedata
 var weekdaysStr
-var weekdaysNum
+var weekdaysNum = {
+  'U':0, 'M':1, 'T':2, 'W':3, 'R':4, 'F':5, 'S':6, 
+  'u':0, 'm':1, 't':2, 'w':3, 'r':4, 'f':5, 's':6,
+  'Sun':0, 'Mon':1, 'Tue':2, 'Wed':3, 'Thu':4, 'Fri':5, 'Sat':6,
+  'sun':0, 'mon':1, 'tue':2, 'wed':3, 'thu':4, 'fri':5, 'sat':6,
+  'Sunday':0, 'Monday':1, 'Tuesday':2, 'Wednesday':3, 'Thursday':4, 
+  'Friday':5, 'Saturday':6,
+  'sunday':0, 'monday':1, 'tuesday':2, 'wednesday':3, 'thursday':4, 
+  'friday':5, 'saturday':6,
+  'tues':2, 'Tues':2, 'thurs':4, 'Thurs':4, 'frid':5, 'Frid':5,
+  'su':0, 'mo':1, 'tu':2, 'we':3, 'th':4, 'fr':5, 'sa':6,
+  'Su':0, 'Mo':1, 'Tu':2, 'We':3, 'Th':4, 'Fr':5, 'Sa':6,
+}
 var filtered
 var filteredlist
 
@@ -205,7 +220,10 @@ function newlist(title, text, saving) {
   $('#loads').append(newthing)
   loadedlist = document.getElementById('loads').children.length - 1
   loadList(saving); // load last element in list
-  if (saving != false) $('#loads').children()[loadedlist].focus()
+  if (saving != false) {
+    try { $('#loads').children()[loadedlist].focus() }
+    catch (err) { console.log(err); }
+  }
   if ($(loads[loadedlist]).val().slice(0, 2) == '- ') {
     $(loads[loadedlist]).addClass('sublist')
   } else {
@@ -221,9 +239,12 @@ function deletelist() {
     $('#loads').children()[loadedlist].remove()
     data.flop.splice(loadedlist, 1)
     $('#flop').empty()
-    loadedlist = 0
+    loadedlist = undefined
     save()
-    loadList()
+    if (data.flop.length > 0) {
+      loadedlist = 0
+      loadList()
+    }
   }
 }
 
@@ -299,27 +320,31 @@ function updateSizes() {
     }
     $(list).css('font-size', fontsize + 'px')
   }
-  // fix context menu for mobile
-  if (window.innerWidth < 600) {
-    $('.dropdown-item').toArray().forEach((x) => {
-      $(x).text($(x).text().replace(/\s\((.*)\)/, ''))
-    })
+  try {
+    // fix context menu for mobile
+    if (window.innerWidth < 600) {
+      $('.dropdown-item').toArray().forEach((x) => {
+        $(x).text($(x).text().replace(/\s\((.*)\)/, ''))
+      })
+    }
+    // updates the text sizes of each list
+    let height = 0
+    $('#texttest').css('font-family', 'var(--font), serif')
+    $('#texttest').css('font-weight', 'bold')
+    $('#texttest').css('word-wrap', 'break-word')
+    for (list of $('#loads').children()) {
+      $('#texttest').css('font-size', $(list).css('font-size'))
+      $('#texttest').html($(list).val())
+      if ($(list).val() == '') $('#texttest').html('&nbsp;')
+      $('#texttest').css('width', $(list).width() + 'px')
+      $(list).css('height', $('#texttest').height() + 'px')
+    }
+    $('#texttest').css('font-family', '')
+    $('#texttest').css('font-size', '')
+    $('#texttest').css('font-weight', '')
+  } catch (err) {
+    console.log(err);
   }
-  // updates the text sizes of each list
-  let height = 0
-  $('#texttest').css('font-family', 'var(--font), serif')
-  $('#texttest').css('font-weight', 'bold')
-  $('#testtest').css('word-wrap', 'break-word')
-  for (list of $('#loads').children()) {
-    $('#texttest').css('font-size', $(list).css('font-size'))
-    $('#texttest').html($(list).val())
-    if ($(list).val() == '') $('#texttest'.html($('&nbsp;')))
-    $('#texttest').css('width', $(list).width() + 'px')
-    $(list).css('height', $('#texttest').height() + 5 + 'px')
-  }
-  $('#texttest').css('font-family', '')
-  $('#texttest').css('font-size', '')
-  $('#texttest').css('font-weight', '')
 }
 
 // picks a new loadlist
@@ -389,7 +414,10 @@ function clean() {
 
 // Storing data:
 function save(undo) {
-  console.log('saving', new Error().stack);
+  if (selected && selected[0].tagName == 'TEXTAREA') {
+    saveTask()
+    return
+  }
   const floptop = $('#flop').scrollTop()
   const poptop = $('#pop').scrollTop()
   unfilter(false)
@@ -421,6 +449,7 @@ function save(undo) {
   // clean up styling
   $('span.in:visible').attr('style', '')
   updatedeadlines()
+  updateSpanDrags()
   localStorage.setItem('data', JSON.stringify(data))
   $('#flop').scrollTop(floptop)
   $('#pop').scrollTop(poptop)
@@ -434,10 +463,10 @@ function clearEmptyDates(saving) {
     if (
       getHeadingChildren($(date)).length == 0 &&
       stringToDate($(date).text(), true).getTime() !=
-      stringToDate('t').getTime()
+      stringToDate('0d').getTime()
     ) { date.remove() }
   }
-  const today = stringToDate('t')
+  const today = stringToDate('0d')
   try {
     $('#pop').children().filter('.dateheading').toArray().forEach((heading) => {
       if (
@@ -621,15 +650,6 @@ function toggleWeekdays() {
       5: 'Fri',
       6: 'Sat'
     }
-    weekdaysNum = {
-      'Sun': 0,
-      'Mon': 1,
-      'Tue': 2,
-      'Wed': 3,
-      'Thu': 4,
-      'Fri': 5,
-      'Sat': 6
-    }
   } else if (data.weekdays == 'Mon') {
     data.weekdays = 'M'
     weekdaysStr = {
@@ -640,15 +660,6 @@ function toggleWeekdays() {
       4: 'R',
       5: 'F',
       6: 'S'
-    }
-    weekdaysNum = {
-      'U': 0,
-      'M': 1,
-      'T': 2,
-      'W': 3,
-      'R': 4,
-      'F': 5,
-      'S': 6
     }
   }
   save()
@@ -767,12 +778,7 @@ function stringToDate(string, weekday, future) {
     string = string.slice(1)
   }
   let date = new Date()
-  if (string.charAt(0) == 't') {
-    if (string.length > 1 && !/[\+-]*\d+[wmyd]/.test(string.slice(1))) {
-      return 'Invalid Date'
-    }
-    // nothing because the weekday is correct
-  } else if (
+  if (
     Object.keys(weekdaysNum).includes(string.split(/(\+|-|\s)/)[0])
   ) {
     // analyze as a weekday string
@@ -1051,6 +1057,7 @@ function updatedeadlines() {
   $('.duedate').remove()
   $('.placeholder').remove()
   $('.mobhandle').remove()
+  const poptop = $('#pop').scrollTop()
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
     (x) => {
       return ($(x).attr('folded') == 'true')
@@ -1099,6 +1106,7 @@ function updatedeadlines() {
     newelt.addClass('placeholder')
     newelt.removeClass('in')
     $(heading).before(newelt)
+    console.log('inserted');
   }
   if (!$('#flop').children().filter('.buffer')[0]) {
     $('#flop').append('<span class="buffer" style="height:90%"></span>')
@@ -1117,7 +1125,7 @@ function updatedeadlines() {
       $($('#loads').children()[list]).remove()
     }
   }
-  updateSpanDrags()
+  $('#pop').scrollTop(poptop)
 }
 
 function updateSpanDrags() {
@@ -1130,7 +1138,7 @@ function updateSpanDrags() {
       containment: 'window',
       axis: 'y',
       revert: true,
-      appendTo: $('#container'),
+      appendTo: $('#listcontainer'),
       helper: 'clone',
       refreshPositions: true,
       zIndex: 1,
@@ -1163,18 +1171,6 @@ function updateSpanDrags() {
     $('span.in').attr('ondragover', 'draggingOver(event)')
     $('span.in').attr('ondrop', 'dropTask(event)')
     $('span.in').attr('draggable', 'true')
-    // for (span of $('.in').toArray()) {
-    //   $(span)[0].outerHTML = $(span)[0].outerHTML.replace(
-    //     'ondragover=""', 'ondragover="draggingOver(event)"').replace(
-    //     'ondrop=""', 'ondrop="dropTask(event)"').replace(
-    //     'ondragstart=""', 'ondragstart="dragTask(event)"').replace(
-    //     'dragstart="" dragover="" drop=""', '')
-    // }
-    // $('span.in').removeClass('ui-draggable')
-    // $('span.in').removeClass('ui-droppable')
-    // $('span.in').removeClass('ui-draggable-handle')
-    // $('span.in').removeClass('ui-draggable-dragging')
-    // $('span.in').removeClass('ui-droppable-active')
   }
 }
 
@@ -1220,15 +1216,38 @@ function mobileDragOver(event) {
   if (window.innerWidth < 600 && 
     event.pageY > popoffset && !flopscrollsave) {
     // scroll flop to end
-    console.log('flopscrollsave saved');
+    if (popscrollsave) {
+      $('#pop').scrollTop(popscrollsave)
+      $('#pop').removeClass('greyedout')
+    }
+    popscrollsave = undefined
     flopscrollsave = $('#flop').scrollTop()
-    const flopchild = $($('#flop').children()[
-      $('#flop').children().length - 2])
-    $('#flop').scrollTop($('#flop').scrollTop() + flopchild.position().top)
+    $('#flop').addClass('greyedout')
+    console.log('flopscroll saved');
+    if ($('#flop').children().length < 2) {
+      $('#flop').scrollTop($('#flop').height())
+    } else {
+      const flopchild = $($('#flop').children()[
+        $('#flop').children().length - 1])
+      $('#flop').scrollTop($('#flop').scrollTop() + flopchild.position().top +
+      flopheight)
+    }
   } else if (window.innerWidth < 600 && 
-    event.pageY < popoffset) {
+    event.pageY < popoffset && !popscrollsave) {
+    // scroll flop to end
+    if (flopscrollsave) {
+      $('#flop').scrollTop(flopscrollsave)
+      $('#flop').removeClass('greyedout')
+    }
     flopscrollsave = undefined
+    popscrollsave = $('#pop').scrollTop()
+    $('#pop').scrollTop(0)
+    $('#pop').addClass('greyedout')
   }
+  // } else if (window.innerWidth < 600 && 
+  //   event.pageY < popoffset) {
+  //   // flopscrollsave = undefined
+  // }
 }
 
 function deleteTask() {
@@ -1786,6 +1805,11 @@ function createBlankTask() {
 }
 
 function newTask(subtask) {
+  console.log(loadedlist, data.flop);
+  if (loadedlist == undefined || loadedlist > data.flop.length - 1) {
+    alert('no list selected; create or select a list first')
+    return
+  }
   $('#context-menu').hide()
   const newspan = createBlankTask()
   if (selected == undefined) return; // prevents glitches
@@ -1824,16 +1848,19 @@ function archiveAll() {
 }
 
 function archiveTask(play) {
-  const taskabove = taskAbove()
+  let taskabove = taskAbove()
+  if (taskabove[0] == selected[0]) { taskabove = getFrame(selected) }
   if (play == true) { $('#popsnd')[0].play(); console.log('playing'); }
   // archives the selected Flop to the current day
   let heading
-  const day = $(dateToHeading(stringToDate('t')))
+  const day = $(dateToHeading(stringToDate('0d')))
   const childText = getHeadingChildren(day).map((x) => {
     return $(x).text()
   })
-  if ((childText.includes('completed') == true ||
-    childText.includes('completed ...') == true) == false) {
+  if (
+    !(childText.includes('completed') ||
+    childText.includes('completed ...'))
+  ) {
     // add in an extra heading
     heading = $('<span class=\'in h2\' folded=\'false\'>' +
       'completed ...</span>')
@@ -1841,6 +1868,7 @@ function archiveTask(play) {
     heading.attr('ondragover', 'draggingOver(event)')
     heading.attr('ondrop', 'dropTask(event)')
     heading.attr('draggable', 'true')
+    heading.attr('folded', 'true')
     if (getHeadingChildren(day).length >= 1) {
       getHeadingChildren(day)[
         getHeadingChildren(day).length - 1].after(heading)
@@ -1856,13 +1884,11 @@ function archiveTask(play) {
     })
   }
   if (selected.hasClass('complete') == false) {
-    selected.addClass('complete')
+    toggleComplete(selected)
   }
   heading.after(selected)
   // formatting
-  if (heading.attr('folded') == 'false') {
-    togglefold(heading)
-  } else {
+  if (heading.attr('folded') == 'true') {
     selected.hide()
   }
   select(taskabove)
@@ -1903,14 +1929,25 @@ function toggleComplete(task) {
   }
   completetask.toggleClass('complete')
   if (!task) {
-    save()
+    save(true)
     clearEmptyDates()
   }
 }
 
 function toggleImportant() {
-  selected.toggleClass('important')
-  save()
+  if (selected[0].tagName == 'SPAN') {
+    selected.removeClass('maybe')
+    selected.toggleClass('important')
+    save()
+  }
+}
+
+function toggleMaybe() {
+  if (selected[0].tagName == 'SPAN') {
+    selected.removeClass('important')
+    selected.toggleClass('maybe')
+    save()
+  }
 }
 
 function startTimer() {
@@ -1986,9 +2023,9 @@ function dragTask(evt) {
 function togglecollapse() {
   $('#leftcol').toggleClass('collapsed')
   if ($('#leftcol').hasClass('collapsed')) {
-    $('.listcontainer').addClass('fullwidth')
+    $('#listcontainer').addClass('fullwidth')
   } else {
-    $('.listcontainer').removeClass('fullwidth')
+    $('#listcontainer').removeClass('fullwidth')
   }
 }
 
@@ -2034,8 +2071,8 @@ function dropTask(evt, obj) {
   } else if (el.tagName == 'SPAN' &&
     $(el).hasClass('in')) {
     // dropping task (according to key commands)
-    if (evt.altKey == true && $(evt.target).parent()[0].tagName != 'SPAN') {
-      if (evt.metaKey == true) {
+    if (dropinside == true && $(evt.target).parent()[0].tagName != 'SPAN') {
+      if (dropabove == true) {
         const subtasks = $(el).children().toArray().filter(
           (x) => {
             if (isSubtask($(x)) == true) return true
@@ -2050,17 +2087,24 @@ function dropTask(evt, obj) {
         $(el).append(selected)
       }
     } else {
-      if (evt.metaKey == true) {
+      if (dropabove == true) {
         $(el).before(selected)
       } else {
         $(el).after(selected)
       }
     }
     $('.drop-hover').removeClass('drop-hover')
+    console.log(flopscrollsave);
     if (flopscrollsave) {
       $('#flop').scrollTop(flopscrollsave)
-      flopscrollsave = undefined
     }
+    if (popscrollsave) {
+      $('#pop').scrollTop(popscrollsave)
+    }
+    flopscrollsave = undefined
+    $('#flop').removeClass('greyedout')
+    popscrollsave = undefined
+    $('#pop').removeClass('greyedout')
   }
   for (i = children.length - 1; i >= 0; i--) {
     // append each child after
@@ -2515,6 +2559,12 @@ function setTask(type) {
 }
 
 function clicked(ev) {
+  // on revert drags on mobile
+  flopscrollsave = undefined
+  $('#flop').removeClass('greyedout')
+  popscrollsave = undefined
+  $('#pop').removeClass('greyedout')
+
   if (movetolist == true && !$(ev.target).hasClass('listtitle')) {
     // cancels move to list
     movetolist = false
@@ -2560,7 +2610,7 @@ function clicked(ev) {
     }
     selected.val('# ')
   } else if ($(ev.target).attr('id') == 'todayBut') {
-    select(dateToHeading(stringToDate('t')))
+    select(dateToHeading(stringToDate('0d')))
     save()
   } else if ($(ev.target).attr('id') == 'addDateBut') {
     $('#searchbar').val('d:')
@@ -2605,7 +2655,7 @@ function clicked(ev) {
     stopTimer()
   } else if ($(ev.target).attr('id') == 'popBut') {
     if (selected == undefined || getFrame(selected).attr('id') != 'pop') {
-      select(dateToHeading(stringToDate('t')))
+      select(dateToHeading(stringToDate('0d')))
     }
     newTask()
   } else if ($(ev.target).attr('id') == 'flopBut') {
@@ -2790,6 +2840,22 @@ function unfilter(update) {
   }
 }
 
+function keydown(ev) {
+  if (ev.code.includes('Meta')) {
+    dropabove = true
+  } else if (ev.code.includes('Alt')) {
+    dropinside = true
+  }
+}
+
+function keyup(ev) {
+  if (ev.code.includes('Meta')) {
+    dropabove = false
+  } else if (ev.code.includes('Alt')) {
+    dropinside = false
+  }
+}
+
 function keycomms(evt) {
   if (['Control', 'Command', 'Shift', 'Alt'].includes(evt.key)) {
     return
@@ -2809,7 +2875,7 @@ function keycomms(evt) {
       saveTask()
     }
   } else if (evt.key == 't' && evt.ctrlKey) {
-    select(dateToHeading(stringToDate('t')))
+    select(dateToHeading(stringToDate('0d')))
   } else if (evt.key == 'f' && evt.ctrlKey) {
     $('#searchbar').focus()
   } else if (evt.key == 'Enter' && $(':focus').attr('id') ==
@@ -2925,6 +2991,8 @@ function keycomms(evt) {
       deleteTask()
     } else if (evt.code == 'KeyI' && evt.altKey) {
       toggleImportant()
+    } else if (evt.code == 'KeyM' && evt.altKey) {
+      toggleMaybe()
     } else if (evt.key == '‘') {
       indentTask(true)
     } else if (evt.key == '“') {
@@ -2992,7 +3060,7 @@ function keycomms(evt) {
       evt.preventDefault()
       select(taskBelow())
     } else if (evt.key == 'ArrowRight') {
-      select(dateToHeading(stringToDate('t')))
+      select(dateToHeading(stringToDate('0d')))
     } else if (evt.key == 'ArrowLeft') {
       select($('#flop').children()[0])
     } else if (evt.key == 'ArrowRight' && Array().includes($('#flop')[0])) {
@@ -3040,6 +3108,10 @@ function getFrame(task) {
 
 function tutorial() {
   $('#tutorial').show()
+  $('video').toArray().forEach((x) => {
+    x.currentTime = 0
+    x.playbackRate = 1.5
+  })
 }
 
 function uploadData(reloading) {
@@ -3116,12 +3188,9 @@ function loadpage(setload, oldscroll, oldselect) {
     );
     if (data.weekdays == 'M') {
       weekdaysStr = {0:'U', 1:'M', 2:'T', 3:'W', 4:'R', 5:'F', 6:'S'}
-      weekdaysNum = {'U':0, 'M':1, 'T':2, 'W':3, 'R':4, 'F':5, 'S':6}
     } else if (data.weekdays == 'Mon') {
       weekdaysStr = {0:'Sun', 1:'Mon', 2:'Tue', 3:'Wed', 4:'Thu', 5:'Fri', 
       6:'Sat'}
-      weekdaysNum = {'Sun':0, 'Mon':1, 'Tue':2, 'Wed':3, 'Thu':4, 'Fri':5, 
-      'Sat':6}
     }
     // prevents endless loading loop
     $(document).on('keydown', keycomms)
@@ -3129,7 +3198,16 @@ function loadpage(setload, oldscroll, oldselect) {
     $(document).on('click', event, clicked)
     $(document).on('dblclick', event, dblclick)
     $(window).resize(updateSizes)
-    window.addEventListener('focus', reload)
+    $(window).keydown(keydown)
+    $(window).keyup(keyup)
+    window.addEventListener('focus', function () {
+      console.log('focusin')
+      reload()
+    })
+    $('#container').on('mouseleave', function () {
+      console.log('focusout')
+      save()
+    })
   }
   if (!data.headingalign) data.headingalign = 'center'
   document.documentElement.style.setProperty('--headingalign',
@@ -3156,20 +3234,16 @@ function loadpage(setload, oldscroll, oldselect) {
       loadList(false)
       toggleFoldList(false)
     }
-  }
+  };
   loadedlist = Number(oldload)
-  loadList(false)
-  dragson(false)
+  if (loadedlist <= data.flop.length - 1) {
+    loadList(false)
+    dragson(false)
+  }
   $('#searchbar').val('')
   // show buttons and help right
   if (data.help == 'show') $('#help').show()
   if (data.help == 'hide') $('#help').hide()
-  if (window.innerWidth < 600) {
-    // hide unnecessary buts
-    $('.mobilehide').hide()
-    $('#optionsbut').text('...')
-    $('#typebut').text('*')
-  }
   if (data.hidebuts == 'false') {
     $('.butbar').show()
     $('#editbuts').append($('#optionsbut'))
@@ -3182,16 +3256,17 @@ function loadpage(setload, oldscroll, oldselect) {
       String($('#optionsbut').width() / 2) + 'px)')
     $(':root').css('--butheight', '0px')
   }
+  if (window.innerWidth < 600) {
+    // hide unnecessary buts
+    $('.mobilehide').hide()
+  }
   $('.taskselect').removeClass('taskselect')
-  // go to today
-  $('#pop').scrollTop(0)
-  $('#pop').scrollTop(
-    $(dateToHeading(stringToDate('t'))).prev().offset().top -
-    $('#pop').offset().top)
   $(document).scrollTop(0)
   updateSizes()
   clean()
   clearEmptyDates(false)
+  updatedeadlines()
+  updateSpanDrags()
   if (oldselect) {
     console.log(oldselect);
     if (oldselect[1])
@@ -3199,7 +3274,7 @@ function loadpage(setload, oldscroll, oldselect) {
     else if (oldselect[0])
       select(oldselect[0])
   } else {
-    select($(dateToHeading(stringToDate('t'))), true, false)
+    select($(dateToHeading(stringToDate('0d'))), true, false)
   }
   if (oldscroll) { 
     $('#flop').scrollTop(oldscroll[0]) 

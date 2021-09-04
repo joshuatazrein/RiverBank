@@ -13,6 +13,7 @@
   --contextcolor: rgba(0, 0, 0, 0.8);
   --contextfontcolor: grey;
   --important: #53D2FF;
+  --maybe: rgba(83, 210, 255, 0.5);
   --event: rgba(135,206,235,0.3);
   --date: rgb(135,206,235);
 }

@@ -58,6 +58,7 @@ button {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+  margin: 2px 0;
 }
 
 .flopbut {
@@ -75,6 +76,10 @@ button {
   overflow: hidden;
 }
 
+button.opts {
+  min-width: 51px;
+}
+
 /* OTHER */
 
 audio {
@@ -84,6 +89,8 @@ audio {
 [draggable] {
   user-select: none;
 }
+
+
 
 /* INPUTS */
 
@@ -169,7 +176,11 @@ p.dropdown-item {
   overflow: hidden;
 }
 
-.listcontainer {
+.greyedout {
+  opacity: 0.1;
+}
+
+#listcontainer {
   width: 80vw;
   height: 100%;
   float: left;
@@ -291,7 +302,7 @@ textarea.folded {
 }
 
 .fullwidth {
-  width: 100vw;
+  width: 100vw !important;
 }
 
 textarea {
@@ -299,9 +310,8 @@ textarea {
 }
 
 textarea.selected, textarea.unselected {
-  height: calc(1em + 5px);
-  width: 100%;
-  margin: 1px 5px;
+  width: calc(100% - 10px);
+  margin: -2px 5px;
   display: inline-block;
   font: 100% var(--font), serif;
   font-weight: bold;
@@ -466,6 +476,10 @@ span.important {
   color: var(--important);
 }
 
+span.maybe {
+  color: var(--maybe);
+}
+
 span.event {
   background-color: var(--event);
   border-radius: 3px;
@@ -560,11 +574,10 @@ span.weblink, span.deadline {
   .container {
     height: calc(100vh - 80px);
     border-bottom: 1px solid var(--bdcolor);
-    color: var(--textcolor);
     background: var(--background);
   }
-  #container > span.in {
-    width: 80%;
+  #listcontainer {
+    color: var(--textcolor);
   }
   .floplist, .poplist {
     width: 100%;
@@ -579,13 +592,16 @@ span.weblink, span.deadline {
     border-right: none;
   }
   .loads {
-    width: calc(100% + 10px);
-    margin-left: -5px;
+    width: calc(100% + 5px);
+    /* margin-left: -5px; */
   }
   .loads textarea {
-    width: 100%;
-    margin: 0;
+    width: calc(100% - 2px);
+    margin: -2px 1px;
     font-size: 16px;
+  }
+  .loads textarea.sublist {
+    font-size: 12px !important;
   }
   .leftcolumn {
     font-size: 24px;
@@ -601,10 +617,14 @@ span.weblink, span.deadline {
   button {
     font-size: 18px !important;
   }
+  #help button {
+    font-size: 2.7vw !important;
+    padding: 1px;
+    word-wrap: break-word;
+    width: 100%;
+  }
   div.leftcolumn div.butbar {
-    width: calc(100% + 6px);
     margin: 0;
-    margin-left: -3px;
   }
   .leftcolumn .butbar button {
     width: calc(50% - 5px);

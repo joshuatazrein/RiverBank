@@ -12,6 +12,8 @@
   --duedatecolor: rgba(255, 0, 0, 0.3);
   --contextcolor: whitesmoke;
   --contextfontcolor: grey;
-  --important: firebrick;
+  --important: #53D2FF;
+  --maybe: rgba(83, 210, 255, 0.5);
   --event: rgba(135,206,235,0.3);
+  --date: rgb(135,206,235);
 }
