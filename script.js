@@ -128,7 +128,7 @@ function dropList(evt) {
 }
 
 //enable you to edit titles
-function toggledrags() {
+function toggledrags(saving) {
   loads = $('#loads').children().toArray()
   if (dragsenabled === true) {
     loads.forEach((i) => {
@@ -139,7 +139,7 @@ function toggledrags() {
     const oldval = $(loads[loadedlist]).val()
     $(loads[loadedlist]).val('')
     $(loads[loadedlist]).val(oldval)
-    save()
+    if (saving != false) save()
   } else {
     loads.forEach((x) => {
       $(x).attr('draggable', 'true')
@@ -152,20 +152,20 @@ function toggledrags() {
     } else {
       $(loads[loadedlist]).removeClass('sublist')
     }
-    save()
+    if (saving != false) save()
   }
   updateSizes()
 }
 
-function dragsoff() {
+function dragsoff(saving) {
   if (dragsenabled === true) {
-    toggledrags()
+    toggledrags(saving)
   }
 }
 
-function dragson() {
+function dragson(saving) {
   if (dragsenabled === false) {
-    toggledrags()
+    toggledrags(saving)
   }
 }
 
@@ -205,13 +205,13 @@ function newlist(title, text, saving) {
   $('#loads').append(newthing)
   loadedlist = document.getElementById('loads').children.length - 1
   loadList(saving); // load last element in list
-  $('#loads').children()[loadedlist].focus()
+  if (saving != false) $('#loads').children()[loadedlist].focus()
   if ($(loads[loadedlist]).val().slice(0, 2) == '- ') {
     $(loads[loadedlist]).addClass('sublist')
   } else {
     $(loads[loadedlist]).removeClass('sublist')
   }
-  dragsoff()
+  dragsoff(saving)
 }
 
 // remove list from display and data
@@ -389,6 +389,7 @@ function clean() {
 
 // Storing data:
 function save(undo) {
+  console.log('saving', new Error().stack);
   const floptop = $('#flop').scrollTop()
   const poptop = $('#pop').scrollTop()
   unfilter(false)
@@ -551,7 +552,7 @@ function reset() {
 }
 
 function uploadData(reloading) {
-  debugger
+  console.log('uploading', data);
   if (JSON.stringify(data) == prevupload) {
     console.log('equal');
     return
@@ -559,7 +560,6 @@ function uploadData(reloading) {
   // uploads data to server
   if (!offlinemode) {
     if (uploading == false) {
-      console.log('uploading', data);
       uploading = true
       $.post("upload.php", {
         datastr: JSON.stringify(data),
@@ -3159,7 +3159,7 @@ function loadpage(setload, oldscroll, oldselect) {
   }
   loadedlist = Number(oldload)
   loadList(false)
-  dragson()
+  dragson(false)
   $('#searchbar').val('')
   // show buttons and help right
   if (data.help == 'show') $('#help').show()
@@ -3191,7 +3191,7 @@ function loadpage(setload, oldscroll, oldselect) {
   $(document).scrollTop(0)
   updateSizes()
   clean()
-  clearEmptyDates()
+  clearEmptyDates(false)
   if (oldselect) {
     console.log(oldselect);
     if (oldselect[1])
