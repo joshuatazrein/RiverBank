@@ -205,5 +205,4 @@ function load() {
   }
 }
 
-resetCookies()
 load()
