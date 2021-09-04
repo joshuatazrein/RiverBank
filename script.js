@@ -551,6 +551,7 @@ function reset() {
 }
 
 function uploadData(reloading) {
+  debugger
   if (JSON.stringify(data) == prevupload) {
     console.log('equal');
     return
