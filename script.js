@@ -3261,6 +3261,10 @@ function loadpage(setload, oldscroll, oldselect) {
   clearEmptyDates(false)
   updatedeadlines()
   updateSpanDrags()
+  if (oldscroll) { 
+    $('#flop').scrollTop(oldscroll[0]) 
+    select($(dateToHeading(stringToDate('0d'))), true, false)
+  }
   if (oldselect) {
     console.log(oldselect);
     if (oldselect[1])
@@ -3269,10 +3273,6 @@ function loadpage(setload, oldscroll, oldselect) {
       select(oldselect[0])
   } else {
     select($(dateToHeading(stringToDate('0d'))), true, false)
-  }
-  if (oldscroll) { 
-    $('#flop').scrollTop(oldscroll[0]) 
-    $('#pop').scrollTop(oldscroll[1])
   }
   console.log('got here');
 }
