@@ -243,7 +243,7 @@ function loadList(saving) { //updates the list display
   }
 }
 
-function toggleFoldList() {
+function toggleFoldList(saving) {
   // folds list into sublists
   let sublist = Number(loadedlist) + 1
   const children = $('#loads').children().toArray()
@@ -273,7 +273,7 @@ function toggleFoldList() {
     sublist += 1
 
   }
-  save()
+  if (saving != false) save()
 }
 
 function updateSizes() {
@@ -3056,7 +3056,9 @@ function uploadData(reloading) {
       }, function(data, status, xhr) {
         prevupload = xhr.responseText
         uploading = false
-        if (reloading == true) reload() // reloads page
+        if (reloading == true) {
+          reload() // reloads page
+        }
       });
     }
   } else {
@@ -3151,7 +3153,7 @@ function loadpage(setload, oldscroll, oldselect) {
       $(children[i]).removeClass('folded')
       loadedlist = Number(i)
       loadList(false)
-      toggleFoldList()
+      toggleFoldList(false)
     }
   }
   loadedlist = Number(oldload)
@@ -3185,7 +3187,6 @@ function loadpage(setload, oldscroll, oldselect) {
   $('#pop').scrollTop(
     $(dateToHeading(stringToDate('t'))).prev().offset().top -
     $('#pop').offset().top)
-  console.log('got here');
   $(document).scrollTop(0)
   updateSizes()
   clean()
@@ -3203,6 +3204,7 @@ function loadpage(setload, oldscroll, oldselect) {
     $('#flop').scrollTop(oldscroll[0]) 
     $('#pop').scrollTop(oldscroll[1])
   }
+  console.log('got here');
 }
 
 if (loadonstart) loadpage()
