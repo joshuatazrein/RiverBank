@@ -205,4 +205,5 @@ function load() {
   }
 }
 
+resetCookies()
 load()
