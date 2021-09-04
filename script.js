@@ -418,8 +418,6 @@ function save(undo) {
     saveTask()
     return
   }
-  const floptop = $('#flop').scrollTop()
-  const poptop = $('#pop').scrollTop()
   unfilter(false)
   if (undo == true) savedata = JSON.parse(JSON.stringify(data))
   clean()
@@ -451,8 +449,6 @@ function save(undo) {
   updatedeadlines()
   updateSpanDrags()
   localStorage.setItem('data', JSON.stringify(data))
-  $('#flop').scrollTop(floptop)
-  $('#pop').scrollTop(poptop)
 }
 
 function clearEmptyDates(saving) {
@@ -987,7 +983,7 @@ function search(skiplinks) {
     $('#searchbar').val('')
     $('#searchbar-results').hide()
     $('#searchbar').blur()
-    select(focused)
+    select(focused, true)
   }
 }
 
@@ -1008,7 +1004,7 @@ function gotosearch(el) {
   }
   // find the matching element
   focused = $(focusarea.find('span.in')[el.attr('index')])
-  select(focused)
+  select(focused, true)
   $('#searchbar').val('')
   $('#searchbar-results').hide()
 }
@@ -1057,7 +1053,6 @@ function updatedeadlines() {
   $('.duedate').remove()
   $('.placeholder').remove()
   $('.mobhandle').remove()
-  const poptop = $('#pop').scrollTop()
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
     (x) => {
       return ($(x).attr('folded') == 'true')
@@ -1125,7 +1120,6 @@ function updatedeadlines() {
       $($('#loads').children()[list]).remove()
     }
   }
-  $('#pop').scrollTop(poptop)
 }
 
 function updateSpanDrags() {
@@ -1547,7 +1541,7 @@ function saveTask() {
     savetask.attr('folded', 'false') // sets heading folds
   selected.remove()
   savetask.show()
-  select(savetask)
+  select(savetask, true)
   let parent = selected.parent()
   while (parent[0].tagName == 'SPAN') {
     // disable drags
@@ -1600,7 +1594,7 @@ function select(el, scroll, animate) {
           }).remove();
       } catch (err) { }
     }
-    if (scroll != false) {
+    if (scroll == true) {
       if (!selected.is(':visible') && getHeading(selected)) {
         togglefold($(getHeading(selected, true)))
       }
@@ -1741,7 +1735,7 @@ function editTask() {
     const newelt = $('<textarea class=\'in edit\'></textarea>')
     el.after(newelt)
     el.hide()
-    select(newelt)
+    select(newelt, true)
     let parent = selected.parent()
     while (parent[0].tagName == 'SPAN') {
       // disable drags
@@ -2006,7 +2000,7 @@ function timertest(ev) {
 
 //start of drag
 function dragTask(evt) {
-  select(evt.target, false)
+  select(evt.target)
   if (window.innerWidth < 600) return
   //start drag
   if (selected[0].tagName == 'TEXTAREA') {
@@ -2287,7 +2281,7 @@ function context(e, mobile) {
     // select list
     target.click()
   } else {
-    select($(target), false)
+    select($(target))
   }
   $('#context-menu').show()
   options = {
@@ -2507,7 +2501,7 @@ function selectRandom() {
     if (headinglist.length > 0) {
       select($(headinglist[
         Math.floor(Math.random() * (headinglist.length))
-      ]))
+      ]), true)
     }
   }
 }
@@ -2610,7 +2604,7 @@ function clicked(ev) {
     }
     selected.val('# ')
   } else if ($(ev.target).attr('id') == 'todayBut') {
-    select(dateToHeading(stringToDate('0d')))
+    select(dateToHeading(stringToDate('0d')), true)
     save()
   } else if ($(ev.target).attr('id') == 'addDateBut') {
     $('#searchbar').val('d:')
@@ -2655,7 +2649,7 @@ function clicked(ev) {
     stopTimer()
   } else if ($(ev.target).attr('id') == 'popBut') {
     if (selected == undefined || getFrame(selected).attr('id') != 'pop') {
-      select(dateToHeading(stringToDate('0d')))
+      select(dateToHeading(stringToDate('0d')), true)
     }
     newTask()
   } else if ($(ev.target).attr('id') == 'flopBut') {
@@ -2685,7 +2679,7 @@ function clicked(ev) {
     dragTime($(ev.target))
   } else if ($(ev.target).hasClass('deadline') == true) {
     select(dateToHeading(stringToDate(
-      $(ev.target).text().slice(1))))
+      $(ev.target).text().slice(1))), true)
   } else if ($(ev.target).hasClass('duedate') == true) {
     // jump to deadline
     $('#searchbar').val(stripChildren($(ev.target)))
@@ -2875,7 +2869,7 @@ function keycomms(evt) {
       saveTask()
     }
   } else if (evt.key == 't' && evt.ctrlKey) {
-    select(dateToHeading(stringToDate('0d')))
+    select(dateToHeading(stringToDate('0d')), true)
   } else if (evt.key == 'f' && evt.ctrlKey) {
     $('#searchbar').focus()
   } else if (evt.key == 'Enter' && $(':focus').attr('id') ==
@@ -2885,7 +2879,7 @@ function keycomms(evt) {
     if ($('#searchbar').val().slice(0, 2) == 'd:') {
       const date = dateToHeading(
         stringToDate($('#searchbar').val().slice(2)))
-      select(date)
+      select(date, true)
       $('#searchbar').val('')
       $('#searchbar').blur()
       if (movetask != undefined) {
@@ -3027,7 +3021,7 @@ function keycomms(evt) {
     } else if (evt.key == 'v' && evt.metaKey) {
       if (copieditem) {
         selected.after(copieditem)
-        select(selected.next())
+        select(selected.next(), true)
         copieditem = undefined
         save()
       }
@@ -3045,37 +3039,37 @@ function keycomms(evt) {
         if (taskAbove()[0] == selected[0]) break
         select(taskAbove(), false)
       }
-      select(taskAbove())
+      select(taskAbove(), true)
     } else if (evt.key == 'ArrowDown' && evt.shiftKey) {
       evt.preventDefault()
       while (taskBelow() && !isHeading(taskBelow())) {
         if (taskBelow()[0] == selected[0]) break
         select(taskBelow(), false)
       }
-      select(taskBelow())
+      select(taskBelow(), true)
     } else if (evt.key == 'ArrowUp') {
       evt.preventDefault()
-      select(taskAbove())
+      select(taskAbove(), true)
     } else if (evt.key == 'ArrowDown') {
       evt.preventDefault()
-      select(taskBelow())
+      select(taskBelow(), true)
     } else if (evt.key == 'ArrowRight') {
-      select(dateToHeading(stringToDate('0d')))
+      select(dateToHeading(stringToDate('0d')), true)
     } else if (evt.key == 'ArrowLeft') {
-      select($('#flop').children()[0])
+      select($('#flop').children()[0], true)
     } else if (evt.key == 'ArrowRight' && Array().includes($('#flop')[0])) {
       // go over and select pop
       // TODO: find the date of today
       // const today = getDate(today)
       select($('#pop').children().toArray()[
-        $('#pop').children().toArray().length - 1])
+        $('#pop').children().toArray().length - 1], true)
     } else if (evt.key == 'ArrowLeft' &&
       selected.parents().toArray().includes($('#pop')[0])) {
       // go over and select pop
       // TODO: find the date of today
       // const today = getDate(today)
       select($('#flop').children().toArray()[
-        $('#flop').children().toArray().length - 1])
+        $('#flop').children().toArray().length - 1], true)
     } else if (['{', '}'].includes(evt.key)) {
       if (selected.attr('folded') == 'false') {
         collapseAll('false')
@@ -3270,7 +3264,7 @@ function loadpage(setload, oldscroll, oldselect) {
   if (oldselect) {
     console.log(oldselect);
     if (oldselect[1])
-      select(oldselect[0].find('span.in').toArray()[oldselect[1]], false)
+      select(oldselect[0].find('span.in').toArray()[oldselect[1]])
     else if (oldselect[0])
       select(oldselect[0])
   } else {
