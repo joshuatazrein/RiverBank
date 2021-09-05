@@ -3169,7 +3169,7 @@ function reload() {
             for (task of olddatadict[list].split('<span class=\"in')) {
               if (!newdatadict[list].includes(task)) {
                 diffs += '\n- task in ' + list + ': ' + 
-                  task.slice(task.search('>'))
+                  task.slice(task.search('>') + 1, task.length - 5)
               }
             }
           }
@@ -3184,7 +3184,7 @@ function reload() {
             for (task of newdatalist) {
               if (!olddatalist.includes(task)) {
                 diffs += '\n+ task in ' + list + ': ' + 
-                  task.slice(task.search('>'))
+                  task.slice(task.search('>') + 1, task.length - 5)
               } else if (
                 (olddatalist.indexOf(task) == 0 && i != 0) || 
                 (olddatalist.indexOf(task) != 0 && i == 0) ||
@@ -3197,7 +3197,8 @@ function reload() {
                 olddatalist[olddatalist.indexOf(task) + 1] !=
                   newdatalist[i + 1])) {
                 // moved tasks have different befores and afters
-                diffs += '\nmoved task in ' + list + ': ' + task
+                diffs += '\nmoved task in ' + list + ': ' + 
+                  task.slice(task.search('>') + 1, task.length - 5)
               }
               i ++
             }
