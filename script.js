@@ -22,6 +22,7 @@ var copieditem
 var prevupload
 var flopscrollsave
 var popscrollsave
+var justclicked
 var dragtimer
 var draggingtask
 var dropabove = false
@@ -2129,7 +2130,7 @@ function getHeadingChildren(el) {
   } else if (el.hasClass('h3') == true) {
     thisclass = 'h3'
   }
-  const children = el.parent().children()
+  const children = el.parent().children().filter(':not(.placeholder)')
   const start = children.toArray().indexOf(el[0]) + 1
   for (let i = start; i < children.length; i++) {
     let toggle = true
@@ -3136,7 +3137,32 @@ function reload() {
   } else {
     $.post(
       'users/' + getCookie('fname') + '.json', 
-      function (datastr, status, xhr) {        data = JSON.parse(xhr.responseText)
+      function (datastr, status, xhr) {
+        // log the diff
+        console.log('Diffs:');
+        const olddata = data.flop.concat([{'title':'pop', 'text':data.pop}])
+        const olddatadict = {}
+        for (list in olddata) {
+          olddatadict[list.title] = list.text
+        }
+        const responsejson = JSON.parse(xhr.responseText)
+        const newdata = responsejson.flop.concat(
+          [{'title':'pop', 'text':responsejson.pop}])
+        const newdatadict = {}
+        for (list in newdata) {
+          newdatadict[list.title] = list.text
+        }
+        console.log(olddatadict, newdatadict);
+        // for (list in olddata) {
+        //   if (!Object.keys(newdata).includes(list.title)) {
+        //     console.log('List "' + list.title + '" was deleted.');
+        //   } else {
+        //     for (task in list.text.split('<span')) {
+
+        //     }
+        //   }
+        // }
+        data = JSON.parse(xhr.responseText)
         reload2()
       }
     )
