@@ -3116,7 +3116,7 @@ function uploadData(reloading) {
 function diffsLog(oldString, newString) {
   // log the diffs
   let diffs = 'Diffs:'
-  if (!oldString) oldString = ''
+  if (!oldString) oldString = '{}'
   const initialjson = JSON.parse(oldString)
   const olddata = initialjson.flop.concat(
     [{'title':'pop', 'text':initialjson.pop}])
