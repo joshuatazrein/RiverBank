@@ -3138,6 +3138,14 @@ function adaptivelog(string) {
   }
 }
 
+function diffsFormat(task) {
+  const taskslice = task.slice(task.search('>') + 1, task.length - 7)
+  const classes = task.substring(task.search('class=\"'), 
+    task.slice(task.search('class =\"')).search('\"')).replace(
+    ' ui-draggable', '').replace(' ui-droppable', '')
+  return '(classes: ' + classes + ') ' + taskslice
+}
+
 function reload() {
   if (offlinemode) {
     // skip upload
@@ -3168,8 +3176,7 @@ function reload() {
           } else {
             for (task of olddatadict[list].split('<span class=\"in')) {
               if (!newdatadict[list].includes(task)) {
-                diffs += '\n- task in ' + list + ': ' + 
-                  task.slice(task.search('>') + 1, task.length - 5)
+                diffs += '\n- task in ' + list + ': ' + diffsFormat(task)
               }
             }
           }
@@ -3183,8 +3190,7 @@ function reload() {
             let i = 0
             for (task of newdatalist) {
               if (!olddatalist.includes(task)) {
-                diffs += '\n+ task in ' + list + ': ' + 
-                  task.slice(task.search('>') + 1, task.length - 5)
+                diffs += '\n+ task in ' + list + ': ' + diffsFormat(task)
               } else if (
                 (olddatalist.indexOf(task) == 0 && i != 0) || 
                 (olddatalist.indexOf(task) != 0 && i == 0) ||
@@ -3197,8 +3203,7 @@ function reload() {
                 olddatalist[olddatalist.indexOf(task) + 1] !=
                   newdatalist[i + 1])) {
                 // moved tasks have different befores and afters
-                diffs += '\nmoved task in ' + list + ': ' + 
-                  task.slice(task.search('>') + 1, task.length - 5)
+                diffs += '\nmoved task in ' + list + ': ' + diffsFormat(task)
               }
               i ++
             }
