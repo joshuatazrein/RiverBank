@@ -3140,10 +3140,9 @@ function adaptivelog(string) {
 
 function diffsFormat(task) {
   const taskslice = task.slice(task.search('>') + 1, task.length - 7)
-  const classes = task.substring(task.search('class=\"'), 
-    task.slice(task.search('class =\"')).search('\"')).replace(
-    ' ui-draggable', '').replace(' ui-droppable', '')
-  return '(classes: ' + classes + ') ' + taskslice
+  const classes = task.substring(task.search('style'), 
+    task.slice(task.search('style')).search('>'))
+  return '(style: ' + classes + ') ' + taskslice
 }
 
 function reload() {
