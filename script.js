@@ -3190,19 +3190,21 @@ function reload() {
           } else {
             let i = 0
             for (task of newdatadict[list]) {
-              if (!olddatalist.includes(task)) {
+              if (!olddatadict[list].includes(task)) {
                 diffs += '\n+ task in ' + list + ': ' + diffsFormat(task)
               } else if (
-                (olddatalist.indexOf(task) == 0 && i != 0) || 
-                (olddatalist.indexOf(task) != 0 && i == 0) ||
-                (olddatalist.indexOf(task) == olddatalist.length - 1 && 
-                i != newdatalist.length - 1) ||
-                (olddatalist.indexOf(task) != olddatalist.length - 1 && 
-                i == newdatalist.length - 1) ||
-                (olddatalist[olddatalist.indexOf(task) - 1] != 
-                  newdatalist[i - 1] &&
-                olddatalist[olddatalist.indexOf(task) + 1] !=
-                  newdatalist[i + 1])) {
+                (olddatadict[list].indexOf(task) == 0 && i != 0) || 
+                (olddatadict[list].indexOf(task) != 0 && i == 0) ||
+                (olddatadict[list].indexOf(task) == 
+                  olddatadict[list].length - 1 && 
+                i != newdatadict[list].length - 1) ||
+                (olddatadict[list].indexOf(task) != 
+                  olddatadict[list].length - 1 && 
+                i == newdatadict[list].length - 1) ||
+                (olddatadict[list][olddatadict[list].indexOf(task) - 1] != 
+                  newdatadict[list][i - 1] &&
+                olddatadict[list][olddatadict[list].indexOf(task) + 1] !=
+                  newdatadict[list][i + 1])) {
                 // moved tasks have different befores and afters
                 diffs += '\nmoved task in ' + list + ': ' + diffsFormat(task)
               }
