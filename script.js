@@ -1777,6 +1777,7 @@ function editTask() {
       selected.val('• ' + selected.val())
     }
     updateHeight()
+    selected.blur()
     selected.focus() // for mobile i guess
   }
 }
