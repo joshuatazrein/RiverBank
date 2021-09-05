@@ -3147,7 +3147,7 @@ function reload() {
     $.post(
       'users/' + getCookie('fname') + '.json', 
       function (datastr, status, xhr) {
-        // log the diff
+        // log the diffs
         let diffs = 'Diffs:'
         const olddata = data.flop.concat([{'title':'pop', 'text':data.pop}])
         const olddatadict = {}
@@ -3157,6 +3157,7 @@ function reload() {
         const responsejson = JSON.parse(xhr.responseText)
         const newdata = responsejson.flop.concat(
           [{'title':'pop', 'text':responsejson.pop}])
+        console.log(newdata[0].text)
         const newdatadict = {}
         for (list of newdata) {
           newdatadict[list.title] = list.text
@@ -3165,7 +3166,7 @@ function reload() {
           if (!Object.keys(newdata).includes(list)) {
             diffs += '\n- list: ' + list
           } else {
-            for (task in olddata[list].split('<span')) {
+            for (task of olddata[list].split('<span class=\"in')) {
               if (!newdata[list].includes(task)) {
                 diffs += '\n- task: ' + task.slice(task.search('>'))
               }
@@ -3176,9 +3177,16 @@ function reload() {
           if (!Object.keys(olddata).includes(list)) {
             diffs += '\n+ list: ' + list
           } else {
-            for (task in newdata[list].split('<span class=\"in')) {
-              if (!olddata[list].includes(task)) {
+            const olddatalist = olddata[list].split('<span class=\"in')
+            const newdatalist = newdata[list].split('<span class=\"in')
+            let i = 0
+            for (task of newdatalist) {
+              if (!olddatalist.includes(task)) {
                 diffs += '\n+ task: ' + task.slice(task.search('>'))
+              } else if (olddatalist[olddatalist.indexOf(list)] > 1 &&
+                olddatalist[olddatalist.indexOf(list) - 1] != 
+                newdatalist[i - 1]) {
+                diffs += '\nmoved task: ' + task.slice(task.search('>'))
               }
             }
           }
