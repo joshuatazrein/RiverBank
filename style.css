@@ -311,14 +311,14 @@ textarea {
 
 textarea.selected, textarea.unselected {
   width: calc(100% - 10px);
-  margin: -2px 5px;
+  margin: 0 5px;
   display: inline-block;
   font: 100% var(--font), serif;
+  line-height: 1em;
   font-weight: bold;
   background-color: inherit;
   border: none;
-  overflow-x: hidden;
-  overflow-y: visible;
+  overflow: hidden;
 }
 
 /* EDITING */
@@ -490,7 +490,7 @@ span.weblink {
   color: var(--select)
 }
 
-span.timing {
+span.timing, span.faketiming {
   background-color: var(--event);
   display: inline;
   border-radius: 5px;

@@ -337,7 +337,12 @@ function updateSizes() {
       $('#texttest').html($(list).val())
       if ($(list).val() == '') $('#texttest').html('&nbsp;')
       $('#texttest').css('width', $(list).width() + 'px')
-      $(list).css('height', $('#texttest').height() + 'px')
+      console.log($(list).css('font-size'))
+      const fontsize = $(list).css('font-size')
+      if ($('#texttest').height() > 
+        Number(fontsize.slice(0, fontsize.length - 2)) - 4) {
+        $(list).css('height', $('#texttest').height() + 'px')
+      }
     }
     $('#texttest').css('font-family', '')
     $('#texttest').css('font-size', '')
@@ -365,6 +370,7 @@ function loadthis(event) {
 }
 
 function clean() {
+  $('#test').empty()
   // update height of loads
   const leftcol = $($('.leftcolumn')[0])
   const loadsheight = leftcol.height() -
@@ -410,6 +416,18 @@ function clean() {
       $(span).remove()
     }
   }
+  // sort headings
+  const headingslist = $('#pop').children().filter('.dateheading').toArray()
+  for (heading of headingslist.sort((a, b) => {
+    return stringToDate($(a).text(), true).getTime() -
+      stringToDate($(b).text(), true).getTime()
+  })) {
+    const children = getHeadingChildren($(heading)).reverse()
+    $('#pop').append($(heading))
+    children.forEach((x) => {
+      $(heading).after($(x))
+    })
+  }
 }
 
 // Storing data:
@@ -420,7 +438,6 @@ function save(undo) {
   }
   unfilter(false)
   if (undo == true) savedata = JSON.parse(JSON.stringify(data))
-  clean()
   // save data
   let newdata = JSON.parse(JSON.stringify(data)) // copies data
   newdata.pop = $('#pop').html()
@@ -440,14 +457,15 @@ function save(undo) {
       loadList()
     }
   }
+  // clean up styling
+  $('span.in:visible').attr('style', '')
+  clean()
+  updatedeadlines()
+  updateSpanDrags()
   data = JSON.parse(JSON.stringify(newdata))
   $(document).scrollTop(0) // fixes scroll
   // backup data to the server after setting localstorage data
   uploadData()
-  // clean up styling
-  $('span.in:visible').attr('style', '')
-  updatedeadlines()
-  updateSpanDrags()
   localStorage.setItem('data', JSON.stringify(data))
 }
 
@@ -529,6 +547,8 @@ function clearEmptyDates(saving) {
     console.log('error', err);
   }
   if (saving != false) { save() }
+  console.log($('.dateheading').toArray().map(
+    (x) => {return $(x).text()}));
 }
 
 function switchUser() {
@@ -886,40 +906,42 @@ function dateToHeading(date, saving) {
   if (date === undefined) return
   if (dateToString(date).includes('NaN')) return
   // find the matching date, or create if not
-  const newtask = createBlankTask()
-  newtask.addClass('h1')
-  newtask.attr('folded', 'false')
-  newtask.text(dateToString(date, true))
-  newtask.addClass('dateheading')
-  newtask.attr('draggable', 'false')
   // sort date headings to be correct
   const headingslist = $('#pop').children().toArray().filter((x) => {
-    if (stringToDate($(x).text()) != 'Invalid Date' &&
-      $(x).hasClass('dateheading')) return true
+    return stringToDate($(x).text(), true) != 'Invalid Date' &&
+      $(x).hasClass('dateheading')
   })
+  console.log(headingslist);
   let heading1 = headingslist.find((x) => {
     return stringToDate(stripChildren($(x)), true).getTime() ==
-      stringToDate(newtask.text(), true).getTime()
+      stringToDate(dateToString(date)).getTime()
   })
   if (heading1 == undefined) {
-    // insert elt at beginning
-    $('#pop').append(newtask)
-    headingslist.push(newtask)
-    for (heading of headingslist.sort((a, b) => {
-      return stringToDate($(a).text().replace('...', ''), true).getTime() -
-        stringToDate($(b).text().replace('...', ''), true).getTime()
-    })) {
-      const children = getHeadingChildren($(heading)).reverse()
-      $('#pop').append($(heading))
-      children.forEach((x) => {
-        $(heading).after($(x))
-      })
+    // insert elt where it should go
+    heading1 = createBlankTask()
+    heading1.addClass('h1')
+    heading1.attr('folded', 'false')
+    heading1.text(dateToString(date, true))
+    heading1.addClass('dateheading')
+    heading1.attr('draggable', 'false')
+    let headingbefore = headingslist.find((x) => {
+      return stringToDate($(x).text(), true).getTime() < 
+        stringToDate($(heading1).text(), true).getTime()
+    })
+    if (!headingbefore) {
+      $('#pop').prepend(heading1)
+    } else {
+      // insert it after last child
+      const headingchildren = getHeadingChildren($(headingbefore))
+      if (headingchildren.length > 0) {
+        $(headingchildren[headingchildren.length - 1]).after(heading1)
+      } else {
+        $(headingbefore).after(heading1)
+      }
     }
     if (saving != false) save()
-    return newtask
-  } else {
-    return heading1
   }
+  return heading1
 }
 
 function search(skiplinks) {
@@ -1047,6 +1069,13 @@ function datesToRelative(a, b) {
   }
   if (days != 0) returnstring += days + 'd'
   return returnstring
+}
+
+function topChild(frame) {
+  const childrenlist = $(frame).children().filter(function () {
+    return $(this).position().top > 0
+  })
+  return childrenlist[0]
 }
 
 function updatedeadlines() {
@@ -1258,9 +1287,9 @@ function deleteTask() {
     setTimeout(null, 500)
   }
   selected.remove()
-  select(newselect)
-  save(true)
+  select(newselect, true)
   clearEmptyDates()
+  save(true)
 }
 
 function indentTask(indent) {
@@ -1358,6 +1387,7 @@ function removesliders() {
 }
 
 function saveTask() {
+  console.log(topChild($('#pop')));
   // analyze format of task and create new <span> elt for it
   const savetask = selected.prev() // looks at item before it
   selected.next().remove() // removes appended children
@@ -1490,7 +1520,11 @@ function saveTask() {
       const timing = $('<span class="timing"></span>')
       timing.text(list[0].slice(1))
       list[0] = timing[0].outerHTML
-      console.log(list[0]);
+      newstr = list.join(' ')
+    } else if (list[0].length > 1) {
+      const timing = $('<span class="faketiming"></span>')
+      timing.text(list[0].slice(1))
+      list[0] = timing[0].outerHTML
       newstr = list.join(' ')
     } else {
       newstr = newstr.slice(1)
@@ -1548,7 +1582,9 @@ function saveTask() {
     parent.attr('draggable', 'true')
     parent = parent.parent()
   }
+  console.log($('#pop').scrollTop(), topChild($('#pop')));
   save(true)
+  console.log($('#pop').scrollTop(), topChild($('#pop')));
 }
 
 function getHeading(el, actual) {
@@ -1923,8 +1959,8 @@ function toggleComplete(task) {
   }
   completetask.toggleClass('complete')
   if (!task) {
-    save(true)
     clearEmptyDates()
+    save(true)
   }
 }
 
@@ -2149,7 +2185,7 @@ function getHeadingChildren(el) {
   } else if (el.hasClass('h3') == true) {
     thisclass = 'h3'
   }
-  const children = el.parent().children().filter('.in')
+  const children = el.parent().children()
   const start = children.toArray().indexOf(el[0]) + 1
   for (let i = start; i < children.length; i++) {
     let toggle = true
@@ -3257,8 +3293,8 @@ function loadpage(setload, oldscroll, oldselect) {
   $('.taskselect').removeClass('taskselect')
   $(document).scrollTop(0)
   updateSizes()
-  clean()
   clearEmptyDates(false)
+  clean()
   updatedeadlines()
   updateSpanDrags()
   if (oldscroll) { 
@@ -3274,7 +3310,6 @@ function loadpage(setload, oldscroll, oldselect) {
   } else {
     select($(dateToHeading(stringToDate('0d'))), true, false)
   }
-  console.log('got here');
 }
 
 if (loadonstart) loadpage()
