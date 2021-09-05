@@ -3164,7 +3164,7 @@ function loadpage(setload, oldscroll, oldselect) {
     // prevents endless loading loop
     $(document).on('keydown', keycomms)
     $(document).on('contextmenu', event, context)
-    $(document).on('click', event, clicked)
+    $(document).on('mousedown', event, clicked)
     $(document).on('dblclick', event, dblclick)
     $(window).resize(updateSizes)
     $(window).keydown(keydown)
