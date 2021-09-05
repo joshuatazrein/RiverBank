@@ -3139,10 +3139,12 @@ function adaptivelog(string) {
 }
 
 function diffsFormat(task) {
-  const taskslice = task.slice(task.search('>') + 1, task.length - 7)
-  const classes = task.substring(task.search('style'), 
-    task.slice(task.search('style')).search('>'))
-  return '(style: ' + classes + ') ' + taskslice
+  const taskslice = task.substring(task.search('>') + 1, task.length - 7)
+  const classes = task.substring(task.search('class=\"'), 
+    task.substring(task.search('class =\"')).search('\"')).replace(
+    ' ui-draggable', '').replace(' ui-droppable', '')
+  const styles = task.substring(task.search('style'), task.search('>') - 1)
+  return '(' + classes + ', ' + styles + ')' + taskslice
 }
 
 function reload() {
