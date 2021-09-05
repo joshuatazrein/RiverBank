@@ -3129,6 +3129,15 @@ function uploadData(reloading) {
   }
 }
 
+function adaptivelog(string) {
+  // either logs or alerts depending on mobile or desktop
+  if (window.innerWidth < 600) {
+    alert(string)
+  } else {
+    console.log(string)
+  }
+}
+
 function reload() {
   if (offlinemode) {
     // skip upload
@@ -3139,7 +3148,7 @@ function reload() {
       'users/' + getCookie('fname') + '.json', 
       function (datastr, status, xhr) {
         // log the diff
-        console.log('Diffs:');
+        let diffs = 'Diffs:'
         const olddata = data.flop.concat([{'title':'pop', 'text':data.pop}])
         const olddatadict = {}
         for (list of olddata) {
@@ -3154,26 +3163,27 @@ function reload() {
         }
         for (list of Object.keys(olddata)) {
           if (!Object.keys(newdata).includes(list)) {
-            console.log('- list: ' + list);
+            diffs += '\n- list: ' + list
           } else {
             for (task in olddata[list].split('<span')) {
               if (!newdata[list].includes(task)) {
-                console.log('- task: ' + task.slice(task.search('>')))
+                diffs += '\n- task: ' + task.slice(task.search('>'))
               }
             }
           }
         }
         for (list of Object.keys(newdata)) {
           if (!Object.keys(olddata).includes(list)) {
-            console.log('+ list: ' + list);
+            diffs += '\n+ list: ' + list
           } else {
             for (task in newdata[list].split('<span class=\"in')) {
               if (!olddata[list].includes(task)) {
-                console.log('+ task: ' + task.slice(task.search('>')))
+                diffs += '\n+ task: ' + task.slice(task.search('>'))
               }
             }
           }
         }
+        adaptivelog(diffs)
         data = JSON.parse(xhr.responseText)
         reload2()
       }
