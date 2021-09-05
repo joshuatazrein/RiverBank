@@ -3195,7 +3195,7 @@ function reload() {
                 olddatalist[olddatalist.indexOf(task) + 1] !=
                   newdatalist[i + 1])) {
                 // moved tasks have different befores and afters
-                diffs += '\nmoved task: ' + task.slice(task.search('>'))
+                diffs += '\nmoved task: ' + task
               }
               i ++
             }
