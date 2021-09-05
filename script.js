@@ -23,6 +23,7 @@ var prevupload
 var flopscrollsave
 var popscrollsave
 var dragtimer
+var draggingtask
 var dropabove = false
 var dropinside = false
 var linestarts = {
@@ -1142,7 +1143,7 @@ function updateSpanDrags() {
       containment: 'window',
       axis: 'y',
       revert: true,
-      appendTo: $('#container'),
+      appendTo: $('#listcontainer'),
       helper: 'clone',
       refreshPositions: true,
       zIndex: 1,
@@ -1163,7 +1164,7 @@ function updateSpanDrags() {
         ui.draggable.css('top', '0')
         ui.draggable.css('left', '0')
         dropTask(event, ui.draggable[0])
-        select(ui.draggable[0])
+        select(ui.draggable[0], true)
       }
     })
     $('span.in').attr('ondragstart', '')
@@ -1990,7 +1991,11 @@ function timertest(ev) {
 //start of drag
 function dragTask(evt) {
   select(evt.target)
-  if (window.innerWidth < 600) return
+  draggingtask = true
+  if (window.innerWidth < 600) {
+    $('.nav').hide()
+    return
+  }
   //start drag
   if (selected[0].tagName == 'TEXTAREA') {
     return; // stops from dragging edited subtasks
@@ -2014,6 +2019,7 @@ function togglecollapse() {
 
 //dropping
 function dropTask(evt, obj) {
+  draggingtask = false
   let el
   if (obj) {
     el = obj
@@ -2076,17 +2082,6 @@ function dropTask(evt, obj) {
         $(el).after(selected)
       }
     }
-    $('.drop-hover').removeClass('drop-hover')    
-    if (flopscrollsave) {
-      $('#flop').scrollTop(flopscrollsave)
-    }
-    if (popscrollsave) {
-      $('#pop').scrollTop(popscrollsave)
-    }
-    flopscrollsave = undefined
-    $('#flop').removeClass('greyedout')
-    popscrollsave = undefined
-    $('#pop').removeClass('greyedout')
   }
   for (i = children.length - 1; i >= 0; i--) {
     // append each child after
@@ -2535,13 +2530,37 @@ function setTask(type) {
   }
 }
 
-function clicked(ev) {
-  // on revert drags on mobile
-  flopscrollsave = undefined
-  $('#flop').removeClass('greyedout')
-  popscrollsave = undefined
-  $('#pop').removeClass('greyedout')
+function clickoff(ev) {
+  if (window.innerWidth < 600) {
+    // on revert drags on mobile
+    $('.drop-hover').removeClass('drop-hover')    
+    if (flopscrollsave) {
+      $('#flop').scrollTop(flopscrollsave)
+    }
+    if (popscrollsave) {
+      $('#pop').scrollTop(popscrollsave)
+    }
+    flopscrollsave = undefined
+    $('#flop').removeClass('greyedout')
+    popscrollsave = undefined
+    $('#pop').removeClass('greyedout')
+    if (draggingtask) { return }
+    if (
+      ev.target.tagName == 'SPAN' &&
+      ev.pageX > window.innerWidth - 50
+    ) {
+      // context menu
+      select($(ev.target), false)
+      context(ev, true)
+    }
+  }
+  if ($(ev.target).hasClass('dropdown-item')) {
+    eval($(ev.target).attr('function'))
+    $('nav').hide()
+  }
+}
 
+function clicked(ev) {
   if (movetolist == true && !$(ev.target).hasClass('listtitle')) {
     // cancels move to list
     movetolist = false
@@ -2550,12 +2569,6 @@ function clicked(ev) {
   $('nav').hide()
   if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
     return
-  } else if (
-    ev.target.tagName == 'SPAN' &&
-    window.innerWidth < 600 && 
-    ev.pageX > window.innerWidth - 50) {
-    select($(ev.target), false)
-    context(ev, true)
   } else if ($(ev.target).hasClass('dropdown-item')) {
     const oldselect = selected
     eval($(ev.target).attr('function'))
@@ -3165,6 +3178,7 @@ function loadpage(setload, oldscroll, oldselect) {
     $(document).on('keydown', keycomms)
     $(document).on('contextmenu', event, context)
     $(document).on('mousedown', event, clicked)
+    $(document).on('mouseup', event, clickoff)
     $(document).on('dblclick', event, dblclick)
     $(window).resize(updateSizes)
     $(window).keydown(keydown)
