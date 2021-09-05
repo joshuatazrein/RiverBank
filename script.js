@@ -585,6 +585,7 @@ function reset() {
 
 function uploadData(reloading) {  
   if (JSON.stringify(data) == prevupload) {    
+    console.log('identical');
     return
   }
   // uploads data to server
