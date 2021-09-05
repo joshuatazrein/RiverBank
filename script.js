@@ -3171,13 +3171,13 @@ function reload() {
         for (list of newdata) {
           newdatadict[list.title] = list.text.split('<span class=\"in')
         }
-        console.log(olddata)
-        console.log(newdata)
+        console.log(olddatadict)
+        console.log(newdatadict)
         for (list of Object.keys(olddatadict)) {
           if (!Object.keys(newdatadict).includes(list)) {
             diffs += '\n- list: ' + list
           } else {
-            for (task of olddatadict[list].split('<span class=\"in')) {
+            for (task of olddatadict[list]) {
               if (!newdatadict[list].includes(task)) {
                 diffs += '\n- task in ' + list + ': ' + diffsFormat(task)
               }
@@ -3189,7 +3189,7 @@ function reload() {
             diffs += '\n+ list: ' + list
           } else {
             let i = 0
-            for (task of newdatalist) {
+            for (task of newdatadict[list]) {
               if (!olddatalist.includes(task)) {
                 diffs += '\n+ task in ' + list + ': ' + diffsFormat(task)
               } else if (
