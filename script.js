@@ -3152,7 +3152,6 @@ function reload() {
         for (list of newdata) {
           newdatadict[list.title] = list.text
         }
-        console.log(olddatadict, newdatadict);
         for (list of Object.keys(olddata)) {
           if (!Object.keys(newdata).includes(list)) {
             console.log('- list: ' + list);
@@ -3295,9 +3294,11 @@ function loadpage(setload, oldselect) {
     $('#pop').scrollTop(0)
     const scrolllocation = selected.offset().top - 
       $('#pop').offset().top - 30
-    $('#pop').animate({
-      scrollTop: scrolllocation
-    }, 500)
+    setTimeout(function () {
+      $('#pop').animate({
+        scrollTop: scrolllocation
+      }, 500)
+    }, 300)
   }
 }
 
