@@ -3300,8 +3300,15 @@ function loadpage(setload, oldselect) {
     else if (oldselect[0])
       select(oldselect[0])
   } else {
+    select()
+    select($(dateToHeading(stringToDate('0d'))), false)
+    $('#pop').scrollTop(0)
+    const scrolllocation = selected.offset().top - 
+      $('#pop').offset().top - 30
     setTimeout(function () {
-      $('#todayBut').click()
+      $('#pop').animate({
+        scrollTop: scrolllocation
+      }, 500)
     }, 750)
   }
 }
