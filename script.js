@@ -594,10 +594,10 @@ function uploadData(reloading) {
       $.post("upload.php", {
         datastr: JSON.stringify(data),
       }, function(data, status, xhr) {
-        prevupload = JSON.stringify(data)
         uploading = false
         console.log('*** UPLOADING ***')
-        diffsLog(JSON.stringify(data), xhr.responseText)
+        diffsLog(prevupload, xhr.responseText)
+        prevupload = xhr.responseText
         if (reloading == true) reload() // reloads page
       });
     }
