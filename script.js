@@ -2589,6 +2589,7 @@ function setTask(type) {
 }
 
 function clicked(ev) {
+  alert('clicked')
   // on revert drags on mobile
   flopscrollsave = undefined
   $('#flop').removeClass('greyedout')
@@ -2605,7 +2606,7 @@ function clicked(ev) {
   if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
     return
   } else if ($(ev.target).hasClass('mobhandle')) {
-    select($(ev.target).parent())
+    select($(ev.target).parent(), false)
     context(ev, true)
   } else if ($(ev.target).hasClass('dropdown-item')) {
     const oldselect = selected
