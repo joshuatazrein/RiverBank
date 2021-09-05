@@ -583,35 +583,6 @@ function reset() {
   }
 }
 
-function uploadData(reloading) {  
-  console.log('uploading');
-  if (JSON.stringify(data) == prevupload) {    
-    console.log('identical');
-    return
-  }
-  // uploads data to server
-  if (navigator.onLine && !offlinemode) {
-    if (uploading == false) {
-      uploading = true
-      $.post("upload.php", {
-        datastr: JSON.stringify(data),
-      }, function(data, status, xhr) {
-        uploading = false
-        console.log('*** UPLOADED ***')
-        diffsLog(prevupload, xhr.responseText)
-        prevupload = xhr.responseText
-        if (reloading == true) reload() // reloads page
-      });
-    }
-  } else {
-    uploading = false
-    // offline mode    
-    localStorage.setItem('data', JSON.stringify(data))
-    prevupload = JSON.stringify(data)
-    if (reloading == true) reload() // reloads page
-  }
-}
-
 function clearEmptyHeadlines() {
   // clears empty headlines'
   let parent
@@ -3113,27 +3084,32 @@ function tutorial() {
   })
 }
 
-function uploadData(reloading) {
-  if (JSON.stringify(data) == prevupload) {    return
+function uploadData(reloading) {  
+  console.log('--- upload started ---')
+  if (JSON.stringify(data) == prevupload) {    
+    console.log('identical');
+    return
   }
   // uploads data to server
   if (navigator.onLine && !offlinemode) {
-    if (uploading == false) {      
+    if (uploading == false) {
       uploading = true
       $.post("upload.php", {
         datastr: JSON.stringify(data),
       }, function(data, status, xhr) {
-        prevupload = xhr.responseText
         uploading = false
-        if (reloading == true) {
-          reload() // reloads page
-        }
+        console.log('*** upload finished ***')
+        diffsLog(prevupload, xhr.responseText)
+        prevupload = xhr.responseText
+        if (reloading == true) reload() // reloads page
       });
     }
   } else {
     uploading = false
-    // offline mode    localStorage.setItem('data', JSON.stringify(data))
+    // offline mode    
+    localStorage.setItem('data', JSON.stringify(data))
     prevupload = JSON.stringify(data)
+    if (reloading == true) reload() // reloads page
   }
 }
 
