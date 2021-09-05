@@ -19,7 +19,7 @@ var movetolist = false
 var durslider
 var stopwatch
 var copieditem
-var prevupload
+var prevupload = JSON.stringify(data)
 var flopscrollsave
 var popscrollsave
 var justclicked
