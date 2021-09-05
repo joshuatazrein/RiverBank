@@ -2734,6 +2734,7 @@ function clicked(ev) {
   } else {
     select()
   }
+  alert(ev.target)
 }
 
 function taskAbove() {
