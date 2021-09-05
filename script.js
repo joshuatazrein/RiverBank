@@ -3166,6 +3166,7 @@ function reload() {
           if (!Object.keys(newdata).includes(list)) {
             diffs += '\n- list: ' + list
           } else {
+            console.log(olddata[list]);
             for (task of olddata[list].split('<span class=\"in')) {
               if (!newdata[list].includes(task)) {
                 diffs += '\n- task: ' + task.slice(task.search('>'))
