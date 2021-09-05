@@ -331,20 +331,20 @@ function updateSizes() {
     })
   }
   // updates the text sizes of each list
-  let height = 0
-  $('#texttest').css('font-family', 'var(--font), serif')
-  $('#texttest').css('font-weight', 'bold')
-  $('#texttest').css('word-wrap', 'break-word')
-  for (list of $('#loads').children()) {
-    $('#texttest').css('font-size', $(list).css('font-size'))
-    $('#texttest').html($(list).val())
-    if ($(list).val() == '') $('#texttest').html('&nbsp;')
-    $('#texttest').css('width', $(list).width() + 'px')      
-    $(list).css('height', $('#texttest').height() + 'px')
-  }
-  $('#texttest').css('font-family', '')
-  $('#texttest').css('font-size', '')
-  $('#texttest').css('font-weight', '')
+  // let height = 0
+  // $('#texttest').css('font-family', 'var(--font), serif')
+  // $('#texttest').css('font-weight', 'bold')
+  // $('#texttest').css('word-wrap', 'break-word')
+  // for (list of $('#loads').children()) {
+  //   $('#texttest').css('font-size', $(list).css('font-size'))
+  //   $('#texttest').html($(list).val())
+  //   if ($(list).val() == '') $('#texttest').html('&nbsp;')
+  //   $('#texttest').css('width', $(list).width() + 'px')      
+  //   $(list).css('height', $('#texttest').height() + 'px')
+  // }
+  // $('#texttest').css('font-family', '')
+  // $('#texttest').css('font-size', '')
+  // $('#texttest').css('font-weight', '')
 }
 
 // picks a new loadlist
