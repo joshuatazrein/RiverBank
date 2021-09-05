@@ -3162,8 +3162,8 @@ function reload() {
         const olddatadict = {}
         for (list of olddata) {
           $('#test').html(list.text)
-          olddatadict[list.title] = $('#test').children().filter(
-            '.in').toArray()
+          olddatadict[list.title] = $('#test').find('span.in').toArray().map(
+            (x) => { return stripChildren($(x)) })
         }
         const responsejson = JSON.parse(xhr.responseText)
         const newdata = responsejson.flop.concat(
@@ -3172,8 +3172,8 @@ function reload() {
         const newdatadict = {}
         for (list of newdata) {
           $('#test').html(list.text)
-          newdatadict[list.title] = $('#test').children().filter(
-            '.in').toArray()
+          newdatadict[list.title] = $('#test').find('span.in').toArray().map(
+            (x) => { return stripChildren($(x)) })
         }
         console.log(olddatadict)
         console.log(newdatadict)
@@ -3183,7 +3183,7 @@ function reload() {
           } else {
             for (task of olddatadict[list]) {
               if (!newdatadict[list].includes(task)) {
-                diffs += '\n- task in ' + list + ': ' + $(task).text()
+                diffs += '\n- task in ' + list + ': ' + task
               }
             }
           }
@@ -3195,7 +3195,7 @@ function reload() {
             let i = 0
             for (task of newdatadict[list]) {
               if (!olddatadict[list].includes(task)) {
-                diffs += '\n+ task in ' + list + ': ' + $(task).text()
+                diffs += '\n+ task in ' + list + ': ' + task
               } else if (
                 (olddatadict[list].indexOf(task) == 0 && i != 0) || 
                 (olddatadict[list].indexOf(task) != 0 && i == 0) ||
@@ -3210,7 +3210,7 @@ function reload() {
                 olddatadict[list][olddatadict[list].indexOf(task) + 1] !=
                   newdatadict[list][i + 1])) {
                 // moved tasks have different befores and afters
-                diffs += '\nmoved task in ' + list + ': ' + $(task).text()
+                diffs += '\nmoved task in ' + list + ': ' + task
               }
               i ++
             }
