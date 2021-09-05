@@ -3309,7 +3309,7 @@ function loadpage(setload, oldselect) {
       $('#pop').animate({
         scrollTop: scrolllocation
       }, 500)
-    }, 750)
+    }, 250)
   }
 }
 
