@@ -1167,10 +1167,10 @@ function updateSpanDrags() {
       refreshPositions: true,
       zIndex: 1,
       addClasses: false,
-      start: function (event) {
-        // $(this).hide()
-        dragTask(event, $(this))
-      },
+      // start: function (event) {
+      //   // $(this).hide()
+      //   dragTask(event, $(this))
+      // },
       drag: function (event) {
         mobileDragOver(event)
       },
