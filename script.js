@@ -2603,6 +2603,9 @@ function clicked(ev) {
   console.log(ev.target);
   if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
     return
+  } else if ($(ev.target).hasClass('mobhandle')) {
+    select($(ev.target).parent())
+    context(ev, true)
   } else if ($(ev.target).hasClass('dropdown-item')) {
     const oldselect = selected
     eval($(ev.target).attr('function'))
@@ -2728,10 +2731,6 @@ function clicked(ev) {
   } else if (!isSubtask($(ev.target))) {
     // select parents of 
     select($(ev.target).parent(), false)
-    alert('selected the right thing')
-    if ($(ev.target).hasClass('mobhandle')) {
-      context(ev, true)
-    }
   } else {
     select()
   }
