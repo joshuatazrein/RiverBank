@@ -3162,24 +3162,23 @@ function reload() {
         for (list of newdata) {
           newdatadict[list.title] = list.text
         }
-        for (list of Object.keys(olddata)) {
-          if (!Object.keys(newdata).includes(list)) {
+        for (list of Object.keys(olddatadict)) {
+          if (!Object.keys(newdatadict).includes(list)) {
             diffs += '\n- list: ' + list
           } else {
-            console.log(olddata[list]);
-            for (task of olddata[list].split('<span class=\"in')) {
-              if (!newdata[list].includes(task)) {
+            for (task of olddatadict[list].split('<span class=\"in')) {
+              if (!newdatadict[list].includes(task)) {
                 diffs += '\n- task: ' + task.slice(task.search('>'))
               }
             }
           }
         }
-        for (list of Object.keys(newdata)) {
-          if (!Object.keys(olddata).includes(list)) {
+        for (list of Object.keys(newdatadict)) {
+          if (!Object.keys(olddatadict).includes(list)) {
             diffs += '\n+ list: ' + list
           } else {
-            const olddatalist = olddata[list].split('<span class=\"in')
-            const newdatalist = newdata[list].split('<span class=\"in')
+            const olddatalist = olddatadict[list].split('<span class=\"in')
+            const newdatalist = newdatadict[list].split('<span class=\"in')
             let i = 0
             for (task of newdatalist) {
               if (!olddatalist.includes(task)) {
