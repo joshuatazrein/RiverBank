@@ -3129,15 +3129,14 @@ function diffsLog(oldString, newString) {
   const responsejson = JSON.parse(newString)
   const newdata = responsejson.flop.concat(
     [{'title':'pop', 'text':responsejson.pop}])
-  console.log(newdata[0].text)
   const newdatadict = {}
   for (list of newdata) {
     $('#test').html(list.text)
     newdatadict[list.title] = $('#test').find('span.in').toArray().map(
       (x) => { return stripChildren($(x)) })
   }
-  console.log(olddatadict)
-  console.log(newdatadict)
+  // console.log(olddatadict)
+  // console.log(newdatadict)
   for (list of Object.keys(olddatadict)) {
     if (!Object.keys(newdatadict).includes(list)) {
       diffs += '\n- list: ' + list
@@ -3180,10 +3179,12 @@ function reload() {
     data = JSON.parse(localStorage.getItem('data'))
     reload2()
   } else {
+    console.log('--- download started ---');
     $.post(
       'users/' + getCookie('fname') + '.json', 
       function (datastr, status, xhr) {
         diffsLog(JSON.stringify(data), xhr.responseText)
+        console.log('*** download finished ***');
         data = JSON.parse(xhr.responseText)
         reload2()
       }

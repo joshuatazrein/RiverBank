@@ -167,7 +167,11 @@ function load() {
       function (datastr, status, xhr) {
         if (xhr.responseText == '') { throw 'no user loaded' }
         data = JSON.parse(xhr.responseText)
-        loadpage()
+        try {
+          loadpage()
+        } catch (err) {
+          setTimeout(1500, tryagain)
+        }
       }
     )
   } catch (err) {
@@ -182,6 +186,10 @@ function load() {
       checkUser()
     }
   }
+}
+
+function tryagain() {
+  loadpage()
 }
 
 load()
