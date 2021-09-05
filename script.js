@@ -1157,35 +1157,35 @@ function updateSpanDrags() {
     // insert mobiledrag elements
     $('span.in').prepend(
       '<span class="mobhandle"></span>')
-    // $('span.in').draggable({
-    //   handle: '.mobhandle',
-    //   containment: 'window',
-    //   axis: 'y',
-    //   revert: true,
-    //   appendTo: $('#listcontainer'),
-    //   helper: 'clone',
-    //   refreshPositions: true,
-    //   zIndex: 1,
-    //   addClasses: false,
-    //   // start: function (event) {
-    //   //   // $(this).hide()
-    //   //   dragTask(event, $(this))
-    //   // },
-    //   drag: function (event) {
-    //     mobileDragOver(event)
-    //   },
-    // })
-    // $('span.in, textarea.listtitle').droppable({
-    //   accept: 'span.in',
-    //   hoverClass: 'drop-hover',
-    //   greedy: true,
-    //   drop: function (event, ui) {
-    //     ui.draggable.css('top', '0')
-    //     ui.draggable.css('left', '0')
-    //     dropTask(event, ui.draggable[0])
-    //     select(ui.draggable[0])
-    //   }
-    // })
+    $('span.in').draggable({
+      handle: '.mobhandle',
+      containment: 'window',
+      axis: 'y',
+      revert: true,
+      appendTo: $('#container'),
+      helper: 'clone',
+      refreshPositions: true,
+      zIndex: 1,
+      addClasses: false,
+      start: function (event) {
+        // $(this).hide()
+        dragTask(event, $(this))
+      },
+      drag: function (event) {
+        mobileDragOver(event)
+      },
+    })
+    $('span.in, textarea.listtitle').droppable({
+      accept: 'span.in',
+      hoverClass: 'drop-hover',
+      greedy: true,
+      drop: function (event, ui) {
+        ui.draggable.css('top', '0')
+        ui.draggable.css('left', '0')
+        dropTask(event, ui.draggable[0])
+        select(ui.draggable[0])
+      }
+    })
     $('span.in').attr('ondragstart', '')
     $('span.in').attr('ondragover', '')
     $('span.in').attr('ondrop', '')
