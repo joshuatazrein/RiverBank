@@ -340,7 +340,7 @@ function updateSizes() {
       console.log($(list).css('font-size'))
       const fontsize = $(list).css('font-size')
       if ($('#texttest').height() > 
-        Number(fontsize.slice(0, fontsize.length - 2)) - 4) {
+        Number(fontsize.slice(0, fontsize.length - 2))) {
         $(list).css('height', $('#texttest').height() + 'px')
       }
     }
