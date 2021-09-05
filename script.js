@@ -338,8 +338,7 @@ function updateSizes() {
       $('#texttest').css('font-size', $(list).css('font-size'))
       $('#texttest').html($(list).val())
       if ($(list).val() == '') $('#texttest').html('&nbsp;')
-      $('#texttest').css('width', $(list).width() + 'px')
-      console.log($(list).css('font-size'))
+      $('#texttest').css('width', $(list).width() + 'px')      
       const fontsize = $(list).css('font-size')
       if ($('#texttest').height() > 
         Number(fontsize.slice(0, fontsize.length - 2))) {
@@ -349,17 +348,13 @@ function updateSizes() {
     $('#texttest').css('font-family', '')
     $('#texttest').css('font-size', '')
     $('#texttest').css('font-weight', '')
-  } catch (err) {
-    console.log(err);
-  }
+  } catch (err) {  }
 }
 
 // picks a new loadlist
 function loadthis(event) {
   let movetask
-  if (movetolist == true) {
-    console.log(selected);
-    movetask = selected.detach()
+  if (movetolist == true) {    movetask = selected.detach()
     movetolist = false
   }
   loads = Array.from($('#loads').children())
@@ -533,9 +528,7 @@ function clearEmptyDates(saving) {
               }
             } else {
               lastchild = $(dateToHeading(today))
-            }
-            console.log(appends);
-            // add uncompleted to after heading
+            }            // add uncompleted to after heading
             for (let appchild of appends) {
               lastchild.after($(appchild))
             }
@@ -544,12 +537,9 @@ function clearEmptyDates(saving) {
       }
     })
   } catch (err) {
-    // prevents loadpage error
-    console.log('error', err);
+    // prevents loadpage error  
   }
   if (saving != false) { save() }
-  console.log($('.dateheading').toArray().map(
-    (x) => {return $(x).text()}));
 }
 
 function switchUser() {
@@ -597,11 +587,7 @@ function reset() {
   }
 }
 
-function uploadData(reloading) {
-  console.log('uploading', data);
-  if (JSON.stringify(data) == prevupload) {
-    console.log('equal');
-    return
+function uploadData(reloading) {  if (JSON.stringify(data) == prevupload) {    return
   }
   // uploads data to server
   if (!offlinemode) {
@@ -617,9 +603,7 @@ function uploadData(reloading) {
     }
   } else {
     uploading = false
-    // offline mode
-    console.log('failed');
-    localStorage.setItem('data', JSON.stringify(data))
+    // offline mode    localStorage.setItem('data', JSON.stringify(data))
     prevupload = JSON.stringify(data)
     if (reloading == true) reload() // reloads page
   }
@@ -682,9 +666,7 @@ function toggleWeekdays() {
   save()
 }
 
-function toggleHeadingAlign() {
-  console.log(data.headingalign);
-  if (data.headingalign == 'left') data.headingalign = 'center'
+function toggleHeadingAlign() {  if (data.headingalign == 'left') data.headingalign = 'center'
   else data.headingalign = 'left'
   save()
   document.documentElement.style.setProperty('--headingalign',
@@ -911,8 +893,7 @@ function dateToHeading(date, saving) {
   const headingslist = $('#pop').children().toArray().filter((x) => {
     return stringToDate($(x).text(), true) != 'Invalid Date' &&
       $(x).hasClass('dateheading')
-  })
-  console.log(headingslist);
+  })  
   let heading1 = headingslist.find((x) => {
     return stringToDate(stripChildren($(x)), true).getTime() ==
       stringToDate(dateToString(date)).getTime()
@@ -1130,9 +1111,7 @@ function updatedeadlines() {
       stringToDate(stripChildren($(heading)), true)))
     newelt.addClass('placeholder')
     newelt.removeClass('in')
-    $(heading).before(newelt)
-    console.log('inserted');
-  }
+    $(heading).before(newelt)  }
   if (!$('#flop').children().filter('.buffer')[0]) {
     $('#flop').append('<span class="buffer" style="height:90%"></span>')
   }
@@ -1245,8 +1224,7 @@ function mobileDragOver(event) {
     }
     popscrollsave = undefined
     flopscrollsave = $('#flop').scrollTop()
-    $('#flop').addClass('greyedout')
-    console.log('flopscroll saved');
+    $('#flop').addClass('greyedout')    
     if ($('#flop').children().length < 2) {
       $('#flop').scrollTop($('#flop').height())
     } else {
@@ -1319,9 +1297,7 @@ function compareTimes(a, b) {
   }
 }
 
-function dragTime(el) {
-  console.log('dragtime');
-  slider = $('<input type="range" min="-12" max="12" value="0"' +
+function dragTime(el) {  slider = $('<input type="range" min="-12" max="12" value="0"' +
     ' class="slider slider-vert">')
   $(document.body).append(slider)
   slider.css('top', el.offset().top + 5)
@@ -1334,12 +1310,8 @@ function dragTime(el) {
   const splitlist = el.text().split('-')
   let durval
   // cleans out nonrounded values
-  if (!/\d+:30/.test(splitlist[0]) && !/^\d+$/.test(splitlist[0])) {
-    console.log(/\d+:30/.test(splitlist[0]), !/^\d$/.test(splitlist[0]),
-      'tests');
-    splitlist[0] = splitlist[0].split(':')[0] + ':30'
-    console.log('fail');
-  }
+  if (!/\d+:30/.test(splitlist[0]) && !/^\d+$/.test(splitlist[0])) {   
+    splitlist[0] = splitlist[0].split(':')[0] + ':30'  }
   const origvalue = Number(splitlist[0].replace(':30', '.5'))
   if (splitlist[1]) {
     // set endpoint if it exists
@@ -1386,9 +1358,7 @@ function removesliders() {
   durslider.remove()
 }
 
-function saveTask() {
-  console.log(topChild($('#pop')));
-  // analyze format of task and create new <span> elt for it
+function saveTask() {  // analyze format of task and create new <span> elt for it
   const savetask = selected.prev() // looks at item before it
   selected.next().remove() // removes appended children
   if (['', '• ', '- ', '# ', '## ', '### ', '@', '@ '
@@ -1504,18 +1474,14 @@ function saveTask() {
       }
     }
   }
-  newstr += htmlstr.slice(start)
-  console.log(newstr);
+  newstr += htmlstr.slice(start)  
   newstr = newstr.replace(
-    /\n/g, '<br>').replace(/\s/g, ' ')
-  console.log(newstr, getChildren(el));
+    /\n/g, '<br>').replace(/\s/g, ' ')  
   newstr += getChildren(el)
   if (selected.val().charAt(0) == '@') {
     // process event signs
-    const list = newstr.split(' ')
-    console.log(list[0]);
-    if (/@\d(.*)/.test(list[0])) {
-      console.log('match');
+    const list = newstr.split(' ')    
+    if (/@\d(.*)/.test(list[0])) {      
       // replace with timing object with times
       const timing = $('<span class="timing"></span>')
       timing.text(list[0].slice(1))
@@ -1548,19 +1514,13 @@ function saveTask() {
             match = true
           }
         }
-        if (match == false) {
-          console.log('matching');
-          wordlist[word] = '<span class="weblink" title="' + wordlist[word] +
+        if (match == false) {          wordlist[word] = '<span class="weblink" title="' + wordlist[word] +
             '">' + wordlist[word] + '</span>'
         }
-        savetask.html(wordlist.join(' '))
-        console.log(savetask.html());
-      }
+        savetask.html(wordlist.join(' '))      }
     }
   } catch (err) {
-    // skip it if it doesn't work
-    console.log(savetask.html(), 'split didn\'t work');
-    return
+    // skip it if it doesn't work    return
   }
   // take away hashtags
   if (savetask.hasClass('h1') == true) {
@@ -1581,10 +1541,8 @@ function saveTask() {
     // disable drags
     parent.attr('draggable', 'true')
     parent = parent.parent()
-  }
-  console.log($('#pop').scrollTop(), topChild($('#pop')));
+  }  
   save(true)
-  console.log($('#pop').scrollTop(), topChild($('#pop')));
 }
 
 function getHeading(el, actual) {
@@ -1779,9 +1737,7 @@ function editTask() {
     }
     selected.focus()
     if (getChildren(el) == '') {
-      selected.after('<span style="display:none;"></span>')
-      console.log('0height');
-    } else {
+      selected.after('<span style="display:none;"></span>')    } else {
       // appends children after
       selected.after('<span>' + getChildren(el) + '</span>')
     }
@@ -1833,9 +1789,7 @@ function createBlankTask() {
   return savetask
 }
 
-function newTask(subtask) {
-  console.log(loadedlist, data.flop);
-  if (loadedlist == undefined || loadedlist > data.flop.length - 1) {
+function newTask(subtask) {  if (loadedlist == undefined || loadedlist > data.flop.length - 1) {
     alert('no list selected; create or select a list first')
     return
   }
@@ -2122,8 +2076,7 @@ function dropTask(evt, obj) {
         $(el).after(selected)
       }
     }
-    $('.drop-hover').removeClass('drop-hover')
-    console.log(flopscrollsave);
+    $('.drop-hover').removeClass('drop-hover')    
     if (flopscrollsave) {
       $('#flop').scrollTop(flopscrollsave)
     }
@@ -2290,8 +2243,7 @@ function toggleHelp() {
 
 function setStyle(style) {
   $('link[href="' + data.style + '"]').remove()
-  data.style = style
-  console.log(data.style);
+  data.style = style  
   save()
   $('head').append(
     $("<link rel='stylesheet' type='text/css' href='" +
@@ -2299,8 +2251,7 @@ function setStyle(style) {
   );
 }
 
-function context(e, mobile) {
-  console.log('context');
+function context(e, mobile) {  
   if (selected != undefined && selected[0].tagName == 'TEXTAREA') {
     saveTask()
   }
@@ -2491,9 +2442,7 @@ function context(e, mobile) {
     window.innerWidth - $('#context-menu').width()) - 40)
 }
 
-function setOptions() {
-  console.log($('#typebut'));
-  $('#settype-menu').css('top', $('#typebut').offset().top)
+function setOptions() {  $('#settype-menu').css('top', $('#typebut').offset().top)
   $('#settype-menu').css('left', $('#typebut').offset().left)
   $('#settype-menu').show()
 }
@@ -2550,7 +2499,6 @@ function setTask(type) {
   const list = stripChildren(selected).split(' ').filter((x) => {
     return x != '' 
   })
-  console.log(list);
   if (type == 'deadline') {
     if (!/\>/.test(list[list.length - 1])) {
       selected.html(stripChildren(selected) + ' >' +
@@ -2602,8 +2550,11 @@ function clicked(ev) {
   $('nav').hide()
   if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
     return
-  } else if ($(ev.target).hasClass('mobhandle')) {
-    select($(ev.target).parent(), false)
+  } else if (
+    ev.target.tagName == 'SPAN' &&
+    window.innerWidth < 600 && 
+    ev.pageX > window.innerWidth - 50) {
+    select($(ev.target), false)
     context(ev, true)
   } else if ($(ev.target).hasClass('dropdown-item')) {
     const oldselect = selected
@@ -2826,7 +2777,6 @@ function moveTask(direction) {
   save(true)
   if (selected.is(':visible')) select(selected, false)
   else select()
-  console.log(selected, 'finished');
 }
 
 function dblclick(ev) {
@@ -2929,9 +2879,8 @@ function keycomms(evt) {
         $('.placeholder:visible').toArray(),
         $('.deadline:visible').toArray()).filter((x) => {
           return !stripChildren($(x)).includes(searchstr)
-        })
-      console.log(filteredlist)
-      filteredlist.forEach((x) => { $(x).hide() })
+        })      
+        filteredlist.forEach((x) => { $(x).hide() })
     } else {
       search()
     }
@@ -3143,15 +3092,11 @@ function tutorial() {
 }
 
 function uploadData(reloading) {
-  if (JSON.stringify(data) == prevupload) {
-    console.log('equal');
-    return
+  if (JSON.stringify(data) == prevupload) {    return
   }
   // uploads data to server
   if (!offlinemode) {
-    if (uploading == false) {
-      console.log('uploading');
-      uploading = true
+    if (uploading == false) {      uploading = true
       $.post("upload.php", {
         datastr: JSON.stringify(data),
       }, function(data, status, xhr) {
@@ -3164,9 +3109,7 @@ function uploadData(reloading) {
     }
   } else {
     uploading = false
-    // offline mode
-    console.log('failed');
-    localStorage.setItem('data', JSON.stringify(data))
+    // offline mode    localStorage.setItem('data', JSON.stringify(data))
     prevupload = JSON.stringify(data)
   }
 }
@@ -3179,9 +3122,7 @@ function reload() {
   } else {
     $.post(
       'users/' + getCookie('fname') + '.json', 
-      function (datastr, status, xhr) {
-        console.log('reloading:', xhr.responseText)
-        data = JSON.parse(xhr.responseText)
+      function (datastr, status, xhr) {        data = JSON.parse(xhr.responseText)
         reload2()
       }
     )
@@ -3228,13 +3169,9 @@ function loadpage(setload, oldscroll, oldselect) {
     $(window).resize(updateSizes)
     $(window).keydown(keydown)
     $(window).keyup(keyup)
-    window.addEventListener('focus', function () {
-      console.log('focusin')
-      reload()
+    window.addEventListener('focus', function () {      reload()
     })
-    $('#container').on('mouseleave', function () {
-      console.log('focusout')
-      save()
+    $('#container').on('mouseleave', function () {      save()
     })
   }
   if (!data.headingalign) data.headingalign = 'center'
@@ -3299,8 +3236,7 @@ function loadpage(setload, oldscroll, oldselect) {
     $('#flop').scrollTop(oldscroll[0]) 
     select($(dateToHeading(stringToDate('0d'))), true, false)
   }
-  if (oldselect) {
-    console.log(oldselect);
+  if (oldselect) {    
     if (oldselect[1])
       select(oldselect[0].find('span.in').toArray()[oldselect[1]])
     else if (oldselect[0])
