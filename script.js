@@ -3184,11 +3184,12 @@ function reload() {
               if (!olddatalist.includes(task)) {
                 diffs += '\n+ task: ' + task.slice(task.search('>'))
               } else if (
-                (olddatalist[olddatalist.indexOf(list)] == 0 && i != 0) || 
-                (olddatalist[olddatalist.indexOf(list)] != 0 && i == 0) ||
-                (olddatalist[olddatalist.indexOf(list)] == 
-                  olddatalist.length - 1 && 
+                (olddatalist.indexOf(list) == 0 && i != 0) || 
+                (olddatalist.indexOf(list) != 0 && i == 0) ||
+                (olddatalist.indexOf(list) == olddatalist.length - 1 && 
                 i != newdatalist.length - 1) ||
+                (olddatalist.indexOf(list) != olddatalist.length - 1 && 
+                i == newdatalist.length - 1) ||
                 (olddatalist[olddatalist.indexOf(list) - 1] != 
                   newdatalist[i - 1] &&
                 olddatalist[olddatalist.indexOf(list) + 1] !=
@@ -3196,6 +3197,7 @@ function reload() {
                 // moved tasks have different befores and afters
                 diffs += '\nmoved task: ' + task.slice(task.search('>'))
               }
+              i ++
             }
           }
         }
