@@ -1724,9 +1724,8 @@ function isSubtask(el) {
     'link', 'italic', 'bold', 'bold-italic', 'deadline', 'weblink', 'timing',
     'mobhandle'
   ]) {
-    if (el.hasClass(lineinner) == true || el.hasClass('in') == false) {
+    if (el.hasClass(lineinner) == true) {
       return false
-      break
     }
   }
   return true
@@ -2729,6 +2728,7 @@ function clicked(ev) {
   } else if (!isSubtask($(ev.target))) {
     // select parents of 
     select($(ev.target).parent(), false)
+    alert('selected the right thing')
     if ($(ev.target).hasClass('mobhandle')) {
       context(ev, true)
     }
