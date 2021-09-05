@@ -3144,7 +3144,7 @@ function diffsFormat(task) {
     task.substring(task.search('class =\"')).search('\"')).replace(
     ' ui-draggable', '').replace(' ui-droppable', '')
   const styles = task.substring(task.search('style'), task.search('>') - 1)
-  return '(' + classes + ', ' + styles + ')' + taskslice
+  return '(' + classes + ', ' + styles + ') ' + taskslice
 }
 
 function reload() {
@@ -3161,7 +3161,7 @@ function reload() {
         const olddata = data.flop.concat([{'title':'pop', 'text':data.pop}])
         const olddatadict = {}
         for (list of olddata) {
-          olddatadict[list.title] = list.text
+          olddatadict[list.title] = list.text.split('<span class=\"in')
         }
         const responsejson = JSON.parse(xhr.responseText)
         const newdata = responsejson.flop.concat(
@@ -3169,8 +3169,10 @@ function reload() {
         console.log(newdata[0].text)
         const newdatadict = {}
         for (list of newdata) {
-          newdatadict[list.title] = list.text
+          newdatadict[list.title] = list.text.split('<span class=\"in')
         }
+        console.log(olddata)
+        console.log(newdata)
         for (list of Object.keys(olddatadict)) {
           if (!Object.keys(newdatadict).includes(list)) {
             diffs += '\n- list: ' + list
@@ -3186,8 +3188,6 @@ function reload() {
           if (!Object.keys(olddatadict).includes(list)) {
             diffs += '\n+ list: ' + list
           } else {
-            const olddatalist = olddatadict[list].split('<span class=\"in')
-            const newdatalist = newdatadict[list].split('<span class=\"in')
             let i = 0
             for (task of newdatalist) {
               if (!olddatalist.includes(task)) {
