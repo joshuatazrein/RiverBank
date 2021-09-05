@@ -3153,15 +3153,28 @@ function reload() {
           newdatadict[list.title] = list.text
         }
         console.log(olddatadict, newdatadict);
-        // for (list in olddata) {
-        //   if (!Object.keys(newdata).includes(list.title)) {
-        //     console.log('List "' + list.title + '" was deleted.');
-        //   } else {
-        //     for (task in list.text.split('<span')) {
-
-        //     }
-        //   }
-        // }
+        for (list of Object.keys(olddata)) {
+          if (!Object.keys(newdata).includes(list)) {
+            console.log('- list: ' + list);
+          } else {
+            for (task in olddata[list].split('<span')) {
+              if (!newdata[list].includes(task)) {
+                console.log('- task: ' + task.slice(task.search('>')))
+              }
+            }
+          }
+        }
+        for (list of Object.keys(newdata)) {
+          if (!Object.keys(olddata).includes(list)) {
+            console.log('+ list: ' + list);
+          } else {
+            for (task in newdata[list].split('<span class=\"in')) {
+              if (!olddata[list].includes(task)) {
+                console.log('+ task: ' + task.slice(task.search('>')))
+              }
+            }
+          }
+        }
         data = JSON.parse(xhr.responseText)
         reload2()
       }
