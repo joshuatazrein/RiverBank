@@ -3161,7 +3161,7 @@ function reload() {
         const olddata = data.flop.concat([{'title':'pop', 'text':data.pop}])
         const olddatadict = {}
         for (list of olddata) {
-          $('#test').html(olddata)
+          $('#test').html(list.text)
           olddatadict[list.title] = $('#test').children().filter(
             '.in').toArray()
         }
@@ -3171,7 +3171,7 @@ function reload() {
         console.log(newdata[0].text)
         const newdatadict = {}
         for (list of newdata) {
-          $('#test').html(olddata)
+          $('#test').html(list.text)
           newdatadict[list.title] = $('#test').children().filter(
             '.in').toArray()
         }
