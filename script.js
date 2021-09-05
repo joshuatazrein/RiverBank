@@ -258,6 +258,7 @@ function loadList(saving) { //updates the list display
   $(loads[loadedlist]).removeClass('unselected')
   $(loads[loadedlist]).addClass('selected')
   $('#flop').html(data.flop[loadedlist].text)
+  updateSpanDrags()
   $('.taskselect').removeClass('taskselect')
   if (saving != false) {
     save() 
@@ -2734,7 +2735,6 @@ function clicked(ev) {
   } else {
     select()
   }
-  alert(ev.target)
 }
 
 function taskAbove() {
