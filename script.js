@@ -3142,14 +3142,14 @@ function reload() {
         console.log('Diffs:');
         const olddata = data.flop.concat([{'title':'pop', 'text':data.pop}])
         const olddatadict = {}
-        for (list in olddata) {
+        for (list of olddata) {
           olddatadict[list.title] = list.text
         }
         const responsejson = JSON.parse(xhr.responseText)
         const newdata = responsejson.flop.concat(
           [{'title':'pop', 'text':responsejson.pop}])
         const newdatadict = {}
-        for (list in newdata) {
+        for (list of newdata) {
           newdatadict[list.title] = list.text
         }
         console.log(olddatadict, newdatadict);
