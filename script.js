@@ -2589,7 +2589,6 @@ function setTask(type) {
 }
 
 function clicked(ev) {
-  alert('clicked')
   // on revert drags on mobile
   flopscrollsave = undefined
   $('#flop').removeClass('greyedout')
@@ -2602,7 +2601,6 @@ function clicked(ev) {
   }
   $(document).scrollTop(0); // fixes weird shit
   $('nav').hide()
-  console.log(ev.target);
   if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
     return
   } else if ($(ev.target).hasClass('mobhandle')) {
