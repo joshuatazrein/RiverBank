@@ -311,6 +311,7 @@ textarea {
 
 textarea.selected, textarea.unselected {
   width: calc(100% - 10px);
+  height: 1em;
   margin: 0 5px;
   display: inline-block;
   font: 100% var(--font), serif;
@@ -578,6 +579,9 @@ span.weblink, span.deadline {
   }
   #listcontainer {
     color: var(--textcolor);
+  }
+  button.opts {
+    min-width: 0px;
   }
   .floplist, .poplist {
     width: 100%;
