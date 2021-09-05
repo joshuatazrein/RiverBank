@@ -2723,15 +2723,15 @@ function clicked(ev) {
   } else if (getFrame($(ev.target)) && $(ev.target).hasClass('in')) {
     // select allowable elements
     select(ev.target, false)
-  } else if (!isSubtask($(ev.target)) && ev.target.tagName == 'SPAN') {
+  } else if ($(ev.target).attr('id') == 'searchbar') {
+    select()
+    // nothing; don't unselect
+  } else if (!isSubtask($(ev.target))) {
     // select parents of 
     select($(ev.target).parent(), false)
     if ($(ev.target).hasClass('mobhandle')) {
       context(ev, true)
     }
-  } else if ($(ev.target).attr('id') == 'searchbar') {
-    select()
-    // nothing; don't unselect
   } else {
     select()
   }
