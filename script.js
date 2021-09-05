@@ -584,6 +584,7 @@ function reset() {
 }
 
 function uploadData(reloading) {  
+  console.log('uploading');
   if (JSON.stringify(data) == prevupload) {    
     console.log('identical');
     return
@@ -596,7 +597,7 @@ function uploadData(reloading) {
         datastr: JSON.stringify(data),
       }, function(data, status, xhr) {
         uploading = false
-        console.log('*** UPLOADING ***')
+        console.log('*** UPLOADED ***')
         diffsLog(prevupload, xhr.responseText)
         prevupload = xhr.responseText
         if (reloading == true) reload() // reloads page
