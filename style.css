@@ -317,11 +317,10 @@ textarea {
 
 textarea.selected, textarea.unselected {
   width: calc(100% - 10px);
-  height: 1em;
+  height: calc(1em + 5px);
   margin: 0 5px;
   display: inline-block;
   font: 100% var(--font), serif;
-  line-height: 1em;
   font-weight: bold;
   background-color: inherit;
   border: none;

@@ -323,33 +323,27 @@ function updateSizes() {
     }
     $(list).css('font-size', fontsize + 'px')
   }
-  try {
-    // fix context menu for mobile
-    if (window.innerWidth < 600) {
-      $('.dropdown-item').toArray().forEach((x) => {
-        $(x).text($(x).text().replace(/\s\((.*)\)/, ''))
-      })
-    }
-    // updates the text sizes of each list
-    let height = 0
-    $('#texttest').css('font-family', 'var(--font), serif')
-    $('#texttest').css('font-weight', 'bold')
-    $('#texttest').css('word-wrap', 'break-word')
-    for (list of $('#loads').children()) {
-      $('#texttest').css('font-size', $(list).css('font-size'))
-      $('#texttest').html($(list).val())
-      if ($(list).val() == '') $('#texttest').html('&nbsp;')
-      $('#texttest').css('width', $(list).width() + 'px')      
-      const fontsize = $(list).css('font-size')
-      if ($('#texttest').height() > 
-        Number(fontsize.slice(0, fontsize.length - 2))) {
-        $(list).css('height', $('#texttest').height() + 'px')
-      }
-    }
-    $('#texttest').css('font-family', '')
-    $('#texttest').css('font-size', '')
-    $('#texttest').css('font-weight', '')
-  } catch (err) {  }
+  // fix context menu for mobile
+  if (window.innerWidth < 600) {
+    $('.dropdown-item').toArray().forEach((x) => {
+      $(x).text($(x).text().replace(/\s\((.*)\)/, ''))
+    })
+  }
+  // updates the text sizes of each list
+  let height = 0
+  $('#texttest').css('font-family', 'var(--font), serif')
+  $('#texttest').css('font-weight', 'bold')
+  $('#texttest').css('word-wrap', 'break-word')
+  for (list of $('#loads').children()) {
+    $('#texttest').css('font-size', $(list).css('font-size'))
+    $('#texttest').html($(list).val())
+    if ($(list).val() == '') $('#texttest').html('&nbsp;')
+    $('#texttest').css('width', $(list).width() + 'px')      
+    $(list).css('height', $('#texttest').height() + 'px')
+  }
+  $('#texttest').css('font-family', '')
+  $('#texttest').css('font-size', '')
+  $('#texttest').css('font-weight', '')
 }
 
 // picks a new loadlist
@@ -1777,8 +1771,10 @@ function editTask() {
       selected.val('• ' + selected.val())
     }
     updateHeight()
-    selected.blur()
-    selected.focus() // for mobile i guess
+    setTimeout(function () {
+      selected.focus()
+      selected.click()
+    }, 300)
   }
 }
 
@@ -2248,7 +2244,11 @@ function setStyle(style) {
 }
 
 function context(e, mobile) {  
-  if (selected != undefined && selected[0].tagName == 'TEXTAREA') {
+  justclicked = true
+  setTimeout(function () { justclicked = false }, 300)
+  if (
+    selected != undefined && 
+    selected[0].tagName == 'TEXTAREA') {
     saveTask()
   }
   let target = e.target
@@ -2555,10 +2555,10 @@ function clickoff(ev) {
       context(ev, true)
     }
   }
-  if ($(ev.target).hasClass('dropdown-item')) {
+  if ($(ev.target).hasClass('dropdown-item') && !justclicked) {
     eval($(ev.target).attr('function'))
-    $('nav').hide()
   }
+  if (!justclicked) $('nav').hide()
 }
 
 function clicked(ev) {
@@ -2861,7 +2861,7 @@ function keycomms(evt) {
       selected.prev().remove()
       const taskabove = taskAbove()
       selected.remove()
-      select(taskabove)
+      select(taskabove, true)
     } else {
       // select current task if cancelling
       saveTask()
@@ -3144,7 +3144,6 @@ function reload() {
 }
 
 function reload2() {
-  // reselect old select
   let selectframe, selectindex
   if (selected && selected[0].tagName == 'SPAN') {
     selectframe = getFrame(selected)
@@ -3152,15 +3151,14 @@ function reload2() {
   } else if (selected && getFrame(selected)) {
     selectframe = getFrame(selected)
   }
-  const oldscroll = [$('#flop').scrollTop(), $('#pop').scrollTop()]
   $('#pop').empty()
   $('#flop').empty()
   $('#loads').empty()
-  loadpage(false, oldscroll, [selectframe, selectindex])
+  loadpage(false, [selectframe, selectindex])
   $(':focus').blur()
 }
 
-function loadpage(setload, oldscroll, oldselect) {
+function loadpage(setload, oldselect) {
   // right after signing in
   $('#username').text(getCookie('user'))
   if (setload != false) {
@@ -3247,17 +3245,20 @@ function loadpage(setload, oldscroll, oldselect) {
   clean()
   updatedeadlines()
   updateSpanDrags()
-  if (oldscroll) { 
-    $('#flop').scrollTop(oldscroll[0]) 
-    select($(dateToHeading(stringToDate('0d'))), true, false)
-  }
   if (oldselect) {    
     if (oldselect[1])
       select(oldselect[0].find('span.in').toArray()[oldselect[1]])
     else if (oldselect[0])
       select(oldselect[0])
   } else {
-    select($(dateToHeading(stringToDate('0d'))), true, false)
+    select()
+    select($(dateToHeading(stringToDate('0d'))), false)
+    $('#pop').scrollTop(0)
+    const scrolllocation = selected.offset().top - 
+      $('#pop').offset().top - 30
+    $('#pop').animate({
+      scrollTop: scrolllocation
+    }, 500)
   }
 }
 
