@@ -22,6 +22,7 @@ var copieditem
 var prevupload
 var flopscrollsave
 var popscrollsave
+var dragtimer
 var dropabove = false
 var dropinside = false
 var linestarts = {
@@ -461,8 +462,7 @@ function save(undo) {
   // clean up styling
   $('span.in:visible').attr('style', '')
   clean()
-  updatedeadlines()
-  updateSpanDrags()
+  updatedeadlines() // updateSpanDrags() called in updatedeadlines
   data = JSON.parse(JSON.stringify(newdata))
   $(document).scrollTop(0) // fixes scroll
   // backup data to the server after setting localstorage data
@@ -1150,6 +1150,7 @@ function updatedeadlines() {
       $($('#loads').children()[list]).remove()
     }
   }
+  updateSpanDrags()
 }
 
 function updateSpanDrags() {
@@ -1197,8 +1198,6 @@ function updateSpanDrags() {
     $('span.in').attr('draggable', 'true')
   }
 }
-
-var dragtimer
 
 function mobileDragOver(event) {
   const timertime = 3
