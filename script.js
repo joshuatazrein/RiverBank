@@ -583,23 +583,28 @@ function reset() {
   }
 }
 
-function uploadData(reloading) {  if (JSON.stringify(data) == prevupload) {    return
+function uploadData(reloading) {  
+  if (JSON.stringify(data) == prevupload) {    
+    return
   }
   // uploads data to server
-  if (!offlinemode) {
+  if (navigator.onLine && !offlinemode) {
     if (uploading == false) {
       uploading = true
       $.post("upload.php", {
         datastr: JSON.stringify(data),
       }, function(data, status, xhr) {
-        prevupload = xhr.responseText
+        prevupload = JSON.stringify(data)
         uploading = false
+        console.log('*** UPLOADING ***')
+        diffsLog(JSON.stringify(data), xhr.responseText)
         if (reloading == true) reload() // reloads page
       });
     }
   } else {
     uploading = false
-    // offline mode    localStorage.setItem('data', JSON.stringify(data))
+    // offline mode    
+    localStorage.setItem('data', JSON.stringify(data))
     prevupload = JSON.stringify(data)
     if (reloading == true) reload() // reloads page
   }
@@ -3110,8 +3115,9 @@ function uploadData(reloading) {
   if (JSON.stringify(data) == prevupload) {    return
   }
   // uploads data to server
-  if (!offlinemode) {
-    if (uploading == false) {      uploading = true
+  if (navigator.onLine && !offlinemode) {
+    if (uploading == false) {      
+      uploading = true
       $.post("upload.php", {
         datastr: JSON.stringify(data),
       }, function(data, status, xhr) {
@@ -3129,26 +3135,68 @@ function uploadData(reloading) {
   }
 }
 
-function adaptivelog(string) {
-  // either logs or alerts depending on mobile or desktop
-  if (window.innerWidth < 600) {
-    alert(string)
-  } else {
-    console.log(string)
+function diffsLog(oldString, newString) {
+  // log the diffs
+  let diffs = 'Diffs:'
+  const initialjson = JSON.parse(oldString)
+  const olddata = initialjson.flop.concat(
+    [{'title':'pop', 'text':initialjson.pop}])
+  const olddatadict = {}
+  for (list of olddata) {
+    $('#test').html(list.text)
+    olddatadict[list.title] = $('#test').find('span.in').toArray().map(
+      (x) => { return stripChildren($(x)) })
   }
-}
-
-function diffsFormat(task) {
-  const taskslice = task.substring(task.search('>') + 1, task.length - 7)
-  const classes = task.substring(task.search('class=\"'), 
-    task.substring(task.search('class =\"')).search('\"')).replace(
-    ' ui-draggable', '').replace(' ui-droppable', '')
-  const styles = task.substring(task.search('style'), task.search('>') - 1)
-  return '(' + classes + ', ' + styles + ') ' + taskslice
+  const responsejson = JSON.parse(newString)
+  const newdata = responsejson.flop.concat(
+    [{'title':'pop', 'text':responsejson.pop}])
+  console.log(newdata[0].text)
+  const newdatadict = {}
+  for (list of newdata) {
+    $('#test').html(list.text)
+    newdatadict[list.title] = $('#test').find('span.in').toArray().map(
+      (x) => { return stripChildren($(x)) })
+  }
+  console.log(olddatadict)
+  console.log(newdatadict)
+  for (list of Object.keys(olddatadict)) {
+    if (!Object.keys(newdatadict).includes(list)) {
+      diffs += '\n- list: ' + list
+    } else {
+      for (task of olddatadict[list]) {
+        if (!newdatadict[list].includes(task)) {
+          diffs += '\n- task in ' + list + ': ' + task
+        }
+      }
+    }
+  }
+  for (list of Object.keys(newdatadict)) {
+    if (!Object.keys(olddatadict).includes(list)) {
+      diffs += '\n+ list: ' + list
+    } else {
+      let i = 0
+      for (task of newdatadict[list]) {
+        if (!olddatadict[list].includes(task)) {
+          diffs += '\n+ task in ' + list + ': ' + task
+        } else if (
+          olddatadict[list][i] != task &&
+          olddatadict[list][olddatadict[list].indexOf(task) - 1] !=
+            newdatadict[list][i - 1] && 
+          olddatadict[list][olddatadict[list].indexOf(task) + 1] !=
+            newdatadict[list][i + 1]) {
+          // moved tasks have different befores and afters; hack
+          // to make so that it doesn't screw up on duplicate text
+          diffs += '\nmoved task in ' + list + ': ' + task
+        }
+        i ++
+      }
+    }
+  }
+  console.log(diffs)
 }
 
 function reload() {
-  if (offlinemode) {
+  if (!navigator.onLine || offlinemode) {
     // skip upload
     data = JSON.parse(localStorage.getItem('data'))
     reload2()
@@ -3156,61 +3204,7 @@ function reload() {
     $.post(
       'users/' + getCookie('fname') + '.json', 
       function (datastr, status, xhr) {
-        // log the diffs
-        let diffs = 'Diffs:'
-        const olddata = data.flop.concat([{'title':'pop', 'text':data.pop}])
-        const olddatadict = {}
-        for (list of olddata) {
-          $('#test').html(list.text)
-          olddatadict[list.title] = $('#test').find('span.in').toArray().map(
-            (x) => { return stripChildren($(x)) })
-        }
-        const responsejson = JSON.parse(xhr.responseText)
-        const newdata = responsejson.flop.concat(
-          [{'title':'pop', 'text':responsejson.pop}])
-        console.log(newdata[0].text)
-        const newdatadict = {}
-        for (list of newdata) {
-          $('#test').html(list.text)
-          newdatadict[list.title] = $('#test').find('span.in').toArray().map(
-            (x) => { return stripChildren($(x)) })
-        }
-        console.log(olddatadict)
-        console.log(newdatadict)
-        for (list of Object.keys(olddatadict)) {
-          if (!Object.keys(newdatadict).includes(list)) {
-            diffs += '\n- list: ' + list
-          } else {
-            for (task of olddatadict[list]) {
-              if (!newdatadict[list].includes(task)) {
-                diffs += '\n- task in ' + list + ': ' + task
-              }
-            }
-          }
-        }
-        for (list of Object.keys(newdatadict)) {
-          if (!Object.keys(olddatadict).includes(list)) {
-            diffs += '\n+ list: ' + list
-          } else {
-            let i = 0
-            for (task of newdatadict[list]) {
-              if (!olddatadict[list].includes(task)) {
-                diffs += '\n+ task in ' + list + ': ' + task
-              } else if (
-                olddatadict[list][i] != task &&
-                olddatadict[list][olddatadict[list].indexOf(task) - 1] !=
-                  newdatadict[list][i - 1] && 
-                olddatadict[list][olddatadict[list].indexOf(task) + 1] !=
-                  newdatadict[list][i + 1]) {
-                // moved tasks have different befores and afters; hack
-                // to make so that it doesn't screw up on duplicate text
-                diffs += '\nmoved task in ' + list + ': ' + task
-              }
-              i ++
-            }
-          }
-        }
-        adaptivelog(diffs)
+        diffsLog(JSON.stringify(data), xhr.responseText)
         data = JSON.parse(xhr.responseText)
         reload2()
       }

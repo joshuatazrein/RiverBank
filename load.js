@@ -121,14 +121,16 @@ function resetCookies() {
 
 function load() {
   try {
-    // test for internet connection
-    const xml = new XMLHttpRequest()
-    xml.open(
-      'GET', 
-      'users/testfile.json', 
-      false
-    )
-    xml.send()
+    if (navigator.onLine) {
+      // test for file mode or not
+      const xml = new XMLHttpRequest()
+      xml.open(
+        'GET', 
+        'users/testfile.json', 
+        false
+      )
+      xml.send()
+    }
   } catch (err) {
     console.log('offline mode');
     offlinemode = true;
