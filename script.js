@@ -2,7 +2,7 @@
 var loadedlist
 var selected
 var focused
-var dragsenabled = false
+var dragsenabled = true
 var inprogress
 var time
 var pause
@@ -149,15 +149,16 @@ function dropList(evt) {
 function toggledrags(saving) {
   loads = $('#loads').children().toArray()
   if (dragsenabled === true) {
+    console.trace()
     loads.forEach((i) => {
       i.setAttribute('draggable', 'false')
     })
     dragsenabled = false
-    loads[loadedlist].focus()
     const oldval = $(loads[loadedlist]).val()
     $(loads[loadedlist]).val('')
     $(loads[loadedlist]).val(oldval)
     if (saving != false) save()
+    setTimeout(function () { loads[loadedlist].focus() }, 300)
   } else {
     loads.forEach((x) => {
       $(x).attr('draggable', 'true')
@@ -176,13 +177,14 @@ function toggledrags(saving) {
 }
 
 function dragsoff(saving) {
-  if (dragsenabled === true) {
+  console.log('dragsoff', dragsenabled);
+  if (dragsenabled == true) {
     toggledrags(saving)
   }
 }
 
 function dragson(saving) {
-  if (dragsenabled === false) {
+  if (dragsenabled == false) {
     toggledrags(saving)
   }
 }
@@ -330,6 +332,19 @@ function updateSizes() {
       $(x).text($(x).text().replace(/\s\((.*)\)/, ''))
     })
   }
+  for (list of $('#loads').children()) {
+    console.log($(list).val().length * 
+      ($(list).css('font-size').slice(0, 
+      $(list).css('font-size').length - 2) / 2)) 
+    if ($(list).width() < $(list).val().length * 
+      ($(list).css('font-size').slice(0, 
+      $(list).css('font-size').length - 2) / 2)) {
+        console.log($(list).text(), 'longer');
+        $(list).css('overflow-y', 'scroll')
+    } else {
+      $(list).css('overflow-y', 'hidden')
+    }
+  }
   // updates the text sizes of each list
   // let height = 0
   // $('#texttest').css('font-family', 'var(--font), serif')
@@ -420,6 +435,21 @@ function clean() {
     children.forEach((x) => {
       $(heading).after($(x))
     })
+  }
+  // clean empty lists
+  const loadlist = $('#loads').children().toArray()
+  for (list in loadlist) {
+    $('#test').html(data.flop[list].text)
+    // clears out empty lists
+    if (
+      $(loadlist[list]).val().length == 0 &&
+      $('#test').children().filter('.in').length == 0 &&
+      loadedlist != list
+    ) {
+      console.log('clearing empty list')
+      data.flop.splice(list, 1)
+      $($('#loads').children()[list]).remove()
+    }
   }
 }
 
@@ -1063,7 +1093,9 @@ function updatedeadlines() {
       const heading = dateToHeading(stringToDate(date), false)
       const duedate = createBlankTask()
       // take out deadline
-      duedate.text(text.slice(0, index) + text.slice(endindex))
+      duedate.text('> ' + 
+        text.slice(0, index).replace(/^•\s/, '').replace(/^\-\s/, '') + 
+        text.slice(endindex))
       duedate.addClass('duedate')
       duedate.removeClass('in')
       $(heading).after(duedate)
@@ -1091,17 +1123,6 @@ function updatedeadlines() {
   }
   if (!$('#pop').children().filter('.buffer')[0]) {
     $('#pop').append('<span class="buffer" style="height:90%"></span>')
-  }
-  for (list in $('#loads').children().toArray()) {
-    // clears out empty lists
-    if (
-      $($('#loads').children()[list]).val() == '' &&
-      data.flop[list].text == '' &&
-      loadedlist != list
-    ) {
-      data.flop.splice(list, 1)
-      $($('#loads').children()[list]).remove()
-    }
   }
   updateSpanDrags()
 }
@@ -1566,55 +1587,57 @@ function select(el, scroll, animate) {
       if (!selected.is(':visible') && getHeading(selected)) {
         togglefold($(getHeading(selected, true)))
       }
-      // only execute if not clicked
-      parent = getFrame(selected)
-      const oldscroll = parent.scrollTop()
-      let scrolltime
-      if (animate != false) {
-        scrolltime = 300
-      } else {
-        scrolltime = 0
-      }
-      parent.stop(true) // clear queue
-      if (!selected.hasClass('dateheading') && !isHeading(selected)) {
-        if (getHeading(selected) &&
-          Number(getHeading(selected).offset().top) + parent.height() / 2 >
-          Number(selected.offset().top)) {
-          // scroll to heading
+      if (getFrame(selected)) {
+        // only execute if not clicked
+        parent = getFrame(selected)
+        const oldscroll = parent.scrollTop()
+        let scrolltime
+        if (animate != false) {
+          scrolltime = 300
+        } else {
+          scrolltime = 0
+        }
+        parent.stop(true) // clear queue
+        if (!selected.hasClass('dateheading') && !isHeading(selected)) {
+          if (getHeading(selected) &&
+            Number(getHeading(selected).offset().top) + parent.height() / 2 >
+            Number(selected.offset().top)) {
+            // scroll to heading
+            const scrolllocation = Number(
+              oldscroll + 
+              getHeading(selected).offset().top) -
+              Number(getFrame(selected).offset().top)
+            parent.animate({
+              scrollTop: scrolllocation
+            }, scrolltime)
+          } else {
+            // if more than halfway down the page
+            const scrolllocation = Number(
+              oldscroll + 
+              selected.offset().top) -
+              Number(parent.offset().top) -
+              parent.height() / 2
+            parent.animate({
+              scrollTop: scrolllocation
+            }, scrolltime)
+          }
+        } else if (selected.hasClass('dateheading')) {
           const scrolllocation = Number(
             oldscroll + 
-            getHeading(selected).offset().top) -
+            selected.prev().offset().top) -
             Number(getFrame(selected).offset().top)
           parent.animate({
             scrollTop: scrolllocation
           }, scrolltime)
-        } else {
-          // if more than halfway down the page
+        } else if (isHeading(selected)) {
           const scrolllocation = Number(
             oldscroll + 
             selected.offset().top) -
-            Number(parent.offset().top) -
-            parent.height() / 2
+            Number(getFrame(selected).offset().top)
           parent.animate({
             scrollTop: scrolllocation
           }, scrolltime)
         }
-      } else if (selected.hasClass('dateheading')) {
-        const scrolllocation = Number(
-          oldscroll + 
-          selected.prev().offset().top) -
-          Number(getFrame(selected).offset().top)
-        parent.animate({
-          scrollTop: scrolllocation
-        }, scrolltime)
-      } else if (isHeading(selected)) {
-        const scrolllocation = Number(
-          oldscroll + 
-          selected.offset().top) -
-          Number(getFrame(selected).offset().top)
-        parent.animate({
-          scrollTop: scrolllocation
-        }, scrolltime)
       }
     }
   } else if ($(el).parent().attr('id') == 'context-menu') {
@@ -1654,7 +1677,7 @@ function isSubtask(el) {
   // tests inline spans until it gets one, otherwise returns true
   for (lineinner of [
     'link', 'italic', 'bold', 'bold-italic', 'deadline', 'weblink', 'timing',
-    'mobhandle'
+    'mobhandle', 'faketiming'
   ]) {
     if (el.hasClass(lineinner) == true) {
       return false
@@ -2558,6 +2581,7 @@ function clicked(ev) {
     }
   } else if ($(ev.target).hasClass('listtitle')) {
     if (window.innerWidth < 600) {
+      ev.preventDefault()
       $(':focus').blur()
       dragson()
     }
@@ -2661,9 +2685,9 @@ function clicked(ev) {
   } else if ($(ev.target).hasClass('deadline') == true) {
     select(dateToHeading(stringToDate(
       $(ev.target).text().slice(1))), true)
-  } else if ($(ev.target).hasClass('duedate') == true) {
+  } else if ($(ev.target).hasClass('duedate')) {
     // jump to deadline
-    $('#searchbar').val(stripChildren($(ev.target)))
+    $('#searchbar').val(stripChildren($(ev.target)).slice(2))
     search('deadline')
   } else if (getFrame($(ev.target)) && $(ev.target).hasClass('in')) {
     // select allowable elements
@@ -2849,6 +2873,8 @@ function keycomms(evt) {
     select(dateToHeading(stringToDate('0d')), true)
   } else if (evt.key == 'f' && evt.ctrlKey) {
     $('#searchbar').focus()
+  } else if (evt.key == 'h' && evt.ctrlKey) {
+    togglecollapse()
   } else if (evt.key == 'Enter' && $(':focus').attr('id') ==
     'searchbar') {
     evt.preventDefault()
@@ -2957,7 +2983,7 @@ function keycomms(evt) {
   } else if (selected != undefined && selected[0].tagName !=
     'TEXTAREA') {
     // console.log(evt.code);
-    if (evt.key == 'Backspace') {
+    if (evt.key == 'Backspace' && $(':focus').attr('id') != 'searchbar') {
       deleteTask()
     } else if (evt.code == 'KeyI' && evt.altKey) {
       toggleImportant()
@@ -3090,7 +3116,6 @@ function uploadData(reloading) {
     console.log('identical');
     return
   }
-  // uploads data to server
   if (navigator.onLine && !offlinemode) {
     if (uploading == false) {
       uploading = true
@@ -3105,8 +3130,16 @@ function uploadData(reloading) {
       });
     }
   } else {
+    if (!navigator.onLine && !offline) {
+      // if it's offline save that
+      alert('Connection lost; saving locally')
+      offline = true
+    } else if (navigator.onLine && offline) {
+      reload()
+      return
+    }
     uploading = false
-    // offline mode    
+    // offline mode
     localStorage.setItem('data', JSON.stringify(data))
     prevupload = JSON.stringify(data)
     if (reloading == true) reload() // reloads page
@@ -3179,6 +3212,16 @@ function reload() {
     data = JSON.parse(localStorage.getItem('data'))
     reload2()
   } else {
+    if (navigator.onLine && offline) {
+      // upload data once navigator comes online
+      const doupload = confirm('Connection detected; upload local data?\n' + 
+      '(overwrites changes from other devices)')
+      if (doupload) {
+        offline = false
+        uploadData(true)
+        return
+      }
+    }
     console.log('--- download started ---');
     $.post(
       'users/' + getCookie('fname') + '.json', 

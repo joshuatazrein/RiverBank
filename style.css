@@ -551,8 +551,13 @@ span.weblink, span.deadline {
   padding: 2px 4px;
 }
 
-#help span.command {
-  border-bottom: 1px solid grey;
+#help span.command, #help span.h2 {
+  border-bottom: 1px solid var(--bdcolor);
+}
+
+#help .h1 {
+  color: var(--select);
+  font-weight: bold;
 }
 
 #help span.left, #help span.right {
