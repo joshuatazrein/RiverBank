@@ -148,7 +148,6 @@ function dropList(evt) {
 function toggledrags(saving) {
   loads = $('#loads').children().toArray()
   if (dragsenabled === true) {
-    console.trace()
     loads.forEach((i) => {
       i.setAttribute('draggable', 'false')
     })
@@ -156,14 +155,15 @@ function toggledrags(saving) {
     const oldval = $(loads[loadedlist]).val()
     $(loads[loadedlist]).val('')
     $(loads[loadedlist]).val(oldval)
-    if (saving != false) save()
-    setTimeout(function () { loads[loadedlist].focus() }, 300)
+    if (saving != false) {
+      save()
+      setTimeout(function () { loads[loadedlist].focus() }, 300)
+    }
   } else {
     loads.forEach((x) => {
       $(x).attr('draggable', 'true')
     })
     dragsenabled = true
-    $(':focus').blur()
     $(document).scrollTop(0); // fixes weird shit
     if ($(loads[loadedlist]).val().slice(0, 2) == '- ') {
       $(loads[loadedlist]).addClass('sublist')
@@ -171,6 +171,7 @@ function toggledrags(saving) {
       $(loads[loadedlist]).removeClass('sublist')
     }
     if (saving != false) save()
+    $(':focus').blur()
   }
   updateSizes()
 }
@@ -265,6 +266,8 @@ function loadList(saving) { //updates the list display
   $('.taskselect').removeClass('taskselect')
   if (saving != false) {
     save() 
+  } else {
+    $(loads[loadedlist]).blur()
   }
 }
 
@@ -2240,17 +2243,14 @@ function toggleButs() {
   if (data.hidebuts == 'true') {
     $('.butbar').show()
     $('#focusbut').show() // just in case it's moved in focusmode
-    $('#editbuts').append($('#optionsbut'))
-    $('#optionsbut').css('margin', '')
+    $('#typebut').show()
     data.hidebuts = 'false'
     $(':root').css('--butheight', $('#flopbuts').height() + 'px')
   } else {
-    $('.butbar').hide()
+    $('.butbar:not(#editbuts)').hide()
+    $('#typebut').hide()
     $('#focusbut').hide()
     data.hidebuts = 'true'
-    $('#username').after($('#optionsbut'))
-    $('#optionsbut').css('margin-left', 'calc(50% - ' +
-      String($('#optionsbut').width() / 2) + 'px)')
     $(':root').css('--butheight', '0px')
   }
   if (window.innerWidth < 600) {
@@ -2476,7 +2476,10 @@ function context(e, mobile) {
     window.innerWidth - $('#context-menu').width()) - 40)
 }
 
-function setOptions() {  $('#settype-menu').css('top', $('#typebut').offset().top)
+function setOptions() {
+  justclicked = true
+  setTimeout(function () { justclicked = false }, 300)
+  $('#settype-menu').css('top', $('#typebut').offset().top)
   $('#settype-menu').css('left', $('#typebut').offset().left)
   $('#settype-menu').show()
 }
@@ -2833,8 +2836,12 @@ function moveTask(direction) {
 }
 
 function dblclick(ev) {
-  if ($(ev.target)[0].tagName == 'TEXTAREA') return
-  if (selected.hasClass('in') && selected[0].tagName == 'P') {
+  if ($(ev.target)[0].tagName == 'TEXTAREA' && 
+    $(ev.target).hasClass('selected')) {
+    dragsoff()
+  } else if ($(ev.target)[0].tagName == 'TEXTAREA') {
+    return
+  } else if (selected.hasClass('in') && selected[0].tagName == 'P') {
     newTask()
   } else if (
     $(ev.target).hasClass('in') &&
@@ -3337,15 +3344,12 @@ function loadpage(setload, oldselect) {
   if (data.hidebuts == 'false') {
     $('.butbar').show()
     $('#focusbut').show()
-    $('#editbuts').append($('#optionsbut'))
-    $('#optionsbut').css('margin', '')
+    $('#typebut').show()
     $(':root').css('--butheight', $('#flopbuts').height() + 'px')
   } else {
-    $('.butbar').hide()
+    $('.butbar:not(#editbuts)').hide()
     $('#focusbut').hide()
-    $('#username').after($('#optionsbut'))
-    $('#optionsbut').css('margin-left', 'calc(50% - ' +
-      String($('#optionsbut').width() / 2) + 'px)')
+    $('#typebut').hide()
     $(':root').css('--butheight', '0px')
   }
   if (window.innerWidth < 600) {
@@ -3365,17 +3369,11 @@ function loadpage(setload, oldselect) {
     else if (oldselect[0])
       select(oldselect[0])
   } else {
-    select()
-    select($(dateToHeading(stringToDate('0d'))), false)
-    $('#pop').scrollTop(0)
-    const scrolllocation = selected.offset().top - 
-      $('#pop').offset().top - 30
-    setTimeout(function () {
-      $('#pop').animate({
-        scrollTop: scrolllocation
-      }, 500)
-    }, 250)
+    $('#pop').animate({
+      scrollTop: $(dateToHeading(stringToDate('0d'))).prev().offset().top - 24
+    }, 500)
   }
+  $(loads[loadedlist]).blur()
 }
 
 if (loadonstart) loadpage()
