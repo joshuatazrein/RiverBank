@@ -1547,8 +1547,12 @@ function getHeading(el, actual) {
 }
 
 function select(el, scroll, animate) {
-  if (el &&
-    $(el)[0].tagName == 'SPAN' && !isSubtask($(el))) el = $(el).parent()
+  try {
+    if (el &&
+      $(el)[0].tagName == 'SPAN' && !isSubtask($(el))) el = $(el).parent()
+  } catch (err) {
+    console.log(err)
+  }
   if (slider) removesliders() // removes sliders
   if ($(el).hasClass('buffer')) {
     select(getFrame($(el)), scroll)
