@@ -4,6 +4,14 @@ function signIn() {
   // keep prompting until they get it right
   const username = $('#username').val()
   const password = $('#password').val()
+  if ($('#username').val() == '') {
+    alert('Please enter your username.')
+    return
+  }
+  if ($('#password').val() == '') {
+    alert('Please enter your password.')
+    return
+  }
   $.post('getuser.php', {
     // trying data
     usertest: username,

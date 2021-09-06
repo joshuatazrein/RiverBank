@@ -28,13 +28,13 @@
         </div>
         <div id='signin' style='display:none;' class='centered'>
           <input id='username' placeholder="username">
-          <input id='password' type='password' placeholder="password">
+          <input id='password' type='password' placeholder="password" onkeyup='if (event.key == "Enter") signIn()'>
           <button onclick='signIn()' style='margin-top:10px;'>submit</button>
         </div>
         <div id='createaccount' style='display:none;' class='centered'>
           <input id='newusername' placeholder="new username">
           <input id='newpassword1' type='password' placeholder="new password">
-          <input id='newpassword2' type='password' placeholder="new password again">
+          <input id='newpassword2' type='password' placeholder="new password again" onkeyup='if (event.key == "Enter") checkNewUser()'>
           <button onclick='checkNewUser()' style='margin-top:10px;'>submit</button>
         </div>
       </div>
