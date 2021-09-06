@@ -2015,7 +2015,7 @@ function togglecollapse() {
 
 function togglefocus(collapse) {
   if (!focusmode) {
-    if (!selected) return
+    if (!selected) select(dateToHeading(stringToDate('0d')))
     // focus
     $('#focusbar').prepend($('#focusbut'))
     $('#searchbarcont').append($('#searchbarframe'))
