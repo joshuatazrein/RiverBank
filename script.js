@@ -3376,7 +3376,7 @@ function loadpage(setload, oldselect) {
 
 function scrollToToday() {
   $('#pop').animate({
-    scrollTop: $(dateToHeading(stringToDate('0d'))).prev().offset().top - 12
+    scrollTop: $(dateToHeading(stringToDate('0d'))).prev().position().top - 12
   }, 500)
 }
 
