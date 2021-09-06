@@ -922,11 +922,13 @@ function dateToHeading(date, saving) {
 function search(skiplinks) {
   // find all matches with the searchtext
   let searchtext = $('#searchbar').val()
-  while (searchtext.charAt(searchtext.length - 1) == ' ') {
+  if (searchtext == '') return
+  while (/\s/.test(searchtext.charAt(searchtext.length - 1))) {
     // chop off end spaces
     searchtext = searchtext.slice(0, searchtext.length - 1)
   }
-  searchtext = searchtext.replace('  ', ' ');
+  searchtext = searchtext.replace(/\s\s/, ' ')
+  console.log(searchtext);
   const searches = data.flop.concat([{
     'title': 'pop',
     'text': data.pop
@@ -946,9 +948,13 @@ function search(skiplinks) {
           // test for links
           continue
         } else if (skiplinks == 'deadline' &&
-          !stripChildren($(child)).includes('>') || 
+          (!stripChildren($(child)).includes('>') || 
           stripChildren($(child)).replace(searchtext, '').replace(
-            /\s•/, '').replace(/\s\-/, '').split(' ').length > 1) {
+            /•\s/, '').replace(/\-\s/, '').split(' ').filter((x) => {
+              return x != ''
+            }).length > 1)) {
+          console.log(stripChildren($(child)).replace(searchtext, '').replace(
+            /•\s/, '').replace(/\s\-/, '').split(' '))
           // finds only deadlines with exact match
           continue
         } else {
