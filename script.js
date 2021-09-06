@@ -1551,7 +1551,7 @@ function select(el, scroll, animate) {
     if (el &&
       $(el)[0].tagName == 'SPAN' && !isSubtask($(el))) el = $(el).parent()
   } catch (err) {
-    console.log(err)
+    console.trace()
     return
   }
   if (slider) removesliders() // removes sliders
