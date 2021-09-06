@@ -2,10 +2,12 @@ var resetstring = {"flop":[{"title":"inbox","text":"<span class=\"in h1\" ondrag
 
 function signIn() {
   // keep prompting until they get it right
+  const username = $('#username').val()
+  const password = $('#password').val()
   $.post('getuser.php', {
     // trying data
-    usertest: $('#username').val(),
-    pwtest: $('#password').val(),
+    usertest: username,
+    pwtest: password,
   }, function(dataval, status, xhr) {
     if (xhr.responseText == 'FAIL') {
       // fail
