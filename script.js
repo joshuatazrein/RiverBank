@@ -1547,20 +1547,12 @@ function getHeading(el, actual) {
 }
 
 function select(el, scroll, animate, save) {
-  try {
-    if (el &&
-      $(el)[0].tagName == 'SPAN' && !isSubtask($(el))) el = $(el).parent()
-  } catch (err) {
-    console.trace()
-    return
-  }
+  if (el &&
+    $(el)[0].tagName == 'SPAN' && !isSubtask($(el))) el = $(el).parent()
   if (slider) removesliders() // removes sliders
   if ($(el).hasClass('buffer')) {
     select(getFrame($(el)), scroll)
     return
-  }
-  if (selected && selected[0].tagName == 'TEXTAREA' && save != false) {
-    saveTask()
   }
   $(document).scrollTop(0); // fixes weird shit
   // switch selection
