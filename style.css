@@ -45,13 +45,14 @@ body {
 
 button {
   font-family: var(--butfont), monospace;
+  font-size: 16px;
   color: var(--butcolor);
   background-color: var(--butbackground);
   border-radius: 6px;
   border-width: 1px;
   border-color: var(--butborder);
   padding: 4px;
-  min-width: 24px;
+  min-width: 30px;
 }
 
 .butbar {
@@ -59,6 +60,13 @@ button {
   justify-content: center;
   flex-wrap: wrap;
   margin: 2px 0;
+}
+
+#focusbar {
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+  margin-top: 3px;
 }
 
 .flopbut {
@@ -137,6 +145,7 @@ nav {
 p.dropdown-item {
   word-wrap: break-word;
   margin: 0;
+  font-size: 20px;
 }
 
 .dropdown {
@@ -188,8 +197,7 @@ p.dropdown-item {
 
 #listcontainer > .in {
   width: 100%;
-  background-color: var(--background);
-  color: var(--textcolor);
+  color: var(--select);
 }
 
 /* PARAGRAPHS */
@@ -205,7 +213,7 @@ p.dropdown-item {
   color: var(--textcolor);
 }
 
-.floplist {
+#floplist {
   width: 50%;
   height: 100vh;
   padding: 5px;
@@ -215,7 +223,7 @@ p.dropdown-item {
   border-left: 1px solid var(--bdcolor);
 }
 
-.poplist {
+#poplist {
   width: 50%;
   height: 100vh;
   padding: 5px;
@@ -551,7 +559,7 @@ span.weblink, span.deadline {
   padding: 2px 4px;
 }
 
-#help span.command, #help span.h2 {
+#help span.command, #help span.h1 {
   border-bottom: 1px solid var(--bdcolor);
 }
 
@@ -594,14 +602,14 @@ span.weblink, span.deadline {
   button.opts {
     min-width: 0px;
   }
-  .floplist, .poplist {
+  #floplist, #poplist {
     width: 100%;
     height: 50%;
     float: none;
     clear: left;
     border-left: 1px solid var(--bdcolor);
   }
-  .floplist {
+  #floplist {
     border-bottom: 1px solid var(--bdcolor);
     border-left: 1px solid var(--bdcolor);
     border-right: none;

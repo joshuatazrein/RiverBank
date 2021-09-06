@@ -2,6 +2,7 @@
 var loadedlist
 var selected
 var focused
+var focusmode
 var dragsenabled = true
 var inprogress
 var time
@@ -25,8 +26,6 @@ var popscrollsave
 var justclicked
 var dragtimer
 var draggingtask
-var dropabove = false
-var dropinside = false
 var linestarts = {
   '# ': 'h1',
   '## ': 'h2',
@@ -1215,8 +1214,8 @@ function mobileDragOver(event) {
     // scroll flop to end
     if (popscrollsave) {
       $('#pop').scrollTop(popscrollsave)
-      $('#pop').removeClass('greyedout')
     }
+    $('#pop').removeClass('greyedout')
     popscrollsave = undefined
     flopscrollsave = $('#flop').scrollTop()
     $('#flop').addClass('greyedout')    
@@ -1233,8 +1232,8 @@ function mobileDragOver(event) {
     // scroll flop to end
     if (flopscrollsave) {
       $('#flop').scrollTop(flopscrollsave)
-      $('#flop').removeClass('greyedout')
     }
+    $('#flop').removeClass('greyedout')
     flopscrollsave = undefined
     popscrollsave = $('#pop').scrollTop()
     $('#pop').scrollTop(0)
@@ -1561,6 +1560,7 @@ function select(el, scroll, animate) {
     select(getFrame($(el)), scroll)
     return
   }
+  if (selected && selected[0].tagName == 'TEXTAREA') saveTask()
   $(document).scrollTop(0); // fixes weird shit
   // switch selection
   if (selected != undefined) {
@@ -2014,6 +2014,48 @@ function togglecollapse() {
   } else {
     $('#listcontainer').removeClass('fullwidth')
   }
+  if (focusmode) togglefocus(false) // unfocus if uncollapse
+}
+
+function togglefocus(collapse) {
+  if (!focusmode) {
+    if (!selected) return
+    // focus
+    $('#focusbar').prepend($('#focusbut'))
+    $('#searchbarcont').append($('#searchbarframe'))
+    $('#timerentcont').append($('#timerent'))
+    getFrame(selected).parent().css('width', '100vw')
+    getFrame(selected).parent().css('height', '100%')
+    getFrame(selected).parent().css('border-right', 'none')
+    getFrame(selected).parent().css('border-left', 'none')
+    console.log(getFrame(selected));
+    if (getFrame(selected).attr('id') == 'flop') {
+      // hide other thing and this' buttons
+      $('#poplist').hide()
+    } else if (getFrame(selected).attr('id') == 'pop') {
+      $('#floplist').hide()
+    }
+    $('#focusbar').show()
+    if (!collapse && !$('#leftcol').hasClass('collapsed')) { togglecollapse() }
+    focusmode = true
+  } else {
+    // unfocus
+    $('#editbuts').after($('#searchbarframe'))
+    $('#movebuts').after($('#timerent'))
+    $('#collapsebut').after($('#focusbut'))
+    getFrame(selected).parent().css('width', '')
+    getFrame(selected).parent().css('height', '')
+    getFrame(selected).parent().css('border-right', '')
+    getFrame(selected).parent().css('border-left', '')
+    if (!$('#poplist').is(':visible')) {
+      $('#poplist').show()
+    } else if (!$('#floplist').is(':visible')) {
+      $('#floplist').show()
+    }
+    $('#focusbar').hide()
+    focusmode = false
+    if (!collapse && $('#leftcol').hasClass('collapsed')) { togglecollapse() }
+  }
 }
 
 //dropping
@@ -2054,13 +2096,13 @@ function dropTask(evt, obj) {
     if (evt.metaKey == true) {
       $(el).parent().prepend(selected)
     } else {
-      $(el).before(selected)
+      $(el).after(selected)
     }
   } else if (el.tagName == 'SPAN' &&
     $(el).hasClass('in')) {
     // dropping task (according to key commands)
-    if (dropinside == true && $(evt.target).parent()[0].tagName != 'SPAN') {
-      if (dropabove == true) {
+    if (evt.altKey == true && $(evt.target).parent()[0].tagName != 'SPAN') {
+      if (evt.metaKey == true) {
         const subtasks = $(el).children().toArray().filter(
           (x) => {
             if (isSubtask($(x)) == true) return true
@@ -2075,7 +2117,7 @@ function dropTask(evt, obj) {
         $(el).append(selected)
       }
     } else {
-      if (dropabove == true) {
+      if (evt.metaKey == true) {
         $(el).before(selected)
       } else {
         $(el).after(selected)
@@ -2205,12 +2247,14 @@ function togglefold(e, saving) {
 function toggleButs() {
   if (data.hidebuts == 'true') {
     $('.butbar').show()
+    $('#focusbut').show() // just in case it's moved in focusmode
     $('#editbuts').append($('#optionsbut'))
     $('#optionsbut').css('margin', '')
     data.hidebuts = 'false'
     $(':root').css('--butheight', $('#flopbuts').height() + 'px')
   } else {
     $('.butbar').hide()
+    $('#focusbut').hide()
     data.hidebuts = 'true'
     $('#username').after($('#optionsbut'))
     $('#optionsbut').css('margin-left', 'calc(50% - ' +
@@ -2835,22 +2879,6 @@ function unfilter(update) {
   }
 }
 
-function keydown(ev) {
-  if (ev.code.includes('Meta')) {
-    dropabove = true
-  } else if (ev.code.includes('Alt')) {
-    dropinside = true
-  }
-}
-
-function keyup(ev) {
-  if (ev.code.includes('Meta')) {
-    dropabove = false
-  } else if (ev.code.includes('Alt')) {
-    dropinside = false
-  }
-}
-
 function keycomms(evt) {
   if (['Control', 'Command', 'Shift', 'Alt'].includes(evt.key)) {
     return
@@ -2873,7 +2901,9 @@ function keycomms(evt) {
     select(dateToHeading(stringToDate('0d')), true)
   } else if (evt.key == 'f' && evt.ctrlKey) {
     $('#searchbar').focus()
-  } else if (evt.key == 'h' && evt.ctrlKey) {
+  } else if (evt.code == 'KeyH' && evt.ctrlKey && evt.shiftKey) {
+    togglefocus()
+  } else if (evt.code == 'KeyH' && evt.ctrlKey) {
     togglecollapse()
   } else if (evt.key == 'Enter' && $(':focus').attr('id') ==
     'searchbar') {
@@ -3224,7 +3254,7 @@ function reload() {
     }
     console.log('--- download started ---');
     $.post(
-      'users/' + getCookie('fname') + '.json', 
+      'download.php', 
       function (datastr, status, xhr) {
         diffsLog(JSON.stringify(data), xhr.responseText)
         console.log('*** download finished ***');
@@ -3255,6 +3285,7 @@ function loadpage(setload, oldselect) {
   $('#username').text(getCookie('user'))
   if (setload != false) {
     // initial loads (not called on reloads)
+    $('#focusbar').hide()
     $('head').append(
       $("<link rel='stylesheet' type='text/css' href='" +
       data.style + "' />")
@@ -3272,11 +3303,11 @@ function loadpage(setload, oldselect) {
     $(document).on('mouseup', event, clickoff)
     $(document).on('dblclick', event, dblclick)
     $(window).resize(updateSizes)
-    $(window).keydown(keydown)
-    $(window).keyup(keyup)
-    window.addEventListener('focus', function () {      reload()
+    window.addEventListener('focus', function () {
+      reload()
     })
-    $('#container').on('mouseleave', function () {      save()
+    $('#container').on('mouseleave', function () {
+      save()
     })
   }
   if (!data.headingalign) data.headingalign = 'center'
@@ -3316,11 +3347,13 @@ function loadpage(setload, oldselect) {
   if (data.help == 'hide') $('#help').hide()
   if (data.hidebuts == 'false') {
     $('.butbar').show()
+    $('#focusbut').show()
     $('#editbuts').append($('#optionsbut'))
     $('#optionsbut').css('margin', '')
     $(':root').css('--butheight', $('#flopbuts').height() + 'px')
   } else {
     $('.butbar').hide()
+    $('#focusbut').hide()
     $('#username').after($('#optionsbut'))
     $('#optionsbut').css('margin-left', 'calc(50% - ' +
       String($('#optionsbut').width() / 2) + 'px)')
