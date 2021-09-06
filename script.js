@@ -1523,7 +1523,7 @@ function saveTask() {  // analyze format of task and create new <span> elt for i
     savetask.attr('folded', 'false') // sets heading folds
   selected.remove()
   savetask.show()
-  select(savetask, true, false, true)
+  select(savetask, true)
   let parent = selected.parent()
   while (parent[0].tagName == 'SPAN') {
     // disable drags
@@ -1546,7 +1546,7 @@ function getHeading(el, actual) {
   else if ($(heading)[0]) return $(heading)
 }
 
-function select(el, scroll, animate, save) {
+function select(el, scroll, animate) {
   if (el &&
     $(el)[0].tagName == 'SPAN' && !isSubtask($(el))) el = $(el).parent()
   if (slider) removesliders() // removes sliders
