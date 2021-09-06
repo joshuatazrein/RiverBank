@@ -919,7 +919,7 @@ function dateToHeading(date, saving) {
   return heading1
 }
 
-function search(skiplinks) {
+function search(skiplinks, deadline) {
   // find all matches with the searchtext
   let searchtext = $('#searchbar').val()
   if (searchtext == '') return
@@ -949,13 +949,12 @@ function search(skiplinks) {
           continue
         } else if (skiplinks == 'deadline' &&
           (!stripChildren($(child)).includes('>') || 
+          !stripChildren($(child)).includes(deadline) ||
           stripChildren($(child)).replace(searchtext, '').replace(
             /•\s/, '').replace(/\-\s/, '').split(' ').filter((x) => {
               return x != ''
             }).length > 1)) {
-          console.log(stripChildren($(child)).replace(searchtext, '').replace(
-            /•\s/, '').replace(/\s\-/, '').split(' '))
-          // finds only deadlines with exact match
+          // finds only deadlines with exact match to text and date
           continue
         } else {
           if (skiplinks != 'complete' && $(child).hasClass('complete')) {
@@ -2728,7 +2727,10 @@ function clicked(ev) {
   } else if ($(ev.target).hasClass('duedate')) {
     // jump to deadline
     $('#searchbar').val(stripChildren($(ev.target)).slice(2))
-    search('deadline')
+    console.log(
+      getHeading($(ev.target), true))
+    search('deadline', dateToString(stringToDate(
+      getHeading($(ev.target), true).text(), true)))
   } else if (getFrame($(ev.target)) && $(ev.target).hasClass('in')) {
     // select allowable elements
     select(ev.target, false)
