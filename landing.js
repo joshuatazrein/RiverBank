@@ -44,9 +44,10 @@ function checkNewUser() {
     alert('Please enter a password.')
     return
   }
+  const username = $('#newusername').val()
   $.post(
     'checkuser.php',
-    {usertest: $('#newusername').val()},
+    {usertest: username},
     function (val, status, xhr) {
       if (xhr.responseText == 'FAIL') {
         alert('Username taken; please try again.')
@@ -67,11 +68,13 @@ function newUser() {
     alert('Passwords do not match; please try again.')
     return
   }
+  const username = $('#newusername').val()
+  const password = $('#newpassword1').val()
   $.post(
     'setuser.php',
     {
-      usertest: $('#newusername').val(),
-      pwtest: $('#newpassword1').val()
+      usertest: username,
+      pwtest: password,
     },
     function (val, status, xhr) {
       // success
