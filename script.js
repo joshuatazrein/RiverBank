@@ -451,10 +451,6 @@ function clean() {
 
 // Storing data:
 function save(undo) {
-  if (selected && selected[0].tagName == 'TEXTAREA') {
-    saveTask()
-    return
-  }
   unfilter(false)
   if (undo == true) savedata = JSON.parse(JSON.stringify(data))
   // save data
