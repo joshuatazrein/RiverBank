@@ -3369,9 +3369,8 @@ function loadpage(setload, oldselect) {
     else if (oldselect[0])
       select(oldselect[0])
   } else {
-    $('#pop').animate({
-      scrollTop: $(dateToHeading(stringToDate('0d'))).prev().offset().top - 24
-    }, 500)
+    $('#pop').scrollTop(
+      $(dateToHeading(stringToDate('0d'))).prev().offset().top - 24)
   }
   $(loads[loadedlist]).blur()
 }
