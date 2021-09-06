@@ -64,8 +64,10 @@ function load() {
   }
   // try the current cookie (synchronous request)
   const fname = getCookie('fname')
+  console.log(fname);
   if (fname == '') {
     // no user loaded
+    alert('redirecting to welcome page')
     window.location = 'https://riverbank.app/welcome'
     return
   }
@@ -74,6 +76,7 @@ function load() {
     function (datastr, status, xhr) {
       if (xhr.responseText == '') { 
         // no file found
+        alert('redirecting to welcome page')
         window.location = 'https://riverbank.app/welcome'
         return
       } else {
