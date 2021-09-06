@@ -137,9 +137,6 @@ function dropList(evt) {
     $(loads[i]).removeClass('sublist')
     if ($(loads[i]).val().slice(0, 2) == '- ') $(loads[i]).addClass('sublist')
   }
-  if (data.hidebuts == 'true') {
-    $('.butbar').hide()
-  }
   $(':focus').blur()
   loadList()
 }
@@ -567,9 +564,9 @@ function switchUser() {
   past.setTime(
     past.getTime() - 10000000)
   past = past.toUTCString()
-  document.cookie = 'user=;expires=' + past + ';'
-  document.cookie = 'fname=;expires=' + past + ';'
-  document.cookie = 'pw=;expires=' + past + ';'
+  document.cookie = 'user=;expires=' + past + ';' + ';path=/;'
+  document.cookie = 'fname=;expires=' + past + ';' + ';path=/;'
+  document.cookie = 'pw=;expires=' + past + ';' + ';path=/;'
   location.reload()
 }
 
@@ -3377,4 +3374,14 @@ function scrollToToday() {
   }, 500)
 }
 
-if (loadonstart) loadpage()
+function resetCookies() {
+  let past = new Date()
+  past.setTime(
+    past.getTime() - 10000000)
+  past = past.toUTCString()
+  document.cookie = 'user=;expires=' + past + ';'
+  document.cookie = 'fname=;expires=' + past + ';'
+  document.cookie = 'pw=;expires=' + past + ';'
+}
+
+loadpage()

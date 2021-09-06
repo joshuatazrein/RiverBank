@@ -1,6 +1,5 @@
 var data
 var weekdaysStr
-var loadonstart
 var offlinemode
 var offline
 
@@ -22,105 +21,8 @@ function getCookie(cname) {
   return "";
 }
 
-function signIn() {
-  // keep prompting until they get it right
-  const username = prompt('Username:')
-  const password = prompt('Password:')
-  $.post('getuser.php', {
-    // trying data
-    usertest: username,
-    pwtest: password,
-  }, function(dataval, status, xhr) {
-    if (xhr.responseText == 'FAIL') {
-      // fail
-      alert('Username and password not recognized; try again.')
-      signIn()
-    } else {
-      // success
-      const inaweek = new Date();
-      inaweek.setTime(inaweek.getTime() + 604800000);
-      document.cookie = 'fname=' + xhr.responseText + '; expires=' + 
-        inaweek.toUTCString();
-      document.cookie = 'user=' + username + '; expires=' + 
-        inaweek.toUTCString();
-      document.cookie = 'pw=' + password + '; expires=' + 
-        inaweek.toUTCString();
-      $.get(
-        'users/' + xhr.responseText + '.json', 
-        function (dataval, status, xhr2) {
-          console.log(xhr2.responseText)
-          data = JSON.parse(xhr2.responseText)
-          loadpage()
-        }
-      )
-    }
-  })
-}
-
-function checkUser() {
-  const username = prompt('Enter your new username:')
-  $.post(
-    'checkuser.php',
-    {usertest: username},
-    function (val, status, xhr) {
-      if (xhr.responseText == 'FAIL') {
-        alert('That username is already taken. Please try again.')
-        checkUser()
-      } else {
-        checkPass(username)
-      }
-    }
-  )
-}
-
-function checkPass(username) {
-  // check password
-  const password = prompt('Enter your new password:')
-  const passcheck = prompt('Enter your password again:')
-  if (passcheck != password) {
-    alert('Passwords do not match; please try again.')
-    checkPass(username)
-  } else {
-    newUser(username, password)
-  }
-}
-
-function newUser(username, password) {
-  // create a new user, has passed the tests - makes file and adds to table
-  $.post(
-    'setuser.php',
-    {
-      usertest: username,
-      pwtest: password
-    },
-    function (val, status, xhr) {
-      // success
-      data = JSON.parse(JSON.stringify(resetstring))
-      const inaweek = new Date();
-      inaweek.setTime(inaweek.getTime() + 604800000);
-      document.cookie = 'fname=' + xhr.responseText + '; expires=' + 
-        inaweek.toUTCString();
-      document.cookie = 'user=' + username + '; expires=' + 
-        inaweek.toUTCString();
-      document.cookie = 'pw=' + password + '; expires=' + 
-        inaweek.toUTCString();
-      // create new file
-      loadpage();
-    }
-  )
-}
-
-function resetCookies() {
-  let past = new Date()
-  past.setTime(
-    past.getTime() - 10000000)
-  past = past.toUTCString()
-  document.cookie = 'user=;expires=' + past + ';'
-  document.cookie = 'fname=;expires=' + past + ';'
-  document.cookie = 'pw=;expires=' + past + ';'
-}
-
 function load() {
+  // tries to load current cookie's data; if not, redirects to welcome
   try {
     if (navigator.onLine) {
       // test for file mode or not (synchonous AJAX)
@@ -153,48 +55,32 @@ function load() {
         data.style + "' />")
       );
     }
-    resetCookies();
     if (data.weekdays == 'M') {
       weekdaysStr = {0:'U', 1:'M', 2:'T', 3:'W', 4:'R', 5:'F', 6:'S'}
     } else if (data.weekdays == 'Mon') {
       weekdaysStr = {0:'Sun', 1:'Mon', 2:'Tue', 3:'Wed', 4:'Thu', 5:'Fri', 
       6:'Sat'}
     }
-    loadonstart = true
+  }
+  // try the current cookie (synchronous request)
+  const fname = getCookie('fname')
+  if (fname == '') {
+    // no user loaded
+    window.location = 'https://riverbank.app/welcome'
     return
   }
-  try {
-    // try the current cookie (synchronous request)
-    const fname = getCookie('fname')
-    if (fname == '') {throw 'no user loaded'}
-    $.get(
-      'users/' + getCookie('fname') + '.json', 
-      function (datastr, status, xhr) {
-        if (xhr.responseText == '') { throw 'no user loaded' }
+  $.get(
+    'users/' + getCookie('fname') + '.json', 
+    function (datastr, status, xhr) {
+      if (xhr.responseText == '') { 
+        // no file found
+        window.location = 'https://riverbank.app/welcome'
+        return
+      } else {
         data = JSON.parse(xhr.responseText)
-        try {
-          loadpage()
-        } catch (err) {
-          setTimeout(1500, tryagain)
-        }
       }
-    )
-  } catch (err) {
-    console.log(err);
-    // there are no cookies or the cookies failed
-    const newuser = confirm('Welcome to RiverBank! Press "OK" to create a new user or "Cancel" to sign in to your account.')
-    if (!newuser) {
-      // wanting to sign in
-      signIn()
-    } else {
-      // create a new user
-      checkUser()
     }
-  }
-}
-
-function tryagain() {
-  loadpage()
+  )
 }
 
 load()

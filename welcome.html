@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<!-- trying this -->
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>RiverBank</title>
+  <script src="jquery.js"></script>
+  <script src='filesaver.js'></script> <!-- this is the extension to save a text file -->
+  <script src='timer.js'></script>
+  <link rel="shortcut icon" type='image/png' href="logo.png"/>
+  <!-- load data and append stylesheet to head-->
+  <script src='landing.js'></script>
+  <link href='default.css' rel='stylesheet' />
+  <link href='ldgstyle.css' rel='stylesheet' />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="touch-punch.js"></script>
+</head>
+<body onload='setTutorialHeight()'>
+  <div class='container' id='container'>
+    <p class='title'>&nbsp;rive<span style='letter-spacing:0'>r</span><img src='logotxt.png' id='logoimg'>bank</p>
+    <div id='welcome'>
+      <div>
+        <p>
+          <span class='h1' style='text-align:left;'>Keep it current.</span>
+          We get sucked up by the tides of tasks, thoughts, and information. RiverBank is here to help you channel all that energy into a productive flow. It's a simple process:
+          <ul>
+            <li>Store unscheduled stuff in the Bank.</li>
+            <li>Schedule stuff by dragging it into the River, which documents your past, present, and future.</li>
+          </ul>
+          Unlike most task managers, RiverBank is both a to-do list and a calendar, unifying your time into a single stream. Give it a try by creating an account below!
+        </p>
+      </div>
+      <div style='padding-top:0.5em;padding-bottom:1em;'>
+        <div class='centered' style='padding-bottom:0.5em;'>
+          <button onclick='$("#signin").hide();$("#createaccount").show();setTutorialHeight();'>create account</button>
+          <button onclick='$(createaccount).hide();$(signin).show();setTutorialHeight();'>sign in</button>
+        </div>
+        <div id='signin' style='display:none;' class='centered'>
+          <input id='username' placeholder="username">
+          <input id='password' type='password' placeholder="password">
+          <button onclick='checkSignIn()' style='margin-top:10px;'>submit</button>
+        </div>
+        <div id='createaccount' class='centered'>
+          <input id='newusername' placeholder="new username">
+          <input id='newpassword1' type='password' placeholder="new password">
+          <input id='newpassword2' type='password' placeholder="new password again">
+          <button onclick='checkNewUser()' style='margin-top:10px;'>submit</button>
+        </div>
+      </div>
+    </div>
+    <div id='tutorial'>
+      <span class='banner'>FEATURE<span style='letter-spacing:0;'>S</span></span>
+      <div class='tutorial-vid'>
+        <span class='h1'>lists</span>
+        <video controls style='width:100%;'><source  src="tutorial/new-list.m4v" type="video/mp4"></video>
+      </div>
+      <div class='tutorial-vid'>
+        <span class='h1'>tasks</span>
+        <video controls style='width:100%;'><source  src="tutorial/new-task.m4v" type="video/mp4"></video>
+      </div>
+      <div class='tutorial-vid'>
+        <span class='h1'>headings</span>
+        <video controls style='width:100%;'><source  src="tutorial/headings.m4v" type="video/mp4"></video>
+      </div>
+      <div class='tutorial-vid'>
+        <span class='h1'>subtasks</span>
+        <video controls style='width:100%;'><source  src="tutorial/subtasks.m4v" type="video/mp4"></video>
+      </div>
+      <div class='tutorial-vid'>
+        <span class='h1'>dragging</span>
+        <video controls style='width:100%;'><source  src="tutorial/drags.m4v" type="video/mp4"></video>
+      </div>
+      <div class='tutorial-vid'>
+        <span class='h1'>types</span>
+        <video controls style='width:100%;'><source  src="tutorial/format-tasks.m4v" type="video/mp4"></video>
+      </div>
+      <div class='tutorial-vid'>
+        <span class='h1'>styles</span>
+        <video controls style='width:100%;'><source  src="tutorial/inline-formatting.m4v" type="video/mp4"></video>
+      </div>
+      <div class='tutorial-vid'>
+        <span class='h1'>dates</span>
+        <video controls style='width:100%;'><source  src="tutorial/search.m4v" type="video/mp4"></video>
+      </div>
+      <div class='tutorial-vid'>
+        <span class='h1'>timer</span>
+        <video controls style='width:100%;'><source  src="tutorial/timer.m4v" type="video/mp4"></video>
+      </div>
+      <div class='tutorial-vid'>
+        <span class='h1'>buttons</span>
+        <video controls style='width:100%;'><source  src="tutorial/buttons.m4v" type="video/mp4"></video>
+      </div>
+      <div class='tutorial-vid'>
+        <span class='h1'>mobile</span>
+        <video controls style='width:100%;'><source  src="tutorial/mobile.m4v" type="video/mp4"></video>
+      </div>
+    </div>
+</body>
+</html>

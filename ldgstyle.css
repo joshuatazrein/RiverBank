@@ -1,0 +1,185 @@
+/* LANDING PAGE */
+
+@font-face {
+  font-family: "Garamond";
+  src:  url("garamond.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Garamond";
+  src:  url("garamond-bold.ttf") format("truetype");
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: "Garamond";
+  src:  url("garamond-italic.ttf") format("truetype");
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Garamond";
+  src:  url("garamond-bold-italic.ttf") format("truetype");
+  font-style: italic;
+  font-weight: bold;
+}
+
+/* MAIN */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font: 24px var(--font), serif;
+  margin: 0;
+  background-color: var(--background);
+  color: var(--textcolor);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* TITLES */
+
+.title {
+  width: 100%;
+  letter-spacing: calc((100vw - 500px) / 11);
+  color: var(--textcolor);
+  text-transform: uppercase;
+  font-weight: 400;
+  text-align: center;
+  font-size: 250%;
+  margin: 20px 0;
+  vertical-align: middle;
+}
+
+input {
+  font: inherit;
+  background-color: var(--background);
+  color: var(--textcolor);
+}
+
+button {
+  font: 16px monospace;
+  background-color: var(--background);
+  color: var(--textcolor);
+  border: 1px solid var(--select);
+  border-radius: 5px;
+  transition-duration: 0.3s;
+}
+
+button:hover {
+  background-color: var(--select);
+}
+
+#logoimg {
+  vertical-align: bottom;
+  margin: 0 calc(10vw - 1em);
+  height: 68px;
+}
+
+#tutorial {
+  width: 50%;
+  background-color: var(--background);
+  color: white;
+  overflow: auto;
+  float: left;
+  padding: 0 15px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  height: calc(100vh - 110px);
+}
+
+.banner {
+  width: 100%;
+  text-align: center;
+  font-family: inherit;
+  letter-spacing: calc(6vw - 0.8em);
+  font-size: 150%;
+  color: white;
+  background: #000;
+  margin-top: 24px;
+}
+
+.tutorial-vid { 
+  width: 50%;
+  padding: 0 10px;
+  max-width: 400px;
+}
+
+p {
+  margin: 0;
+}
+
+span {
+  display: inline-block;
+}
+
+span.h1, span.h2, span.h3 {
+  margin-top: 0.5em;
+  text-align: center;
+  line-height: 1em;
+  font-family: var(--font), serif;
+  width: 100%;
+}
+
+span.h1 {
+  font-size: 200%;
+  font-weight: bold; 
+  color: var(--select);
+  padding-bottom: 0.5em;
+}
+
+.tutorial-vid .h1 {
+  font-size: 3vw;
+}
+
+.centered {
+  width: fit-content;
+  margin: 0 auto;
+}
+
+#welcome {
+  width: 50%;
+  float: left;
+  padding: 0 15px;
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    font: 18px var(--font), serif;
+  }
+  #tutorial, .welcome {
+    width: 100%;
+  }
+  #tutorial {
+    height: fit-content;
+  }
+  .tutorial-vid {
+    padding: 0 5px;
+  }
+  .tutorial-vid .h1 {
+    font-size: 8vw;
+  }
+  .title {
+    font-size: 10vw;
+    letter-spacing: calc(88vw / 50);
+  }
+  .banner {
+    letter-spacing: calc((100vw - 200px) / 8);
+    font-size: 36px;
+  }
+  #logoimg {
+    margin: 0 2vw;
+    height: 11vw;
+  }
+}
+
+@media only screen and (min-width: 1000px) {
+  .tutorial-vid .h1 {
+    font-size: 36px;
+  }
+}
