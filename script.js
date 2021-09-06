@@ -3369,14 +3369,14 @@ function loadpage(setload, oldselect) {
     else if (oldselect[0])
       select(oldselect[0])
   } else {
-    setTimeout(500, scrollToToday)
+    setTimeout(scrollToToday, 500)
   }
   $(loads[loadedlist]).blur()
 }
 
 function scrollToToday() {
   $('#pop').animate({
-    scrollTop: $(dateToHeading(stringToDate('0d'))).prev().offset().top - 24
+    scrollTop: $(dateToHeading(stringToDate('0d'))).prev().offset().top - 12
   }, 500)
 }
 
