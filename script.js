@@ -2038,10 +2038,12 @@ function togglefocus(collapse) {
     $('#editbuts').after($('#searchbarframe'))
     $('#movebuts').after($('#timerent'))
     $('#collapsebut').after($('#focusbut'))
-    getFrame(selected).parent().css('width', '')
-    getFrame(selected).parent().css('height', '')
-    getFrame(selected).parent().css('border-right', '')
-    getFrame(selected).parent().css('border-left', '')
+    for (thing in $('#flop'), $('#pop')) {
+      thing.parent().css('width', '')
+      thing.parent().css('height', '')
+      thing.parent().css('border-right', '')
+      thing.parent().css('border-left', '')
+    }
     if (!$('#poplist').is(':visible')) {
       $('#poplist').show()
     } else if (!$('#floplist').is(':visible')) {
@@ -2049,7 +2051,9 @@ function togglefocus(collapse) {
     }
     $('#focusbar').hide()
     focusmode = false
-    if (!collapse && $('#leftcol').hasClass('collapsed')) { togglecollapse() }
+    if (!collapse && $('#leftcol').hasClass('collapsed')) { 
+      togglecollapse() 
+    }
   }
 }
 
