@@ -2038,7 +2038,7 @@ function togglefocus(collapse) {
     $('#editbuts').after($('#searchbarframe'))
     $('#movebuts').after($('#timerent'))
     $('#collapsebut').after($('#focusbut'))
-    for (thing in $('#flop'), $('#pop')) {
+    for (thing of [$('#flop'), $('#pop')]) {
       thing.parent().css('width', '')
       thing.parent().css('height', '')
       thing.parent().css('border-right', '')
