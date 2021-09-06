@@ -66,6 +66,7 @@ function load() {
     } catch (err) {
       setTimeout(initialize, 500)
     }
+    return
   }
   // try the current cookie (synchronous request)
   const fname = getCookie('fname')

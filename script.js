@@ -946,8 +946,10 @@ function search(skiplinks) {
           // test for links
           continue
         } else if (skiplinks == 'deadline' &&
-          !stripChildren($(child)).includes('>')) {
-          // finds only deadlines
+          !stripChildren($(child)).includes('>') || 
+          stripChildren($(child)).replace(searchtext, '').replace(
+            /\s•/, '').replace(/\s\-/, '').split(' ').length > 1) {
+          // finds only deadlines with exact match
           continue
         } else {
           if (skiplinks != 'complete' && $(child).hasClass('complete')) {
@@ -2744,14 +2746,15 @@ function taskAbove() {
   } else if (selected.prev()[0] != undefined) {
     returntask = selected.prev()
   } // nonedisplays are not selected
-  while (returntask != undefined && returntask.hasClass('in') == false) {
+  while (returntask[0] && returntask.hasClass('in') == false) {
+    console.log(returntask.prev());
     returntask = returntask.prev()
   }
-  if (returntask != undefined && !returntask.is(':visible')) {
+  if (returntask[0] && !returntask.is(':visible')) {
     // while invisible
     select(returntask, false)
     return taskAbove()
-  } else if (!returntask || returntask.hasClass('in') == false) {
+  } else if (!returntask[0] || returntask.hasClass('in') == false) {
     return selected
   } else {
     return returntask
