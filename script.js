@@ -176,7 +176,6 @@ function toggledrags(saving) {
 }
 
 function dragsoff(saving) {
-  console.log('dragsoff', dragsenabled);
   if (dragsenabled == true) {
     toggledrags(saving)
   }
@@ -332,13 +331,9 @@ function updateSizes() {
     })
   }
   for (list of $('#loads').children()) {
-    console.log($(list).val().length * 
-      ($(list).css('font-size').slice(0, 
-      $(list).css('font-size').length - 2) / 2)) 
     if ($(list).width() < $(list).val().length * 
       ($(list).css('font-size').slice(0, 
       $(list).css('font-size').length - 2) / 2)) {
-        console.log($(list).text(), 'longer');
         $(list).css('overflow-y', 'scroll')
     } else {
       $(list).css('overflow-y', 'hidden')
@@ -445,7 +440,6 @@ function clean() {
       $('#test').children().filter('.in').length == 0 &&
       loadedlist != list
     ) {
-      console.log('clearing empty list')
       data.flop.splice(list, 1)
       $($('#loads').children()[list]).remove()
     }
@@ -1833,7 +1827,7 @@ function archiveAll() {
 function archiveTask(play) {
   let taskabove = taskAbove()
   if (taskabove[0] == selected[0]) { taskabove = getFrame(selected) }
-  if (play == true) { $('#popsnd')[0].play(); console.log('playing'); }
+  if (play == true) { $('#popsnd')[0].play(); console.log('playing pop'); }
   // archives the selected Flop to the current day
   let heading
   const day = $(dateToHeading(stringToDate('0d')))
@@ -2028,7 +2022,6 @@ function togglefocus(collapse) {
     getFrame(selected).parent().css('height', '100%')
     getFrame(selected).parent().css('border-right', 'none')
     getFrame(selected).parent().css('border-left', 'none')
-    console.log(getFrame(selected));
     if (getFrame(selected).attr('id') == 'flop') {
       // hide other thing and this' buttons
       $('#poplist').hide()
@@ -3012,7 +3005,6 @@ function keycomms(evt) {
     selectRandom()
   } else if (selected != undefined && selected[0].tagName !=
     'TEXTAREA') {
-    // console.log(evt.code);
     if (evt.key == 'Backspace' && $(':focus').attr('id') != 'searchbar') {
       deleteTask()
     } else if (evt.code == 'KeyI' && evt.altKey) {
@@ -3198,8 +3190,6 @@ function diffsLog(oldString, newString) {
     newdatadict[list.title] = $('#test').find('span.in').toArray().map(
       (x) => { return stripChildren($(x)) })
   }
-  // console.log(olddatadict)
-  // console.log(newdatadict)
   for (list of Object.keys(olddatadict)) {
     if (!Object.keys(newdatadict).includes(list)) {
       diffs += '\n- list: ' + list
