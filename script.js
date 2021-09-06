@@ -3383,5 +3383,3 @@ function resetCookies() {
   document.cookie = 'fname=;expires=' + past + ';'
   document.cookie = 'pw=;expires=' + past + ';'
 }
-
-loadpage()
