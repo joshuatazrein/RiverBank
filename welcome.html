@@ -21,17 +21,6 @@
   <div class='container' id='container'>
     <p class='title'>&nbsp;rive<span style='letter-spacing:0'>r</span><img src='logotxt.png' id='logoimg'>bank</p>
     <div id='welcome'>
-      <div>
-        <p>
-          <span class='h1' style='text-align:left;'>Keep it current.</span>
-          We get sucked up by the tides of tasks, thoughts, and information. RiverBank is here to help you channel all that energy into a productive flow. It's a simple process:
-          <ul>
-            <li>Store unscheduled stuff in the Bank.</li>
-            <li>Schedule stuff by dragging it into the River, which documents your past, present, and future.</li>
-          </ul>
-          Unlike most task managers, RiverBank is both a to-do list and a calendar, unifying your time into a single stream. Give it a try by creating an account below!
-        </p>
-      </div>
       <div style='padding-top:0.5em;padding-bottom:1em;'>
         <div class='centered' style='padding-bottom:0.5em;'>
           <button onclick='$("#signin").hide();$("#createaccount").show();setTutorialHeight();'>create account</button>
@@ -42,12 +31,23 @@
           <input id='password' type='password' placeholder="password">
           <button onclick='signIn()' style='margin-top:10px;'>submit</button>
         </div>
-        <div id='createaccount' class='centered'>
+        <div id='createaccount' style='display:none;' class='centered'>
           <input id='newusername' placeholder="new username">
           <input id='newpassword1' type='password' placeholder="new password">
           <input id='newpassword2' type='password' placeholder="new password again">
           <button onclick='checkNewUser()' style='margin-top:10px;'>submit</button>
         </div>
+      </div>
+      <div>
+        <p>
+          <span class='h1' style='text-align:left;'>Keep it current.</span>
+          We get sucked up by the tides of tasks, thoughts, and information. RiverBank is here to help you channel all that energy into a productive flow. It's a simple process:
+          <ul>
+            <li>Store unscheduled stuff in the Bank.</li>
+            <li>Schedule stuff by dragging it into the River, which documents your past, present, and future.</li>
+          </ul>
+          Unlike most task managers, RiverBank is both a to-do list and a calendar, unifying your time into a single stream. Give it a try by creating an account above!
+        </p>
       </div>
     </div>
     <div id='tutorial'>
