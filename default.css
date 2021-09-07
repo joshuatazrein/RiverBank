@@ -1,19 +1,19 @@
 :root {
   --background: black;
-  --select: skyblue;
+  --select: rgb(135, 206, 235);
   --font: 'Garamond';
   --butfont: Andale Mono;
-  --butcolor: whitesmoke;
-  --textcolor: whitesmoke;
-  --butbackground: dimgrey;
-  --butborder: transparent;
+  --textcolor: rgb(245, 245, 245);
   --menufont: Courier New;
-  --bdcolor: grey;
-  --duedatecolor: skyblue;
+  --bdcolor: rgb(128, 128, 128);
+  --duedatecolor: rgb(135, 206, 235);
   --contextcolor: rgba(0, 0, 0, 0.8);
-  --contextfontcolor: grey;
+  --contextfontcolor: rgb(128, 128, 128);
   --important: #53D2FF;
   --maybe: rgba(83, 210, 255, 0.5);
   --event: rgba(135,206,235,0.3);
   --date: rgb(135,206,235);
+  --butbackground: rgba(128, 128, 128, 0.3);
+  --popbutbackground: rgba(135, 206, 235, 0.3);
+  --flopbutbackground: rgba(245, 245, 245, 0.3);
 }

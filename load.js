@@ -1,6 +1,6 @@
 var data
 var weekdaysStr
-var offlinemode
+var offlinemode = false
 var offline
 
 var resetstring = {"flop":[{"title":"inbox","text":"<span class=\"in h1\" ondragstart=\"dragTask(event)\" ondragover=\"draggingOver(event)\" ondrop=\"dropTask(event)\" draggable=\"true\" style=\"\">Welcome to RiverBank!</span><span class=\"in\" ondragstart=\"dragTask(event)\" ondragover=\"draggingOver(event)\" ondrop=\"dropTask(event)\" draggable=\"true\" style=\"\">RiverBank is a tool for storing and scheduling your tasks.</span><span class=\"in\" ondragstart=\"dragTask(event)\" ondragover=\"draggingOver(event)\" ondrop=\"dropTask(event)\" draggable=\"true\" style=\"\">This is the Bank view, which is a \"bank\" of your unscheduled tasks and projects.</span><span class=\"in\" ondragstart=\"dragTask(event)\" ondragover=\"draggingOver(event)\" ondrop=\"dropTask(event)\" draggable=\"true\" style=\"\">Go over to the \"help\" at the bottom-left. Click the button to see the full tutorial!</span>"}],"pop":"<span class=\"in\" ondragstart=\"dragTask(event)\" ondragover=\"draggingOver(event)\" ondrop=\"dropTask(event)\" draggable=\"true\" style=\"\">This is the River view, where you can drag tasks to specific dates to schedule them. As you can see, today's date is automatically added.</span>","hidebuts":"false","style":"default.css","dateSplit":"mm/dd/yyyy","weekdays":"Mon","help":"show","loadedlist":0}
@@ -23,24 +23,15 @@ function getCookie(cname) {
 
 function load() {
   // tries to load current cookie's data; if not, redirects to welcome
-  try {
-    if (navigator.onLine) {
-      // test for file mode or not (synchonous AJAX)
-      const xml = new XMLHttpRequest()
-      xml.open(
-        'GET', 
-        'users/testfile.json', 
-        false
-      )
-      xml.send()
-    } else {
-      alert('No connection detected; saving locally')
+  if (!navigator.onLine || window.location.href.includes('file://')) {
+    alert('No connection detected; saving locally')
+    if (!navigator.onLine) {
       offline = true
-      throw 'offline'
     }
-  } catch (err) {
     console.log('offline mode');
-    offlinemode = true;
+    if (window.location.href.includes('file://')) {
+      offlinemode = true;
+    }
     // offline mode
     try {
       data = JSON.parse(localStorage.getItem('data'))
@@ -73,7 +64,8 @@ function load() {
   console.log(document.cookie);
   if (fname == '') {
     // no user loaded
-    window.location = 'https://riverbank.app/welcome.html'
+    window.location = window.location.href.replace(
+      'index.html', 'welcome.html')
     return
   }
   $.get(
@@ -81,7 +73,8 @@ function load() {
     function (datastr, status, xhr) {
       if (xhr.responseText == '') { 
         // no file found
-        window.location = 'https://riverbank.app/welcome.html'
+        window.location = window.location.href.replace(
+          'index.html', 'welcome.html')
         return
       } else {
         data = JSON.parse(xhr.responseText)

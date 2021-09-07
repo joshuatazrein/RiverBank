@@ -3,10 +3,7 @@
   --select: #9C89F0;
   --font: Avenir Next, Helvetica;
   --butfont: Avenir Next, Helvetica;
-  --butcolor: #252426;
   --textcolor: whitesmoke;
-  --butbackground: #E3DEE9;
-  --butborder: grey;
   --menufont: Avenir Next, Helvetica;
   --bdcolor: grey;
   --duedatecolor: rgba(255, 0, 0, 0.3);
@@ -16,4 +13,7 @@
   --maybe: rgba(83, 210, 255, 0.5);
   --event: rgba(135,206,235,0.3);
   --date: rgb(135,206,235);
+  --butbackground: rgba(128, 128, 128, 0.3);
+  --popbutbackground: rgba(135, 206, 235, 0.3);
+  --flopbutbackground: rgba(245, 245, 245, 0.3);
 }

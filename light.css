@@ -3,10 +3,7 @@
   --select: #abcdf8;
   --font: Helvetica Neue Light, Helvetica;
   --butfont: Helvetica Neue Light, Helvetica;
-  --butcolor: #212121;
   --textcolor: #212121;
-  --butbackground: white;
-  --butborder: grey;
   --menufont: Helvetica Neue Light, Helvetica;
   --bdcolor: grey;
   --duedatecolor: rgba(255, 0, 0, 0.3);
@@ -16,4 +13,7 @@
   --maybe: rgba(83, 210, 255, 0.5);
   --event: rgba(135,206,235,0.3);
   --date: rgb(135,206,235);
+  --butbackground: rgba(128, 128, 128, 0.3);
+  --popbutbackground: rgba(135, 206, 235, 0.3);
+  --flopbutbackground: rgba(245, 245, 245, 0.3);
 }

@@ -118,6 +118,10 @@ span {
   display: inline-block;
 }
 
+span.b {
+  color: var(--select);
+}
+
 span.h1, span.h2, span.h3 {
   margin-top: 0.5em;
   text-align: center;

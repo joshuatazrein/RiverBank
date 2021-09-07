@@ -46,13 +46,21 @@ body {
 button {
   font-family: var(--butfont), monospace;
   font-size: 16px;
-  color: var(--butcolor);
+  color: var(--textcolor);
   background-color: var(--butbackground);
   border-radius: 6px;
   border-width: 1px;
-  border-color: var(--butborder);
+  border: 1px solid var(--bdcolor);
   padding: 4px;
   min-width: 30px;
+}
+
+#floplist button {
+  background-color: var(--flopbutbackground);
+}
+
+#poplist button {
+  background-color: var(--popbutbackground);
 }
 
 .butbar {

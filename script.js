@@ -25,6 +25,7 @@ var flopscrollsave
 var popscrollsave
 var justclicked
 var dragtimer
+var mobile
 var draggingtask
 var linestarts = {
   '# ': 'h1',
@@ -339,6 +340,11 @@ function updateSizes() {
     } else {
       $(list).css('overflow-y', 'hidden')
     }
+  }
+  if (window.innerWidth < 600) mobile = true
+  if (window.innerWidth >= 600 && mobile) {
+    mobile = false
+    reloadpage()
   }
   // updates the text sizes of each list
   // let height = 0
@@ -3074,11 +3080,28 @@ function keycomms(evt) {
 
     if (evt.key == 'ArrowUp' && evt.shiftKey) {
       evt.preventDefault()
-      while (taskAbove() && !isHeading(taskAbove())) {
-        if (taskAbove()[0] == selected[0]) break
-        select(taskAbove(), false)
+      let heading
+      if (selected.hasClass('h1')) heading = 'h1'
+      else if (selected.hasClass('h2')) heading = 'h2'
+      else if (selected.hasClass('h3')) heading = 'h3'
+      else heading = 'in'
+      const oldselect = selected[0]
+      try {
+        while (taskAbove() && (!isHeading(taskAbove()) ||
+          !taskAbove().hasClass(heading))) {
+          if (taskAbove()[0] == selected[0]) break
+          select(taskAbove(), false)
+        }
+        select(taskAbove(), true)
+      } catch (er) {
+        // just select the thing
+        select(oldselect)
+        while (taskAbove() && !isHeading(taskAbove())) {
+          if (taskAbove()[0] == selected[0]) break
+          select(taskAbove(), false)
+        }
+        select(taskAbove(), true)
       }
-      select(taskAbove(), true)
     } else if (evt.key == 'ArrowDown' && evt.shiftKey) {
       evt.preventDefault()
       let heading
@@ -3086,12 +3109,23 @@ function keycomms(evt) {
       else if (selected.hasClass('h2')) heading = 'h2'
       else if (selected.hasClass('h3')) heading = 'h3'
       else heading = 'in'
-      while (taskBelow() && !isHeading(taskBelow()) && 
-        !taskBelow().hasClass(heading)) {
-        if (taskBelow()[0] == selected[0]) break
-        select(taskBelow(), false)
+      const oldselect = selected[0]
+      try {
+        while (taskBelow() && (!isHeading(taskBelow()) ||
+          !taskBelow().hasClass(heading))) {
+          if (taskBelow()[0] == selected[0]) break
+          select(taskBelow(), false)
+        }
+        select(taskBelow(), true)
+      } catch (er) {
+        // just select the thing
+        select(oldselect)
+        while (taskBelow() && !isHeading(taskBelow())) {
+          if (taskBelow()[0] == selected[0]) break
+          select(taskBelow(), false)
+        }
+        select(taskBelow(), true)
       }
-      select(taskBelow(), true)
     } else if (evt.key == 'ArrowUp') {
       evt.preventDefault()
       select(taskAbove(), true)
@@ -3185,7 +3219,10 @@ function uploadData(reloading) {
     // offline mode
     localStorage.setItem('data', JSON.stringify(data))
     prevupload = JSON.stringify(data)
-    if (reloading == true) reload() // reloads page
+    if (reloading == true) {
+      console.log('reloading from upload (offline)');
+      reload() // reloads page
+    }
   }
 }
 
@@ -3295,6 +3332,7 @@ function loadpage(setload, oldselect) {
   // right after signing in
   $('#username').text(getCookie('user'))
   if (setload != false) {
+    $('#loaddivs').remove()
     // initial loads (not called on reloads)
     $('#focusbar').hide()
     $('head').append(
