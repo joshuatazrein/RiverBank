@@ -152,7 +152,7 @@ span.h1 {
   body {
     font: 18px var(--font), serif;
   }
-  #tutorial, .welcome {
+  #tutorial, #welcome {
     width: 100%;
   }
   #tutorial {

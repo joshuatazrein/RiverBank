@@ -266,6 +266,7 @@ function loadList(saving) { //updates the list display
   } else {
     $(loads[loadedlist]).blur()
   }
+  $('#flop').scrollTop(0)
 }
 
 function toggleFoldList(saving) {
@@ -1256,7 +1257,7 @@ function deleteTask() {
     setTimeout(null, 500)
   }
   selected.remove()
-  select(newselect, true)
+  select(newselect)
   clearEmptyDates()
   save(true)
 }
@@ -3080,7 +3081,13 @@ function keycomms(evt) {
       select(taskAbove(), true)
     } else if (evt.key == 'ArrowDown' && evt.shiftKey) {
       evt.preventDefault()
-      while (taskBelow() && !isHeading(taskBelow())) {
+      let heading
+      if (selected.hasClass('h1')) heading = 'h1'
+      else if (selected.hasClass('h2')) heading = 'h2'
+      else if (selected.hasClass('h3')) heading = 'h3'
+      else heading = 'in'
+      while (taskBelow() && !isHeading(taskBelow()) && 
+        !taskBelow().hasClass(heading)) {
         if (taskBelow()[0] == selected[0]) break
         select(taskBelow(), false)
       }
