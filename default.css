@@ -1,5 +1,6 @@
 :root {
   --background: black;
+  --bgoverlay: rgba(0, 0, 0, 0.5);
   --select: rgb(135, 206, 235);
   --font: 'Garamond';
   --butfont: Andale Mono;

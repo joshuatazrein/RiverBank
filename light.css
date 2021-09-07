@@ -1,11 +1,12 @@
 :root {
   --background: #E4EDF1;
+  --bgoverlay: (228, 237, 241, 0.5);
   --select: rgb(119, 152, 171);
-  --font: Helvetica Neue Light, Helvetica;
-  --butfont: Helvetica Neue Light, Helvetica;
+  --font: Helvetica Neue Light, Helvetica Neue;
+  --butfont: Helvetica Neue Light, Helvetica Neue;
   --textcolor: rgb(52, 64, 85);
-  --menufont: Helvetica Neue Light, Helvetica;
-  --bdcolor: grey;
+  --menufont: Helvetica Neue Light, Helvetica Neue;
+  --bdcolor: rgba(21, 35, 40, 0.5);
   --contextcolor: whitesmoke;
   --contextfontcolor: grey;
   --important: rgb(69, 108, 135);

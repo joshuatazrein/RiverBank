@@ -2904,6 +2904,13 @@ function unfilter(update) {
   }
 }
 
+function hierarchyCheck(task, headings) {
+  for (heading of headings) {
+    if ($(task).hasClass(heading)) return true
+  }
+  return false
+}
+
 function keycomms(evt) {
   if (['Control', 'Command', 'Shift', 'Alt'].includes(evt.key)) {
     return
@@ -3092,14 +3099,14 @@ function keycomms(evt) {
     if (evt.key == 'ArrowUp' && evt.shiftKey) {
       evt.preventDefault()
       let heading
-      if (selected.hasClass('h1')) heading = 'h1'
-      else if (selected.hasClass('h2')) heading = 'h2'
-      else if (selected.hasClass('h3')) heading = 'h3'
-      else heading = 'in'
+      if (selected.hasClass('h1')) headings = ['h1']
+      else if (selected.hasClass('h2')) headings = ['h1', 'h2']
+      else if (selected.hasClass('h3')) headings = ['h1', 'h2', 'h3']
+      else headings = ['in']
       const oldselect = selected[0]
       try {
         while (taskAbove() && (!isHeading(taskAbove()) ||
-          !taskAbove().hasClass(heading))) {
+          !hierarchyCheck(taskAbove(), headings))) {
           if (taskAbove()[0] == selected[0]) break
           select(taskAbove(), false)
         }
@@ -3116,14 +3123,14 @@ function keycomms(evt) {
     } else if (evt.key == 'ArrowDown' && evt.shiftKey) {
       evt.preventDefault()
       let heading
-      if (selected.hasClass('h1')) heading = 'h1'
-      else if (selected.hasClass('h2')) heading = 'h2'
-      else if (selected.hasClass('h3')) heading = 'h3'
-      else heading = 'in'
+      if (selected.hasClass('h1')) headings = ['h1']
+      else if (selected.hasClass('h2')) headings = ['h1', 'h2']
+      else if (selected.hasClass('h3')) headings = ['h1', 'h2', 'h3']
+      else headings = ['in']
       const oldselect = selected[0]
       try {
         while (taskBelow() && (!isHeading(taskBelow()) ||
-          !taskBelow().hasClass(heading))) {
+          !hierarchyCheck(taskBelow(), headings))) {
           if (taskBelow()[0] == selected[0]) break
           select(taskBelow(), false)
         }
@@ -3146,7 +3153,7 @@ function keycomms(evt) {
     } else if (evt.key == 'ArrowRight') {
       select(dateToHeading(stringToDate('0d')), true)
     } else if (evt.key == 'ArrowLeft') {
-      select($('#flop').children()[0], true)
+      select($('#flop').children()[1], true)
     } else if (evt.key == 'ArrowRight' && Array().includes($('#flop')[0])) {
       // go over and select pop
       // TODO: find the date of today

@@ -46,7 +46,7 @@ body {
 button {
   font-family: var(--butfont), monospace;
   font-size: 16px;
-  color: var(--textcolor);
+  color: var(--bdcolor);
   background-color: var(--butbackground);
   border-radius: 6px;
   border: none;
@@ -71,17 +71,33 @@ button {
 }
 
 #flopbuts, #popbuts {
-  background-color: transparent;
+  background-color: var(--bgoverlay);
   position: fixed;
   z-index: 1;
   width: 100%;
+  margin-top: -10px;
+  padding-top: 10px;
 }
 
 #focusbar {
   display: flex;
-  justify-content: center;
+  justify-content: left;
   width: 100vw;
   margin-top: 3px;
+}
+
+#focusbar button {
+  margin: 0px 5px;
+}
+
+#focusbar div {
+  width: 250px;
+  max-width: calc(50vw - 20px);
+}
+
+#focusbar div div {
+  width: fit-content;
+  max-width: 100%;
 }
 
 .flopbut {
@@ -120,8 +136,8 @@ audio {
 input {
   display: block;
   font: inherit;
-  width: 100%;
-  margin: auto;
+  width: calc(100% + 2px);
+  margin: -1px auto;
   background-color: inherit;
   border: 1px solid var(--bdcolor);
   color: var(--textcolor);
@@ -130,7 +146,12 @@ input {
 #username {
   color: var(--textcolor);
   text-align: center;
-  margin: 0 0;
+  margin: 0 auto;
+}
+
+#searchbarframe {
+  z-index: 2;
+  min-width: 200px;
 }
 
 #searchbar {
@@ -150,7 +171,6 @@ input {
 nav {
   position: absolute;
   background-color: var(--contextcolor);
-  z-index: 1;
   font: inherit;
   display: none;
   color: var(--contextfontcolor);
@@ -160,26 +180,23 @@ nav {
 p.dropdown-item {
   word-wrap: break-word;
   margin: 0;
-  font-size: 20px;
+  font: 16px var(--menufont);
+  background-color: var(--contextcolor);
+  z-index: inherit;
 }
 
 .dropdown {
   display: inline-block;
-  background-color: var(--background);
-  color: var(--textcolor);
+  background-color: var(--contextcolor);
+  color: var(--contextfontcolor);
   position:absolute;
   width: 100%;
-  z-index: 1;
+  z-index: 3;
+  padding: 0 3px;
 }
 
 .dropdown-item:hover {
   color: var(--select);
-}
-
-.dropdown-item {
-  font: 16px var(--menufont);
-  background-color: transparent;
-  z-index: inherit;
 }
 
 /* CONTAINERS */
@@ -431,7 +448,7 @@ span.note {
 span.duedate {
   font-family: var(--font), serif;
   color: var(--select);
-  font-style: italic;
+  /* font-style: italic; */
   border-radius: 5px;
 }
 
@@ -505,6 +522,7 @@ span.complete {
 
 span.important {
   color: var(--important);
+  font-weight: bold;
 }
 
 span.maybe {
