@@ -49,8 +49,7 @@ button {
   color: var(--textcolor);
   background-color: var(--butbackground);
   border-radius: 6px;
-  border-width: 1px;
-  border: 1px solid var(--bdcolor);
+  border: none;
   padding: 4px;
   min-width: 30px;
 }
@@ -60,7 +59,7 @@ button {
 }
 
 #poplist button {
-  background-color: var(--popbutbackground);
+  background-color: var(--event);
 }
 
 .butbar {
@@ -68,6 +67,14 @@ button {
   justify-content: center;
   flex-wrap: wrap;
   margin: 2px 0;
+  background-color: transparent;
+}
+
+#flopbuts, #popbuts {
+  background-color: transparent;
+  position: fixed;
+  z-index: 1;
+  width: 100%;
 }
 
 #focusbar {
@@ -211,7 +218,7 @@ p.dropdown-item {
 /* PARAGRAPHS */
 
 .rendered {
-  height: calc(100% - var(--butheight));
+  height: 100%;
   width: 100%;
   margin: 0;
   overflow-y: auto;
@@ -266,6 +273,7 @@ p.dropdown-item {
   left: 0;
   color: white;
   overflow: auto;
+  z-index: 2;
 }
 
 #tutorial .h1 {
@@ -422,7 +430,7 @@ span.note {
 
 span.duedate {
   font-family: var(--font), serif;
-  color: var(--duedatecolor);
+  color: var(--select);
   font-style: italic;
   border-radius: 5px;
 }
@@ -478,7 +486,7 @@ span.bold-italic {
 }
 
 span.dateheading {
-  color: var(--date);
+  color: var(--select);
   margin: 0;
   padding-top: 0;
 }
@@ -524,7 +532,7 @@ span.timing, span.faketiming {
 }
 
 span.deadline {
-  color: var(--duedatecolor);
+  color: var(--select);
 }
 
 /* ## SUBSPANS */

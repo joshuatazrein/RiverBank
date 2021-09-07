@@ -346,6 +346,10 @@ function updateSizes() {
     mobile = false
     reloadpage()
   }
+  $('#flopbuts, #popbuts').css('width', 
+    String(
+      Math.floor(($('.rendered:visible').width() / window.innerWidth) * 100)) + 
+    'vw')
   // updates the text sizes of each list
   // let height = 0
   // $('#texttest').css('font-family', 'var(--font), serif')
@@ -373,7 +377,7 @@ function loadthis(event) {
   loadedlist = loads.indexOf(this)
   loadList(this)
   if (movetask) {
-    $('#flop > .buffer').before(movetask)
+    $('#flop > .buffer.bottom').before(movetask)
     save()
   }
 }
@@ -1122,10 +1126,12 @@ function updatedeadlines() {
     newelt.removeClass('in')
     $(heading).before(newelt)  }
   if (!$('#flop').children().filter('.buffer')[0]) {
-    $('#flop').append('<span class="buffer" style="height:90%"></span>')
+    $('#flop').prepend('<span class="buffer" style="height:var(--butheight)"></span>')
+    $('#flop').append('<span class="buffer bottom" style="height:90%;"></span>')
   }
   if (!$('#pop').children().filter('.buffer')[0]) {
-    $('#pop').append('<span class="buffer" style="height:90%"></span>')
+    $('#pop').prepend('<span class="buffer" style="height:var(--butheight)"></span>')
+    $('#pop').append('<span class="buffer bottom" style="height:90%"></span>')
   }
   updateSpanDrags()
 }
@@ -1593,7 +1599,9 @@ function select(el, scroll, animate) {
       if (getFrame(selected)) {
         // only execute if not clicked
         parent = getFrame(selected)
-        const oldscroll = parent.scrollTop()
+        const butheight = $(':root').css('--butheight')
+        const oldscroll = parent.scrollTop() - 
+          Number(butheight.slice(0, butheight.length - 2))
         let scrolltime
         if (animate != false) {
           scrolltime = 300
@@ -2018,6 +2026,7 @@ function togglecollapse() {
     $('#listcontainer').removeClass('fullwidth')
   }
   if (focusmode) togglefocus(false) // unfocus if uncollapse
+  updateSizes()
 }
 
 function togglefocus(collapse) {
@@ -2256,7 +2265,7 @@ function toggleButs() {
     $('#focusbut').show() // just in case it's moved in focusmode
     $('#typebut').show()
     data.hidebuts = 'false'
-    $(':root').css('--butheight', $('#flopbuts').height() + 'px')
+    $(':root').css('--butheight', $('#flopbuts').height() + 5 + 'px')
   } else {
     $('.butbar:not(#editbuts)').hide()
     $('#typebut').hide()
@@ -2622,7 +2631,12 @@ function clicked(ev) {
   $('nav').hide()
   if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
     return
+  } else if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
+    ev.target.tagName != 'TEXTAREA') {
+    saveTask()
+    select($(ev.target), false)
   } else if ($(ev.target).hasClass('dropdown-item')) {
+    ev.preventDefault()
     const oldselect = selected
     eval($(ev.target).attr('function'))
     if (selected && selected[0].tagName != 'TEXTAREA' &&
@@ -2639,11 +2653,6 @@ function clicked(ev) {
       dragson()
     }
     if (movetolist != true) select()
-  } else if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
-    ev.target.tagName != 'TEXTAREA') {
-    saveTask()
-    select($(ev.target), false)
-    return
   } else if ($(ev.target).hasClass('buffer')) {
     select(getFrame($(ev.target)), false)
   } else if ($(ev.target).attr('id') == 'newHeadingFlopBut') {
@@ -2662,7 +2671,9 @@ function clicked(ev) {
     select(dateToHeading(stringToDate('0d')), true)
     save()
   } else if ($(ev.target).attr('id') == 'addDateBut') {
+    ev.preventDefault()
     $('#searchbar').val('d:')
+    select()
     $('#searchbar').focus()
   } else if ($(ev.target).attr('id') == 'timer25But') {
     stopTimer()
@@ -2906,7 +2917,7 @@ function keycomms(evt) {
       selected.prev().remove()
       const taskabove = taskAbove()
       selected.remove()
-      select(taskabove, true)
+      select(taskabove)
     } else {
       // select current task if cancelling
       saveTask()
@@ -3398,7 +3409,7 @@ function loadpage(setload, oldselect) {
     $('.butbar').show()
     $('#focusbut').show()
     $('#typebut').show()
-    $(':root').css('--butheight', $('#flopbuts').height() + 'px')
+    $(':root').css('--butheight', $('#flopbuts').height() + 5 + 'px')
   } else {
     $('.butbar:not(#editbuts)').hide()
     $('#focusbut').hide()
@@ -3428,9 +3439,10 @@ function loadpage(setload, oldselect) {
 }
 
 function scrollToToday() {
+  const butheight = $(':root').css('--butheight')
   $('#pop').animate({
     scrollTop: $(dateToHeading(stringToDate('0d'))).prev().offset().top 
-    - $('#pop').offset().top - 12
+    - $('#pop').offset().top - butheight.slice(0, butheight.length - 2)
   }, 500)
 }
 

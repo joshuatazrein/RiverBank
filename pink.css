@@ -1,19 +1,16 @@
 :root {
-  --background: #FF83FF;
-  --select: #9C89F0;
+  --background: /* rgb(199, 203, 229); */ rgb(171, 176, 208);
+  --select: rgb(251, 217, 253);
   --font: Avenir Next, Helvetica;
   --butfont: Avenir Next, Helvetica;
   --textcolor: whitesmoke;
   --menufont: Avenir Next, Helvetica;
-  --bdcolor: grey;
-  --duedatecolor: rgba(255, 0, 0, 0.3);
+  --bdcolor: rgba(53, 3, 58, 0.3);
   --contextcolor: whitesmoke;
   --contextfontcolor: grey;
-  --important: #53D2FF;
-  --maybe: rgba(83, 210, 255, 0.5);
-  --event: rgba(135,206,235,0.3);
-  --date: rgb(135,206,235);
-  --butbackground: rgba(128, 128, 128, 0.3);
-  --popbutbackground: rgba(135, 206, 235, 0.3);
+  --important: rgb(254, 187, 248);
+  --maybe: rgba(254, 187, 248, 0.5);
+  --event: rgba(251, 217, 253, 0.3);
+  --butbackground: #BEC1DA;
   --flopbutbackground: rgba(245, 245, 245, 0.3);
 }

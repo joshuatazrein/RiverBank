@@ -1,19 +1,17 @@
 :root {
-  --background: #005EFF;
+  /* --background: #005EFF; */
+  --background: rgba(52, 73, 94, 1);
   --select: skyblue;
   --font: Andale Mono;
   --butfont: Andale Mono;
   --textcolor: whitesmoke;
   --menufont: Andale Mono;
   --bdcolor: grey;
-  --duedatecolor: rgba(255, 0, 0, 0.3);
   --contextcolor: rgba(0, 0, 0, 0.8);
   --contextfontcolor: grey;
   --important: #53D2FF;
   --maybe: rgba(83, 210, 255, 0.5);
   --event: rgba(135,206,235,0.3);
-  --date: rgb(135,206,235);
   --butbackground: rgba(128, 128, 128, 0.3);
-  --popbutbackground: rgba(135, 206, 235, 0.3);
   --flopbutbackground: rgba(245, 245, 245, 0.3);
 }
