@@ -29,7 +29,7 @@ function load() {
       offline = true
     }
     console.log('offline mode');
-    if (window.location.href.includes('file://')) {
+    if (window.location.href.includes('file')) {
       offlinemode = true;
     }
     // offline mode
@@ -64,8 +64,12 @@ function load() {
   console.log(document.cookie);
   if (fname == '') {
     // no user loaded
-    window.location = window.location.href.replace(
-      'index.html', 'welcome.html')
+    if (offlinemode) {
+      window.location = window.location.href.replace(
+        'index.html', 'welcome.html')
+    } else {
+      window.location = 'https://riverbank.app'
+    }
     return
   }
   $.get(
@@ -73,8 +77,12 @@ function load() {
     function (datastr, status, xhr) {
       if (xhr.responseText == '') { 
         // no file found
-        window.location = window.location.href.replace(
-          'index.html', 'welcome.html')
+        if (offlinemode) {
+          window.location = window.location.href.replace(
+            'index.html', 'welcome.html')
+        } else {
+          window.location = 'https://riverbank.app'
+        }
         return
       } else {
         data = JSON.parse(xhr.responseText)
