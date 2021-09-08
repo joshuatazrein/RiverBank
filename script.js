@@ -512,7 +512,6 @@ function save(undo) {
   $(document).scrollTop(0) // fixes scroll
   // backup data to the server after setting localstorage data
   uploadData()
-  localStorage.setItem('data', JSON.stringify(data))
 }
 
 function clearEmptyDates(saving) {
@@ -1844,7 +1843,10 @@ function archiveAll() {
 function archiveTask(play) {
   let taskabove = taskAbove()
   if (taskabove[0] == selected[0]) { taskabove = getFrame(selected) }
-  if (play == true) { $('#popsnd')[0].play(); console.log('playing pop'); }
+  if (play == true) { 
+
+    $('#popsnd')[0].play();
+  }
   // archives the selected Flop to the current day
   let heading
   const day = $(dateToHeading(stringToDate('0d')))
@@ -2294,11 +2296,11 @@ function toggleHelp() {
 function setStyle(style) {
   $('link[href="' + data.style + '"]').remove()
   data.style = style  
-  save()
   $('head').append(
     $("<link rel='stylesheet' type='text/css' href='" +
       data.style + "' />")
   );
+  save()
 }
 
 function context(e, mobile) {  
@@ -2609,7 +2611,9 @@ function clickoff(ev) {
     if (draggingtask) { return }
     if (
       ev.target.tagName == 'SPAN' &&
-      ev.pageX > window.innerWidth - 50
+      ev.pageX > window.innerWidth - 50 &&
+      (ev.pageY < $('#popbuts').offset().height ||
+      ev.pageY > $('#popbuts').offset().height + $('#popbuts').height())
     ) {
       // context menu
       select($(ev.target), false)
@@ -3235,11 +3239,14 @@ function uploadData(reloading) {
     }
     uploading = false
     // offline mode
-    localStorage.setItem('data', JSON.stringify(data))
     prevupload = JSON.stringify(data)
+    localStorage.setItem('data', JSON.stringify(data))
+    console.log('*** local upload finished ***')
     if (reloading == true) {
+      localStorage.setItem('data', JSON.stringify(data))
       console.log('reloading from upload (offline)');
       reload() // reloads page
+      return
     }
   }
 }
@@ -3303,9 +3310,12 @@ function diffsLog(oldString, newString) {
 }
 
 function reload() {
+  console.log('--- download started ---');
   if (!navigator.onLine || offlinemode) {
     // skip upload
+    diffsLog(JSON.stringify(data), localStorage.getItem('data'))
     data = JSON.parse(localStorage.getItem('data'))
+    console.log('*** local download finished ***')
     reload2()
   } else {
     if (navigator.onLine && offline) {
@@ -3318,7 +3328,6 @@ function reload() {
         return
       }
     }
-    console.log('--- download started ---');
     $.post(
       'download.php', 
       function (datastr, status, xhr) {

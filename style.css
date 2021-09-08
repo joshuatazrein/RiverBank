@@ -134,8 +134,8 @@ audio {
 input {
   display: block;
   font: inherit;
-  width: calc(100% + 2px);
-  margin: -1px auto;
+  width: calc(100% + 3px);
+  margin: -1px;
   background-color: inherit;
   border: 1px solid var(--bdcolor);
   color: var(--textcolor);
@@ -149,7 +149,6 @@ input {
 
 #searchbarframe {
   z-index: 2;
-  min-width: 200px;
 }
 
 #searchbar {
@@ -168,28 +167,27 @@ input {
 
 nav {
   position: absolute;
-  background-color: var(--contextcolor);
+  background-color: var(--bgoverlay);
   font: inherit;
   display: none;
-  color: var(--contextfontcolor);
+  color: var(--bdcolor);
   padding: 5px;
+  z-index: 3;
 }
 
 p.dropdown-item {
   word-wrap: break-word;
   margin: 0;
   font: 16px var(--menufont);
-  background-color: var(--contextcolor);
+  background-color: inherit;
+  color: inherit;
   z-index: inherit;
 }
 
 .dropdown {
   display: inline-block;
-  background-color: var(--contextcolor);
-  color: var(--contextfontcolor);
-  position:absolute;
+  position: absolute;
   width: 100%;
-  z-index: 3;
   padding: 0 3px;
 }
 
@@ -667,9 +665,12 @@ span.weblink, span.deadline {
     font-size: 24px;
     height: 100%;
   }
-  input {
+  input, #searchbarframe {
     font-size: 24px;
     width: calc(100% - 10px);
+  }
+  #searchbarframe input {
+    width: 100%;
   }
   #timerent {
     font-size: 24px;
@@ -723,6 +724,15 @@ span.weblink, span.deadline {
     height: 20px !important;
     width: 20px !important;
     right: 15px;
+  }
+  span.h1 {
+    font-size: 130%;
+  }
+  span.h2 {
+    font-size: 120%;
+  }
+  span.h3 {
+    font-size: 110%;
   }
   /* add the padding-right to subspan widths */
   span.in {
