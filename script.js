@@ -2188,7 +2188,7 @@ function getHeadingChildren(el) {
   } else if (el.hasClass('h3') == true) {
     thisclass = 'h3'
   }
-  const children = el.parent().children().filter(':not(.placeholder)')
+  const children = el.parent().children().filter(':not(.placeholder):not(.buffer)')
   const start = children.toArray().indexOf(el[0]) + 1
   for (let i = start; i < children.length; i++) {
     let toggle = true
