@@ -97,7 +97,7 @@ function initialize() {
   try {
     loadpage()
   } catch (err) {
-    setTimeout(500, initialize)
+    setTimeout(initialize, 500)
   }
 }
 

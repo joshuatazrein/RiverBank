@@ -1253,11 +1253,12 @@ function mobileDragOver(event) {
 }
 
 function deleteTask() {
-  if (selected[0].tagName == 'P' || selected.hasClass('dateheading')) {
+  if (!selected || selected[0].tagName == 'P' || 
+    selected.hasClass('dateheading')) {
     return
   }
-  let newselect = taskBelow()
-  if (newselect[0] == selected[0]) {
+  let newselect = selected.next()
+  if (!selected.next()[0] || !selected.next().hasClass('in')) {
     newselect = taskAbove()
   }
   if (selected.attr('folded') == 'true') {
