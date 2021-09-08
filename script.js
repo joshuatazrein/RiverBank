@@ -2646,6 +2646,7 @@ function clicked(ev) {
     }
   } else if ($(ev.target).hasClass('listtitle')) {
     if (window.innerWidth < 600 && $(ev.target).val() != '') {
+      evt.preventDefault()
       $(':focus').blur()
       dragson()
     } else if ($(ev.target).hasClass('unselected')) {
