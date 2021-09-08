@@ -2645,12 +2645,10 @@ function clicked(ev) {
       select(oldselect)
     }
   } else if ($(ev.target).hasClass('listtitle')) {
-    if (window.innerWidth < 600) {
-      ev.preventDefault()
+    if (window.innerWidth < 600 && ev.target.val() != '') {
       $(':focus').blur()
       dragson()
-    }
-    if ($(ev.target).hasClass('unselected')) {
+    } else if ($(ev.target).hasClass('unselected')) {
       dragson()
     }
     if (movetolist != true) select()

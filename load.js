@@ -86,18 +86,19 @@ function load() {
         return
       } else {
         data = JSON.parse(xhr.responseText)
-        try {
-          loadpage()
-        } catch (err) {
-          setTimeout(initialize, 500)
-        }
+        initialize()
       }
     }
   )
 }
 
 function initialize() {
-  loadpage()
+  // tries to load until it's actually loaded
+  try {
+    loadpage()
+  } catch (err) {
+    setTimeout(500, initialize)
+  }
 }
 
 load()
