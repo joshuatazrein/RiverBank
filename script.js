@@ -96,6 +96,24 @@ function dragList(evt) {
 function draggingOver(evt) {
   //drag over
   evt.preventDefault()
+  const boxright = $('#listcontainer').offset().left
+  if (evt.pageX < boxright) {
+    console.log(evt.pageX, evt.pageY)
+    let i = 0
+    for (list of $('#loads').children().toArray()) {
+      const boxtop = $(list).offset().top
+      if (evt.pageY > boxtop && evt.pageY < boxtop + $(list).height() &&
+        $(list).hasClass('unselected')) {
+        console.log(selected)
+        loadedlist = i
+        selected.remove()
+        save()
+        loadList()
+        return
+      }
+      i ++ 
+    }
+  }
 }
 
 //dropping
@@ -643,7 +661,14 @@ function clearEmptyHeadlines() {
   save()
 }
 
-function toggleWeekdays() {
+function toggleHeadingAlign() {  if (data.headingalign == 'left') data.headingalign = 'center'
+  else data.headingalign = 'left'
+  save()
+  document.documentElement.style.setProperty('--headingalign',
+    data.headingalign)
+}
+
+function toggleWeekdayFormat() {
   if (data.weekdays == 'M') {
     data.weekdays = 'Mon'
     weekdaysStr = {
@@ -667,48 +692,14 @@ function toggleWeekdays() {
       6: 'S'
     }
   }
-  save()
-}
-
-function toggleHeadingAlign() {  if (data.headingalign == 'left') data.headingalign = 'center'
-  else data.headingalign = 'left'
-  save()
-  document.documentElement.style.setProperty('--headingalign',
-    data.headingalign)
-}
-
-function toggleWeekdayFormat() {
   // changes between 1 and 3 letter date formats
-  const weekdaytransdict = {
-    'M': 'Mon',
-    'Mon': 'M',
-    'T': 'Tue',
-    'Tue': 'T',
-    'W': 'Wed',
-    'Wed': 'W',
-    'R': 'Thu',
-    'Thu': 'R',
-    'F': 'Fri',
-    'Fri': 'F',
-    'S': 'Sat',
-    'Sat': 'S',
-    'U': 'Sun',
-    'Sun': 'U'
-  }
   const headingslist = $('#pop').children().toArray().filter(
-    (x) => {
-      if ($(x).hasClass('h1') &&
-        stringToDate($(x).text(), true) != 'Invalid Date') {
-        return true
-      }
-    })
+    (x) => { return $(x).hasClass('dateheading') })
   for (heading of headingslist) {
     // switches the dates back and forth
-    const textlist = $(heading).text().split(' ')
-    textlist[0] = weekdaytransdict[textlist[0]]
-    $(heading).html(textlist.join(' ') + getChildren($(heading)))
+    $(heading).html(dateToString(stringToDate(stripChildren($(heading))), 
+      true))
   }
-  toggleWeekdays(); // new
 }
 
 function changeDateFormat(format) {
@@ -1383,9 +1374,11 @@ function saveTask() {  // analyze format of task and create new <span> elt for i
     selected.val().slice(0, 2) == '# ' &&
     savetask.parents().filter('#pop').length != 0
   ) {
-    alert('create new dates by searching them')
+    const date = stringToDate(selected.val().slice(2))
     savetask.remove()
     selected.remove()
+    select(dateToHeading(date))
+    // makes new date
     return
   }
   // fixes leading or hanging indents
@@ -1720,7 +1713,7 @@ function updateHeight() {
   $('#texttest').text(selected.val() + ' x')
   $('#texttest').css('font', selected.css('font'))
   $('#texttest').css('font-size', selected.css('font-size'))
-  $('#texttest').css('padding', selected.css('padding'))
+  // $('#texttest').css('padding', selected.css('padding'))
   $('#texttest').css('width', selected.width() + 'px')
   selected.css('height', $('#texttest').height() + 5 + 'px')
 }
@@ -3080,7 +3073,8 @@ function keycomms(evt) {
     } else if (evt.key == 'c' && evt.metaKey) {
       copieditem = selected.clone()
     } else if (evt.key == 'x' && evt.metaKey) {
-      copieditem = selected
+      copieditem = selected.clone
+      selected.remove()
     } else if (evt.key == 'v' && evt.metaKey) {
       if (copieditem) {
         selected.after(copieditem)

@@ -1,7 +1,7 @@
 :root {
   /* --background: #005EFF; */
   --background: rgba(52, 73, 94, 1);
-  --bgoverlay: rgba(52, 73, 94, 0.5);
+  --bgoverlay: rgba(52, 73, 94, 0.8);
   --select: skyblue;
   --font: Andale Mono;
   --butfont: Andale Mono;

@@ -1,6 +1,6 @@
 :root {
   --background: /* rgb(199, 203, 229); */ rgb(171, 176, 208);
-  --bgoverlay: /* rgb(199, 203, 229); */ rgba(171, 176, 208, 0.5);
+  --bgoverlay: /* rgb(199, 203, 229); */ rgba(171, 176, 208, 0.8);
   --select: rgb(251, 217, 253);
   --font: Avenir Next, Helvetica;
   --butfont: Avenir Next, Helvetica;
