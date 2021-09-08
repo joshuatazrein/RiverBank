@@ -511,7 +511,7 @@ function save(undo, upload) {
   data = JSON.parse(JSON.stringify(newdata))
   $(document).scrollTop(0) // fixes scroll
   // backup data to the server after setting localstorage data
-  if (upload) {
+  if (upload != false) {
     uploadData()
     localStorage.setItem('data', JSON.stringify(data))
   }
