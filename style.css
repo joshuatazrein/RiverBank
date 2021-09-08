@@ -129,6 +129,10 @@ audio {
   user-select: none;
 }
 
+#logoimage.show {
+  display: block;
+}
+
 #logoimage {
   display: none;
   background: #000;

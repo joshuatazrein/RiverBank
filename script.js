@@ -3350,7 +3350,6 @@ function loadpage(setload, oldselect) {
   // right after signing in
   $('#username').text(getCookie('user'))
   if (setload != false) {
-    $('#loaddivs').remove()
     // initial loads (not called on reloads)
     $('#focusbar').hide()
     $('head').append(
@@ -3443,6 +3442,7 @@ function loadpage(setload, oldselect) {
     setTimeout(scrollToToday, 500)
   }
   $(loads[loadedlist]).blur()
+  $('#logoimage').removeClass('show')
 }
 
 function scrollToToday() {
