@@ -482,7 +482,7 @@ function clean() {
 }
 
 // Storing data:
-function save(undo, upload) {
+function save(undo) {
   unfilter(false)
   if (undo == true) savedata = JSON.parse(JSON.stringify(data))
   // save data
@@ -511,10 +511,8 @@ function save(undo, upload) {
   data = JSON.parse(JSON.stringify(newdata))
   $(document).scrollTop(0) // fixes scroll
   // backup data to the server after setting localstorage data
-  if (upload != false) {
-    uploadData()
-    localStorage.setItem('data', JSON.stringify(data))
-  }
+  uploadData()
+  localStorage.setItem('data', JSON.stringify(data))
 }
 
 function clearEmptyDates(saving) {
