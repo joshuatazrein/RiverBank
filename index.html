@@ -15,9 +15,21 @@
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script src="touch-punch.js"></script>
+  <style>
+    #logoimage {
+      display: none;
+      background: #000;
+      height: 100%;
+      width: 100%;
+    }
+
+    #logoimage.show {
+      display: block;
+    }
+  </style>
 </head>
 <body>
-  <div id='logoimage'>
+  <div id='logoimage' class='show'>
     <img src='logo.png' width='100%'>
   </div>
   <div class='container' id='container'>
