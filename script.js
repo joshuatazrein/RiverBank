@@ -2645,7 +2645,7 @@ function clicked(ev) {
       select(oldselect)
     }
   } else if ($(ev.target).hasClass('listtitle')) {
-    if (window.innerWidth < 600 && ev.target.val() != '') {
+    if (window.innerWidth < 600 && $(ev.target).val() != '') {
       $(':focus').blur()
       dragson()
     } else if ($(ev.target).hasClass('unselected')) {
