@@ -23,7 +23,7 @@ function getCookie(cname) {
 
 function load() {
   // tries to load current cookie's data; if not, redirects to welcome
-  if (!navigator.onLine || window.location.href.includes('file://')) {
+  if (!navigator.onLine || window.location.href.includes('file')) {
     alert('No connection detected; saving locally')
     if (!navigator.onLine) {
       offline = true
@@ -68,7 +68,7 @@ function load() {
       window.location = window.location.href.replace(
         'index.html', 'welcome.html')
     } else {
-      window.location = 'https://riverbank.app'
+      window.location = 'https://riverbank.app/welcome.html'
     }
     return
   }
@@ -81,7 +81,7 @@ function load() {
           window.location = window.location.href.replace(
             'index.html', 'welcome.html')
         } else {
-          window.location = 'https://riverbank.app'
+          window.location = 'https://riverbank.app/welcome.html'
         }
         return
       } else {
