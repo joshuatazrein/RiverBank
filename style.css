@@ -555,6 +555,10 @@ span.deadline {
 
 /* ## SUBSPANS */
 
+span span.mobhandle {
+  display: none;
+}
+
 span span.in, span textarea.in {
   margin-left: calc(0.5em - 5px);
   font-size: 0.85em;
@@ -706,6 +710,7 @@ span.weblink, span.deadline {
     background-color: #333;
   }
   span span.mobhandle {
+    display: inline-block;
     border: 1px solid var(--select);
     height: 30px !important;
     width: 30px !important;

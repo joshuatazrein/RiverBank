@@ -98,17 +98,23 @@ function draggingOver(evt) {
   evt.preventDefault()
   const boxright = $('#listcontainer').offset().left
   if (evt.pageX < boxright) {
-    console.log(evt.pageX, evt.pageY)
+    // load the dragged-over list
     let i = 0
-    for (list of $('#loads').children().toArray()) {
+    const loads = $('#loads').children().toArray()
+    for (list of loads) {
       const boxtop = $(list).offset().top
       if (evt.pageY > boxtop && evt.pageY < boxtop + $(list).height() &&
         $(list).hasClass('unselected')) {
-        console.log(selected)
+        $(loads[loadedlist]).removeClass('selected')
+        $(loads[loadedlist]).addClass('unselected')
+        selected.detach()
+        data.flop[loadedlist].text = $('#flop').html()
         loadedlist = i
-        selected.remove()
-        save()
-        loadList()
+        $('#flop').empty()
+        $('#flop').html(data.flop[loadedlist].text)
+        console.log($('#flop')[0]);
+        $(list).removeClass('unselected')
+        $(list).addClass('selected')
         return
       }
       i ++ 
@@ -476,7 +482,7 @@ function clean() {
 }
 
 // Storing data:
-function save(undo) {
+function save(undo, upload) {
   unfilter(false)
   if (undo == true) savedata = JSON.parse(JSON.stringify(data))
   // save data
@@ -505,8 +511,10 @@ function save(undo) {
   data = JSON.parse(JSON.stringify(newdata))
   $(document).scrollTop(0) // fixes scroll
   // backup data to the server after setting localstorage data
-  uploadData()
-  localStorage.setItem('data', JSON.stringify(data))
+  if (upload) {
+    uploadData()
+    localStorage.setItem('data', JSON.stringify(data))
+  }
 }
 
 function clearEmptyDates(saving) {
