@@ -87,10 +87,11 @@ function load() {
     }
     return
   }
-  console.log('getting file');
+  console.log('getting file', '/users/' + getCookie('fname') + '.json');
   $.get(
     'users/' + getCookie('fname') + '.json', 
     function (datastr, status, xhr) {
+      console.log('success on get');
       if (xhr.responseText == '') { 
         console.log('get failed');
         // no file found
@@ -107,7 +108,9 @@ function load() {
         initialize()
       }
     }
-  )
+  ).error(function(xhr, status, errorthrown) { 
+    console.log ('get request threw error', status, errorthrown)
+  })
 }
 
 function initialize() {
