@@ -88,7 +88,7 @@ function load() {
     return
   }
   console.log('getting file', '/users/' + getCookie('fname') + '.json');
-  $.get('users/' + getCookie('fname') + '.json').success(
+  $.get('users/' + getCookie('fname') + '.json',
     function (datastr, status, xhr) {
       console.log('success on get');
       if (xhr.responseText == '') { 
@@ -107,9 +107,7 @@ function load() {
         initialize()
       }
     }
-  ).error(function(jqXHR, textStatus, errorThrown) { 
-    console.log ('get request threw error', textStatus, errorThrown)
-  })
+  )
 }
 
 function initialize() {
@@ -119,7 +117,7 @@ function initialize() {
     loadpage()
   } catch (err) {
     console.log(err);
-    setTimeout(initialize, 500)
+    alert('error; please reload')
   }
 }
 
