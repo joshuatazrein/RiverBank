@@ -1135,6 +1135,7 @@ function updatedeadlines() {
 function updateSpanDrags() {
   if (window.innerWidth < 600) {
     // insert mobiledrag elements
+    $('.mobhandle').remove()
     $('span.in').prepend(
       '<span class="mobhandle"></span>')
     $('span.in').draggable({
@@ -1155,7 +1156,7 @@ function updateSpanDrags() {
         mobileDragOver(event)
       },
     })
-    $('span.in, textarea.listtitle').droppable({
+    $('span.in').droppable({
       accept: 'span.in',
       hoverClass: 'drop-hover',
       greedy: true,
@@ -1179,76 +1180,104 @@ function updateSpanDrags() {
 }
 
 function mobileDragOver(event) {
-  const timertime = 3
-  const offsetwidth = 30
-  const scrollChange = 1
-  const flopoffset = $('#flop').offset().top
-  const flopheight = $('#flop').height()
-  const popoffset = $('#pop').offset().top
-  const popheight = $('#pop').height()
-  clearTimeout(dragtimer)
-  dragtimer = setTimeout(mobileDragOver, timertime, event)
-  if (
-    flopoffset + flopheight - offsetwidth < event.pageY &&
-    event.pageY < flopoffset + flopheight
-  ) {
-    // scroll down
-    $('#flop').scrollTop($('#flop').scrollTop() + scrollChange)
-  } else if (
-    flopoffset < event.pageY &&
-    event.pageY < flopoffset + offsetwidth
-  ) {
-    // scroll up
-    $('#flop').scrollTop($('#flop').scrollTop() - scrollChange)
-  } else if (
-    popoffset + popheight - offsetwidth < event.pageY &&
-    event.pageY < popoffset + popheight
-  ) {
-    // scroll down
-    $('#pop').scrollTop($('#pop').scrollTop() + scrollChange)
-  } else if (
-    popoffset < event.pageY &&
-    event.pageY < popoffset + offsetwidth
-  ) {
-    // scroll up
-    $('#pop').scrollTop($('#pop').scrollTop() - scrollChange)
+  const boxright = $('#listcontainer').offset().left
+  if (event.pageX < boxright) {
+    // load the dragged-over list
+    let i = 0
+    const loads = $('#loads').children().toArray()
+    for (list of loads) {
+      const boxtop = $(list).offset().top
+      if (event.pageY > boxtop && event.pageY < boxtop + $(list).height() &&
+        $(list).hasClass('unselected')) {
+        $(loads[loadedlist]).removeClass('selected')
+        $(loads[loadedlist]).addClass('unselected')
+        selected.detach()
+        data.flop[loadedlist].text = $('#flop').html()
+        flopscrollsave = undefined
+        if (popscrollsave) {
+          $('#pop').scrollTop(popscrollsave)
+        }
+        popscrollsave = undefined
+        $('#flop, #pop').removeClass('greyedout')
+        loadedlist = i
+        $('#flop').empty()
+        $('#flop').html(data.flop[loadedlist].text)
+        console.log($('#flop')[0]);
+        $(list).removeClass('unselected')
+        $(list).addClass('selected')
+        updateSpanDrags()
+        return
+      }
+      i ++ 
+    }
   } else {
+    const timertime = 3
+    const offsetwidth = 30
+    const scrollChange = 1
+    const flopoffset = $('#flop').offset().top
+    const flopheight = $('#flop').height()
+    const popoffset = $('#pop').offset().top
+    const popheight = $('#pop').height()
     clearTimeout(dragtimer)
-  }
-  if (window.innerWidth < 600 && 
-    event.pageY > popoffset && !flopscrollsave) {
-    // scroll flop to end
-    if (popscrollsave) {
-      $('#pop').scrollTop(popscrollsave)
-    }
-    $('#pop').removeClass('greyedout')
-    popscrollsave = undefined
-    flopscrollsave = $('#flop').scrollTop()
-    $('#flop').addClass('greyedout')    
-    if ($('#flop').children().length < 2) {
-      $('#flop').scrollTop($('#flop').height())
+    dragtimer = setTimeout(mobileDragOver, timertime, event)
+    if (
+      flopoffset + flopheight - offsetwidth < event.pageY &&
+      event.pageY < flopoffset + flopheight
+    ) {
+      // scroll down
+      $('#flop').scrollTop($('#flop').scrollTop() + scrollChange)
+    } else if (
+      flopoffset < event.pageY &&
+      event.pageY < flopoffset + offsetwidth
+    ) {
+      // scroll up
+      $('#flop').scrollTop($('#flop').scrollTop() - scrollChange)
+    } else if (
+      popoffset + popheight - offsetwidth < event.pageY &&
+      event.pageY < popoffset + popheight
+    ) {
+      // scroll down
+      $('#pop').scrollTop($('#pop').scrollTop() + scrollChange)
+    } else if (
+      popoffset < event.pageY &&
+      event.pageY < popoffset + offsetwidth
+    ) {
+      // scroll up
+      $('#pop').scrollTop($('#pop').scrollTop() - scrollChange)
     } else {
-      const flopchild = $($('#flop').children()[
-        $('#flop').children().length - 1])
-      $('#flop').scrollTop($('#flop').scrollTop() + flopchild.position().top +
-      flopheight)
+      clearTimeout(dragtimer)
     }
-  } else if (window.innerWidth < 600 && 
-    event.pageY < popoffset && !popscrollsave) {
-    // scroll flop to end
-    if (flopscrollsave) {
-      $('#flop').scrollTop(flopscrollsave)
+    if (window.innerWidth < 600 && 
+      event.pageY > popoffset && !flopscrollsave) {
+      // scroll flop to end
+      if (popscrollsave) {
+        $('#pop').scrollTop(popscrollsave)
+      }
+      $('#pop').removeClass('greyedout')
+      popscrollsave = undefined
+      flopscrollsave = $('#flop').scrollTop()
+      $('#flop').addClass('greyedout')    
+      if ($('#flop').children().length < 2) {
+        $('#flop').scrollTop($('#flop').height())
+      } else {
+        const flopchild = $($('#flop').children()[
+          $('#flop').children().length - 1])
+        $('#flop').scrollTop($('#flop').scrollTop() + flopchild.position().top +
+        flopheight)
+      }
+    } else if (window.innerWidth < 600 && 
+      event.pageY < popoffset && !popscrollsave) {
+      // scroll flop to end
+      if (flopscrollsave) {
+        $('#flop').scrollTop(flopscrollsave)
+      }
+      $('#flop').removeClass('greyedout')
+      flopscrollsave = undefined
+      popscrollsave = $('#pop').scrollTop()
+      $('#pop').scrollTop(0)
+      $('#pop').addClass('greyedout')
     }
-    $('#flop').removeClass('greyedout')
-    flopscrollsave = undefined
-    popscrollsave = $('#pop').scrollTop()
-    $('#pop').scrollTop(0)
-    $('#pop').addClass('greyedout')
   }
-  // } else if (window.innerWidth < 600 && 
-  //   event.pageY < popoffset) {
-  //   // flopscrollsave = undefined
-  // }
 }
 
 function deleteTask() {

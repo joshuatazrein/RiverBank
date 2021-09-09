@@ -706,7 +706,8 @@ span.weblink, span.deadline {
     background: var(--background);
   }
   .drop-hover {
-    background-color: #333;
+    background-color: var(--event);
+    border: 1px solid var(--select);
   }
   span span.mobhandle {
     display: inline-block;
