@@ -108,9 +108,11 @@ function load() {
 
 function initialize() {
   // tries to load until it's actually loaded
+  console.log('loading once');
   try {
     loadpage()
   } catch (err) {
+    console.log(err);
     setTimeout(initialize, 500)
   }
 }
