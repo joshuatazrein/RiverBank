@@ -3484,7 +3484,8 @@ function loadpage(setload, oldselect) {
     setTimeout(scrollToToday, 500)
   }
   $(loads[loadedlist]).blur()
-  $('#logoimage').removeClass('show')
+  $('#logoimage').remove()
+  console.log('got here');
 }
 
 function scrollToToday() {
