@@ -88,8 +88,7 @@ function load() {
     return
   }
   console.log('getting file', '/users/' + getCookie('fname') + '.json');
-  $.get(
-    'users/' + getCookie('fname') + '.json', 
+  $.get('users/' + getCookie('fname') + '.json').success(
     function (datastr, status, xhr) {
       console.log('success on get');
       if (xhr.responseText == '') { 
@@ -108,8 +107,8 @@ function load() {
         initialize()
       }
     }
-  ).error(function(xhr, status, errorthrown) { 
-    console.log ('get request threw error', status, errorthrown)
+  ).error(function(jqXHR, textStatus, errorThrown) { 
+    console.log ('get request threw error', textStatus, errorThrown)
   })
 }
 
