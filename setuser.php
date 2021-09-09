@@ -15,8 +15,8 @@ $sql2 = 'SELECT * FROM users WHERE user="' .
 $username . '"';
 $result = $conn->query($sql2);
 while ($row = $result->fetch_assoc()) {
-  echo $row["fname"];
   file_put_contents('users/' . $row["fname"] . '.json', $data);
+  echo $row["fname"];
 }
 $conn->close();
 ?>
