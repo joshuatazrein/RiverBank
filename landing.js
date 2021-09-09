@@ -97,7 +97,7 @@ function newUser() {
         inaweek.toUTCString() + ';path=/;';
       document.cookie = 'pw=' + password + '; expires=' + 
         inaweek.toUTCString() + ';path=/;';
-      window.location='htpps://riverbank.app'
+      window.location='https://riverbank.app'
     }
   )
 }
