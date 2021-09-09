@@ -77,6 +77,7 @@ function load() {
   const fname = getCookie('fname')
   console.log(document.cookie);
   if (fname == '') {
+    console.log('no user loaded');
     // no user loaded
     if (offlinemode) {
       window.location = window.location.href.replace(
@@ -86,10 +87,12 @@ function load() {
     }
     return
   }
+  console.log('getting file');
   $.get(
     'users/' + getCookie('fname') + '.json', 
     function (datastr, status, xhr) {
       if (xhr.responseText == '') { 
+        console.log('get failed');
         // no file found
         if (offlinemode) {
           window.location = window.location.href.replace(
@@ -99,6 +102,7 @@ function load() {
         }
         return
       } else {
+        console.log('get succeeded');
         data = JSON.parse(xhr.responseText)
         initialize()
       }
