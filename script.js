@@ -2294,13 +2294,17 @@ function toggleHelp() {
 }
 
 function setStyle(style) {
-  $('link[href="' + data.style + '"]').remove()
-  data.style = style  
-  $('head').append(
-    $("<link rel='stylesheet' type='text/css' href='" +
-      data.style + "' />")
-  );
-  save()
+  if (navigator.onLine) {
+    $('link[href="' + data.style + '"]').remove()
+    data.style = style  
+    $('head').append(
+      $("<link rel='stylesheet' type='text/css' href='" +
+        data.style + "' />")
+    );
+    save()
+  } else {
+    alert('Connect to the Internet to load styles')
+  }
 }
 
 function context(e, mobile) {  
