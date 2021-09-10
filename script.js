@@ -1077,10 +1077,16 @@ function migrate() {
   console.log(today, todayheading);
   for (heading of $('#pop').children().filter('.dateheading').toArray()) {
     if (stringToDate($(heading).text(), true).getTime() < today) {
-      if (selected && 
-        (selected[0] == heading || 
-        (getHeading(selected, true)[0] && getHeading(selected, true)[0] 
-        == heading))) {
+      console.log(getHeading(selected, true));
+      try {
+        if (selected && 
+          (selected[0] == heading || 
+          (getHeading(selected, true) && getHeading(selected, true)[0] 
+          == heading))) {
+          continue
+        }
+      } catch (err) {
+        console.log(err, getHeading(selected, true))
         continue
       }
       console.log(heading);
