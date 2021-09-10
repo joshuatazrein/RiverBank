@@ -117,7 +117,7 @@ function initialize() {
     loadpage()
   } catch (err) {
     console.log(err);
-    alert('error; please reload')
+    setTimeout(initialize, 500)
   }
 }
 

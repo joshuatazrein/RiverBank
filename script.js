@@ -1079,7 +1079,8 @@ function migrate() {
     if (stringToDate($(heading).text(), true).getTime() < today) {
       if (selected && 
         (selected[0] == heading || 
-        getHeading(selected, true)[0] == heading)) {
+        (getHeading(selected, true)[0] && getHeading(selected, true)[0] 
+        == heading))) {
         continue
       }
       console.log(heading);
