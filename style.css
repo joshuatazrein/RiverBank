@@ -276,6 +276,10 @@ p.dropdown-item {
   border-top: 1px solid var(--bdcolor);
 }
 
+#help button {
+  font-size: 18px !important;
+}
+
 #tutorial {
   width: 100%;
   height: 100vh;
@@ -591,6 +595,7 @@ span.weblink, span.deadline {
 
 #help span {
   padding: 2px 4px;
+  font-size: 14px;
 }
 
 #help span.command, #help span.h1 {
@@ -621,9 +626,11 @@ span.weblink, span.deadline {
 
 @media only screen and (max-width: 600px) {
   #help {
-    font-size: 14px;
     height: 30%;
     overflow-wrap: break-word;
+  }
+  #help span {
+    font-size: 12px;
   }
   .container {
     height: calc(100vh - 80px);
@@ -680,7 +687,7 @@ span.weblink, span.deadline {
   }
   #help button {
     font-size: 2.7vw !important;
-    padding: 1px;
+    padding: 5px 1px;
     word-wrap: break-word;
     width: 100%;
   }

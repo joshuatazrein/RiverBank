@@ -74,6 +74,7 @@ var timer = new Timer({
 
 // defining options using on
 timer.on('end', function () {
+  $('#timersnd')[0].currentTime = 0
   $('#timersnd')[0].play()
   alert('timer done')
   $('#timersnd')[0].pause()
@@ -507,8 +508,8 @@ function save(undo) {
   // clean up styling
   $('span.in:visible').attr('style', '')
   clean()
-  updatedeadlines() // updateSpanDrags() called in updatedeadlines
   data = JSON.parse(JSON.stringify(newdata))
+  updatedeadlines() // updateSpanDrags() called in updatedeadlines
   $(document).scrollTop(0) // fixes scroll
   // backup data to the server after setting localstorage data
   uploadData()
@@ -524,69 +525,6 @@ function clearEmptyDates(saving) {
       stringToDate($(date).text(), true).getTime() !=
       stringToDate('0d').getTime()
     ) { date.remove() }
-  }
-  const today = stringToDate('0d')
-  try {
-    $('#pop').children().filter('.dateheading').toArray().forEach((heading) => {
-      if (
-        stringToDate($(heading).text(), true).getTime() < today.getTime()
-      ) {
-        if (
-          !selected ||
-          !(selected[0] == $(heading)[0] ||
-          (getHeading(selected, true) &&
-            getHeading(selected, true)[0] == $(heading)[0]))
-        ) {
-          // move uncompleted tasks to today and fold/complete all tasks
-          if (!($(heading).hasClass('complete')))
-            $(heading).addClass('complete')
-          if (($(heading).attr('folded') == 'false'))
-            togglefold($(heading), false)
-          const children = getHeadingChildren($(heading))
-          const appends = []
-          for (child of children) {
-            // test children of heading
-            if (['uncompleted...', 'uncompleted'].includes($(child).text())) {
-              $(child).remove() // take out headings
-            } else if ($(child).hasClass('event') &&
-              !$(child).hasClass('complete')) toggleComplete(child)
-            else if (!$(child).hasClass('complete') && !isHeading($(child))) {
-              $(child).show()
-              $(child).attr('style', '')
-              appends.push($(child))
-            } else {
-              const incomp = $(child).find('span.in:not(.complete)')
-              for (subchild of incomp) appends.push($(subchild))
-            }
-          }
-          if (appends.length > 0) {
-            let todayheading = $(dateToHeading(today))
-            let lastchild
-            if (getHeadingChildren($(dateToHeading(today))).length > 0) {
-              if (!getHeadingChildren(todayheading).map((x) => { 
-                return $(x).text()
-              }).includes('uncompleted')) {
-                const completespan = $(
-                  '<span class="in h2" folded="false">uncompleted</span>')
-                $(lastchild).after(completespan)
-                lastchild = completespan
-              } else {
-                lastchild = getHeadingChildren(todayheading).find((x) => {
-                  return $(x).text() == 'uncompleted'
-                })
-              }
-            } else {
-              lastchild = $(dateToHeading(today))
-            }            // add uncompleted to after heading
-            for (let appchild of appends) {
-              lastchild.after($(appchild))
-            }
-          }
-        }
-      }
-    })
-  } catch (err) {
-    // prevents loadpage error  
   }
   if (saving != false) { save() }
 }
@@ -1130,6 +1068,72 @@ function updatedeadlines() {
     $('#pop').append('<span class="buffer bottom" style="height:90%"></span>')
   }
   updateSpanDrags()
+  migrate()
+}
+
+function migrate() {
+  const today = stringToDate('0d').getTime()
+  const todayheading = $(dateToHeading(stringToDate('0d')))
+  console.log(today, todayheading);
+  for (heading of $('#pop').children().filter('.dateheading').toArray()) {
+    if (stringToDate($(heading).text(), true).getTime() < today) {
+      if (selected && 
+        (selected[0] == heading || 
+        getHeading(selected, true)[0] == heading)) {
+        continue
+      }
+      console.log(heading);
+      // migrate all uncompleted tasks
+      for (child of getHeadingChildren($(heading))) {
+        const ch = $(child)
+        const appends = []
+        ch.children().filter('span.in:not(.complete)').toArray().forEach(
+          (x) => { appends.push(x) })
+        if (ch.hasClass('event') && !ch.hasClass('complete')) {
+          toggleComplete(ch)
+        } else if (!ch.hasClass('complete') && !isHeading(ch)) {
+          appends.push(ch)
+        }
+        if (appends.length > 0) {
+          // show all
+          appends.forEach((x) => {$(x).show()})
+          // find the place and add the heading
+          let uncompletespan
+          const headingchildren = getHeadingChildren(todayheading)
+          console.log(headingchildren);
+          uncompletespan = headingchildren.find((x) => {
+            return /^uncompleted/.test($(x).text()) && $(x).hasClass('h2')
+          })
+          if (!uncompletespan) {
+            // insert after completed tasks heading
+            let completed = headingchildren.find((x) => {
+              return /^completed/.test($(x).text()) && $(x).hasClass('h2')
+            })
+            if (completed) {
+              completed = $(completed).prev()
+            } else if (!completed && headingchildren.length > 0) {
+              completed = headingchildren[headingchildren.length - 1]
+            } else {
+              completed = todayheading
+            }
+            uncompletespan = createBlankTask()
+            uncompletespan.addClass('h2')
+            uncompletespan.text('uncompleted')
+            completed.after(uncompletespan)
+          }
+          // append tasks after it
+          appends.forEach((x) => {
+            uncompletespan.after($(x))
+          })
+        }
+      }
+      // fold and complete
+      $(heading).addClass('complete')
+      if ($(heading).attr('folded') == 'false') {
+        togglefold($(heading), false)
+      }
+    }
+  }
 }
 
 function updateSpanDrags() {
@@ -1296,8 +1300,8 @@ function deleteTask() {
   }
   selected.remove()
   select(newselect)
-  clearEmptyDates()
   save(true)
+  clearEmptyDates()
 }
 
 function indentTask(indent) {
@@ -1873,7 +1877,7 @@ function archiveTask(play) {
   let taskabove = taskAbove()
   if (taskabove[0] == selected[0]) { taskabove = getFrame(selected) }
   if (play == true) { 
-
+    $('#popsnd')[0].currentTime = 0 // resets pop sound
     $('#popsnd')[0].play();
   }
   // archives the selected Flop to the current day
@@ -2219,7 +2223,8 @@ function getHeadingChildren(el) {
   } else if (el.hasClass('h3') == true) {
     thisclass = 'h3'
   }
-  const children = el.parent().children().filter(':not(.placeholder):not(.buffer)')
+  const children = el.parent().children()
+    .filter(':not(.placeholder):not(.buffer)')
   const start = children.toArray().indexOf(el[0]) + 1
   for (let i = start; i < children.length; i++) {
     let toggle = true
@@ -2323,14 +2328,19 @@ function toggleHelp() {
 }
 
 function setStyle(style) {
-  if (navigator.onLine) {
+  if (navigator.onLine || offlinemode) {
     $('link[href="' + data.style + '"]').remove()
     data.style = style  
-    $('head').append(
-      $("<link rel='stylesheet' type='text/css' href='" +
-        data.style + "' />")
-    );
-    save()
+    $.get(
+      data.style, 
+      function () {
+        $('head').append(
+          $("<link rel='stylesheet' type='text/css' href='" +
+            data.style + "' />")
+        );
+        save()
+      }
+    )
   } else {
     alert('Connect to the Internet to load styles')
   }
@@ -3355,10 +3365,12 @@ function reload() {
       // upload data once navigator comes online
       const doupload = confirm('Connection detected; upload local data?\n' + 
       '(overwrites changes from other devices)')
+      offline = false
       if (doupload) {
-        offline = false
         uploadData(true)
         return
+      } else {
+        alert('downloading from cloud...')
       }
     }
     $.post(
