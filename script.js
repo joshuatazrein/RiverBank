@@ -3275,6 +3275,7 @@ function uploadData(reloading) {
         diffsLog(prevupload, xhr.responseText)
         console.log('*** upload finished ***')
         prevupload = xhr.responseText
+        localStorage.setItem('data', JSON.stringify(data))
         if (reloading == true) reload() // reloads page
       });
     }
