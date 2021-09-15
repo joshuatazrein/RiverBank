@@ -2334,6 +2334,7 @@ function setStyle(style) {
     $.get(
       data.style,
       function () {
+        console.log(oldstyle, $('link[href="' + oldstyle + '"]'));
         $('link[href="' + oldstyle + '"]').remove()
         $('head').append(
           $("<link rel='stylesheet' type='text/css' href='" +
