@@ -3056,6 +3056,7 @@ function dblclick(ev) {
     selected.on('click', 
       function () { $(this).focus() })
     selected.click()
+    selected.focus()
   } else if (
     $(ev.target).hasClass('in') &&
     ev.target.tagName != 'TEXTAREA' &&
