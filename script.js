@@ -1724,6 +1724,7 @@ function select(el, scroll, animate) {
     return
   }
   $(document).scrollTop(0); // fixes weird shit
+  document.body.style.zoom = "100%";
   // switch selection
   if (selected != undefined) {
     $('.taskselect').removeClass('taskselect')
