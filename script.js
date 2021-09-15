@@ -1934,11 +1934,13 @@ function archiveTask(play) {
 
 function toggleComplete(task) {
   // task is for autocompleting yesterday's events
-  if (selected[0].tagName == 'P') {
-    return
-  }
   let completetask
-  if (!task) completetask = selected
+  if (!task) {
+    completetask = selected
+    if (selected && selected[0].tagName == 'P') {
+      return
+    }
+  }
   else completetask = $(task)
   const text = stripChildren(completetask).split(' ')
   if (!completetask.hasClass('complete') &&
