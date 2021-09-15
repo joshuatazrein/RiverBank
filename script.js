@@ -369,11 +369,12 @@ function updateSizes() {
       $(list).css('overflow-y', 'hidden')
     }
   }
-  if (window.innerWidth < 600) mobile = true
-  if (window.innerWidth >= 600 && mobile) {
-    mobile = false
+  if (window.innerWidth >= 600 && mobile || 
+    window.innerWidth < 600 && !mobile) {
     reload()
   }
+  if (window.innerWidth < 600) { mobile = true }
+  else { mobile = false }
   $('#flopbuts, #popbuts').css('width',
     String(
       Math.floor(($('.rendered:visible').width() / window.innerWidth) * 100)) +
