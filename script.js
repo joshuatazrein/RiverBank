@@ -3056,7 +3056,6 @@ function dblclick(ev) {
     selected[0].tagName == 'P') {
     ev.preventDefault()
     newTask()
-    console.log(selected);
     selected.click(function (e) { $(this).focus() })
     setTimeout(function () { 
       selected.trigger('click')
@@ -3069,6 +3068,12 @@ function dblclick(ev) {
     select($(ev.target))
     ev.preventDefault()
     editTask()
+    // this doens't work on mobile :(
+    selected.click(function (e) { $(this).focus() })
+    setTimeout(function () { 
+      selected.trigger('click')
+      selected.click()
+    }, 200)
   } else if (
     ['bold', 'italic', 'bold-italic'].includes(
       $(ev.target).attr('class'))) {
