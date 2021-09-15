@@ -727,6 +727,7 @@ span.weblink, span.deadline {
     position: absolute;
     top: 0;
     right: 10px;
+    z-index: 1;
   }
   span span span.mobhandle {
     height: 20px !important;

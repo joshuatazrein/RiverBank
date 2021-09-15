@@ -2674,38 +2674,22 @@ function clickoff(ev) {
 }
 
 function clicked(ev) {
+  console.log(ev.target);
   if (movetolist == true && !$(ev.target).hasClass('listtitle')) {
     // cancels move to list
     movetolist = false
   }
   $(document).scrollTop(0); // fixes weird shit
   $('nav').hide()
+  // pre-click
   if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
     return
   } else if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
     ev.target.tagName != 'TEXTAREA') {
     saveTask()
-    select($(ev.target), false)
-  } else if ($(ev.target).hasClass('dropdown-item')) {
-    ev.preventDefault()
-    const oldselect = selected
-    eval($(ev.target).attr('function'))
-    if (selected && selected[0].tagName != 'TEXTAREA' &&
-      $(ev.target).attr('id') != 'context-goToToday') {
-      select(oldselect)
-    }
-  } else if ($(ev.target).hasClass('listtitle')) {
-    if (window.innerWidth < 600 && $(ev.target).val() != '') {
-      ev.preventDefault()
-      $(':focus').blur()
-      dragson()
-    } else if ($(ev.target).hasClass('unselected')) {
-      dragson()
-    }
-    if (movetolist != true) select()
-  } else if ($(ev.target).hasClass('buffer')) {
-    select(getFrame($(ev.target)), false)
-  } else if ($(ev.target).attr('id') == 'newHeadingFlopBut') {
+  } 
+  // click events
+  if ($(ev.target).attr('id') == 'newHeadingFlopBut') {
     if (selected == undefined || getFrame(selected).attr('id') != 'flop') {
       // insert after selected
       const newtask = $('<span class="in"></span>')
@@ -2780,8 +2764,32 @@ function clicked(ev) {
       newTask()
     }
   } else if ($(ev.target)[0].tagName == 'BUTTON') {
-    eval($(ev.target).attr('function')) // execute button functions
-  } else if ($(ev.target).hasClass('link') == true) {
+     // execute button functions
+    eval($(ev.target).attr('function'))
+  } else if ($(ev.target).hasClass('dropdown-item')) {
+    // classes
+    ev.preventDefault()
+    const oldselect = selected
+    eval($(ev.target).attr('function'))
+    if (selected && selected[0].tagName != 'TEXTAREA' &&
+      $(ev.target).attr('id') != 'context-goToToday') {
+      select(oldselect)
+    }
+  } else if ($(ev.target).hasClass('listtitle')) {
+    if (window.innerWidth < 600 && $(ev.target).val() != '') {
+      ev.preventDefault()
+      $(':focus').blur()
+      dragson()
+    } else if ($(ev.target).hasClass('unselected')) {
+      dragson()
+    }
+    if (movetolist != true) select()
+  } else if ($(ev.target).hasClass('buffer')) {
+    select(getFrame($(ev.target)), false)
+  } else if ($(ev.target).attr('id') == 'searchbar') {
+    select()
+    // nothing; don't unselect
+  } else if ($(ev.target).hasClass('link')) {
     // search the task
     $('#searchbar').val($(ev.target).text().slice(2, -2))
     search(true)
@@ -2801,12 +2809,13 @@ function clicked(ev) {
     $('#searchbar').val(stripChildren($(ev.target)).slice(2))
     search('deadline', dateToString(stringToDate(
       getHeading($(ev.target), true).text(), true)))
+  } else if ($(ev.target).hasClass('mobhandle')) {
+    // provide context
+    select($(ev.target).parent(), false)
+    context(ev, true)
   } else if (getFrame($(ev.target)) && $(ev.target).hasClass('in')) {
     // select allowable elements
     select(ev.target, false)
-  } else if ($(ev.target).attr('id') == 'searchbar') {
-    select()
-    // nothing; don't unselect
   } else if (!isSubtask($(ev.target))) {
     // select parents of 
     select($(ev.target).parent(), false)
