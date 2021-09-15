@@ -1139,7 +1139,7 @@ function updateSpanDrags() {
     $('.mobhandle').remove()
     $('span.in').prepend(
       '<span class="mobhandle"></span>')
-    $('span.in').draggable({
+    $('span.in:not(.dateheading)').draggable({
       handle: '.mobhandle',
       containment: 'window',
       axis: 'y',
@@ -1165,6 +1165,18 @@ function updateSpanDrags() {
         ui.draggable.css('top', '0')
         ui.draggable.css('left', '0')
         dropTask(event, ui.draggable[0])
+        select(ui.draggable[0], true)
+      }
+    })
+    $('p.rendered').droppable({
+      accept: 'span.in',
+      hoverClass: 'selected',
+      greedy: true,
+      drop: function (event, ui) {
+        ui.draggable.css('top', '0')
+        ui.draggable.css('left', '0')
+        $($(event.target).children()[
+          $(event.target).children().length - 1]).before(ui.draggable[0])
         select(ui.draggable[0], true)
       }
     })
@@ -1328,6 +1340,8 @@ function compareTimes(a, b) {
 }
 
 function dragTime(el) {
+  console.log('dragtime');
+  $('.slider').remove()
   slider = $('<input type="range" min="-12" max="12" value="0"' +
     ' class="slider slider-vert">')
   $(document.body).append(slider)
@@ -1341,37 +1355,50 @@ function dragTime(el) {
   const splitlist = el.text().split('-')
   let durval
   // cleans out nonrounded values
+  const endmatch = splitlist[0].match(/[a-z]+$/)
+  let endof = ''
+  let endof2 = ''
+  if (endmatch) { 
+    endof = endmatch[0] 
+    splitlist[0] = splitlist[0].slice(0, splitlist[0].search(endof))
+  }
   if (!/\d+:30/.test(splitlist[0]) && !/^\d+$/.test(splitlist[0])) {
     splitlist[0] = splitlist[0].split(':')[0] + ':30'
   }
   const origvalue = Number(splitlist[0].replace(':30', '.5'))
   if (splitlist[1]) {
     // set endpoint if it exists
+    const endmatch2 = splitlist[1].match(/[a-z]+$/)
+    if (endmatch2) { 
+      endof2 = endmatch2[0] 
+      splitlist[1] = splitlist[1].slice(0, splitlist[1].search(endof2))
+    }
     if (!/:30/.test(splitlist[1]) && !/^\d+$/.test(splitlist[1])) {
       splitlist[1] = splitlist[1].split(':')[0] + ':30'
     }
     durval = Number(splitlist[1].replace(':30', '.5'))
   } else durval = origvalue
+
   slider.on('input', function () {
     if (durslider) durslider.remove()
     let changeval = mod12(origvalue + slider.val() / 2)
     if (durval != origvalue) {
       durchangeval = mod12(durval + slider.val() / 2)
-      el.text(String(changeval).replace('.5', ':30') + '-' +
-        String(durchangeval).replace('.5', ':30'))
+      el.text(String(changeval).replace('.5', ':30') + endof + '-' +
+        String(durchangeval).replace('.5', ':30')) + endof2
     } else {
-      el.text(String(changeval).replace('.5', ':30'))
+      el.text(String(changeval).replace('.5', ':30') + endof)
     }
   })
   durslider.on('input', function () {
     if (slider) slider.remove()
     durchangeval = mod12(durval + durslider.val() / 2)
     // prevent earlier
-    if (durchangeval == origvalue) el.text(splitlist[0])
+    if (durchangeval == origvalue) el.text(splitlist[0] + endof)
     else if (compareTimes(origvalue, durchangeval) < 0 &&
       durslider.val() < 0) return
-    else el.text(splitlist[0] + '-' +
-      String(durchangeval).replace('.5', ':30'))
+    else el.text(splitlist[0] + endof + '-' +
+      String(durchangeval).replace('.5', ':30') + endof2)
   })
   durslider.on('mouseup touchend', function () {
     slider.remove()
@@ -2662,14 +2689,9 @@ function clickoff(ev) {
     popscrollsave = undefined
     $('#pop').removeClass('greyedout')
     if (draggingtask) { return }
-    if (
-      ev.target.tagName == 'SPAN' &&
-      ev.pageX > window.innerWidth - 50 &&
-      (ev.pageY < $('#popbuts').offset().height ||
-        ev.pageY > $('#popbuts').offset().height + $('#popbuts').height())
-    ) {
+    if ($(ev.target).hasClass('mobhandle')) {
       // context menu
-      select($(ev.target), false)
+      select($(ev.target).parent(), false)
       context(ev, true)
     }
   }
@@ -2689,6 +2711,8 @@ function clicked(ev) {
   $('nav').hide()
   // pre-click
   if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
+    return 
+  } else if ($(ev.target).hasClass('slider')) {
     return
   } else if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
     ev.target.tagName != 'TEXTAREA') {
@@ -2815,10 +2839,6 @@ function clicked(ev) {
     $('#searchbar').val(stripChildren($(ev.target)).slice(2))
     search('deadline', dateToString(stringToDate(
       getHeading($(ev.target), true).text(), true)))
-  } else if ($(ev.target).hasClass('mobhandle')) {
-    // provide context
-    select($(ev.target).parent(), false)
-    context(ev, true)
   } else if (getFrame($(ev.target)) && $(ev.target).hasClass('in')) {
     // select allowable elements
     select(ev.target, false)
@@ -2926,7 +2946,11 @@ function moveTask(direction) {
 function dblclick(ev) {
   if ($(ev.target)[0].tagName == 'TEXTAREA' &&
     $(ev.target).hasClass('selected')) {
-    dragsoff()
+    if (window.innerWidth > 600) {
+      dragsoff()
+    } else {
+      context(ev)
+    }
   } else if ($(ev.target)[0].tagName == 'TEXTAREA') {
     return
   } else if (selected.hasClass('in') && selected[0].tagName == 'P') {
