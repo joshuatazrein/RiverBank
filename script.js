@@ -1340,6 +1340,23 @@ function compareTimes(a, b) {
 }
 
 function dragTime(el) {
+  let pretext = el.text()
+  function timetest() {
+    console.log(pretext, el.text());
+    if ((pretext.includes('11:30a') && el.text().includes('12a')) ||
+    (pretext.includes('12a') && el.text().includes('11:30a'))) {
+      // rollover pms
+      el.text(el.text().replace('a', 'p'))
+      endof = endof.replace('a', 'p')
+      endof2 = endof2.replace('a', 'p')
+    } else if ((pretext.includes('11:30p') && el.text().includes('12p')) ||
+    (pretext.includes('12p') && el.text().includes('11:30p'))) {
+      // rollover ams
+      el.text(el.text().replace('p', 'a'))
+      endof = endof.replace('p', 'a')
+      endof2 = endof2.replace('p', 'a')
+    } 
+  }
   // sets up sliders to drag times on events
   console.log('dragtime');
   $('.slider').remove()
@@ -1390,6 +1407,8 @@ function dragTime(el) {
     } else {
       el.text(String(changeval).replace('.5', ':30') + endof)
     }
+    timetest()
+    pretext = el.text()
   })
   durslider.on('input', function () {
     if (slider) slider.remove()
@@ -1397,9 +1416,18 @@ function dragTime(el) {
     // prevent earlier
     if (durchangeval == origvalue) el.text(splitlist[0] + endof)
     else if (compareTimes(origvalue, durchangeval) < 0 &&
-      durslider.val() < 0) return
-    else el.text(splitlist[0] + '-' +
-      String(durchangeval).replace('.5', ':30') + endof)
+      durslider.val() < 0) {
+      el.text(splitlist[0] + endof)
+      return
+    }
+    if (!endof2) {
+      endof2 = endof
+      endof = ''
+    }
+    el.text(splitlist[0] + endof + '-' +
+      String(durchangeval).replace('.5', ':30') + endof2)
+    timetest()
+    pretext = el.text()
   })
   durslider.on('mouseup touchend', function () {
     slider.remove()
