@@ -75,9 +75,8 @@ button:hover {
 }
 
 #logoimg {
-  vertical-align: bottom;
   margin: 0 calc(10vw - 1em);
-  height: 68px;
+  height: 0.7em;
 }
 
 #tutorial {
@@ -108,6 +107,12 @@ button:hover {
   width: 50%;
   padding: 0 10px;
   max-width: 400px;
+  margin-top: 35px;
+}
+
+.tutorial-vid video {
+  height: 110%;
+  margin-top: -15%;
 }
 
 p {
@@ -152,7 +157,7 @@ span.h1 {
   padding: 0 15px;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 700px) {
   body {
     font: 18px var(--font), serif;
   }
@@ -160,7 +165,7 @@ span.h1 {
     width: 100%;
   }
   #tutorial {
-    height: fit-content;
+    height: fit-content !important;
   }
   .tutorial-vid {
     padding: 0 5px;
@@ -175,10 +180,6 @@ span.h1 {
   .banner {
     letter-spacing: calc((100vw - 200px) / 8);
     font-size: 36px;
-  }
-  #logoimg {
-    margin: 0 2vw;
-    height: 11vw;
   }
 }
 

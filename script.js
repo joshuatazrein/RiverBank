@@ -61,16 +61,16 @@ var filtered
 var filteredlist
 
 function display(x) {
-  console.log(x)
+  // console.log(x)
 }
 
 function mobiletest() {
   if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
     .test(navigator.userAgent)) {
-    console.log(true);
+    // console.log(true);
     return true
   } else {
-    console.log(false);
+    // console.log(false);
     return false
   }
 }
@@ -110,6 +110,11 @@ function dragList(evt) {
 
 // for desktops
 function dragTaskOver(event) {
+  if (event.ctrlKey) {
+    $('#listcontainer > .in').hide()
+    $('span.in').removeClass('drop-hover')
+    return
+  }
   // $('#listcontainer > .in').css('width', $('#flop').width() + 'px')
   $(document).scrollTop(0)
   const boxright = $('#listcontainer').offset().left
@@ -1244,18 +1249,18 @@ function updateSpanDrags() {
       select(ui.draggable[0], true)
     }
   })
-  $('p.rendered').droppable({
-    accept: 'span.in',
-    hoverClass: 'drop-hover',
-    greedy: true,
-    drop: function (event, ui) {
-      ui.draggable.css('top', '0')
-      ui.draggable.css('left', '0')
-      $($(event.target).children()[
-        $(event.target).children().length - 1]).before(ui.draggable[0])
-      select(ui.draggable[0], true)
-    }
-  })
+  // not working right now
+  // $('p.rendered').droppable({
+  //   accept: 'span.in',
+  //   hoverClass: 'drop-hover',
+  //   drop: function (event, ui) {
+  //     ui.draggable.css('top', '0')
+  //     ui.draggable.css('left', '0')
+  //     $($(event.target).children()[
+  //       $(event.target).children().length - 1]).before(ui.draggable[0])
+  //     select(ui.draggable[0], true)
+  //   }
+  // })
 }
 
 function mobileDragOver(event) {
@@ -1409,7 +1414,7 @@ function compareTimes(a, b) {
 function dragTime(el) {
   let pretext = el.text().split('-')
   function timetest(text, placement, included) {
-    console.log(placement, pretext);
+    // console.log(placement, pretext);
     // replaces pm and am
     if ((pretext[placement].includes('11:30a') && text.includes('12')) ||
     (pretext[placement].includes('12a') && text.includes('11:30'))) {
@@ -1427,7 +1432,7 @@ function dragTime(el) {
     else if (placement == 1) return text + endof2
   }
   // sets up sliders to drag times on events
-  console.log('dragtime');
+  // console.log('dragtime');
   $('.slider').remove()
   slider = $('<input type="range" min="-12" max="12" value="0"' +
     ' class="slider slider-vert">')
@@ -1659,11 +1664,12 @@ function saveTask() {  // analyze format of task and create new <span> elt for i
   savetask.html(newstr)
   try {
     // fixing weird glitch
-    const wordlist = savetask.html().split(' ')
+    const wordlist = stripChildren(savetask).split(' ')
     for (word in wordlist) {
       // add in weblinks
-      if (wordlist[word].slice(1, wordlist[word].length - 1).includes('.') &&
-        stringToDate(wordlist[word]) == 'Invalid Date') {
+      if (wordlist[word].slice(1, wordlist[word].length - 2).includes('.') &&
+        stringToDate(wordlist[word]) == 'Invalid Date' && 
+        !/\.\./.test(wordlist[word])) {
         let match = false
         for (patt of [/^\.+$/, /\d+\.\d+/]) {
           if (patt.test(wordlist[word])) {
@@ -2416,17 +2422,25 @@ function togglefold(e, saving) {
   }
 }
 
-function toggleButs() {
+function toggleButs(saving) {
   if (data.hidebuts == 'true') {
     $('.butbar').show()
     $('#focusbut').show() // just in case it's moved in focusmode
     $('#typebut').show()
     data.hidebuts = 'false'
     $(':root').css('--butheight', $('#flopbuts').height() + 5 + 'px')
+    $('#collapsebut').removeAttr('style')
+    $('#flopbuts').prepend($('#collapsebut'))
   } else {
     $('.butbar:not(#editbuts)').hide()
     $('#typebut').hide()
     $('#focusbut').hide()
+    if (mobiletest()) {
+      $('#collapsebut').css('top', '0')
+      $('#collapsebut').css('left', '0')
+      $('#collapsebut').css('position', 'absolute')
+      $('#listcontainer').prepend($('#collapsebut'))
+    }
     data.hidebuts = 'true'
     $(':root').css('--butheight', '0px')
   }
@@ -2434,7 +2448,7 @@ function toggleButs() {
     // hide unnecessary buts
     $('.mobilehide').hide()
   }
-  save()
+  if (saving != false) save()
 }
 
 function toggleHelp() {
@@ -2457,7 +2471,7 @@ function setStyle(style) {
     $.get(
       data.style,
       function () {
-        console.log(oldstyle, $('link[href="' + oldstyle + '"]'));
+        // console.log(oldstyle, $('link[href="' + oldstyle + '"]'));
         $('link[href="' + oldstyle + '"]').remove()
         $('head').append(
           $("<link rel='stylesheet' type='text/css' href='" +
@@ -2476,8 +2490,7 @@ function setStyle(style) {
 function context(e, mobile) {
   justclicked = true
   setTimeout(function () { justclicked = false }, 300)
-  if (
-    selected != undefined &&
+  if (selected != undefined &&
     selected[0].tagName == 'TEXTAREA') {
     saveTask()
   }
@@ -2486,10 +2499,8 @@ function context(e, mobile) {
     target = $(e.target).parent()[0]
   }
   e.preventDefault()
-  if (
-    $(target)[0].tagName == 'TEXTAREA' &&
-    !$(target).hasClass('selected')
-  ) {
+  if ($(target)[0].tagName == 'TEXTAREA' &&
+    !$(target).hasClass('selected')) {
     // select list
     target.click()
   } else {
@@ -2667,7 +2678,7 @@ function context(e, mobile) {
     window.innerHeight - $('#context-menu').height()) - 20)
   $('#context-menu').css('left', Math.min(e.pageX,
     window.innerWidth - $('#context-menu').width()) - 40)
-  console.log($('#context-menu').offset());
+  // // console.log($('#context-menu').offset());
   if ($('#context-menu').offset().top < 0) {
     $('#context-menu').css('top', '0')
   }
@@ -2810,6 +2821,8 @@ function clicked(ev) {
   if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
     return 
   } else if ($(ev.target).hasClass('slider')) {
+    return
+  } else if (ev.ctrlKey) {
     return
   } else if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
     ev.target.tagName != 'TEXTAREA') {
@@ -3581,7 +3594,11 @@ function loadpage(setload, oldselect, scrolls) {
     }
     // prevents endless loading loop
     $(document).on('keydown', keycomms)
-    $(document).on('contextmenu', event, context)
+    $(document).on('contextmenu', function(event) {
+      context(event)
+      console.log($('#listcontainer > .in'));
+      $('#listcontainer > .in').hide()
+    })
     $(document).on('mousedown', event, clicked)
     $(document).on('mouseup', event, clickoff)
     $(document).on('dblclick', event, dblclick)
@@ -3599,7 +3616,7 @@ function loadpage(setload, oldselect, scrolls) {
   $('#pop').html(data.pop)
   // loads data
   let oldload
-  console.log(data.loadedlist, setload);
+  // console.log(data.loadedlist, setload);
   // load lists if there is one
   if (setload == false) {
     // fixes weird loadlist glitch
@@ -3607,7 +3624,7 @@ function loadpage(setload, oldselect, scrolls) {
   } else if (data.loadedlist != undefined) {
     oldload = Number(data.loadedlist)
   }
-  console.log(oldload);
+  // console.log(oldload);
   for (i of data.flop) {
     const newthing = $('<textarea class="listtitle unselected"></textarea>')
     newthing.attr('ondragstart', 'dragList(event)')
@@ -3639,20 +3656,11 @@ function loadpage(setload, oldselect, scrolls) {
   if (data.help == 'show') $('#help').show()
   if (data.help == 'hide') $('#help').hide()
   if (data.hidebuts == 'false') {
-    $('.butbar').show()
-    $('#focusbut').show()
-    $('#typebut').show()
-    $(':root').css('--butheight', $('#flopbuts').height() + 5 + 'px')
-  } else {
-    $('.butbar:not(#editbuts)').hide()
-    $('#focusbut').hide()
-    $('#typebut').hide()
-    $(':root').css('--butheight', '0px')
+    data.hidebuts = 'true'
+  } else if (data.hidebuts == 'true') {
+    data.hidebuts = 'false'
   }
-  if (mobiletest()) {
-    // hide unnecessary buts
-    $('.mobilehide').hide()
-  }
+  toggleButs(false)
   $('.taskselect').removeClass('taskselect')
   $(document).scrollTop(0)
   updateSizes()
@@ -3660,7 +3668,7 @@ function loadpage(setload, oldselect, scrolls) {
   clean()
   updatedeadlines()
   updateSpanDrags()
-  console.log(scrolls);
+  // console.log(scrolls);
   if (scrolls) {
     $('#flop').scrollTop(scrolls[0])
     $('#pop').scrollTop(scrolls[1])
