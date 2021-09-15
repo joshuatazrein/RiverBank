@@ -20,95 +20,105 @@
 <body onload='setTutorialHeight()' onresize='setTutorialHeight()'>
   <div class='container' id='container'>
     <p class='title'>&nbsp;<span class='b'>r</span>i<span class='b'>v</span>e<span class='b' style='letter-spacing:0'>r</span><img src='logotxt.png' id='logoimg'>b<span class='b'>a</span>n<span class='b'>k</span></p>
-    <div id='welcome'>
-      <div style='padding-top:0.5em;'>
-        <div class='centered' style='padding-bottom:0.5em;'>
-          <button onclick='
-            $("#signin").hide();
-            $("#createaccount").show();
-            setTutorialHeight();
-            $("#createaccountbut").addClass("clicked");
-            $("#signinbut").removeClass("clicked");' 
-            id='createaccountbut'>create account</button>
-          <button onclick='
-            $(createaccount).hide();
-            $(signin).show();
-            setTutorialHeight();
-            $("#signinbut").addClass("clicked");
-            $("#createaccountbut").removeClass("clicked");' 
-            id='signinbut'>sign in</button>
+    <div style='margin-top:100px;'>
+      <div id='welcome'>
+        <div style='padding-top:0.5em;'>
+          <div class='centered' style='padding-bottom:0.5em;'>
+            <button onclick='
+              $("#signin").hide();
+              $("#createaccount").show();
+              setTutorialHeight();
+              $("#createaccountbut").addClass("clicked");
+              $("#signinbut").removeClass("clicked");' 
+              id='createaccountbut'>create account</button>
+            <button onclick='
+              $(createaccount).hide();
+              $(signin).show();
+              setTutorialHeight();
+              $("#signinbut").addClass("clicked");
+              $("#createaccountbut").removeClass("clicked");' 
+              id='signinbut'>sign in</button>
+          </div>
+          <div id='signin' style='display:none;' class='centered'>
+            <input id='username' placeholder="username">
+            <input id='password' type='password' placeholder="password" onkeyup='if (event.key == "Enter") signIn()'>
+            <button onclick='signIn()' style='margin-top:10px;'>submit</button>
+          </div>
+          <div id='createaccount' style='display:none;' class='centered'>
+            <input id='newusername' placeholder="new username">
+            <input id='newpassword1' type='password' placeholder="new password">
+            <input id='newpassword2' type='password' placeholder="new password again" onkeyup='if (event.key == "Enter") checkNewUser()'>
+            <button onclick='checkNewUser()' style='margin-top:10px;'>submit</button>
+          </div>
         </div>
-        <div id='signin' style='display:none;' class='centered'>
-          <input id='username' placeholder="username">
-          <input id='password' type='password' placeholder="password" onkeyup='if (event.key == "Enter") signIn()'>
-          <button onclick='signIn()' style='margin-top:10px;'>submit</button>
+        <div>
+          <p>
+            <span class='h1' style='text-align:left;'>Keep it current.</span>
+            We get sucked up by the tides of tasks, thoughts, and information. RiverBank is here to help you channel all that energy into a productive flow. It's a simple process:
+            <ul>
+              <li>Store unscheduled stuff in the Bank.</li>
+              <li>Schedule stuff by dragging it into the River, which documents your past, present, and future.</li>
+            </ul>
+            Unlike most task managers, RiverBank is both a to-do list and a calendar, unifying your time into a single stream. Give it a try by creating an account above! 
+            <br><br>
+          </p>
         </div>
-        <div id='createaccount' style='display:none;' class='centered'>
-          <input id='newusername' placeholder="new username">
-          <input id='newpassword1' type='password' placeholder="new password">
-          <input id='newpassword2' type='password' placeholder="new password again" onkeyup='if (event.key == "Enter") checkNewUser()'>
-          <button onclick='checkNewUser()' style='margin-top:10px;'>submit</button>
+        <div>
+          <p>
+            <span class='h1' style='text-align:left;font-size:1.15em;'>About me:</span>
+          </p>
+          <p>
+            <img src='headshot.jpg' ALIGN='left' style='width:150px;padding-right: 10px;max-width:20vw;'>My name is Joshua Tazman Reinier. I'm interested in how technology can change our minds and help us be better at being people. In addition to this project, I also write poetry, music, and do web design. Check out my other work at <a href='https://joshuareinier.com'>joshuareinier.com</a>.
+          </p>
         </div>
       </div>
-      <div>
-        <p>
-          <span class='h1' style='text-align:left;'>Keep it current.</span>
-          We get sucked up by the tides of tasks, thoughts, and information. RiverBank is here to help you channel all that energy into a productive flow. It's a simple process:
-          <ul>
-            <li>Store unscheduled stuff in the Bank.</li>
-            <li>Schedule stuff by dragging it into the River, which documents your past, present, and future.</li>
-          </ul>
-          Unlike most task managers, RiverBank is both a to-do list and a calendar, unifying your time into a single stream. Give it a try by creating an account above! 
-          <br><br>
-        </p>
-      </div>
-    </div>
-    <div id='tutorial'>
-      <img src='screenshot.png' width='100%' style='margin-bottom:10px;'>
-      <span class='banner'>FEATURE<span style='letter-spacing:0;'>S</span></span>
-      <div class='tutorial-vid'>
-        <span class='h1'>lists</span>
-        <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/new-list.m4v" type="video/mp4"></video>
-      </div>
-      <div class='tutorial-vid'>
-        <span class='h1'>tasks</span>
-        <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/new-task.m4v" type="video/mp4"></video>
-      </div>
-      <div class='tutorial-vid'>
-        <span class='h1'>headings</span>
-        <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/headings.m4v" type="video/mp4"></video>
-      </div>
-      <div class='tutorial-vid'>
-        <span class='h1'>subtasks</span>
-        <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/subtasks.m4v" type="video/mp4"></video>
-      </div>
-      <div class='tutorial-vid'>
-        <span class='h1'>dragging</span>
-        <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/drags.m4v" type="video/mp4"></video>
-      </div>
-      <div class='tutorial-vid'>
-        <span class='h1'>types</span>
-        <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/format-tasks.m4v" type="video/mp4"></video>
-      </div>
-      <div class='tutorial-vid'>
-        <span class='h1'>styles</span>
-        <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/inline-formatting.m4v" type="video/mp4"></video>
-      </div>
-      <div class='tutorial-vid'>
-        <span class='h1'>dates</span>
-        <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/search.m4v" type="video/mp4"></video>
-      </div>
-      <div class='tutorial-vid'>
-        <span class='h1'>timer</span>
-        <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/timer.m4v" type="video/mp4"></video>
-      </div>
-      <div class='tutorial-vid'>
-        <span class='h1'>buttons</span>
-        <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/buttons.m4v" type="video/mp4"></video>
-      </div>
-      <div class='tutorial-vid'>
-        <span class='h1'>mobile</span>
-        <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/mobile.m4v" type="video/mp4"></video>
+      <div id='tutorial'>
+        <img src='screenshot.png' width='100%' style='margin-bottom:10px;'>
+        <span class='banner'>FEATURE<span style='letter-spacing:0;'>S</span></span>
+        <div class='tutorial-vid'>
+          <span class='h1'>lists</span>
+          <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/new-list.m4v" type="video/mp4"></video>
+        </div>
+        <div class='tutorial-vid'>
+          <span class='h1'>tasks</span>
+          <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/new-task.m4v" type="video/mp4"></video>
+        </div>
+        <div class='tutorial-vid'>
+          <span class='h1'>headings</span>
+          <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/headings.m4v" type="video/mp4"></video>
+        </div>
+        <div class='tutorial-vid'>
+          <span class='h1'>subtasks</span>
+          <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/subtasks.m4v" type="video/mp4"></video>
+        </div>
+        <div class='tutorial-vid'>
+          <span class='h1'>dragging</span>
+          <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/drags.m4v" type="video/mp4"></video>
+        </div>
+        <div class='tutorial-vid'>
+          <span class='h1'>types</span>
+          <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/format-tasks.m4v" type="video/mp4"></video>
+        </div>
+        <div class='tutorial-vid'>
+          <span class='h1'>styles</span>
+          <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/inline-formatting.m4v" type="video/mp4"></video>
+        </div>
+        <div class='tutorial-vid'>
+          <span class='h1'>dates</span>
+          <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/search.m4v" type="video/mp4"></video>
+        </div>
+        <div class='tutorial-vid'>
+          <span class='h1'>timer</span>
+          <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/timer.m4v" type="video/mp4"></video>
+        </div>
+        <div class='tutorial-vid'>
+          <span class='h1'>buttons</span>
+          <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/buttons.m4v" type="video/mp4"></video>
+        </div>
+        <div class='tutorial-vid'>
+          <span class='h1'>mobile</span>
+          <video autoplay muted loop muted loop style='width:100%;'><source  src="tutorial/mobile.m4v" type="video/mp4"></video>
+        </div>
       </div>
     </div>
 </body>
