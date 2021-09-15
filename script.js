@@ -372,27 +372,12 @@ function updateSizes() {
   if (window.innerWidth < 600) mobile = true
   if (window.innerWidth >= 600 && mobile) {
     mobile = false
-    reloadpage()
+    reload()
   }
   $('#flopbuts, #popbuts').css('width',
     String(
       Math.floor(($('.rendered:visible').width() / window.innerWidth) * 100)) +
-    'vw')
-  // updates the text sizes of each list
-  // let height = 0
-  // $('#texttest').css('font-family', 'var(--font), serif')
-  // $('#texttest').css('font-weight', 'bold')
-  // $('#texttest').css('word-wrap', 'break-word')
-  // for (list of $('#loads').children()) {
-  //   $('#texttest').css('font-size', $(list).css('font-size'))
-  //   $('#texttest').html($(list).val())
-  //   if ($(list).val() == '') $('#texttest').html('&nbsp;')
-  //   $('#texttest').css('width', $(list).width() + 'px')      
-  //   $(list).css('height', $('#texttest').height() + 'px')
-  // }
-  // $('#texttest').css('font-family', '')
-  // $('#texttest').css('font-size', '')
-  // $('#texttest').css('font-weight', '')
+      'vw')
 }
 
 // picks a new loadlist
@@ -3418,6 +3403,7 @@ function reload2() {
 
 function loadpage(setload, oldselect) {
   // right after signing in
+  const floptop = $('#flop').scrollTop()
   $('#username').text(getCookie('user'))
   if (setload != false) {
     // initial loads (not called on reloads)
@@ -3510,6 +3496,7 @@ function loadpage(setload, oldselect) {
   clean()
   updatedeadlines()
   updateSpanDrags()
+  $('#flop').scrollTop(floptop)
   if (oldselect) {
     if (oldselect[1])
       select(oldselect[0].find('span.in').toArray()[oldselect[1]])
