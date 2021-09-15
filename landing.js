@@ -107,7 +107,10 @@ function setTutorialHeight() {
     $("#tutorial").css("height", 
       Math.max($("#welcome").height(), window.innerHeight - 110) + "px")
   }
-  $('video').toArray().forEach((x) => {
-    x.currentTime = 0;
-  })
 }
+
+$('video').toArray().forEach((x) => {
+  x.currentTime = 0;
+})
+setTimeout(function () {$('#createaccountbut').trigger('click')}, 250)
+console.log('loaded');

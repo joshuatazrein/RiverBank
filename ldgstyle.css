@@ -70,7 +70,7 @@ button {
   transition-duration: 0.3s;
 }
 
-button:hover {
+button:hover, button.clicked {
   background-color: var(--select);
 }
 
@@ -107,13 +107,13 @@ button:hover {
   width: 50%;
   padding: 0 10px;
   max-width: 400px;
-  margin-top: 35px;
+  /* margin-top: 35px; */
 }
 
-.tutorial-vid video {
+/* .tutorial-vid video {
   height: 110%;
   margin-top: -15%;
-}
+} */
 
 p {
   margin: 0;
@@ -174,8 +174,7 @@ span.h1 {
     font-size: 8vw;
   }
   .title {
-    font-size: 10vw;
-    letter-spacing: calc(88vw / 50);
+    font-size: 9vw;
   }
   .banner {
     letter-spacing: calc((100vw - 200px) / 8);
