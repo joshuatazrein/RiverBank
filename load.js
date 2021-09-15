@@ -116,7 +116,7 @@ function initialize() {
     loadpage()
   } catch (err) {
     console.log(err)
-    // setTimeout(initialize, 500)
+    setTimeout(initialize, 500)
   }
 }
 

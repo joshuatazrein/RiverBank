@@ -64,6 +64,17 @@ function display(x) {
   console.log(x)
 }
 
+function mobiletest() {
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
+    .test(navigator.userAgent)) {
+    console.log(true);
+    return true
+  } else {
+    console.log(false);
+    return false
+  }
+}
+
 //# TIMER
 var timer = new Timer({
   tick: 1,
@@ -97,31 +108,73 @@ function dragList(evt) {
   evt.dataTransfer.effectAllowed = 'move'
 }
 
-//passing over stuff
-function draggingOver(evt) {
-  //drag over
-  evt.preventDefault()
+// for desktops
+function dragTaskOver(event) {
+  // $('#listcontainer > .in').css('width', $('#flop').width() + 'px')
+  $(document).scrollTop(0)
   const boxright = $('#listcontainer').offset().left
-  if (evt.pageX < boxright) {
+  if (event.pageX < boxright) {
     // load the dragged-over list
     let i = 0
     const loads = $('#loads').children().toArray()
     for (list of loads) {
       const boxtop = $(list).offset().top
-      if (evt.pageY > boxtop && evt.pageY < boxtop + $(list).height() &&
+      if (event.pageY > boxtop && event.pageY < boxtop + $(list).height() &&
         $(list).hasClass('unselected')) {
         $(loads[loadedlist]).removeClass('selected')
         $(loads[loadedlist]).addClass('unselected')
         selected.detach()
         data.flop[loadedlist].text = $('#flop').html()
+        flopscrollsave = undefined
+        if (popscrollsave) {
+          $('#pop').scrollTop(popscrollsave)
+        }
+        popscrollsave = undefined
+        $('#flop, #pop').removeClass('greyedout')
+        $('.drop-hover').removeClass('.drop-hover')
         loadedlist = i
         $('#flop').empty()
         $('#flop').html(data.flop[loadedlist].text)
         $(list).removeClass('unselected')
         $(list).addClass('selected')
+        updateSpanDrags()
         return
       }
       i++
+    }
+  } else {
+    const timertime = 3
+    const offsetwidth = 50
+    const scrollChange = 1
+    const flopoffset = $('#flop').offset().top
+    const flopheight = $('#flop').height()
+    const popoffset = $('#pop').offset().top
+    const popheight = $('#pop').height()
+    const popleft = $('#pop').offset().left
+    clearTimeout(dragtimer)
+    dragtimer = setTimeout(mobileDragOver, timertime, event)
+    if (flopoffset + flopheight - offsetwidth < event.pageY &&
+      event.pageY < flopoffset + flopheight &&
+      event.pageX < popleft) {
+      // scroll down
+      $('#flop').scrollTop($('#flop').scrollTop() + scrollChange)
+    } else if (flopoffset < event.pageY &&
+      event.pageY < flopoffset + offsetwidth &&
+      event.pageX < popleft) {
+      // scroll up
+      $('#flop').scrollTop($('#flop').scrollTop() - scrollChange)
+    } else if (popoffset + popheight - offsetwidth < event.pageY &&
+      event.pageY < popoffset + popheight &&
+      event.pageX > popleft) {
+      // scroll down
+      $('#pop').scrollTop($('#pop').scrollTop() + scrollChange)
+    } else if (popoffset < event.pageY &&
+      event.pageY < popoffset + offsetwidth &&
+      event.pageX > popleft) {
+      // scroll up
+      $('#pop').scrollTop($('#pop').scrollTop() - scrollChange)
+    } else {
+      clearTimeout(dragtimer)
     }
   }
 }
@@ -348,14 +401,14 @@ function updateSizes() {
   ) {
     // update entries
     let fontsize = 24
-    if (window.innerWidth < 600) fontsize = 16
+    if (mobiletest()) fontsize = 16
     while ($(list[0]).width() / (fontsize / 2) < list[1]) {
       fontsize -= 1
     }
     $(list).css('font-size', fontsize + 'px')
   }
   // fix context menu for mobile
-  if (window.innerWidth < 600) {
+  if (mobiletest()) {
     $('.dropdown-item').toArray().forEach((x) => {
       $(x).text($(x).text().replace(/\s\((.*)\)/, ''))
     })
@@ -368,12 +421,6 @@ function updateSizes() {
     } else {
       $(list).css('overflow-y', 'hidden')
     }
-  }
-  if (window.innerWidth >= 600 && mobile || 
-    window.innerWidth < 600 && !mobile) {
-    if (window.innerWidth < 600) { mobile = true }
-    else { mobile = false }
-    reload()
   }
   $('#flopbuts, #popbuts').css('width',
     String(
@@ -475,6 +522,11 @@ function clean() {
       $($('#loads').children()[list]).remove()
     }
   }
+  // clear out deprecated attributes
+  $('span.in').removeAttr('ondragstart')
+  $('span.in').removeAttr('ondragover')
+  $('span.in').removeAttr('ondrop')
+  $('span.in').removeAttr('draggable')
 }
 
 // Storing data:
@@ -1084,6 +1136,11 @@ function migrate() {
       // migrate all uncompleted tasks
       for (child of getHeadingChildren($(heading))) {
         const ch = $(child)
+        if (/^uncompleted/.test(ch.text())) {
+          // takes out the uncompleted heading
+          ch.remove()
+          continue
+        }
         const appends = []
         ch.children().filter('span.in:not(.complete)').toArray().forEach(
           (x) => { appends.push(x) })
@@ -1134,7 +1191,7 @@ function migrate() {
 }
 
 function updateSpanDrags() {
-  if (window.innerWidth < 600) {
+  if (mobiletest()) {
     // insert mobiledrag elements
     $('.mobhandle').remove()
     $('span.in').prepend(
@@ -1157,39 +1214,48 @@ function updateSpanDrags() {
         mobileDragOver(event)
       },
     })
-    $('span.in').droppable({
-      accept: 'span.in',
-      hoverClass: 'drop-hover',
-      greedy: true,
-      drop: function (event, ui) {
-        ui.draggable.css('top', '0')
-        ui.draggable.css('left', '0')
-        dropTask(event, ui.draggable[0])
-        select(ui.draggable[0], true)
-      }
-    })
-    $('p.rendered').droppable({
-      accept: 'span.in',
-      hoverClass: 'selected',
-      greedy: true,
-      drop: function (event, ui) {
-        ui.draggable.css('top', '0')
-        ui.draggable.css('left', '0')
-        $($(event.target).children()[
-          $(event.target).children().length - 1]).before(ui.draggable[0])
-        select(ui.draggable[0], true)
-      }
-    })
-    $('span.in').attr('ondragstart', '')
-    $('span.in').attr('ondragover', '')
-    $('span.in').attr('ondrop', '')
-    $('span.in').attr('draggable', 'false')
   } else {
-    $('span.in').attr('ondragstart', 'dragTask(event)')
-    $('span.in').attr('ondragover', 'draggingOver(event)')
-    $('span.in').attr('ondrop', 'dropTask(event)')
-    $('span.in').attr('draggable', 'true')
+    $('.mobhandle').remove()
+    $('span.in:not(.dateheading)').draggable({
+      containment: 'window',
+      revert: true,
+      appendTo: $('#listcontainer'),
+      helper: 'clone',
+      refreshPositions: true,
+      zIndex: 1,
+      addClasses: false,
+      start: function (event) {
+        // $(this).hide()
+        dragTask(event, $(this))
+      },
+      drag: function (event) {
+        dragTaskOver(event)
+      },
+    })
   }
+  $('span.in').droppable({
+    accept: 'span.in',
+    hoverClass: 'drop-hover',
+    greedy: true,
+    drop: function (event, ui) {
+      ui.draggable.css('top', '0')
+      ui.draggable.css('left', '0')
+      dropTask(event, ui.draggable[0])
+      select(ui.draggable[0], true)
+    }
+  })
+  $('p.rendered').droppable({
+    accept: 'span.in',
+    hoverClass: 'drop-hover',
+    greedy: true,
+    drop: function (event, ui) {
+      ui.draggable.css('top', '0')
+      ui.draggable.css('left', '0')
+      $($(event.target).children()[
+        $(event.target).children().length - 1]).before(ui.draggable[0])
+      select(ui.draggable[0], true)
+    }
+  })
 }
 
 function mobileDragOver(event) {
@@ -1212,6 +1278,7 @@ function mobileDragOver(event) {
         }
         popscrollsave = undefined
         $('#flop, #pop').removeClass('greyedout')
+        $('.drop-hover').removeClass('.drop-hover')
         loadedlist = i
         $('#flop').empty()
         $('#flop').html(data.flop[loadedlist].text)
@@ -1259,7 +1326,7 @@ function mobileDragOver(event) {
     } else {
       clearTimeout(dragtimer)
     }
-    if (window.innerWidth < 600 &&
+    if (mobiletest() &&
       event.pageY > popoffset && !flopscrollsave) {
       // scroll flop to end
       if (popscrollsave) {
@@ -1277,7 +1344,7 @@ function mobileDragOver(event) {
         $('#flop').scrollTop($('#flop').scrollTop() + flopchild.position().top +
           flopheight)
       }
-    } else if (window.innerWidth < 600 &&
+    } else if (mobiletest() &&
       event.pageY < popoffset && !popscrollsave) {
       // scroll flop to end
       if (flopscrollsave) {
@@ -1340,22 +1407,24 @@ function compareTimes(a, b) {
 }
 
 function dragTime(el) {
-  let pretext = el.text()
-  function timetest() {
-    console.log(pretext, el.text());
-    if ((pretext.includes('11:30a') && el.text().includes('12a')) ||
-    (pretext.includes('12a') && el.text().includes('11:30a'))) {
+  let pretext = el.text().split('-')
+  function timetest(text, placement, included) {
+    console.log(placement, pretext);
+    // replaces pm and am
+    if ((pretext[placement].includes('11:30a') && text.includes('12')) ||
+    (pretext[placement].includes('12a') && text.includes('11:30'))) {
       // rollover pms
-      el.text(el.text().replace('a', 'p'))
-      endof = endof.replace('a', 'p')
-      endof2 = endof2.replace('a', 'p')
-    } else if ((pretext.includes('11:30p') && el.text().includes('12p')) ||
-    (pretext.includes('12p') && el.text().includes('11:30p'))) {
+      if (placement == 0) endof = endof.replace('a', 'p')
+      else if (placement == 1) endof2 = endof2.replace('a', 'p')
+    } else if ((pretext[placement].includes('11:30p') && text.includes('12')) ||
+    (pretext[placement].includes('12p') && text.includes('11:30'))) {
       // rollover ams
-      el.text(el.text().replace('p', 'a'))
-      endof = endof.replace('p', 'a')
-      endof2 = endof2.replace('p', 'a')
-    } 
+      if (placement == 0) endof = endof.replace('p', 'a')
+      else if (placement == 1) endof2 = endof2.replace('p', 'a')
+    }
+    if (placement == 0 && included != false) return text + endof
+    else if (placement == 0) return text
+    else if (placement == 1) return text + endof2
   }
   // sets up sliders to drag times on events
   console.log('dragtime');
@@ -1398,36 +1467,38 @@ function dragTime(el) {
   } else durval = origvalue
 
   slider.on('input', function () {
+    // change time
     if (durslider) durslider.remove()
     let changeval = mod12(origvalue + slider.val() / 2)
     if (durval != origvalue) {
       durchangeval = mod12(durval + slider.val() / 2)
-      el.text(String(changeval).replace('.5', ':30') + endof + '-' +
-        String(durchangeval).replace('.5', ':30')) + endof2
+      el.text(timetest(String(changeval).replace('.5', ':30'), 0) + 
+        '-' + timetest(String(durchangeval).replace('.5', ':30'), 1))
     } else {
-      el.text(String(changeval).replace('.5', ':30') + endof)
+      el.text(timetest(String(changeval).replace('.5', ':30'), 0))
     }
-    timetest()
-    pretext = el.text()
+    pretext = el.text().split('-')
   })
   durslider.on('input', function () {
+    // change duration
     if (slider) slider.remove()
     durchangeval = mod12(durval + durslider.val() / 2)
     // prevent earlier
-    if (durchangeval == origvalue) el.text(splitlist[0] + endof)
-    else if (compareTimes(origvalue, durchangeval) < 0 &&
-      durslider.val() < 0) {
-      el.text(splitlist[0] + endof)
-      return
+    if (compareTimes(origvalue, durchangeval) <= 0 &&
+      durslider.val() <= 0) {
+      el.text(timetest(splitlist[0], 0))
+      pretext = [el.text()]
+        .concat([el.text()])
+    } else {
+      if (!endof2) {
+        endof2 = endof
+        pretext = [timetest(splitlist[0], 0)]
+          .concat(String(durchangeval).replace('.5', ':30') + endof2)
+      }
+      el.text(timetest(splitlist[0], 0) + '-' +
+        timetest(String(durchangeval).replace('.5', ':30'), 1))
+      pretext = el.text().split('-')
     }
-    if (!endof2) {
-      endof2 = endof
-      endof = ''
-    }
-    el.text(splitlist[0] + endof + '-' +
-      String(durchangeval).replace('.5', ':30') + endof2)
-    timetest()
-    pretext = el.text()
   })
   durslider.on('mouseup touchend', function () {
     slider.remove()
@@ -1876,10 +1947,6 @@ function editTask() {
 
 function createBlankTask() {
   const savetask = $('<span class="in"></span>')
-  savetask.attr('draggable', 'true')
-  savetask.attr('ondragstart', 'dragTask(event)')
-  savetask.attr('ondragover', 'draggingOver(event)')
-  savetask.attr('ondrop', 'dropTask(event)')
   return savetask
 }
 
@@ -2091,7 +2158,7 @@ function timertest(ev) {
 function dragTask(evt) {
   select(evt.target)
   draggingtask = true
-  if (window.innerWidth < 600) {
+  if (mobiletest()) {
     $('.nav').hide()
     return
   }
@@ -2104,7 +2171,7 @@ function dragTask(evt) {
   }
   // plaintext alternative? for compatibility?
   //specify allowed transfer
-  evt.dataTransfer.effectAllowed = 'move'
+  // evt.dataTransfer.effectAllowed = 'move'
 }
 
 function togglecollapse() {
@@ -2363,7 +2430,7 @@ function toggleButs() {
     data.hidebuts = 'true'
     $(':root').css('--butheight', '0px')
   }
-  if (window.innerWidth < 600) {
+  if (mobiletest()) {
     // hide unnecessary buts
     $('.mobilehide').hide()
   }
@@ -2396,7 +2463,7 @@ function setStyle(style) {
           $("<link rel='stylesheet' type='text/css' href='" +
             data.style + "' />")
         );
-        save()
+        uploadData()
         $('#pop').scrollTop(poptop)
         $('#flop').scrollTop(floptop)
       }
@@ -2595,10 +2662,18 @@ function context(e, mobile) {
       $(option).hide()
     }
   }
+  // correctly position top and left
   $('#context-menu').css('top', Math.min(e.pageY,
     window.innerHeight - $('#context-menu').height()) - 20)
   $('#context-menu').css('left', Math.min(e.pageX,
     window.innerWidth - $('#context-menu').width()) - 40)
+  console.log($('#context-menu').offset());
+  if ($('#context-menu').offset().top < 0) {
+    $('#context-menu').css('top', '0')
+  }
+  if ($('#context-menu').offset().left < 0) {
+    $('#context-menu').css('left', '0')
+  }
 }
 
 function setOptions() {
@@ -2698,7 +2773,7 @@ function setTask(type) {
 }
 
 function clickoff(ev) {
-  if (window.innerWidth < 600) {
+  if (mobiletest()) {
     // on revert drags on mobile
     $('.drop-hover').removeClass('drop-hover')
     if (flopscrollsave) {
@@ -2725,7 +2800,6 @@ function clickoff(ev) {
 }
 
 function clicked(ev) {
-  console.log(ev.target);
   if (movetolist && !$(ev.target).hasClass('listtitle')) {
     // cancels move to list
     movetolist = false
@@ -2830,7 +2904,7 @@ function clicked(ev) {
       select(oldselect)
     }
   } else if ($(ev.target).hasClass('listtitle')) {
-    if (window.innerWidth < 600 && $(ev.target).val() != '') {
+    if (mobiletest() && $(ev.target).val() != '') {
       ev.preventDefault()
       $(':focus').blur()
       dragson()
@@ -2970,7 +3044,7 @@ function moveTask(direction) {
 function dblclick(ev) {
   if ($(ev.target)[0].tagName == 'TEXTAREA' &&
     $(ev.target).hasClass('selected')) {
-    if (window.innerWidth > 600) {
+    if (!mobiletest()) {
       dragsoff()
     } else {
       context(ev)
@@ -2978,13 +3052,19 @@ function dblclick(ev) {
   } else if ($(ev.target)[0].tagName == 'TEXTAREA') {
     return
   } else if (selected.hasClass('in') && selected[0].tagName == 'P') {
+    ev.preventDefault()
+    const oldselect = selected
     newTask()
+    if (selected && selected[0].tagName != 'TEXTAREA') {
+      select(oldselect)
+    }
   } else if (
     $(ev.target).hasClass('in') &&
     ev.target.tagName != 'TEXTAREA' &&
     !$(ev.target).hasClass('dateheading')
   ) {
     select($(ev.target))
+    ev.preventDefault()
     editTask()
   } else if (
     ['bold', 'italic', 'bold-italic'].includes(
@@ -3468,8 +3548,6 @@ function reload2() {
 }
 
 function loadpage(setload, oldselect, scrolls) {
-  if (window.innerWidth < 600) mobile = true
-  else mobile = false
   // right after signing in
   $('#username').text(getCookie('user'))
   if (setload != false) {
@@ -3557,7 +3635,7 @@ function loadpage(setload, oldselect, scrolls) {
     $('#typebut').hide()
     $(':root').css('--butheight', '0px')
   }
-  if (window.innerWidth < 600) {
+  if (mobiletest()) {
     // hide unnecessary buts
     $('.mobilehide').hide()
   }

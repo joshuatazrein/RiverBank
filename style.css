@@ -222,11 +222,18 @@ p.dropdown-item {
   width: 80vw;
   height: 100%;
   float: left;
+  position: relative;
 }
 
 #listcontainer > .in {
-  width: 100%;
   color: var(--select);
+  width: 50%;
+}
+
+.drop-hover {
+  background-color: var(--event) !important;
+  border: 1px solid var(--select) !important;
+  border-radius: 3px;
 }
 
 /* PARAGRAPHS */
@@ -657,6 +664,9 @@ span.weblink, span.deadline {
     border-left: 1px solid var(--bdcolor);
     border-right: none;
   }
+  #listcontainer > .in {
+    width: 100%;
+  }
   .loads {
     width: calc(100% + 5px);
     /* margin-left: -5px; */
@@ -676,7 +686,8 @@ span.weblink, span.deadline {
   }
   input, #searchbarframe {
     font-size: 24px;
-    width: calc(100% - 10px);
+    width: calc(100% - 2px);
+    margin-left: 1px;
   }
   #searchbarframe input {
     width: 100%;
@@ -714,10 +725,6 @@ span.weblink, span.deadline {
   #context-menu {
     background: var(--background);
   }
-  .drop-hover {
-    background-color: var(--event);
-    border: 1px solid var(--select);
-  }
   span span.mobhandle {
     display: inline-block;
     border: 1px solid var(--select);
@@ -727,14 +734,13 @@ span.weblink, span.deadline {
     padding: 0;
     margin: 1px;
     position: absolute;
-    top: 0;
-    right: 10px;
+    top: 2px;
+    right: 2px;
     z-index: 1;
   }
   span span span.mobhandle {
     height: 20px !important;
     width: 20px !important;
-    right: 15px;
   }
   span.h1 {
     font-size: 130%;
