@@ -1074,7 +1074,7 @@ function updatedeadlines() {
 
 function migrate() {
   const today = stringToDate('0d').getTime()
-  const todayheading = $(dateToHeading(stringToDate('0d')))
+  const todayheading = $(dateToHeading(stringToDate('0d'), false))
   console.log(today, todayheading);
   for (heading of $('#pop').children().filter('.dateheading').toArray()) {
     if (stringToDate($(heading).text(), true).getTime() < today) {
@@ -3499,6 +3499,7 @@ function loadpage(setload, oldselect) {
   updateSizes()
   clearEmptyDates(false)
   clean()
+  console.log('updating deadlines ---');
   updatedeadlines()
   updateSpanDrags()
   if (oldselect) {    
