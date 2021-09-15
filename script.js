@@ -216,13 +216,13 @@ function dragson(saving) {
 // new list
 function newlist(title, text, saving) {
   let savetitle
-  if (title === undefined) {
+  if (!title) {
     savetitle = ''
   } else {
     savetitle = title
   }
   let savetext
-  if (text === undefined) {
+  if (!text) {
     savetext = ''
   } else {
     savetext = text
@@ -231,7 +231,7 @@ function newlist(title, text, saving) {
     'title': savetitle,
     'text': savetext
   }
-  if (title === undefined) {
+  if (!title) {
     data.flop.push(newobj); //add to main list of lists only if it's new
   }
   const newthing = $('<textarea></textarea>')
@@ -245,7 +245,7 @@ function newlist(title, text, saving) {
   newthing.attr('ondragover', 'draggingOver(event)')
   newthing.attr('ondrop', 'dropList(event)')
   $('#loads').append(newthing)
-  loadedlist = document.getElementById('loads').children.length - 1
+  loadedlist = $('#loads').children().length - 1
   loadList(saving); // load last element in list
   if (saving != false) {
     try { $('#loads').children()[loadedlist].focus() }
@@ -277,13 +277,14 @@ function deletelist() {
 
 function loadList(saving) { //updates the list display
   unfilter()
-  loads = $('#loads').children().toArray()
+  const loads = $('#loads').children().toArray()
   loads.forEach(function (i) {
     $(i).removeClass('selected')
     $(i).addClass('unselected')
   })
   $(loads[loadedlist]).removeClass('unselected')
   $(loads[loadedlist]).addClass('selected')
+  console.log(loadedlist, data.flop[loadedlist]);
   $('#flop').html(data.flop[loadedlist].text)
   updateSpanDrags()
   $('.taskselect').removeClass('taskselect')
@@ -3444,7 +3445,6 @@ function loadpage(setload, oldselect) {
   $('#pop').html(data.pop)
   // loads data
   let oldload
-  console.log(data.loadedlist);
   // load lists if there is one
   if (data.loadedlist) {
     if (setload == false) {
