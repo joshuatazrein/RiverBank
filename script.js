@@ -1724,7 +1724,6 @@ function select(el, scroll, animate) {
     return
   }
   $(document).scrollTop(0); // fixes weird shit
-  document.body.style.zoom = "100%";
   // switch selection
   if (selected != undefined) {
     $('.taskselect').removeClass('taskselect')
@@ -3139,6 +3138,7 @@ function keycomms(evt) {
   } else if (evt.key == 'Enter' && $(':focus').attr('id') ==
     'searchbar') {
     evt.preventDefault()
+    document.body.style.zoom = "100%";
     // focus on searchbar and find it
     if ($('#searchbar').val().slice(0, 2) == 'd:') {
       const date = dateToHeading(
@@ -3164,7 +3164,8 @@ function keycomms(evt) {
     } else {
       search()
     }
-  } else if ($(':focus').attr('id') == 'timerent') {
+  } else if ($(':focus').attr('id') == 'timerent' && evt.key == 'Enter') {
+    document.body.style.zoom = "100%";
     timertest(evt);
   } else if (evt.key == 'Escape') {
     // cancel select
