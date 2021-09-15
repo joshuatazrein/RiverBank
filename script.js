@@ -3053,6 +3053,8 @@ function dblclick(ev) {
     return
   } else if (selected.hasClass('in') && selected[0].tagName == 'P') {
     newTask()
+    selected.on('click', 
+      function () { $(this).focus() })
     selected.click()
   } else if (
     $(ev.target).hasClass('in') &&
