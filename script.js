@@ -1340,6 +1340,7 @@ function compareTimes(a, b) {
 }
 
 function dragTime(el) {
+  // sets up sliders to drag times on events
   console.log('dragtime');
   $('.slider').remove()
   slider = $('<input type="range" min="-12" max="12" value="0"' +
@@ -1397,8 +1398,8 @@ function dragTime(el) {
     if (durchangeval == origvalue) el.text(splitlist[0] + endof)
     else if (compareTimes(origvalue, durchangeval) < 0 &&
       durslider.val() < 0) return
-    else el.text(splitlist[0] + endof + '-' +
-      String(durchangeval).replace('.5', ':30') + endof2)
+    else el.text(splitlist[0] + '-' +
+      String(durchangeval).replace('.5', ':30') + endof)
   })
   durslider.on('mouseup touchend', function () {
     slider.remove()
@@ -1410,11 +1411,6 @@ function dragTime(el) {
     durslider.remove()
     save()
   })
-}
-
-function removesliders() {
-  slider.remove()
-  durslider.remove()
 }
 
 function saveTask() {  // analyze format of task and create new <span> elt for it
@@ -1624,7 +1620,6 @@ function getHeading(el, actual) {
 function select(el, scroll, animate) {
   if (el &&
     $(el)[0].tagName == 'SPAN' && !isSubtask($(el))) el = $(el).parent()
-  if (slider) removesliders() // removes sliders
   if ($(el).hasClass('buffer')) {
     select(getFrame($(el)), scroll)
     return
@@ -2718,6 +2713,7 @@ function clicked(ev) {
     ev.target.tagName != 'TEXTAREA') {
     saveTask()
   } 
+  $('.slider').remove() // remove sliders
   // click events
   if ($(ev.target).attr('id') == 'newHeadingFlopBut') {
     if (selected == undefined || getFrame(selected).attr('id') != 'flop') {
