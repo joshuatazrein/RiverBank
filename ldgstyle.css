@@ -52,10 +52,11 @@ body {
   font-weight: 400;
   text-align: center;
   font-size: 250%;
-  margin: 20px 0;
   vertical-align: middle;
   position: fixed;
   top: 0; left: 0;
+  padding-top: 20px;
+  background-color: rgba(0, 0, 0, 0.5)
 }
 
 input {
