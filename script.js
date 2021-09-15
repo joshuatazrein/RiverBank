@@ -2328,7 +2328,7 @@ function toggleHelp() {
 function setStyle(style) {
   const poptop = $('#pop').scrollTop()
   const floptop = $('#flop').scrollTop()
-  var oldstyle = data.style
+  var oldstyle = String(data.style)
   if (navigator.onLine || offlinemode) {
     data.style = style
     $.get(
