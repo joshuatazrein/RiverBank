@@ -3054,7 +3054,9 @@ function dblclick(ev) {
   } else if (selected && 
     selected.hasClass('in') && 
     selected[0].tagName == 'P') {
+    ev.preventDefault()
     newTask()
+    console.log(selected);
     selected.click(function (e) { $(this).focus() })
     setTimeout(function () { 
       selected.trigger('click')
