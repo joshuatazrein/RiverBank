@@ -3444,11 +3444,14 @@ function loadpage(setload, oldselect) {
   $('#pop').html(data.pop)
   // loads data
   let oldload
-  if (setload == false) {
-    // fixes weird loadlist glitch
-    oldload = Number(loadedlist)
-  } else {
-    oldload = Number(data.loadedlist)
+  // load lists if there is one
+  if (data.loadedlist) {
+    if (setload == false) {
+      // fixes weird loadlist glitch
+      oldload = Number(loadedlist)
+    } else {
+      oldload = Number(data.loadedlist)
+    }
   }
   for (i of data.flop) {
     newlist(i.title, i.text, false) // don't save
@@ -3464,10 +3467,12 @@ function loadpage(setload, oldselect) {
       toggleFoldList(false)
     }
   };
-  loadedlist = Number(oldload)
-  if (loadedlist <= data.flop.length - 1) {
-    loadList(false)
-    dragson(false)
+  if (oldload) {
+    loadedlist = Number(oldload)
+    if (loadedlist <= data.flop.length - 1) {
+      loadList(false)
+      dragson(false)
+    }
   }
   $('#searchbar').val('')
   // show buttons and help right
@@ -3503,9 +3508,11 @@ function loadpage(setload, oldselect) {
   } else {
     setTimeout(scrollToToday, 500)
   }
-  $(loads[loadedlist]).blur()
+  if (loadedlist) {
+    $(loads[loadedlist]).blur()
+  }
   $('#logoimage').remove()
-  console.log('got here');
+  console.log('loaded')
 }
 
 function scrollToToday() {
