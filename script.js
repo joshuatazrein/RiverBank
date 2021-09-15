@@ -3453,7 +3453,10 @@ function loadpage(setload, oldselect) {
       oldload = Number(data.loadedlist)
     }
   }
+  let h = 0
   for (i of data.flop) {
+    console.log(h, i.title, i.text);
+    h ++
     newlist(i.title, i.text, false) // don't save
   }
   const children = $('#loads').children().toArray()
