@@ -2334,11 +2334,11 @@ function setStyle(style) {
     $.get(
       data.style,
       function () {
+        $('link[href="' + oldstyle + '"]').remove()
         $('head').append(
           $("<link rel='stylesheet' type='text/css' href='" +
             data.style + "' />")
         );
-        $('link[href="' + oldstyle + '"]').remove()
         save()
         $('#pop').scrollTop(poptop)
         $('#flop').scrollTop(floptop)
