@@ -3052,12 +3052,8 @@ function dblclick(ev) {
   } else if ($(ev.target)[0].tagName == 'TEXTAREA') {
     return
   } else if (selected.hasClass('in') && selected[0].tagName == 'P') {
-    ev.preventDefault()
-    const oldselect = selected
     newTask()
-    if (selected && selected[0].tagName != 'TEXTAREA') {
-      select(oldselect)
-    }
+    selected.focus()
   } else if (
     $(ev.target).hasClass('in') &&
     ev.target.tagName != 'TEXTAREA' &&
@@ -3183,10 +3179,12 @@ function keycomms(evt) {
     $(':focus').hasClass('selected')
   ) {
     evt.preventDefault()
+    $(document).scrollTop(0)
     toggledrags()
   } else if (selected != undefined && evt.key == 'Enter' &&
     !evt.altKey && !evt.shiftKey) {
     // swap editing
+    $(document).scrollTop(0)
     evt.preventDefault()
     if (selected[0].tagName == 'TEXTAREA') {
       saveTask()
@@ -3198,6 +3196,7 @@ function keycomms(evt) {
   } else if (selected != undefined && evt.key == 'Enter' &&
     evt.altKey && evt.metaKey) {
     evt.preventDefault()
+    $(document).scrollTop(0)
     // new task if it's in textarea then save task
     if (selected[0].tagName == 'TEXTAREA') {
       saveTask()
@@ -3214,6 +3213,7 @@ function keycomms(evt) {
     }
   } else if (selected != undefined && evt.key == 'Enter' &&
     evt.altKey) {
+    $(document).scrollTop(0)
     evt.preventDefault()
     // new task if it's in textarea then save task
     if (selected[0].tagName == 'TEXTAREA') {
