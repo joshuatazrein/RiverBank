@@ -231,7 +231,7 @@ function newlist(title, text, saving) {
     'title': savetitle,
     'text': savetext
   }
-  if (!title) {
+  if (saving != false) {
     data.flop.push(newobj); //add to main list of lists only if it's new
   }
   const newthing = $('<textarea></textarea>')
@@ -251,10 +251,11 @@ function newlist(title, text, saving) {
     try { $('#loads').children()[loadedlist].focus() }
     catch (err) { console.log(err); }
   }
-  if ($(loads[loadedlist]).val().slice(0, 2) == '- ') {
-    $(loads[loadedlist]).addClass('sublist')
+  console.log('loadedlist is', loadedlist);
+  if ($($('#loads').children()[loadedlist]).val().slice(0, 2) == '- ') {
+    $($('#loads').children()[loadedlist]).addClass('sublist')
   } else {
-    $(loads[loadedlist]).removeClass('sublist')
+    $($('#loads').children()[loadedlist]).removeClass('sublist')
   }
   dragsoff(saving)
 }
@@ -284,7 +285,6 @@ function loadList(saving) { //updates the list display
   })
   $(loads[loadedlist]).removeClass('unselected')
   $(loads[loadedlist]).addClass('selected')
-  console.log(loadedlist, data.flop[loadedlist]);
   $('#flop').html(data.flop[loadedlist].text)
   updateSpanDrags()
   $('.taskselect').removeClass('taskselect')
