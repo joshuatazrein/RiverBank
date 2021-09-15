@@ -3453,6 +3453,7 @@ function loadpage(setload, oldselect) {
       oldload = Number(data.loadedlist)
     }
   }
+  console.log('got here');
   let h = 0
   for (i of data.flop) {
     console.log(h, i.title, i.text);
