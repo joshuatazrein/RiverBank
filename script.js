@@ -2884,7 +2884,7 @@ function clicked(ev) {
     if (selected == undefined || getFrame(selected).attr('id') != 'flop') {
       // insert after selected
       const newtask = $('<span class="in"></span>')
-      $('#flop').prepend(newtask)
+      $($('#flop').children()[0]).after(newtask)
       select(newtask)
       newTask()
       newtask.remove()
@@ -3051,13 +3051,13 @@ function dblclick(ev) {
     }
   } else if ($(ev.target)[0].tagName == 'TEXTAREA') {
     return
-  } else if (selected.hasClass('in') && selected[0].tagName == 'P') {
+  } else if (selected && 
+    selected.hasClass('in') && 
+    selected[0].tagName == 'P') {
     newTask()
-    selected.on('click', 
-      function () { $(this).focus() })
+    selected.click(function (e) { $(this).focus() })
     setTimeout(function () { 
-      selected.click() 
-      selected.focus()
+      selected.trigger('click')
     }, 200)
   } else if (
     $(ev.target).hasClass('in') &&
