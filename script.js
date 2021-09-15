@@ -60,6 +60,13 @@ var weekdaysNum = {
 var filtered
 var filteredlist
 
+function display(arg1, arg2, arg3, arg4, arg5) {
+  const list = [arg1, arg2, arg3, arg4, arg5].filter((x) => {
+    return x != undefined
+  })
+  console.log(list)
+}
+
 //# TIMER
 var timer = new Timer({
   tick: 1,
@@ -113,7 +120,6 @@ function draggingOver(evt) {
         loadedlist = i
         $('#flop').empty()
         $('#flop').html(data.flop[loadedlist].text)
-        console.log($('#flop')[0]);
         $(list).removeClass('unselected')
         $(list).addClass('selected')
         return
@@ -249,9 +255,8 @@ function newlist(title, text, saving) {
   loadList(saving); // load last element in list
   if (saving != false) {
     try { $('#loads').children()[loadedlist].focus() }
-    catch (err) { console.log(err); }
+    catch (err) { display(err, 'loadedlist is ' + loadedlist) }
   }
-  console.log('loadedlist is', loadedlist);
   if ($($('#loads').children()[loadedlist]).val().slice(0, 2) == '- ') {
     $($('#loads').children()[loadedlist]).addClass('sublist')
   } else {
@@ -874,7 +879,6 @@ function search(skiplinks, deadline) {
     searchtext = searchtext.slice(0, searchtext.length - 1)
   }
   searchtext = searchtext.replace(/\s\s/, ' ')
-  console.log(searchtext);
   const searches = data.flop.concat([{
     'title': 'pop',
     'text': data.pop
@@ -1075,10 +1079,8 @@ function updatedeadlines() {
 function migrate() {
   const today = stringToDate('0d').getTime()
   const todayheading = $(dateToHeading(stringToDate('0d'), false))
-  console.log(today, todayheading);
   for (heading of $('#pop').children().filter('.dateheading').toArray()) {
     if (stringToDate($(heading).text(), true).getTime() < today) {
-      console.log(getHeading(selected, true));
       try {
         if (selected && 
           (selected[0] == heading || 
@@ -1087,10 +1089,9 @@ function migrate() {
           continue
         }
       } catch (err) {
-        console.log(err, getHeading(selected, true))
+        display(err, getHeading(selected, true))
         continue
       }
-      console.log(heading);
       // migrate all uncompleted tasks
       for (child of getHeadingChildren($(heading))) {
         const ch = $(child)
@@ -1108,7 +1109,6 @@ function migrate() {
           // find the place and add the heading
           let uncompletespan
           const headingchildren = getHeadingChildren(todayheading)
-          console.log(headingchildren);
           uncompletespan = headingchildren.find((x) => {
             return /^uncompleted/.test($(x).text()) && $(x).hasClass('h2')
           })
@@ -1214,7 +1214,6 @@ function mobileDragOver(event) {
         loadedlist = i
         $('#flop').empty()
         $('#flop').html(data.flop[loadedlist].text)
-        console.log($('#flop')[0]);
         $(list).removeClass('unselected')
         $(list).addClass('selected')
         updateSpanDrags()
@@ -2805,8 +2804,6 @@ function clicked(ev) {
   } else if ($(ev.target).hasClass('duedate')) {
     // jump to deadline
     $('#searchbar').val(stripChildren($(ev.target)).slice(2))
-    console.log(
-      getHeading($(ev.target), true))
     search('deadline', dateToString(stringToDate(
       getHeading($(ev.target), true).text(), true)))
   } else if (getFrame($(ev.target)) && $(ev.target).hasClass('in')) {
@@ -2833,7 +2830,6 @@ function taskAbove() {
     returntask = selected.prev()
   } // nonedisplays are not selected
   while (returntask[0] && returntask.hasClass('in') == false) {
-    console.log(returntask.prev());
     returntask = returntask.prev()
   }
   if (returntask[0] && !returntask.is(':visible')) {
@@ -3263,9 +3259,9 @@ function tutorial() {
 }
 
 function uploadData(reloading) {  
-  console.log('--- upload started ---')
+  display('--- upload started ---')
   if (JSON.stringify(data) == prevupload) {    
-    console.log('identical');
+    display('identical');
     return
   }
   if (navigator.onLine && !offlinemode) {
@@ -3276,7 +3272,7 @@ function uploadData(reloading) {
       }, function(data, status, xhr) {
         uploading = false
         diffsLog(prevupload, xhr.responseText)
-        console.log('*** upload finished ***')
+        display('*** upload finished ***')
         prevupload = xhr.responseText
         localStorage.setItem('data', JSON.stringify(data))
         if (reloading == true) reload() // reloads page
@@ -3295,10 +3291,10 @@ function uploadData(reloading) {
     // offline mode
     prevupload = JSON.stringify(data)
     localStorage.setItem('data', JSON.stringify(data))
-    console.log('*** local upload finished ***')
+    display('*** local upload finished ***')
     if (reloading == true) {
       localStorage.setItem('data', JSON.stringify(data))
-      console.log('reloading from upload (offline)');
+      display('reloading from upload (offline)');
       reload() // reloads page
       return
     }
@@ -3360,16 +3356,16 @@ function diffsLog(oldString, newString) {
       }
     }
   }
-  console.log(diffs)
+  display(diffs)
 }
 
 function reload() {
-  console.log('--- download started ---');
+  display('--- download started ---');
   if (!navigator.onLine || offlinemode) {
     // skip upload
     diffsLog(JSON.stringify(data), localStorage.getItem('data'))
     data = JSON.parse(localStorage.getItem('data'))
-    console.log('*** local download finished ***')
+    display('*** local download finished ***')
     reload2()
   } else {
     if (navigator.onLine && offline) {
@@ -3388,7 +3384,7 @@ function reload() {
       'download.php', 
       function (datastr, status, xhr) {
         diffsLog(JSON.stringify(data), xhr.responseText)
-        console.log('*** download finished ***');
+        display('*** download finished ***');
         data = JSON.parse(xhr.responseText)
         reload2()
       }
@@ -3501,7 +3497,6 @@ function loadpage(setload, oldselect) {
   updateSizes()
   clearEmptyDates(false)
   clean()
-  console.log('updating deadlines ---');
   updatedeadlines()
   updateSpanDrags()
   if (oldselect) {    
@@ -3516,7 +3511,7 @@ function loadpage(setload, oldselect) {
     $(loads[loadedlist]).blur()
   }
   $('#logoimage').remove()
-  console.log('loaded')
+  display('loaded')
 }
 
 function scrollToToday() {
