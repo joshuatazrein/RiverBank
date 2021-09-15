@@ -3055,8 +3055,10 @@ function dblclick(ev) {
     newTask()
     selected.on('click', 
       function () { $(this).focus() })
-    selected.click()
-    selected.focus()
+    setTimeout(function () { 
+      selected.click() 
+      selected.focus()
+    }, 200)
   } else if (
     $(ev.target).hasClass('in') &&
     ev.target.tagName != 'TEXTAREA' &&
