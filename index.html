@@ -31,6 +31,9 @@
       display: block;
     }
   </style>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;0,700;1,100&display=swap');
+  </style>
 </head>
 <body>
   <div id='logoimage' class='show'>
@@ -77,8 +80,8 @@
         <div class='butbar'>
           <button class='mobilehide' id='timer+2But' title='+2 minutes'>+2</button>
           <button class='mobilehide' id='timer-2But' title='-2 minutes'>-2</button>
-          <button id='timerStartBut' title='start timer' style='font-family:monospace'>&#9654;</button>
-          <button id='timerStopBut' title='stop timer'>■</button>
+          <button id='timerStartBut' title='start timer' style='font-family: monospace !important'>&#9654;</button>
+          <button id='timerStopBut' title='stop timer' style='font-family: monospace !important'>■</button>
         </div>
       </div>
       <p class='title' id='lists'>LISTS</p>
@@ -154,7 +157,7 @@
     <div id='listcontainer'>
       <div id='floplist'>
         <div class='butbar' id='flopbuts'>
-          <button id='collapsebut' title='collapse menu' id='collapsebut' function='togglecollapse()'>≡</button>
+          <button id='collapsebut' title='collapse menu' id='collapsebut' function='togglecollapse()' style='font-family: monospace !important'>≡</button>
           <button id='focusbut' title='focus on view' function='togglefocus()'>&lt;></button>
           <button class='flopbut' id='flopBut' title='new task in bank'>+ BANK</button>
           <button id='newHeadingFlopBut' title='new heading in bank'>+#</button>
@@ -171,14 +174,13 @@
           <button class='flopbut' id='popBut' title='new task in river'>+ RIVER</button>
           <button function="archiveTask(true)" title='complete'>!</button>
         </div>
-        <p id='pop' class='rendered in' ondrop='dropTask(event)' ondragover='draggingOver(event)'></p>
-        <div style='height:1000px;'></div>
-        <p id='texttest'></p>
+        <p id='pop' class='rendered in' ondrop='dropTask(event)' ondragover='draggingOver(event)'></p>        
       </div>
     </div>
   </div>
   <div style='height:1000px;background-color:transparent;'></div>
   <p id='test' style='display:none;position:absolute;'><p>
+  <p id='texttest' class='incopy'></p>
   <nav id="context-menu">
     <p function='editTask()' class='dropdown-item' id='context-editTask'>edit task (return)</p>
     <p function='newTask()' class='dropdown-item' id='context-newTask'>new task (option return)</p>

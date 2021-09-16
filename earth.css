@@ -1,4 +1,5 @@
 :root {
+  --fontsize: 23px;
   --background: rgb(27, 30, 33);
   --bgoverlay: rgba(27, 30, 33, 0.8);
   --select: rgb(175, 224, 220);
@@ -14,4 +15,5 @@
   --event: rgba(175, 224, 220, 0.3);
   --flopbutbackground: rgba(165, 188, 213, 0.3);
   --butbackground: rgba(224, 223, 225, 0.3);
+  --indent: 0.5em;
 }

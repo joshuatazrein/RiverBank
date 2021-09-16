@@ -1,18 +1,24 @@
 :root {
-  /* --background: #005EFF; */
-  --background: rgba(52, 73, 94, 1);
-  --bgoverlay: rgba(52, 73, 94, 0.8);
-  --select: skyblue;
-  --font: Andale Mono;
-  --butfont: Andale Mono;
+  --fontsize: 19px;
+  /* --background: rgba(52, 73, 94, 1); */
+  /* --background: rgb(37, 42, 60); */
+  /* --background: rgb(32, 49, 77); */
+  /* --background: rgb(40, 70, 92); */
+  /* --background: rgb(45, 73, 88); */
+  --background: rgb(31, 40, 52);
+  --bgoverlay: rgba(31, 40, 52, 0.8);
+  --select: rgb(145, 163, 176);
+  --font: 'Roboto Mono', monospace;
+  --butfont: 'Roboto Mono', monospace;
   --textcolor: whitesmoke;
-  --menufont: Andale Mono;
+  --menufont: 'Roboto Mono', monospace;
   --bdcolor: rgba(176, 194, 212);
   --contextcolor: rgba(0, 0, 0, 0.8);
   --contextfontcolor: grey;
   --important: #53D2FF;
   --maybe: rgba(83, 210, 255, 0.5);
-  --event: rgba(135,206,235,0.3);
+  --event: rgba(145, 163, 176, 0.3);
   --butbackground: rgba(128, 128, 128, 0.3);
   --flopbutbackground: rgba(245, 245, 245, 0.3);
+  --indent: 1em;
 }

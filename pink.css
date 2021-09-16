@@ -1,6 +1,7 @@
 :root {
   --background: /* rgb(199, 203, 229); */ rgb(171, 176, 208);
   --bgoverlay: /* rgb(199, 203, 229); */ rgba(171, 176, 208, 0.8);
+  --fontsize: 21px;
   --select: rgb(251, 217, 253);
   --font: Avenir Next, Helvetica;
   --butfont: Avenir Next, Helvetica;
@@ -14,4 +15,5 @@
   --event: rgba(251, 217, 253, 0.3);
   --butbackground: #BEC1DA;
   --flopbutbackground: rgba(245, 245, 245, 0.3);
+  --indent: 0.5em;
 }

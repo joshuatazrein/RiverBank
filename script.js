@@ -36,9 +36,9 @@ var linestarts = {
   '-': 'note'
 }
 var lineinners = {
-  '_*': ['*_', 'bold-italic'],
-  '*': ['*', 'bold'],
-  '_': ['_', 'italic'],
+  // '_*': ['*_', 'bold-italic'],
+  // '*': ['*', 'bold'],
+  // '_': ['_', 'italic'],
   '[[': [']]', 'link'],
   '>': [' ', 'deadline']
 }
@@ -61,7 +61,7 @@ var filtered
 var filteredlist
 
 function display(x) {
-  // console.log(x)
+  console.log(x)
 }
 
 function mobiletest() {
@@ -337,6 +337,10 @@ function deletelist() {
 }
 
 function loadList(saving) { //updates the list display
+  if (loadedlist === undefined) {
+    display('no loaded list')
+    return
+  }
   unfilter()
   const loads = $('#loads').children().toArray()
   loads.forEach(function (i) {
@@ -390,40 +394,44 @@ function toggleFoldList(saving) {
 }
 
 function updateSizes() {
-  for (list of [
-    [$('#timerent')[0], 6],
-    [$('#searchbar')[0], 5],
-    [$('#username')[0], $('#username').text().length / 2 + 2],
-    [$('#lists')[0], 7]
-  ]
-    // ].concat(
-    //   $('#loads').children().toArray().map((x) => {
-    //     let textlength = Math.max($(x).val().split(' ').map((x) => {
-    //       return x.length
-    //     }))
-    //     return [$(x)[0], textlength / 2 + 2.5]
-    //   }))
-  ) {
-    // update entries
-    let fontsize = 24
-    if (mobiletest()) fontsize = 16
-    while ($(list[0]).width() / (fontsize / 2) < list[1]) {
-      fontsize -= 1
-    }
-    $(list).css('font-size', fontsize + 'px')
-  }
+  // for (list of [
+  //   [$('#timerent')[0], 6],
+  //   [$('#searchbar')[0], 5],
+  //   [$('#username')[0], $('#username').text().length / 2 + 2],
+  //   [$('#lists')[0], 7]
+  // ]
+  //   // ].concat(
+  //   //   $('#loads').children().toArray().map((x) => {
+  //   //     let textlength = Math.max($(x).val().split(' ').map((x) => {
+  //   //       return x.length
+  //   //     }))
+  //   //     return [$(x)[0], textlength / 2 + 2.5]
+  //   //   }))
+  // ) {
+  //   // update entries
+  //   let fontsize = 24
+  //   if (mobiletest()) fontsize = 16
+  //   while ($(list[0]).width() / (fontsize / 2) < list[1]) {
+  //     fontsize -= 1
+  //   }
+  //   $(list).css('font-size', fontsize + 'px')
+  // }
   // fix context menu for mobile
   if (mobiletest()) {
     $('.dropdown-item').toArray().forEach((x) => {
       $(x).text($(x).text().replace(/\s\((.*)\)/, ''))
     })
   }
+  $('#texttest').attr('class', 'listtitle unselected')
   for (list of $('#loads').children()) {
     if ($(list).width() < $(list).val().length *
       ($(list).css('font-size').slice(0,
         $(list).css('font-size').length - 2) / 2)) {
-      $(list).css('overflow-y', 'scroll')
+      $('#texttest').text($(list).val())
+      $('#texttest').css('width', $(list).width() + 'px')
+      $(list).css('height', $('#texttest').height() + 5 + 'px')
     } else {
+      $(list).css('height', '')
       $(list).css('overflow-y', 'hidden')
     }
   }
@@ -539,28 +547,20 @@ function save(undo) {
   unfilter(false)
   if (undo) savedata = JSON.parse(JSON.stringify(data))
   // save data
-  let newdata = JSON.parse(JSON.stringify(data)) // copies data
-  newdata.pop = $('#pop').html()
+  data.pop = $('#pop').html()
   if (loadedlist != undefined) {
-    try {
-      newdata.flop[loadedlist].text = $('#flop').html()
-      try {
-        newdata.flop[loadedlist].title =
-          $('#loads').children()[loadedlist].value
-      } catch (TypeError) {
-        newdata.flop[loadedlist].title = ''
-      }
-      newdata.loadedlist = loadedlist
-    } catch (TypeError) {
-      newdata.loadedlist = 0
-      loadedlist = 0
-      loadList()
+    if (loadedlist > data.flop.length - 1) {
+      loadedlist = undefined
+    } else {
+      data.flop[loadedlist].text = $('#flop').html()
+      data.flop[loadedlist].title =
+        $('#loads').children()[loadedlist].value
     }
   }
+  data.loadedlist = loadedlist
   // clean up styling
   $('span.in:visible').attr('style', '')
   clean()
-  data = JSON.parse(JSON.stringify(newdata))
   updatedeadlines() // updateSpanDrags() called in updatedeadlines
   $(document).scrollTop(0) // fixes scroll
   // backup data to the server after setting localstorage data
@@ -621,7 +621,7 @@ function download() {
 function reset() {
   yes = confirm("Are you sure you want to reset?")
   if (yes) {
-    data = JSON.parse(JSON.stringify(resetstring))
+    data = JSON.parse(resetstring)
     uploadData(true)
   }
 }
@@ -1008,6 +1008,7 @@ function gotosearch(el) {
   select(focused, true)
   $('#searchbar').val('')
   $('#searchbar-results').hide()
+  $('#searchbar').blur()
 }
 
 function datesToRelative(a, b) {
@@ -1058,6 +1059,9 @@ function topChild(frame) {
 }
 
 function updatedeadlines() {
+  updateSpanDrags()
+  migrate()
+  clearEmptyDates(false)
   $('.duedate').remove()
   $('.placeholder').remove()
   $('.mobhandle').remove()
@@ -1118,8 +1122,6 @@ function updatedeadlines() {
     $('#pop').prepend('<span class="buffer" style="height:var(--butheight)"></span>')
     $('#pop').append('<span class="buffer bottom" style="height:90%"></span>')
   }
-  updateSpanDrags()
-  migrate()
 }
 
 function migrate() {
@@ -1154,12 +1156,12 @@ function migrate() {
         } else if (!ch.hasClass('complete') && !isHeading(ch)) {
           appends.push(ch)
         }
+        const headingchildren = getHeadingChildren(todayheading)
         if (appends.length > 0) {
           // show all
           appends.forEach((x) => { $(x).show() })
           // find the place and add the heading
           let uncompletespan
-          const headingchildren = getHeadingChildren(todayheading)
           uncompletespan = headingchildren.find((x) => {
             return /^uncompleted/.test($(x).text()) && $(x).hasClass('h2')
           })
@@ -1184,6 +1186,13 @@ function migrate() {
           appends.forEach((x) => {
             uncompletespan.after($(x))
           })
+        } else {
+          for (ch of headingchildren) {
+            if (/^uncompleted/.test($(ch).text())) { 
+              $(ch).remove()
+              break
+            }
+          }
         }
       }
       // fold and complete
@@ -1597,47 +1606,56 @@ function saveTask() {  // analyze format of task and create new <span> elt for i
       break
     }
   }
-  // add in line inners
-  let htmlstr = selected.val()
-  let newstr = '' // newstr is the gradually added string with classes
-  let start = 0
-  const modecloses = []
-  for (let i = 0; i < htmlstr.length; i++) {
-    // test for mode modecloses
-    let modeclosed = false
-    for (modeclose of modecloses) {
-      // test for matches
-      if (htmlstr.slice(i, i + modeclose.length) ==
-        modeclose) {
-        // close span
-        i += modeclose.length
-        newstr += htmlstr.slice(start, i) + '</span>'
-        start = i
-        modecloses.splice(modecloses.indexOf(modeclose), 1)
-        modeclosed = true
-      }
-    }
-    if (modeclosed) {
-      continue
-    }
-    // go down the string
-    for (lineinner of Object.keys(lineinners)) {
-      // test for a match
-      if (htmlstr.slice(i, i + lineinner.length) == lineinner &&
-        htmlstr.slice(i).includes(lineinners[lineinner][0])) {
-        // add in a span to the list and where it splits
-        newstr += htmlstr.slice(start, i) + '<span class=\'' +
-          lineinners[lineinner][1] + '\'>'
-        start = i
-        i += lineinner.length
-        modecloses.push(lineinners[lineinner][0])
-        continue
-      }
-    }
+  // // add in line inners
+  // let htmlstr = selected.val()
+  // let newstr = '' // newstr is the gradually added string with classes
+  // let start = 0
+  // const modecloses = []
+  // for (let i = 0; i < htmlstr.length; i++) {
+  //   // test for mode modecloses
+  //   let modeclosed = false
+  //   for (modeclose of modecloses) {
+  //     // test for matches
+  //     if (htmlstr.slice(i, i + modeclose.length) ==
+  //       modeclose) {
+  //       // close span
+  //       i += modeclose.length
+  //       newstr += htmlstr.slice(start, i) + '</span>'
+  //       start = i
+  //       modecloses.splice(modecloses.indexOf(modeclose), 1)
+  //       modeclosed = true
+  //     }
+  //   }
+  //   if (modeclosed) {
+  //     continue
+  //   }
+  //   // go down the string
+  //   for (lineinner of Object.keys(lineinners)) {
+  //     // test for a match
+  //     if (htmlstr.slice(i, i + lineinner.length) == lineinner &&
+  //       htmlstr.slice(i).includes(lineinners[lineinner][0])) {
+  //       // add in a span to the list and where it splits
+  //       newstr += htmlstr.slice(start, i) + '<span class=\'' +
+  //         lineinners[lineinner][1] + '\'>'
+  //       start = i
+  //       i += lineinner.length
+  //       modecloses.push(lineinners[lineinner][0])
+  //       continue
+  //     }
+  //   }
+  // }
+  if (selected.val().charAt(selected.val().length - 1) != ' ') {
+    selected.val(selected.val() + ' ')
   }
-  newstr += htmlstr.slice(start)
-  newstr = newstr.replace(
-    /\n/g, '<br>').replace(/\s/g, ' ')
+  newstr = selected.val()
+    .replace(/\s\*(.*)\*/g, ' <span class="bold">$1</span> ')
+    .replace(/\s_(.*)_\s/g, ' <span class="italic">$1</span> ')
+    .replace(/\s_\*(.*)\*_\s/g, 
+    ' <span class="bold-italic">$1</span> ')
+    .replace(/\s\>(.*)\s/g, ' <span class="deadline">>$1</span> ')
+    .replace(/\s\[\[(.*)\]\]\s/g, 
+    ' <span class="link">[[$1]]</span> ')
+    .replace(/\n/g, '<br>').replace(/\s/g, ' ')
   newstr += getChildren(el)
   if (selected.val().charAt(0) == '@') {
     // process event signs
@@ -1657,10 +1675,9 @@ function saveTask() {  // analyze format of task and create new <span> elt for i
       newstr = newstr.slice(1)
     }
   }
-  newstr = newstr.replace(
-    /\_(.*)\_/, "$1").replace(
-      /\*(.*)\*/, "$1").replace(
-        /\_*(.*)\*_/, "$1")
+  newstr = newstr.replace(/\_(.*)\_/, "$1")
+    .replace(/\*(.*)\*/, "$1")
+    .replace(/\_*(.*)\*_/, "$1")
   savetask.html(newstr)
   try {
     // fixing weird glitch
@@ -1707,6 +1724,7 @@ function saveTask() {  // analyze format of task and create new <span> elt for i
     parent = parent.parent()
   }
   save(true)
+  if (stripChildren(selected).includes('>')) { updatedeadlines() }
 }
 
 function getHeading(el, actual) {
@@ -1876,12 +1894,11 @@ function getChildren(el) {
 
 function updateHeight() {
   // $('#texttest').font(selected.css('font'))
-  $('#texttest').text(selected.val() + ' x')
+  $('#texttest').attr('class', '')
   $('#texttest').css('font', selected.css('font'))
-  $('#texttest').css('font-size', selected.css('font-size'))
-  // $('#texttest').css('padding', selected.css('padding'))
+  $('#texttest').text(selected.val() + ' x')
   $('#texttest').css('width', selected.width() + 'px')
-  selected.css('height', $('#texttest').height() + 5 + 'px')
+  selected.css('height', 'calc(' + $('#texttest').height() + 'px + 0.25em')
 }
 
 function editTask() {
@@ -3454,11 +3471,11 @@ function uploadData(reloading) {
     }
     uploading = false
     // offline mode
-    prevupload = JSON.stringify(data)
     localStorage.setItem('data', JSON.stringify(data))
+    diffsLog(prevupload, JSON.stringify(data))
     display('*** local upload finished ***')
+    prevupload = JSON.stringify(data)
     if (reloading) {
-      localStorage.setItem('data', JSON.stringify(data))
       display('reloading from upload (offline)');
       reload() // reloads page
       return
