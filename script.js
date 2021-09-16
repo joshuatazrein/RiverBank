@@ -517,7 +517,7 @@ function clean() {
     })
   }
   // clean empty lists
-  const loadlist = $('#loads').children().toArray()
+  let loadlist = $('#loads').children().toArray()
   for (list in loadlist) {
     try {
       $('#test').html(data.flop[list].text)
@@ -533,6 +533,7 @@ function clean() {
     } catch (err) {
       display(err)
       $($('#loads').children()[list]).remove()
+      loadlist = $('#loads').children().toArray()
     }
   }
   // clear out deprecated attributes
@@ -1187,9 +1188,9 @@ function migrate() {
             uncompletespan.after($(x))
           })
         } else {
-          for (ch of headingchildren) {
-            if (/^uncompleted/.test($(ch).text())) { 
-              $(ch).remove()
+          for (let child of headingchildren) {
+            if (/^uncompleted/.test($(child).text())) { 
+              $(child).remove()
               break
             }
           }
