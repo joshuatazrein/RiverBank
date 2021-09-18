@@ -1,13 +1,13 @@
 :root {
   --fontsize: 22px;
-  --fontweight: 100;
+  --fontweight: 300;
   --background: #E4EDF1;
   --bgoverlay: rgba(228, 237, 241, 0.8);
   --select: rgb(119, 152, 171);
-  --font: Helvetica Neue Light;
-  --butfont: Helvetica Neue Light;
+  --font: 'Raleway', sans-serif;
+  --butfont: 'Raleway', sans-serif;
   --textcolor: rgb(52, 64, 85);
-  --menufont: Helvetica Neue Light;
+  --menufont: 'Raleway', sans-serif;
   --bdcolor: rgba(21, 35, 40, 0.5);
   --important: rgb(135, 206, 235);
   --maybe: rgba(135, 206, 235, 0.5);
