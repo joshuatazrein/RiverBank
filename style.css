@@ -290,7 +290,7 @@ p.dropdown-item {
 }
 
 #help span.h1 {
-  font-size: 75%;
+  font-size: 115%;
 }
 
 #tutorial {
@@ -385,7 +385,7 @@ textarea.listtitle, p.listtitle {
 /* EDITING */
 
 textarea.in, p.incopy {
-  font: 80% var(--menufont), monospace;
+  font: inherit;
   width: 100%;
   color: var(--textcolor);
   background: inherit;
@@ -546,7 +546,6 @@ span.complete {
 
 span.important {
   color: var(--important);
-  font-weight: bold;
 }
 
 span.maybe {

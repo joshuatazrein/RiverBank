@@ -12,7 +12,6 @@ var searchwidth = 10
 var movetask
 var fileinput
 var loadedlistobj
-var uploading = false
 var reloading
 var currentupload
 var slider
@@ -75,6 +74,11 @@ function mobiletest() {
   }
 }
 
+function resetdoc() {
+  $(document).scrollTop(0)
+  $(document.body).css('zoom', "100%")
+}
+
 //# TIMER
 var timer = new Timer({
   tick: 1,
@@ -89,10 +93,31 @@ var timer = new Timer({
 
 // defining options using on
 timer.on('end', function () {
+  // display notification and sound
+  if (window.Notification) {
+    console.log('notifications');
+    if (Notification.permission === 'granted') {
+      console.log('notifying');
+      // notify
+      var notify = new Notification('timer complete', {
+        icon: 'logo.png'
+      })
+    } else {
+      Notification.requestPermission().then(function(p) {
+        if (p === 'granted') {
+          // notify
+          var notify = new Notification('RiverBank', {
+            body: 'timer complete',
+            icon: 'logo.png'
+          })
+        } else {
+          display('user blocked notifications')
+        }
+      })
+    }
+  }
   $('#timersnd')[0].currentTime = 0
   $('#timersnd')[0].play()
-  alert('timer done')
-  $('#timersnd')[0].pause()
   $('#timerent').val('')
 })
 
@@ -116,7 +141,7 @@ function dragTaskOver(event) {
     return
   }
   // $('#listcontainer > .in').css('width', $('#flop').width() + 'px')
-  $(document).scrollTop(0)
+  resetdoc()
   const boxright = $('#listcontainer').offset().left
   if (event.pageX < boxright) {
     // load the dragged-over list
@@ -248,7 +273,7 @@ function toggledrags(saving) {
       $(x).attr('draggable', 'true')
     })
     dragsenabled = true
-    $(document).scrollTop(0); // fixes weird shit
+    resetdoc(); // fixes weird shit
     if ($(loads[loadedlist]).val().slice(0, 2) == '- ') {
       $(loads[loadedlist]).addClass('sublist')
     } else {
@@ -532,7 +557,6 @@ function clean() {
   $('span.in').removeAttr('ondragstart')
   $('span.in').removeAttr('ondragover')
   $('span.in').removeAttr('ondrop')
-  $('span.in').removeAttr('draggable')
 }
 
 // Storing data:
@@ -555,7 +579,7 @@ function save(undo) {
   $('span.in:visible').attr('style', '')
   clean()
   updatedeadlines() // updateSpanDrags() called in updatedeadlines
-  $(document).scrollTop(0) // fixes scroll
+  resetdoc() // fixes scroll
   // backup data to the server after setting localstorage data
   uploadData()
 }
@@ -1274,7 +1298,7 @@ function updateSpanDrags() {
   //     select(ui.draggable[0], true)
   //   }
   // })
-  $('span.in').attr('draggable', 'false')
+  $('span.in').attr('draggable', 'true')
 }
 
 function mobileDragOver(event) {
@@ -1533,6 +1557,7 @@ function dragTime(el) {
 
 function saveTask() {  // analyze format of task and create new <span> elt for it
   const savetask = selected.prev() // looks at item before it
+  savetask.attr('class', 'in')
   selected.next().remove() // removes appended children
   if (['', '• ', '- ', '# ', '## ', '### ', '@', '@ '
   ].includes(selected.val()) ||
@@ -1716,7 +1741,7 @@ function select(el, scroll, animate) {
     select(getFrame($(el)), scroll)
     return
   }
-  $(document).scrollTop(0); // fixes weird shit
+  resetdoc(); // fixes weird shit
   // switch selection
   if (selected != undefined) {
     $('.taskselect').removeClass('taskselect')
@@ -1879,6 +1904,7 @@ function editTask() {
   if (selected != undefined) {
     $('#context-menu').hide()
     const newelt = $('<textarea class=\'in edit\'></textarea>')
+    newelt.css('font', selected.css('font'))
     el.after(newelt)
     el.hide()
     select(newelt, true)
@@ -2801,7 +2827,7 @@ function clicked(ev) {
     // cancels move to list
     movetolist = false
   }
-  $(document).scrollTop(0); // fixes weird shit
+  resetdoc(); // fixes weird shit
   $('nav').hide()
   // pre-click
   if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
@@ -3112,9 +3138,14 @@ function keycomms(evt) {
   if (['Control', 'Command', 'Shift', 'Alt'].includes(evt.key)) {
     return
   }
+  if (evt.ctrlKey || evt.metaKey || evt.altKey || evt.key == 'Enter') {
+    // reset zoom and scroll to make better
+    resetdoc()
+  }
   // makes sure to unselect on proper things
   if (evt.key == 'Escape' && selected != undefined &&
     selected[0].tagName == 'TEXTAREA') {
+    // save task
     evt.preventDefault()
     const exp = /^(•*)(\s*)$/
     if (exp.test(selected.val())) {
@@ -3127,18 +3158,21 @@ function keycomms(evt) {
       saveTask()
     }
   } else if (evt.key == 't' && evt.ctrlKey) {
+    // go to today
     select(dateToHeading(stringToDate('0d')), true)
   } else if (evt.key == 'f' && evt.ctrlKey) {
+    // focus on search
     $('#searchbar').focus()
   } else if (evt.code == 'KeyH' && evt.ctrlKey && evt.shiftKey) {
+    // focus
     togglefocus()
   } else if (evt.code == 'KeyH' && evt.ctrlKey) {
+    // hide sidebar
     togglecollapse()
   } else if (evt.key == 'Enter' && $(':focus').attr('id') ==
     'searchbar') {
-    evt.preventDefault()
-    document.body.style.zoom = "100%";
     // focus on searchbar and find it
+    evt.preventDefault()
     if ($('#searchbar').val().slice(0, 2) == 'd:') {
       const date = dateToHeading(
         stringToDate($('#searchbar').val().slice(2)), false, true)
@@ -3152,6 +3186,7 @@ function keycomms(evt) {
       }
       // already saves
     } else if ($('#searchbar').val().charAt(0) == '#') {
+      // filter tags
       const searchstr = $('#searchbar').val()
       filtered = true
       filteredlist = $('#pop').find('span.in:visible').toArray().concat(
@@ -3162,9 +3197,11 @@ function keycomms(evt) {
         })
       filteredlist.forEach((x) => { $(x).hide() })
     } else {
+      // search
       search()
     }
   } else if ($(':focus').attr('id') == 'timerent' && evt.key == 'Enter') {
+    // enter timer
     document.body.style.zoom = "100%";
     timertest(evt);
   } else if (evt.key == 'Escape') {
@@ -3176,6 +3213,7 @@ function keycomms(evt) {
     select()
     if (filtered) unfilter()
   } else if (evt.key == 'z' && evt.ctrlKey) {
+    // undo
     data = JSON.parse(JSON.stringify(savedata))
     select()
     const oldload = Number(loadedlist)
@@ -3187,30 +3225,22 @@ function keycomms(evt) {
     }
     loadedlist = oldload
     loadList()
-    dragsoff()
-  } else if (
-    selected == undefined && evt.key == 'Enter' &&
-    $(':focus').hasClass('selected')
-  ) {
+    dragson()
+  } else if (selected == undefined && evt.key == 'Escape' &&
+    $(':focus').hasClass('selected')) {
+    // save list
     evt.preventDefault()
-    $(document).scrollTop(0)
-    toggledrags()
+    resetdoc()
+    dragson()
+  } else if (!selected && evt.key == 'Enter' &&
+    $(':focus').hasClass('listtitle')) {
+    // new list
+    newlist()
   } else if (selected != undefined && evt.key == 'Enter' &&
-    !evt.altKey && !evt.shiftKey) {
-    // swap editing
-    $(document).scrollTop(0)
+    evt.metaKey) {
+    // new task above
     evt.preventDefault()
-    if (selected[0].tagName == 'TEXTAREA') {
-      saveTask()
-    } else if (selected[0].tagName == 'SPAN' &&
-     !selected.hasClass('dateheading')) {
-      evt.preventDefault()
-      editTask()
-    }
-  } else if (selected != undefined && evt.key == 'Enter' &&
-    evt.altKey && evt.metaKey) {
-    evt.preventDefault()
-    $(document).scrollTop(0)
+    resetdoc()
     // new task if it's in textarea then save task
     if (selected[0].tagName == 'TEXTAREA') {
       saveTask()
@@ -3225,29 +3255,33 @@ function keycomms(evt) {
       newTask()
       newspan.remove()
     }
-  } else if (selected != undefined && evt.key == 'Enter' &&
-    evt.altKey) {
-    $(document).scrollTop(0)
+  } else if (selected && evt.key == 'Enter' && evt.altKey) {
+    // new subtask
     evt.preventDefault()
-    // new task if it's in textarea then save task
     if (selected[0].tagName == 'TEXTAREA') {
       saveTask()
     }
-    if (evt.shiftKey) {
-      newTask(true) // make subtask
-    } else {
-      newTask()
+    newTask(true)
+  } else if (selected != undefined && evt.key == 'Enter') {
+    // new task 
+    evt.preventDefault()
+    if (selected[0].tagName == 'TEXTAREA') {
+      saveTask()
     }
+    newTask()
   } else if (!evt.metaKey && !evt.altKey && !evt.ctrlKey &&
     selected != undefined && selected[0].tagName == 'TEXTAREA') {
     // modify the height of the textarea to hold everything
     updateHeight()
   } else if ($(':focus').hasClass('listtitle')) {
+    // resize
     updateSizes()
   } else if (evt.key == 'r' && evt.ctrlKey) {
+    // select random
     selectRandom()
   } else if (selected != undefined && selected[0].tagName !=
     'TEXTAREA') {
+    // task commands
     if (evt.key == 'Backspace' && $(':focus').attr('id') != 'searchbar') {
       deleteTask()
     } else if (evt.code == 'KeyI' && evt.altKey) {
@@ -3273,13 +3307,11 @@ function keycomms(evt) {
       }
     } else if (evt.key == 'ArrowRight' &&
       evt.altKey) {
-      // insert afterwards
-      // TODO: find the date of today
-      // const today = getDate(today)
+      // move to pop
       moveTask('pop')
     } else if (evt.key == 'ArrowLeft' &&
       evt.altKey) {
-      // insert afterwards
+      // move to flop
       moveTask('flop')
     } else if (evt.key == 'c' && evt.metaKey) {
       copieditem = selected.clone()
@@ -3294,14 +3326,11 @@ function keycomms(evt) {
         save()
       }
     }
-  }
-  if (selected != undefined && selected[0].tagName != 'TEXTAREA' &&
-    !event.metaKey && !event.ctrlKey && !event.altKey) {
+  } else if (selected != undefined && selected[0].tagName != 'TEXTAREA' &&
+    !evt.metaKey && !evt.ctrlKey && !evt.altKey) {
     // key comms without modifier keys
-    // TODO fix to make it so they skip over hidden tasks
-    // TODO make so that tasks which don't have subtasks aren't folded
-
     if (evt.key == 'ArrowUp' && evt.shiftKey) {
+      // select previous heading
       evt.preventDefault()
       let heading
       if (selected.hasClass('h1')) headings = ['h1']
@@ -3326,6 +3355,7 @@ function keycomms(evt) {
         select(taskAbove(), true)
       }
     } else if (evt.key == 'ArrowDown' && evt.shiftKey) {
+      // select next heading
       evt.preventDefault()
       let heading
       if (selected.hasClass('h1')) headings = ['h1']
@@ -3350,47 +3380,27 @@ function keycomms(evt) {
         select(taskBelow(), true)
       }
     } else if (evt.key == 'ArrowUp') {
+      // select previous
       evt.preventDefault()
       select(taskAbove(), true)
     } else if (evt.key == 'ArrowDown') {
+      // select next
       evt.preventDefault()
       select(taskBelow(), true)
     } else if (evt.key == 'ArrowRight') {
+      // select pop
       select(dateToHeading(stringToDate('0d')), true)
     } else if (evt.key == 'ArrowLeft') {
+      // select flop
       select($('#flop').children()[1], true)
-    } else if (evt.key == 'ArrowRight' && Array().includes($('#flop')[0])) {
-      // go over and select pop
-      // TODO: find the date of today
-      // const today = getDate(today)
-      select($('#pop').children().toArray()[
-        $('#pop').children().toArray().length - 1], true)
-    } else if (evt.key == 'ArrowLeft' &&
-      selected.parents().toArray().includes($('#pop')[0])) {
-      // go over and select pop
-      // TODO: find the date of today
-      // const today = getDate(today)
-      select($('#flop').children().toArray()[
-        $('#flop').children().toArray().length - 1], true)
-    } else if (['{', '}'].includes(evt.key)) {
-      if (selected.attr('folded') == 'false') {
-        collapseAll('false')
-      } else if (selected.attr('folded') == 'true') {
-        collapseAll('true')
-      }
     } else if (evt.key == '[' || evt.key == ']') {
       // toggle folding
       toggleSubtasks();
-    } else if (evt.key == 'Enter' && evt.altKey &&
-      evt.shiftKey) {
-      newTask(true) // create subtask
-    } else if (evt.key == 'Enter' && evt.altKey) {
-      newTask() // new task
     }
   }
   if (evt.key == 'Escape') {
     evt.preventDefault()
-    $(document).scrollTop(0) // fixes scrolling
+    resetdoc() // fixes scrolling
   }
 }
 
@@ -3417,19 +3427,15 @@ function uploadData(reloading) {
     return
   }
   if (navigator.onLine && !offlinemode) {
-   if (!uploading) {
-      uploading = true
-      $.post("upload.php", {
-        datastr: JSON.stringify(data),
-      }, function (data, status, xhr) {
-        uploading = false
-        diffsLog(prevupload, xhr.responseText)
-        display('*** upload finished ***')
-        prevupload = xhr.responseText
-        localStorage.setItem('data', JSON.stringify(data))
-        if (reloading) reload() // reloads page
-      });
-    }
+    $.post("upload.php", {
+      datastr: JSON.stringify(data),
+    }, function (data, status, xhr) {
+      diffsLog(prevupload, xhr.responseText)
+      display('*** upload finished ***')
+      prevupload = xhr.responseText
+      localStorage.setItem('data', JSON.stringify(data))
+      if (reloading) reload() // reloads page
+    });
   } else {
     if (!navigator.onLine && !offline) {
       // if it's offline save that
@@ -3439,7 +3445,6 @@ function uploadData(reloading) {
       reload()
       return
     }
-    uploading = false
     // offline mode
     localStorage.setItem('data', JSON.stringify(data))
     diffsLog(prevupload, JSON.stringify(data))
@@ -3649,7 +3654,7 @@ function loadpage(setload, oldselect, scrolls) {
   }
   toggleButs(false)
   $('.taskselect').removeClass('taskselect')
-  $(document).scrollTop(0)
+  resetdoc()
   updateSizes()
   clearEmptyDates(false)
   clean()

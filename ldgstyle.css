@@ -45,18 +45,20 @@ body {
 
 .title {
   width: 100%;
-  height: 100px;
-  letter-spacing: calc((100vw - 500px) / 11);
+  height: 96px;
+  letter-spacing: calc((100vw - 300px) / 12);
+  font-size: 48px;
   color: var(--textcolor);
   text-transform: uppercase;
   font-weight: 400;
   text-align: center;
-  font-size: 250%;
   vertical-align: middle;
   position: fixed;
   top: 0; left: 0;
   padding-top: 20px;
-  background-color: rgba(0, 0, 0, 0.5)
+  background-color: rgba(0, 0, 0, 0.5);
+  margin-top: 0;
+  padding-top: 0.5em;
 }
 
 input {
@@ -161,9 +163,16 @@ span.h1 {
   padding: 0 15px;
 }
 
+#main {
+  margin-top: 96px;
+}
+
 @media only screen and (max-width: 700px) {
   body {
     font: 18px var(--font), serif;
+  }
+  #main {
+    margin-top: 14vw;
   }
   #tutorial, #welcome {
     width: 100%;
@@ -178,7 +187,9 @@ span.h1 {
     font-size: 8vw;
   }
   .title {
-    font-size: 9vw;
+    font-size: 7vw;
+    height: 14vw;
+    letter-spacing: calc((60vw - 50px) / 12);
   }
   .banner {
     letter-spacing: calc((100vw - 200px) / 8);
