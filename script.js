@@ -2311,6 +2311,7 @@ function dropTask(evt, obj) {
     selected.after(children[i])
   }
   save()
+  updateSpanDrags()
 }
 
 function toggleSubtasks() {
