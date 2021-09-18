@@ -1227,10 +1227,6 @@ function migrate() {
 
 function updateSpanDrags() {
   if (mobiletest()) {
-    // insert mobiledrag elements
-    $('.mobhandle').remove()
-    $('span.in').prepend(
-      '<span class="mobhandle"></span>')
     $('span.in:not(.dateheading)').draggable({
       handle: '.mobhandle',
       containment: 'window',
@@ -2796,6 +2792,12 @@ function clicked(ev) {
   if (movetolist && !$(ev.target).hasClass('listtitle')) {
     // cancels move to list
     movetolist = false
+  }
+  if (mobiletest()) {
+    // insert mobiledrag elements
+    $('.mobhandle').remove()
+    $('span.in').prepend(
+      '<span class="mobhandle"></span>')
   }
   resetdoc(); // fixes weird shit
   $('nav').hide()
