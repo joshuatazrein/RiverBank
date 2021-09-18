@@ -767,6 +767,7 @@ span.weblink, span.deadline {
   /* add the padding-right to subspan widths */
   span.in {
     padding-right: 40px;
+    margin-bottom: 0.5em; /* fixing drag bs */
   }
   span.in span.in {
     width: calc(100% + 5px + 40px - var(--indent));
