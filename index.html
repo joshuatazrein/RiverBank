@@ -17,14 +17,21 @@
   <script src="touch-punch.js"></script>
   <style>
     #logoimage {
-      display: none;
       background-color: #000;
-      height: 100vh;
       width: 100vw;
-      position:fixed;
-      top:0;
-      left:0;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
       z-index: 4;
+    }
+
+    #logoimage img {
+      width: 100vh;
+      max-width: 100vw;
+      max-height: 100vw;
+      margin: auto;
+      display: block;
     }
 
     #logoimage.show {
@@ -93,7 +100,7 @@
       <div id='loads' class='loads'> <!-- this is used to store list names -->
       </div>
       <p id='help' class='help'>
-        <span class='h1' style='border-bottom:none;color:var(--textcolor);font-size:150%;'>help</span>
+        <span class='h1' style='border-bottom:none;color:var(--textcolor);font-size:125%;'>help</span>
         <span class='h1' style='border-bottom:none;'><button onclick='tutorial()' style='font-size:20px;font:inherit;'>tutorial</button></span>
         <span class='h1'>controls</span>
         <span class='command'><span class='left'>click</span><span class='right'>select task</span></span>
@@ -104,8 +111,9 @@
         <span class='command'><span class='left'>option drag/drop</span><span class='right'>move as subtask</span></span>
         <span class='command'><span class='left'>command drag/drop</span><span class='right'>move before target</span></span>
         <span class='h1'>commands</span>
+        <span class='command'><span class='left'>shift return</span><span class='right'>edit/save task</span></span>
         <span class='command'><span class='left'>return</span><span class='right'>new task</span></span>
-        <span class='command'><span class='left'>shift return</span><span class='right'>new subtask</span></span>
+        <span class='command'><span class='left'>option return</span><span class='right'>new subtask</span></span>
         <span class='command'><span class='left'>command return</span><span class='right'>new task above</span></span>
         <span class='command'><span class='left'>delete</span><span class='right'>delete task</span></span>
         <span class='command'><span class='left'>up/down</span><span class='right'>select above/below</span></span>
@@ -182,9 +190,9 @@
   <p id='test' style='display:none;position:absolute;'><p>
   <p id='texttest' class='incopy'></p>
   <nav id="context-menu">
-    <p function='editTask()' class='dropdown-item' id='context-editTask'>edit task (return)</p>
-    <p function='newTask()' class='dropdown-item' id='context-newTask'>new task (option return)</p>
-    <p function='newTask(subtask=true)' class='dropdown-item' id='context-newSubtask'>new subtask (shift option return)</p>
+    <p function='editTask()' class='dropdown-item' id='context-editTask'>edit task (shift return)</p>
+    <p function='newTask()' class='dropdown-item' id='context-newTask'>new task (return)</p>
+    <p function='newTask(true)' class='dropdown-item' id='context-newSubtask'>new subtask (option return)</p>
     <p function='deleteTask()' class='dropdown-item' id='context-deleteTask'>delete (delete)</p>
     <p function='archiveTask()' class='dropdown-item' id='context-archiveTask'>archive (shift space)</p>
     <p function='' class='dropdown-item' id='context-divider'>————————————</p>
@@ -192,6 +200,7 @@
     <p function='moveToList()' class='dropdown-item' id='context-moveToList'>move to list</p>
     <p function='toggleComplete()' class='dropdown-item' id='context-toggleComplete'>toggle complete (space)</p>
     <p function='toggleImportant()' class='dropdown-item' id='context-toggleimportant'>toggle important (option i)</p>
+    <p function='toggleMaybe()' class='dropdown-item' id='context-toggleMaybe'>toggle maybe (option m)</p>
     <p function='toggleSubtasks()' class='dropdown-item' id='context-toggleSubtasks'>toggle fold ([ or ])</p>
     <p function='indentTask(true)' class='dropdown-item' id='context-indentTask'>indent (option ])</p>
     <p function='indentTask(false)' class='dropdown-item' id='context-unIndentTask'>unindent (option [)</p>

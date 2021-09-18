@@ -447,8 +447,8 @@ function updateSizes() {
   }
   $('#flopbuts, #popbuts').css('width',
     String(
-      Math.floor(($('.rendered:visible').width() / window.innerWidth) * 100)) +
-      'vw')
+    Math.floor(($('.rendered:visible').width() / window.innerWidth) * 100)) +
+    'vw')
 }
 
 // picks a new loadlist
@@ -2556,7 +2556,7 @@ function context(e, mobile) {
     '#context-toggleComplete': [
       ['SPAN'], ['in']
     ],
-    '#context-toggleSomeday': [
+    '#context-toggleMaybe': [
       ['SPAN'], ['in']
     ],
     '#context-toggleimportant': [
@@ -3196,16 +3196,27 @@ function keycomms(evt) {
     loadedlist = oldload
     loadList()
     dragson()
-  } else if (selected == undefined && evt.key == 'Escape' &&
+  } else if (!selected && evt.key == 'Enter' &&
+    evt.shiftKey && $(':focus').hasClass('selected')) {
+    // save list
+    toggledrags()
+  } else if (!selected && evt.key == 'Escape' &&
     $(':focus').hasClass('selected')) {
     // save list
-    evt.preventDefault()
-    resetdoc()
     dragson()
+    $(':focus').blur()
   } else if (!selected && evt.key == 'Enter' &&
     $(':focus').hasClass('listtitle')) {
     // new list
     newlist()
+  } else if (selected && evt.key == 'Enter' &&
+    evt.shiftKey) {
+    // edit/save task
+    if (selected[0].tagName == 'TEXTARAEA') {
+      saveTask()
+    } else if (selected[0].tagName == 'SPAN') {
+      editTask()
+    }
   } else if (selected != undefined && evt.key == 'Enter' &&
     evt.metaKey) {
     // new task above
