@@ -1231,7 +1231,6 @@ function updateSpanDrags() {
     $('.mobhandle').remove()
     $('span.in').prepend(
       '<span class="mobhandle"></span>')
-    jqDraggableItem.draggable('destroy')
     // drags are now updated individually
   } else {
     $('.mobhandle').remove()
