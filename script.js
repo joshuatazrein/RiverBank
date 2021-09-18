@@ -3541,10 +3541,13 @@ function loadpage(setload, oldselect, scrolls) {
     // initial loads (not called on reloads)
     $('#focusbar').hide()
     if (data.play === undefined) { data.play = 'true' }
+    // removes things
     $('head').append(
       $("<link rel='stylesheet' type='text/css' href='" +
         data.style + "' />")
     );
+    $.get(data.style, 
+      function () { $('#logoimage').remove() })
     if (data.weekdays == 'M') {
       weekdaysStr = { 0: 'U', 1: 'M', 2: 'T', 3: 'W', 4: 'R', 5: 'F', 6: 'S' }
     } else if (data.weekdays == 'Mon') {
@@ -3651,7 +3654,6 @@ function loadpage(setload, oldselect, scrolls) {
   if (loadedlist) {
     $(loads[loadedlist]).blur()
   }
-  $('#logoimage').remove()
   display('loaded')
 }
 
