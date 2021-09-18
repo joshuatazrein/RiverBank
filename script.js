@@ -165,6 +165,7 @@ function dragTaskOver(event) {
       i++
     }
   } else {
+    console.log('dragover');
     const timertime = 3
     const offsetwidth = 50
     const scrollChange = 1
@@ -174,7 +175,7 @@ function dragTaskOver(event) {
     const popheight = $('#pop').height()
     const popleft = $('#pop').offset().left
     clearTimeout(dragtimer)
-    dragtimer = setTimeout(mobileDragOver, timertime, event)
+    dragtimer = setTimeout(dragTaskOver, timertime, event)
     if (flopoffset + flopheight - offsetwidth < event.pageY &&
       event.pageY < flopoffset + flopheight &&
       event.pageX < popleft) {
