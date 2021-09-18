@@ -1231,7 +1231,24 @@ function updateSpanDrags() {
     $('.mobhandle').remove()
     $('span.in').prepend(
       '<span class="mobhandle"></span>')
-    // drags are now updated individually
+    $('span.in:not(.dateheading)').draggable({
+      handle: '.mobhandle',
+      containment: 'window',
+      axis: 'y',
+      revert: true,
+      appendTo: $('#listcontainer'),
+      helper: 'clone',
+      refreshPositions: true,
+      zIndex: 1,
+      addClasses: false,
+      start: function (event) {
+        // $(this).hide()
+        dragTask(event, $(this))
+      },
+      drag: function (event) {
+        mobileDragOver(event)
+      },
+    })
   } else {
     $('.mobhandle').remove()
     $('span.in:not(.dateheading)').draggable({
@@ -2749,8 +2766,8 @@ function setTask(type) {
 
 function clickoff(ev) {
   if (mobiletest()) {
-    // turn off drags so you can scroll
-    jqDraggableItem.draggable('destroy')
+    // turn on drags
+    jqDraggableItem.draggable('option', 'disabled', false)
     // on revert drags on mobile
     $('.drop-hover').removeClass('drop-hover')
     if (flopscrollsave) {
@@ -2784,26 +2801,9 @@ function clicked(ev) {
   resetdoc(); // fixes weird shit
   $('nav').hide()
   // pre-click
-  if (mobiletest() && $(ev.target).hasClass('mobhandle')) {
-    // enable dragging if you click on button
-    $(ev.target).parent().draggable({
-      handle: '.mobhandle',
-      containment: 'window',
-      axis: 'y',
-      revert: true,
-      appendTo: $('#listcontainer'),
-      helper: 'clone',
-      refreshPositions: true,
-      zIndex: 1,
-      addClasses: false,
-      start: function (event) {
-        // $(this).hide()
-        dragTask(event, $(this))
-      },
-      drag: function (event) {
-        mobileDragOver(event)
-      },
-    })
+  if (mobiletest() && !$(ev.target).hasClass('mobhandle')) {
+    // turn off drags to scroll
+    jqDraggableItem.draggable('option', 'disabled', true)
   }
   if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
     return 
