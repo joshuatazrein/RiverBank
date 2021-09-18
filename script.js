@@ -1274,7 +1274,8 @@ function updateSpanDrags() {
   //     select(ui.draggable[0], true)
   //   }
   // })
-  $('span.in').attr('draggable', 'true')
+  if (mobiletest()) $('span.in').attr('draggable', 'false')
+  else $('span.in').attr('draggable', 'true')
 }
 
 function mobileDragOver(event) {
