@@ -98,13 +98,18 @@ timer.on('end', function () {
     if (Notification.permission === 'granted') {
       console.log('notifying');
       // notify
-      var notify = new Notification('timer complete', {
+      var notify = new Notification('RiverBank', {
+        body: 'timer complete',
         icon: 'logo.png'
       })
     }
   }
   $('#timersnd')[0].currentTime = 0
-  $('#timersnd')[0].play()
+  if (data.play == 'true') {
+    console.log('playing');
+    $('#timersnd')[0].play()
+  }
+  $('#timersnd')[0].pause()
   $('#timerent').val('')
 })
 
@@ -1997,11 +2002,11 @@ function archiveAll() {
   })
 }
 
-function archiveTask(play) {
+function archiveTask() {
   let taskabove = taskAbove()
   if (taskabove[0] == selected[0]) { taskabove = getFrame(selected) }
-  if (play) {
-    $('#popsnd')[0].currentTime = 0 // resets pop sound
+  $('#popsnd')[0].currentTime = 0 // resets pop sound
+  if (data.play == 'true') {
     $('#popsnd')[0].play();
   }
   // archives the selected Flop to the current day
@@ -2461,6 +2466,16 @@ function toggleHelp() {
   save()
 }
 
+function togglePlay() {
+  if (data.play == 'true') {
+    data.play = 'false'
+    alert('sounds off')
+  } else {
+    data.play = 'true'
+    alert('sounds on')
+  }
+}
+
 function setStyle(style) {
   const poptop = $('#pop').scrollTop()
   const floptop = $('#flop').scrollTop()
@@ -2508,152 +2523,118 @@ function context(e, mobile) {
   $('#context-menu').show()
   options = {
     '#context-newlist': [
-      ['TEXTAREA', 'DIV'],
-      ['selected', 'unselected',
-        'loads'
-      ]
+      ['TEXTAREA', 'DIV'],['selected', 'unselected', 'loads']
     ],
     '#context-toggledrags': [
-      ['TEXTAREA'],
-      ['selected', 'unselected']
+      ['TEXTAREA'], ['selected', 'unselected']
     ],
     '#context-deletelist': [
-      ['TEXTAREA'],
-      ['selected', 'unselected']
+      ['TEXTAREA'], ['selected', 'unselected']
     ],
     '#context-toggleFoldList': [
-      ['TEXTAREA'],
-      ['selected', 'unselected']
+      ['TEXTAREA'], ['selected', 'unselected']
     ],
     '#context-reset': [
-      ['BUTTON', 'DIV'],
-      ['opts']
+      ['BUTTON', 'DIV'], ['opts']
     ],
     '#context-switchUser': [
-      ['BUTTON', 'DIV'],
-      ['opts']
+      ['BUTTON', 'DIV'], ['opts']
     ],
     '#context-upload': [
-      ['BUTTON', 'DIV'],
-      ['opts']
+      ['BUTTON', 'DIV'], ['opts']
     ],
     '#context-download': [
-      ['BUTTON', 'DIV'],
-      ['opts']
+      ['BUTTON', 'DIV'], ['opts']
     ],
     '#context-moveToList': [
       ['SPAN'], ['in']
     ],
     '#context-divider': [
-      ['SPAN'],
-      ['in']
+      ['SPAN'], ['in']
     ],
     '#context-toggleComplete': [
-      ['SPAN'],
-      ['in']
+      ['SPAN'], ['in']
     ],
     '#context-toggleSomeday': [
-      ['SPAN'],
-      ['in']
+      ['SPAN'], ['in']
     ],
     '#context-toggleimportant': [
-      ['SPAN'],
-      ['in']
+      ['SPAN'], ['in']
     ],
     '#context-weekdaysToggle': [
-      ['BUTTON'],
-      ['opts']
+      ['BUTTON'], ['opts']
     ],
     '#context-toggleHelp': [
-      ['BUTTON', 'P'],
-      ['opts', 'help']
+      ['BUTTON', 'P'], ['opts', 'help']
     ],
     '#context-editTask': [
-      ['SPAN'],
-      ['in']
+      ['SPAN'], ['in']
     ],
     '#context-archiveTask': [
-      ['SPAN'],
-      ['in']
+      ['SPAN'], ['in']
     ],
     '#context-newTask': [
-      ['SPAN', 'P'],
-      ['in', 'buffer']
+      ['SPAN', 'P'], ['in', 'buffer']
     ],
     '#context-newSubtask': [
-      ['SPAN'],
-      ['in']
+      ['SPAN'], ['in']
     ],
     '#context-goToToday': [
       ['SPAN', 'P'], ['in', 'buffer']
     ],
     '#context-deleteTask': [
-      ['SPAN'],
-      ['in']
+      ['SPAN'], ['in']
     ],
     '#context-indentTask': [
-      ['SPAN'],
-      ['in']
+      ['SPAN'], ['in']
     ],
     '#context-unIndentTask': [
-      ['SPAN'],
-      ['in']
+      ['SPAN'], ['in']
     ],
     '#context-toggleSubtasks': [
-      ['SPAN'],
-      ['in']
+      ['SPAN'], ['in']
     ],
     '#context-archiveComplete': [
-      ['SPAN', 'P'],
-      ['in', 'buffer']
+      ['SPAN', 'P'], ['in', 'buffer']
     ],
     '#context-clearEmptyHeadlines': [
-      ['P', 'SPAN'],
-      ['in', 'buffer']
+      ['P', 'SPAN'], ['in', 'buffer']
     ],
     '#context-toggleButs': [
-      ['BUTTON'],
-      ['opts']
+      ['BUTTON'], ['opts']
     ],
     '#context-toggleHeadingAlign': [
-      ['BUTTON'],
-      ['opts']
+      ['BUTTON'], ['opts']
+    ],
+    '#context-togglePlay': [
+      ['BUTTON'], ['opts']
     ],
     '#context-styleDefault': [
-      ['BUTTON'],
-      ['opts']
+      ['BUTTON'], ['opts']
     ],
     '#context-styleJason': [
-      ['BUTTON'],
-      ['opts']
+      ['BUTTON'], ['opts']
     ],
     '#context-styleLight': [
-      ['BUTTON'],
-      ['opts']
+      ['BUTTON'], ['opts']
     ],
     '#context-stylePink': [
-      ['BUTTON'],
-      ['opts']
+      ['BUTTON'], ['opts']
     ],
     '#context-styleGreen': [
-      ['BUTTON'],
-      ['opts']
+      ['BUTTON'], ['opts']
     ],
     '#context-changeDate1': [
-      ['BUTTON'],
-      ['opts']
+      ['BUTTON'], ['opts']
     ],
     '#context-changeDate2': [
-      ['BUTTON'],
-      ['opts']
+      ['BUTTON'], ['opts']
     ],
     '#context-changeDate3': [
-      ['BUTTON'],
-      ['opts']
+      ['BUTTON'], ['opts']
     ],
     '#context-clearEmptyDates': [
-      ['BUTTON'],
-      ['opts']
+      ['BUTTON'], ['opts']
     ],
   }
   for (option of Object.keys(options)) {
@@ -3125,7 +3106,8 @@ function keycomms(evt) {
   if (['Control', 'Command', 'Shift', 'Alt'].includes(evt.key)) {
     return
   }
-  if (evt.ctrlKey || evt.metaKey || evt.altKey || evt.key == 'Enter') {
+  if (evt.ctrlKey || evt.metaKey || evt.altKey || evt.key == 'Enter' ||
+    evt.key == 'Escape') {
     // reset zoom and scroll to make better
     resetdoc()
   }
@@ -3227,8 +3209,6 @@ function keycomms(evt) {
     evt.metaKey) {
     // new task above
     evt.preventDefault()
-    resetdoc()
-    // new task if it's in textarea then save task
     if (selected[0].tagName == 'TEXTAREA') {
       saveTask()
     }
@@ -3242,7 +3222,8 @@ function keycomms(evt) {
       newTask()
       newspan.remove()
     }
-  } else if (selected && evt.key == 'Enter' && evt.altKey) {
+  } else if (selected && evt.key == 'Enter' && evt.altKey &&
+    !isHeading(selected)) {
     // new subtask
     evt.preventDefault()
     if (selected[0].tagName == 'TEXTAREA') {
@@ -3270,53 +3251,59 @@ function keycomms(evt) {
     'TEXTAREA') {
     // task commands
     if (evt.key == 'Backspace' && $(':focus').attr('id') != 'searchbar') {
+      // delete
       deleteTask()
     } else if (evt.code == 'KeyI' && evt.altKey) {
+      // important
       toggleImportant()
     } else if (evt.code == 'KeyM' && evt.altKey) {
+      // maybe
       toggleMaybe()
     } else if (evt.key == '‘') {
+      // indent
       indentTask(true)
     } else if (evt.key == '“') {
+      // unindent
       indentTask(false)
-    } else if (evt.key == 'ArrowUp' && evt.altKey) {
-      evt.preventDefault()
-      moveTask('up')
-    } else if (evt.key == 'ArrowDown' && evt.altKey) {
-      evt.preventDefault()
-      moveTask('down')
+    } else if (evt.key == '[' || evt.key == ']') {
+      // toggle folding
+      toggleSubtasks();
     } else if (evt.key == ' ') {
+      // toggle complete or archive
       evt.preventDefault();
       if (evt.shiftKey) {
         archiveTask()
       } else {
         toggleComplete()
       }
-    } else if (evt.key == 'ArrowRight' &&
-      evt.altKey) {
-      // move to pop
-      moveTask('pop')
-    } else if (evt.key == 'ArrowLeft' &&
-      evt.altKey) {
-      // move to flop
-      moveTask('flop')
     } else if (evt.key == 'c' && evt.metaKey) {
+      // copy
       copieditem = selected.clone()
     } else if (evt.key == 'x' && evt.metaKey) {
+      // cut
       copieditem = selected.clone
       selected.remove()
     } else if (evt.key == 'v' && evt.metaKey) {
+      // paste
       if (copieditem) {
         selected.after(copieditem)
         select(selected.next(), true)
         copieditem = undefined
         save()
       }
-    }
-  } else if (selected != undefined && selected[0].tagName != 'TEXTAREA' &&
-    !evt.metaKey && !evt.ctrlKey && !evt.altKey) {
-    // key comms without modifier keys
-    if (evt.key == 'ArrowUp' && evt.shiftKey) {
+    } else if (evt.key == 'ArrowUp' && evt.altKey) {
+      evt.preventDefault()
+      moveTask('up')
+    } else if (evt.key == 'ArrowDown' && evt.altKey) {
+      evt.preventDefault()
+      moveTask('down')
+    } else if (evt.key == 'ArrowRight' && evt.altKey) {
+      // move to pop
+      moveTask('pop')
+    } else if (evt.key == 'ArrowLeft' && evt.altKey) {
+      // move to flop
+      moveTask('flop')
+    } else if (evt.key == 'ArrowUp' && evt.shiftKey) {
       // select previous heading
       evt.preventDefault()
       let heading
@@ -3380,14 +3367,7 @@ function keycomms(evt) {
     } else if (evt.key == 'ArrowLeft') {
       // select flop
       select($('#flop').children()[1], true)
-    } else if (evt.key == '[' || evt.key == ']') {
-      // toggle folding
-      toggleSubtasks();
     }
-  }
-  if (evt.key == 'Escape') {
-    evt.preventDefault()
-    resetdoc() // fixes scrolling
   }
 }
 
@@ -3559,6 +3539,7 @@ function loadpage(setload, oldselect, scrolls) {
   if (setload != false) {
     // initial loads (not called on reloads)
     $('#focusbar').hide()
+    if (data.play === undefined) { data.play = 'true' }
     $('head').append(
       $("<link rel='stylesheet' type='text/css' href='" +
         data.style + "' />")

@@ -172,7 +172,7 @@
           <button id='todayBut' title='jump to today'>today</button>
           <button id='addDateBut' title='add date'>+#</button>
           <button class='flopbut' id='popBut' title='new task in river'>+ RIVER</button>
-          <button function="archiveTask(true)" title='complete'>!</button>
+          <button function="archiveTask()" title='complete'>!</button>
         </div>
         <p id='pop' class='rendered in' ondrop='dropTask(event)' ondragover='draggingOver(event)'></p>        
       </div>
@@ -211,6 +211,7 @@
     <p function='switchUser()' class='dropdown-item' id='context-switchUser'>switch user</p>
     <p function='upload()' class='dropdown-item' id='context-upload'>upload backup</p>
     <p function='download()' class='dropdown-item' id='context-download'>download backup</p>
+    <p function='togglePlay()' class='dropdown-item' id='context-togglePlay'>toggle sounds</p>
 
     <p function='setStyle("default.css")' class='dropdown-item' id='context-styleDefault'>style: space</p>
     <p function='setStyle("jason.css")' class='dropdown-item' id='context-styleJason'>style: water</p>
