@@ -95,24 +95,11 @@ var timer = new Timer({
 timer.on('end', function () {
   // display notification and sound
   if (window.Notification) {
-    console.log('notifications');
     if (Notification.permission === 'granted') {
       console.log('notifying');
       // notify
       var notify = new Notification('timer complete', {
         icon: 'logo.png'
-      })
-    } else {
-      Notification.requestPermission().then(function(p) {
-        if (p === 'granted') {
-          // notify
-          var notify = new Notification('RiverBank', {
-            body: 'timer complete',
-            icon: 'logo.png'
-          })
-        } else {
-          display('user blocked notifications')
-        }
       })
     }
   }
@@ -3594,6 +3581,11 @@ function loadpage(setload, oldselect, scrolls) {
     $(document).on('mousedown', event, clicked)
     $(document).on('mouseup', event, clickoff)
     $(document).on('dblclick', event, dblclick)
+    $('#timer').on('click', function () {
+      if (Notification.permission != 'granted') {
+        Notification.requestPermission()
+      }
+    })
     $(window).resize(updateSizes)
     window.addEventListener('focus', function () {
       reload()
