@@ -1,15 +1,14 @@
 :root {
   --background: rgb(171, 176, 208);
+  --fontweight: 400;
   --bgoverlay: /* rgb(199, 203, 229); rgba(171, 176, 208, 0.8); */ rgba(171, 176, 208, 0.8);
   --fontsize: 21px;
   --select: rgb(251, 217, 253);
   --font: Avenir Next, Helvetica;
   --butfont: Avenir Next, Helvetica;
-  --textcolor: rgb(230, 230, 250);
+  --textcolor: rgb(53, 3, 58);
   --menufont: Avenir Next, Helvetica;
   --bdcolor: rgba(53, 3, 58, 0.3);
-  --contextcolor: whitesmoke;
-  --contextfontcolor: grey;
   --important: rgb(254, 187, 248);
   --maybe: rgba(254, 187, 248, 0.5);
   --event: rgba(251, 217, 253, 0.3);

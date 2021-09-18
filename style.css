@@ -19,8 +19,10 @@
   font-family: "Garamond";
   src:  url("garamond-bold-italic.ttf") format("truetype");
   font-style: italic;
-  font-weight: bold;
+  font-weight: 500;
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;0,500;0,700;1,100;1,700&display=swap');
 
 /* MAIN */
 
@@ -30,6 +32,7 @@ html {
 
 body {
   font: var(--fontsize) var(--font), serif;
+  font-weight: var(--fontweight);
   width: 100vw;
   height: 100vh;
   margin: 0;
@@ -45,6 +48,7 @@ body {
 
 button {
   font-family: var(--butfont), monospace;
+  font-weight: var(--fontweight);
   font-size: 16px;
   color: var(--bdcolor);
   background-color: var(--butbackground);
@@ -180,6 +184,7 @@ p.dropdown-item {
   word-wrap: break-word;
   margin: 0;
   font: 16px var(--menufont);
+  font-weight: var(--fontweight);
   background-color: var(--background);
   color: var(--textcolor);
   z-index: inherit;
@@ -375,7 +380,7 @@ textarea.listtitle, p.listtitle {
   margin: 0 3px;
   display: inline-block;
   font: 100% var(--font), serif;
-  font-weight: bold;
+  font-weight: 500;
   word-wrap: break-word;
   background-color: inherit;
   border: none;
@@ -436,6 +441,7 @@ textarea.sublist {
 span {
   width: 100%;
   display: inline-block;
+  font-family: inherit;
 }
 
 span.in {
@@ -470,7 +476,6 @@ span.note {
 }
 
 span.duedate {
-  font-family: var(--font), serif;
   color: var(--select);
   /* font-style: italic; */
   border-radius: 5px;
@@ -494,12 +499,11 @@ span.h1, span.h2, span.h3 {
   margin-top: 0.5em;
   text-align: var(--headingalign);
   line-height: 1em;
-  font-family: var(--font), serif;
 }
 
 span.h1 {
   font-size: 150%;
-  font-weight: bold; 
+  font-weight: 500; 
 }
 
 span.h2 {
@@ -521,7 +525,6 @@ span.bold {
 }
 
 span.bold-italic {
-  font-family: var(--font);
   font-weight: bold;
   font-style: italic;
 }
@@ -569,7 +572,7 @@ span.timing, span.faketiming {
   padding: 0 2px;
   font-family: 'Courier New', Courier, monospace;
   font-size: 80%;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 span.deadline {
@@ -626,7 +629,7 @@ span.weblink, span.deadline {
 
 #help .h1 {
   color: var(--select);
-  font-weight: bold;
+  font-weight: 500;
 }
 
 #help span.left, #help span.right {
