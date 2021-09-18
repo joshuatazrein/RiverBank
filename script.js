@@ -1672,7 +1672,7 @@ function saveTask() {  // analyze format of task and create new <span> elt for i
       if (wordlist[word].slice(1, wordlist[word].length - 2).includes('.') &&
         stringToDate(wordlist[word]) == 'Invalid Date' && 
         !/\.\./.test(wordlist[word]) && 
-        !['i.e.', 'e.g.'].includes(wordlist[word])) {
+        !/(i\.e\.|e\.g\.)/.test(wordlist[word])) {
         let match = false
         for (patt of [/^\.+$/, /\d+\.\d+/]) {
           if (patt.test(wordlist[word])) {
@@ -2006,10 +2006,6 @@ function archiveAll() {
 function archiveTask() {
   let taskabove = taskAbove()
   if (taskabove[0] == selected[0]) { taskabove = getFrame(selected) }
-  $('#popsnd')[0].currentTime = 0 // resets pop sound
-  if (data.play == 'true') {
-    $('#popsnd')[0].play();
-  }
   // archives the selected Flop to the current day
   let heading
   const day = $(dateToHeading(stringToDate('0d')))
@@ -2087,6 +2083,10 @@ function toggleComplete(task) {
         $(heading).after(newtask)
       }
     }
+  }
+  if (!completetask.hasClass('complete') && data.play == 'true') {
+    // pop!
+    new Audio('snd/pop.mp3').play()
   }
   completetask.toggleClass('complete')
   if (!task) {
@@ -3107,6 +3107,7 @@ function keycomms(evt) {
   if (['Control', 'Command', 'Shift', 'Alt'].includes(evt.key)) {
     return
   }
+  if (['ArrowUp', 'ArrowDown'].includes(evt.key)) evt.preventDefault()
   if (evt.ctrlKey || evt.metaKey || evt.altKey || evt.key == 'Enter' ||
     evt.key == 'Escape') {
     // reset zoom and scroll to make better
@@ -3211,8 +3212,10 @@ function keycomms(evt) {
     newlist()
   } else if (selected && evt.key == 'Enter' &&
     evt.shiftKey) {
+    evt.preventDefault()
     // edit/save task
-    if (selected[0].tagName == 'TEXTARAEA') {
+    if (selected[0].tagName == 'TEXTAREA') {
+      console.log('saving task');
       saveTask()
     } else if (selected[0].tagName == 'SPAN') {
       editTask()
