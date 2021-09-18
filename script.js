@@ -1249,6 +1249,37 @@ function updateSpanDrags() {
         mobileDragOver(event)
       },
     })
+    var firstY = null;      
+    var lastY = null;
+    var currentY = null;
+    var vertScroll = false;
+    var initAdjustment = 0;
+    // record the initial position of the cursor on start of the touch
+    jqDraggableItem.on("touchstart", function(event) {
+      lastY = currentY = firstY = event.originalEvent.touches[0].pageY;
+    });
+    // fires whenever the cursor moves
+    jqDraggableItem.on("touchmove", function(event) {
+      currentY = event.originalEvent.touches[0].pageY;
+      var adjustment = lastY-currentY;
+      // Mimic native vertical scrolling where scrolling only starts after the
+      // cursor has moved up or down from its original position by ~30 pixels.
+      if (vertScroll == false && Math.abs(currentY-firstY) > 30) {
+        vertScroll = true;
+        initAdjustment = currentY-firstY;
+      }
+      // only apply the adjustment if the user has met the threshold for 
+      // vertical scrolling
+      if (vertScroll == true) {
+        getFrame($(event.target)).scrollBy(0, adjustment + initAdjustment);
+        lastY = currentY + adjustment;
+      }
+    });
+    // when the user lifts their finger, they will again need to meet the 
+    // threshold before vertical scrolling starts.
+    jqDraggableItem.on("touchend", function(event) {
+      vertScroll = false;
+    });
   } else {
     $('.mobhandle').remove()
     $('span.in:not(.dateheading)').draggable({
@@ -2766,8 +2797,6 @@ function setTask(type) {
 
 function clickoff(ev) {
   if (mobiletest()) {
-    // turn on drags
-    jqDraggableItem.draggable('option', 'disabled', false)
     // on revert drags on mobile
     $('.drop-hover').removeClass('drop-hover')
     if (flopscrollsave) {
@@ -2801,10 +2830,6 @@ function clicked(ev) {
   resetdoc(); // fixes weird shit
   $('nav').hide()
   // pre-click
-  if (mobiletest() && !$(ev.target).hasClass('mobhandle')) {
-    // turn off drags to scroll
-    jqDraggableItem.draggable('option', 'disabled', true)
-  }
   if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
     return 
   } else if ($(ev.target).hasClass('slider')) {
