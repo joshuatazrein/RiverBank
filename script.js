@@ -1082,7 +1082,6 @@ function updatedeadlines() {
   clearEmptyDates(false)
   $('.duedate').remove()
   $('.placeholder').remove()
-  $('.mobhandle').remove()
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
     (x) => { return ($(x).attr('folded') == 'true') })
   // uncollapses then recollapses to prevent weirdness
@@ -1227,6 +1226,9 @@ function migrate() {
 
 function updateSpanDrags() {
   if (mobiletest()) {
+    $('.mobhandle').remove()
+    $('span.in').prepend(
+      '<span class="mobhandle"></span>')
     $('span.in:not(.dateheading)').draggable({
       handle: '.mobhandle',
       containment: 'window',
@@ -2792,12 +2794,6 @@ function clicked(ev) {
   if (movetolist && !$(ev.target).hasClass('listtitle')) {
     // cancels move to list
     movetolist = false
-  }
-  if (mobiletest()) {
-    // insert mobiledrag elements
-    $('.mobhandle').remove()
-    $('span.in').prepend(
-      '<span class="mobhandle"></span>')
   }
   resetdoc(); // fixes weird shit
   $('nav').hide()
