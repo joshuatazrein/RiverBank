@@ -394,28 +394,20 @@ function toggleFoldList(saving) {
 }
 
 function updateSizes() {
-  // for (list of [
-  //   [$('#timerent')[0], 6],
-  //   [$('#searchbar')[0], 5],
-  //   [$('#username')[0], $('#username').text().length / 2 + 2],
-  //   [$('#lists')[0], 7]
-  // ]
-  //   // ].concat(
-  //   //   $('#loads').children().toArray().map((x) => {
-  //   //     let textlength = Math.max($(x).val().split(' ').map((x) => {
-  //   //       return x.length
-  //   //     }))
-  //   //     return [$(x)[0], textlength / 2 + 2.5]
-  //   //   }))
-  // ) {
-  //   // update entries
-  //   let fontsize = 24
-  //   if (mobiletest()) fontsize = 16
-  //   while ($(list[0]).width() / (fontsize / 2) < list[1]) {
-  //     fontsize -= 1
-  //   }
-  //   $(list).css('font-size', fontsize + 'px')
-  // }
+  for (list of [
+      [$('#timerent')[0], 6],
+      [$('#searchbar')[0], 5],
+      [$('#username')[0], $('#username').text().length / 2 + 2],
+      [$('#lists')[0], 7]
+    ]) {
+    // update entries
+    let fontsize = 24
+    if (mobiletest()) fontsize = 16
+    while ($(list[0]).width() / (fontsize / 2) < list[1]) {
+      fontsize -= 1
+    }
+    $(list).css('font-size', fontsize + 'px')
+  }
   // fix context menu for mobile
   if (mobiletest()) {
     $('.dropdown-item').toArray().forEach((x) => {
@@ -576,7 +568,8 @@ function clearEmptyDates(saving) {
     if (
       getHeadingChildren($(date)).length == 0 &&
       stringToDate($(date).text(), true).getTime() !=
-      stringToDate('0d').getTime()
+      stringToDate('0d').getTime() &&
+      date != selected
     ) { date.remove() }
   }
   if (saving != false) { save() }
@@ -877,7 +870,7 @@ function stringToDate(string, weekday, future) {
   return date
 }
 
-function dateToHeading(date, saving) {
+function dateToHeading(date, saving, print) {
   if (date === undefined) return
   if (dateToString(date).includes('NaN')) return
   // find the matching date, or create if not
@@ -890,32 +883,39 @@ function dateToHeading(date, saving) {
     return stringToDate(stripChildren($(x)), true).getTime() ==
       stringToDate(dateToString(date)).getTime()
   })
-  if (heading1 == undefined) {
+  if (!heading1) {
     // insert elt where it should go
-    heading1 = createBlankTask()
-    heading1.addClass('h1')
-    heading1.attr('folded', 'false')
-    heading1.text(dateToString(date, true))
-    heading1.addClass('dateheading')
-    heading1.attr('draggable', 'false')
-    let headingbefore = headingslist.find((x) => {
-      return stringToDate($(x).text(), true).getTime() <
-        stringToDate($(heading1).text(), true).getTime()
+    const heading2 = $('<span class="in h1 dateheading" folded="false" ' +
+      'draggable="false">' + 
+      dateToString(date, true) + '</span>')
+    if (print) console.log(heading2);
+    let headingafter = headingslist.find((x) => {
+      return stringToDate($(x).text(), true).getTime() >
+        stringToDate($(heading2).text(), true).getTime()
     })
-    if (!headingbefore) {
-      $('#pop').prepend(heading1)
+    if (!headingafter) {
+      // insert before buffer
+      $($('#pop').children()[$('#pop').children().length - 1]).before(heading2)
     } else {
-      // insert it after last child
-      const headingchildren = getHeadingChildren($(headingbefore))
-      if (headingchildren.length > 0) {
-        $(headingchildren[headingchildren.length - 1]).after(heading1)
-      } else {
-        $(headingbefore).after(heading1)
-      }
+      $(headingafter).prev().before(heading2)
     }
-    if (saving != false) save()
+    const today = new Date()
+    today.setHours(0);
+    today.setMinutes(0);
+    today.setSeconds(0);
+    today.setMilliseconds(0)
+    // add in relative dates underneath
+    const newelt = $('<span class="placeholder">' + datesToRelative(today,
+      stringToDate(dateToString(date))) + '</span>')
+    $(heading2).before(newelt)
+    if (saving != false) {
+      select(heading2) 
+      save()
+    }
+    return heading2
+  } else {
+    return heading1
   }
-  return heading1
 }
 
 function search(skiplinks, deadline) {
@@ -1100,6 +1100,7 @@ function updatedeadlines() {
   for (heading of collapselist) {
     togglefold($(heading), false)
   }
+  // creating relative dates
   today = new Date()
   today.setHours(0);
   today.setMinutes(0);
@@ -1115,6 +1116,7 @@ function updatedeadlines() {
     newelt.removeClass('in')
     $(heading).before(newelt)
   }
+  // adds in scroll buffers if needed
   if (!$('#flop').children().filter('.buffer')[0]) {
     $('#flop').prepend('<span class="buffer" style="height:var(--butheight)"></span>')
     $('#flop').append('<span class="buffer bottom" style="height:90%;"></span>')
@@ -1144,7 +1146,8 @@ function migrate() {
       // migrate all uncompleted tasks
       for (child of getHeadingChildren($(heading))) {
         const ch = $(child)
-        if (/^uncompleted/.test(ch.text())) {
+        if (/^uncompleted/.test(ch.text()) && 
+          heading != todayheading[0]) {
           // takes out the uncompleted heading
           ch.remove()
           continue
@@ -1271,6 +1274,7 @@ function updateSpanDrags() {
   //     select(ui.draggable[0], true)
   //   }
   // })
+  $('span.in').attr('draggable', 'false')
 }
 
 function mobileDragOver(event) {
@@ -1607,51 +1611,13 @@ function saveTask() {  // analyze format of task and create new <span> elt for i
       break
     }
   }
-  // // add in line inners
-  // let htmlstr = selected.val()
-  // let newstr = '' // newstr is the gradually added string with classes
-  // let start = 0
-  // const modecloses = []
-  // for (let i = 0; i < htmlstr.length; i++) {
-  //   // test for mode modecloses
-  //   let modeclosed = false
-  //   for (modeclose of modecloses) {
-  //     // test for matches
-  //     if (htmlstr.slice(i, i + modeclose.length) ==
-  //       modeclose) {
-  //       // close span
-  //       i += modeclose.length
-  //       newstr += htmlstr.slice(start, i) + '</span>'
-  //       start = i
-  //       modecloses.splice(modecloses.indexOf(modeclose), 1)
-  //       modeclosed = true
-  //     }
-  //   }
-  //   if (modeclosed) {
-  //     continue
-  //   }
-  //   // go down the string
-  //   for (lineinner of Object.keys(lineinners)) {
-  //     // test for a match
-  //     if (htmlstr.slice(i, i + lineinner.length) == lineinner &&
-  //       htmlstr.slice(i).includes(lineinners[lineinner][0])) {
-  //       // add in a span to the list and where it splits
-  //       newstr += htmlstr.slice(start, i) + '<span class=\'' +
-  //         lineinners[lineinner][1] + '\'>'
-  //       start = i
-  //       i += lineinner.length
-  //       modecloses.push(lineinners[lineinner][0])
-  //       continue
-  //     }
-  //   }
-  // }
   if (selected.val().charAt(selected.val().length - 1) != ' ') {
     selected.val(selected.val() + ' ')
   }
   newstr = selected.val()
-    .replace(/\s\*(.*)\*/g, ' <span class="bold">$1</span> ')
-    .replace(/\s_(.*)_\s/g, ' <span class="italic">$1</span> ')
-    .replace(/\s_\*(.*)\*_\s/g, 
+    .replace(/\*(.*)\*/g, ' <span class="bold">$1</span> ')
+    .replace(/_(.*)_/g, ' <span class="italic">$1</span> ')
+    .replace(/_\*(.*)\*_/g, 
     ' <span class="bold-italic">$1</span> ')
     .replace(/\s\>(.*)\s/g, ' <span class="deadline">>$1</span> ')
     .replace(/\s\[\[(.*)\]\]\s/g, 
@@ -1687,7 +1653,8 @@ function saveTask() {  // analyze format of task and create new <span> elt for i
       // add in weblinks
       if (wordlist[word].slice(1, wordlist[word].length - 2).includes('.') &&
         stringToDate(wordlist[word]) == 'Invalid Date' && 
-        !/\.\./.test(wordlist[word])) {
+        !/\.\./.test(wordlist[word]) && 
+        !['i.e.', 'e.g.'].includes(wordlist[word])) {
         let match = false
         for (patt of [/^\.+$/, /\d+\.\d+/]) {
           if (patt.test(wordlist[word])) {
@@ -1742,6 +1709,7 @@ function getHeading(el, actual) {
 }
 
 function select(el, scroll, animate) {
+  console.trace()
   if (el &&
     $(el)[0].tagName == 'SPAN' && !isSubtask($(el))) el = $(el).parent()
   if ($(el).hasClass('buffer')) {
@@ -3173,15 +3141,16 @@ function keycomms(evt) {
     // focus on searchbar and find it
     if ($('#searchbar').val().slice(0, 2) == 'd:') {
       const date = dateToHeading(
-        stringToDate($('#searchbar').val().slice(2)))
+        stringToDate($('#searchbar').val().slice(2)), false, true)
       select(date, true)
+      console.log(selected);
       $('#searchbar').val('')
       $('#searchbar').blur()
       if (movetask != undefined) {
         selected.after(movetask)
         movetask = undefined
       }
-      save()
+      // already saves
     } else if ($('#searchbar').val().charAt(0) == '#') {
       const searchstr = $('#searchbar').val()
       filtered = true
