@@ -1,14 +1,14 @@
 :root {
   --fontsize: 23px;
-  --fontweight: 100;
-  --boldweight: 500;
+  --fontweight: 400;
+  --boldweight: 600;
   --background: rgb(27, 30, 33);
   --bgoverlay: rgba(27, 30, 33, 0.8);
   --select: rgb(175, 224, 220);
-  --font: 'Exo 2', sans-serif;
-  --butfont: 'Exo 2', sans-serif;
+  --font: 'Caveat', cursive;
+  --butfont: 'Amatic SC', cursive;
   --textcolor: rgb(165, 188, 213);
-  --menufont: 'Exo 2', sans-serif;
+  --menufont: 'Amatic SC', cursive;
   --bdcolor: rgba(224, 223, 225, 0.5);
   --contextcolor: rgba(175, 224, 220, 0.8);;
   --contextfontcolor: rgba(40, 103, 72);
