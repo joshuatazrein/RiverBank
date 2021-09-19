@@ -4,17 +4,16 @@
   --boldweight: 600;
   --background: rgb(27, 30, 33);
   --bgoverlay: rgba(27, 30, 33, 0.8);
-  --select: rgb(175, 224, 220);
+  --select: rgb(236, 229, 240);
   --font: 'Caveat', cursive;
   --butfont: 'Amatic SC', cursive;
   --textcolor: rgb(165, 188, 213);
+  /* --textcolor: rgb(120, 133, 133); */
   --menufont: 'Amatic SC', cursive;
   --bdcolor: rgba(224, 223, 225, 0.5);
-  --contextcolor: rgba(175, 224, 220, 0.8);;
-  --contextfontcolor: rgba(40, 103, 72);
   --important: rgb(135, 206, 235);
   --maybe: rgba(135, 206, 235, 0.5);
-  --event: rgba(175, 224, 220, 0.3);
+  --event: rgba(236, 229, 240, 0.3);
   --flopbutbackground: rgba(165, 188, 213, 0.3);
   --butbackground: rgba(224, 223, 225, 0.3);
   --indent: 0.5em;
