@@ -2819,13 +2819,11 @@ function clicked(ev) {
     return 
   } else if ($(ev.target).hasClass('slider')) {
     return
-  } else if ($(ev.ctrlKey)) {
-    // destroy the drag item
+  } else if ($(ev.target).hasClass('dropdown-item')) { 
+    return
   } else if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
     ev.target.tagName != 'TEXTAREA') {
     saveTask()
-  } else if ($(ev.target).hasClass('dropdown-item')) { 
-    return
   }
   $('nav').hide() 
   resetdoc(); // fixes weird shit
