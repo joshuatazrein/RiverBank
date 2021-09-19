@@ -1,13 +1,14 @@
 :root {
   --fontsize: 23px;
   --fontweight: 100;
+  --boldweight: 500;
   --background: rgb(27, 30, 33);
   --bgoverlay: rgba(27, 30, 33, 0.8);
   --select: rgb(175, 224, 220);
-  --font: Gill Sans Light, Helvetica;
-  --butfont: Gill Sans Light, Helvetica;
+  --font: 'Exo 2', sans-serif;
+  --butfont: 'Exo 2', sans-serif;
   --textcolor: rgb(165, 188, 213);
-  --menufont: Gill Sans Light, Helvetica;
+  --menufont: 'Exo 2', sans-serif;
   --bdcolor: rgba(224, 223, 225, 0.5);
   --contextcolor: rgba(175, 224, 220, 0.8);;
   --contextfontcolor: rgba(40, 103, 72);

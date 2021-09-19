@@ -1,13 +1,14 @@
 :root {
   --background: rgb(171, 176, 208);
-  --fontweight: 400;
+  --fontweight: 300;
+  --boldweight: 500;
   --bgoverlay: /* rgb(199, 203, 229); rgba(171, 176, 208, 0.8); */ rgba(171, 176, 208, 0.8);
   --fontsize: 21px;
   --select: rgb(251, 217, 253);
-  --font: Avenir Next, Helvetica;
-  --butfont: Avenir Next, Helvetica;
+  --font: 'Josefin Sans', sans-serif;
+  --butfont: 'Josefin Sans', sans-serif;
   --textcolor: rgb(53, 3, 58);
-  --menufont: Avenir Next, Helvetica;
+  --menufont: 'Josefin Sans', sans-serif;
   --bdcolor: rgba(53, 3, 58, 0.3);
   --important: rgb(254, 187, 248);
   --maybe: rgba(254, 187, 248, 0.5);

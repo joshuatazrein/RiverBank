@@ -40,8 +40,11 @@
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com"> 
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;0,500;0,700;1,100;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;0,400;0,600;1,100;1,400;1,600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,500;0,700;1,300;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,300;0,500;0,700;1,300;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100;0,500;0,700;1,100;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300;1,600;1,700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div id='logoimage' class='show'>
@@ -171,7 +174,7 @@
           <button class='flopbut' id='flopBut' title='new task in bank'>+ BANK</button>
           <button id='newHeadingFlopBut' title='new heading in bank'>+#</button>
           <button function="selectRandom()" title='select random flop'>?</button>
-          <button function="moveTask('pop')" title='move task to river'>→</button>
+          <button function="moveTask('pop');$('#searchbar').focus()" title='move task to river'>→</button>
         </div>
         <p id='flop' class='rendered in' ondrop='dropTask(event)' ondragover='draggingOver(event)'></p>
       </div>
@@ -191,8 +194,10 @@
   <p id='test' style='display:none;position:absolute;'><p>
   <p id='texttest' class='incopy'></p>
   <nav id="context-menu">
-    <p function='editTask()' class='dropdown-item' id='context-editTask'>edit task (shift return)</p>
-    <p function='newTask()' class='dropdown-item' id='context-newTask'>new task (return)</p>
+    <p function="editTask()" 
+    class='dropdown-item' id='context-editTask'>edit task (shift return)</p>
+    <p function="newTask()" 
+    class='dropdown-item' id='context-newTask'>new task (return)</p>
     <p function='newTask(true)' class='dropdown-item' id='context-newSubtask'>new subtask (option return)</p>
     <p function='deleteTask()' class='dropdown-item' id='context-deleteTask'>delete (delete)</p>
     <p function='archiveTask()' class='dropdown-item' id='context-archiveTask'>archive (shift space)</p>
@@ -218,7 +223,7 @@
     <p function='toggleButs()' class='dropdown-item' id='context-toggleButs'>toggle buttons</p>
 
     <p function='reset()' class='dropdown-item' id='context-reset'>reset</p>
-    <p function='switchUser()' class='dropdown-item' id='context-switchUser'>switch user</p>
+    <p function='switchUser()' class='dropdown-item' id='context-switchUser'>sign out</p>
     <p function='upload()' class='dropdown-item' id='context-upload'>upload backup</p>
     <p function='download()' class='dropdown-item' id='context-download'>download backup</p>
     <p function='togglePlay()' class='dropdown-item' id='context-togglePlay'>toggle sounds</p>

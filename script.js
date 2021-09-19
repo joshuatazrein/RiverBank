@@ -104,12 +104,12 @@ timer.on('end', function () {
       })
     }
   }
-  $('#timersnd')[0].currentTime = 0
   if (data.play == 'true') {
     console.log('playing');
-    $('#timersnd')[0].play()
+    const timersnd = new Audio('snd/timer.mp3')
+    timersnd.play()
   }
-  $('#timersnd')[0].pause()
+  // $('#timersnd')[0].pause()
   $('#timerent').val('')
 })
 
@@ -132,11 +132,11 @@ function dragTaskOver(event) {
     $('span.in').removeClass('drop-hover')
     return
   }
-  // $('#listcontainer > .in').css('width', $('#flop').width() + 'px')
   resetdoc()
   const boxright = $('#listcontainer').offset().left
   if (event.pageX < boxright) {
     // load the dragged-over list
+    $('#listcontainer > span').css('transform: scale(0.5, 0.5);')
     let i = 0
     const loads = $('#loads').children().toArray()
     for (list of loads) {
@@ -432,14 +432,16 @@ function updateSizes() {
       $(x).text($(x).text().replace(/\s\((.*)\)/, ''))
     })
   }
+  $('#texttest').removeAttr('style')
   $('#texttest').attr('class', 'listtitle unselected')
   for (list of $('#loads').children()) {
     if ($(list).width() < $(list).val().length *
       ($(list).css('font-size').slice(0,
         $(list).css('font-size').length - 2) / 2)) {
       $('#texttest').text($(list).val())
+      $('#texttest').css('font', $(list).css('font'))
       $('#texttest').css('width', $(list).width() + 'px')
-      $(list).css('height', $('#texttest').height() + 5 + 'px')
+      $(list).css('height', 'calc(' + $('#texttest').height() + 'px + 0.35em)')
     } else {
       $(list).css('height', '')
       $(list).css('overflow-y', 'hidden')
@@ -532,11 +534,9 @@ function clean() {
     try {
       $('#test').html(data.flop[list].text)
       // clears out empty lists
-      if (
-        $(loadlist[list]).val().length == 0 &&
-        $('#test').children().filter('.in').length == 0 &&
-        loadedlist != list
-      ) {
+      if ($(loadlist[list]).val().length <= 1 &&
+        $('#test > .in').length == 0 &&
+        loadedlist != list) {
         data.flop.splice(list, 1)
         $($('#loads').children()[list]).remove()
       }
@@ -1247,6 +1247,10 @@ function updateSpanDrags() {
         mobileDragOver(event)
       },
     })
+    $('span.in').off('focusout')
+    $('span.in').focusout(function() {
+      saveTask()
+    })
   } else {
     $('.mobhandle').remove()
     $('span.in:not(.dateheading)').draggable({
@@ -1878,9 +1882,10 @@ function getChildren(el) {
 }
 
 function updateHeight() {
-  // $('#texttest').font(selected.css('font'))
-  $('#texttest').attr('class', '')
+  $('#texttest').removeAttr('class')
+  $('#texttest').removeAttr('style')
   $('#texttest').css('font', selected.css('font'))
+  $('#texttest').css('padding', selected.css('padding'))
   $('#texttest').text(selected.val() + ' x')
   $('#texttest').css('width', selected.width() + 'px')
   selected.css('height', 'calc(' + $('#texttest').height() + 'px + 0.25em')
@@ -1913,14 +1918,18 @@ function editTask() {
       selected.after('<span>' + getChildren(el) + '</span>')
     }
     // (el).html()
-    el.html(el.html().replace(
-      /<span class="italic">(.*)<\/span>/,
-      '<span class="italic">_$1_</span>').replace(
-        /<span class="bold">(.*)<\/span>/,
-        '<span class="bold">*$1*</span>').replace(
-          /<span class="bold-italic">(.*)<\/span>/,
-          '<span class="bold-italic">_*$1*_</span>'))
+    el.html(el.html()
+      .replace(/<span class="italic">(.*)<\/span>/,
+      '<span class="italic">_$1_</span>')
+      .replace(/<span class="bold">(.*)<\/span>/,
+      '<span class="bold">*$1*</span>')
+      .replace(/<span class="bold-italic">(.*)<\/span>/,
+      '<span class="bold-italic">_*$1*_</span>'))
     selected.val(stripChildren(el))
+    const val = selected.val()
+    if (val.charAt(val.length - 1) == ' ') {
+      selected.val(val.slice(0, val.length - 1))
+    }
     // add back hashtags
     if (el.hasClass('h1')) {
       selected.val('# ' + selected.val())
@@ -1941,16 +1950,21 @@ function editTask() {
     while (selected.val().charAt(selected.val().length - 1) == '\n') {
       selected.val(selected.val().slice(0, selected.val().length - 1))
     }
+    console.log(isHeading(selected.prev().prev()), selected.next().text());
     if (selected.prev().prev().text().charAt(0) == '•' &&
-      selected.val() == '') {
+      selected.val() == '' ||
+      (isHeading(selected.prev().prev()) &&
+      selected.next().next().text().charAt(0) == '•' &&
+      selected.val() == '')) {
       // continue lists
       selected.val('• ' + selected.val())
     }
     updateHeight()
-    setTimeout(function () {
-      selected.focus()
-      selected.click()
-    }, 300)
+    selected.click(function (e) { $(this).focus() });
+    setTimeout(function () { 
+      selected.trigger('click');
+      selected.click();
+    }, 200);
   }
 }
 
@@ -2470,9 +2484,11 @@ function togglePlay() {
   if (data.play == 'true') {
     data.play = 'false'
     alert('sounds off')
-  } else {
+    save()
+  } else if (data.play == 'false') {
     data.play = 'true'
     alert('sounds on')
+    save()
   }
 }
 
@@ -2749,6 +2765,7 @@ function setTask(type) {
     selected.attr('class', 'in ' + type)
     if (['-', '•'].includes(selected.text().charAt(0))) {
       // remove bullet or list
+      $('.taskselect > .mobhandle').remove() // removes handle
       selected.html(selected.html().slice(1))
       if (selected.text().charAt(0) == ' ') {
         selected.html(selected.html().slice(1))
@@ -2765,8 +2782,11 @@ function setTask(type) {
 
 function clickoff(ev) {
   if (mobiletest()) {
-    // on revert drags on mobile
-    $('.drop-hover').removeClass('drop-hover')
+    if ($(ev.target).hasClass('mobhandle')) {
+      // context menu
+      select($(ev.target).parent(), false)
+      context(ev, true)
+    }
     if (flopscrollsave) {
       $('#flop').scrollTop(flopscrollsave)
     }
@@ -2777,13 +2797,12 @@ function clickoff(ev) {
     $('#flop').removeClass('greyedout')
     popscrollsave = undefined
     $('#pop').removeClass('greyedout')
-    if (draggingtask) { return }
-    if ($(ev.target).hasClass('mobhandle')) {
-      // context menu
-      select($(ev.target).parent(), false)
-      context(ev, true)
+    if (draggingtask) { 
+      return 
     }
   }
+  // on revert drags on mobile
+  $('.drop-hover').removeClass('drop-hover')
   if ($(ev.target).hasClass('dropdown-item') && !justclicked) {
     eval($(ev.target).attr('function'))
   }
@@ -2795,19 +2814,21 @@ function clicked(ev) {
     // cancels move to list
     movetolist = false
   }
-  resetdoc(); // fixes weird shit
-  $('nav').hide()
   // pre-click
   if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
     return 
   } else if ($(ev.target).hasClass('slider')) {
     return
-  } else if (ev.ctrlKey) {
-    return
+  } else if ($(ev.ctrlKey)) {
+    // destroy the drag item
   } else if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
     ev.target.tagName != 'TEXTAREA') {
     saveTask()
-  } 
+  } else if ($(ev.target).hasClass('dropdown-item')) { 
+    return
+  }
+  $('nav').hide() 
+  resetdoc(); // fixes weird shit
   $('.slider').remove() // remove sliders
   // click events
   if ($(ev.target).attr('id') == 'newHeadingFlopBut') {
@@ -2887,15 +2908,6 @@ function clicked(ev) {
   } else if ($(ev.target)[0].tagName == 'BUTTON') {
      // execute button functions
     eval($(ev.target).attr('function'))
-  } else if ($(ev.target).hasClass('dropdown-item')) {
-    // classes
-    ev.preventDefault()
-    const oldselect = selected
-    eval($(ev.target).attr('function'))
-    if (selected && selected[0].tagName != 'TEXTAREA' &&
-      $(ev.target).attr('id') != 'context-goToToday') {
-      select(oldselect)
-    }
   } else if ($(ev.target).hasClass('listtitle')) {
     if (mobiletest() && $(ev.target).val() != '') {
       ev.preventDefault()
@@ -3035,7 +3047,11 @@ function moveTask(direction) {
 }
 
 function dblclick(ev) {
-  if ($(ev.target)[0].tagName == 'TEXTAREA' &&
+  if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
+    // prevents interfering with edits
+    return
+  }
+  if (ev.target.tagName == 'TEXTAREA' &&
     $(ev.target).hasClass('selected')) {
     if (!mobiletest()) {
       dragsoff()
@@ -3047,35 +3063,28 @@ function dblclick(ev) {
   } else if (selected && 
     selected.hasClass('in') && 
     selected[0].tagName == 'P') {
-    ev.preventDefault()
     newTask()
     selected.click(function (e) { $(this).focus() })
     setTimeout(function () { 
       selected.trigger('click')
     }, 200)
-  } else if (
-    $(ev.target).hasClass('in') &&
+  } else if ($(ev.target).hasClass('in') &&
     ev.target.tagName != 'TEXTAREA' &&
-    !$(ev.target).hasClass('dateheading')
-  ) {
+    !$(ev.target).hasClass('dateheading')) {
     select($(ev.target))
-    ev.preventDefault()
     editTask()
-    // this doens't work on mobile :(
+    // trigger mobile keyboard
     selected.click(function (e) { $(this).focus() })
     setTimeout(function () { 
       selected.trigger('click')
       selected.click()
     }, 200)
-  } else if (
-    ['bold', 'italic', 'bold-italic'].includes(
-      $(ev.target).attr('class'))) {
+  } else if (['bold', 'italic', 'bold-italic'].includes(
+    $(ev.target).attr('class'))) {
     select($(ev.target).parent())
     editTask()
-  } else if (
-    ($(ev.target).hasClass('selected') ||
-      $(ev.target).hasClass('unselected'))
-  ) {
+  } else if (($(ev.target).hasClass('selected') ||
+    $(ev.target).hasClass('unselected'))) {
     dragsoff()
   } else if ($(ev.target).hasClass('loads')) {
     newlist()
@@ -3102,8 +3111,23 @@ function hierarchyCheck(task, headings) {
   return false
 }
 
+function keyup(ev) {
+  if (ev.key == 'Control') {
+    // re-enable drags
+    try {
+      $('span.in').draggable('option', 'disabled', false)
+    } catch (err) {}
+  }
+}
+
 function keycomms(evt) {
-  if (['Control', 'Command', 'Shift', 'Alt'].includes(evt.key)) {
+  if (evt.key == 'Control') {
+    // cancel draggables
+    try {
+      $('span.in').draggable('option', 'disabled', true)
+    } catch (err) {}
+  }
+  if (['Command', 'Shift', 'Alt'].includes(evt.key)) {
     return
   }
   if (['ArrowUp', 'ArrowDown'].includes(evt.key)) evt.preventDefault()
@@ -3117,16 +3141,25 @@ function keycomms(evt) {
     selected[0].tagName == 'TEXTAREA') {
     // save task
     evt.preventDefault()
+    const frame = getFrame(selected)
+    const scrollsave = getFrame(selected).scrollTop()
     const exp = /^(•*)(\s*)$/
     if (exp.test(selected.val())) {
       selected.prev().remove()
-      const taskabove = taskAbove()
+      let taskabove = taskAbove()
+      if (!taskabove || taskabove == selected) {
+        taskabove = taskBelow()
+      } 
+      if (!taskabove || taskabove == selected) {
+        taskabove = getFrame(selected)
+      }
       selected.remove()
-      select(taskabove)
+      select(taskabove, false)
     } else {
       // select current task if cancelling
       saveTask()
     }
+    frame.scrollTop(scrollsave)
   } else if (evt.key == 't' && evt.ctrlKey) {
     // go to today
     select(dateToHeading(stringToDate('0d')), true)
@@ -3174,6 +3207,13 @@ function keycomms(evt) {
     // enter timer
     document.body.style.zoom = "100%";
     timertest(evt);
+  } else if ($(':focus').attr('id') == 'timerent' && evt.key == 'Escape') {
+    evt.preventDefault()
+    stopTimer()
+  } else if ($(':focus').attr('id') == 'timerent' && evt.key == ' ') {
+    evt.preventDefault()
+    timer.stop()
+    $('#timerent').blur()
   } else if (evt.key == 'Escape') {
     // cancel select
     evt.preventDefault()
@@ -3184,6 +3224,8 @@ function keycomms(evt) {
     if (filtered) unfilter()
   } else if (evt.key == 'z' && evt.ctrlKey) {
     // undo
+    const floptop = $('#flop').scrollTop()
+    const poptop = $('#pop').scrollTop()
     data = JSON.parse(JSON.stringify(savedata))
     select()
     const oldload = Number(loadedlist)
@@ -3196,12 +3238,17 @@ function keycomms(evt) {
     loadedlist = oldload
     loadList()
     dragson()
+    $(':focus').blur()
+    select()
+    $('#flop').scrollTop(floptop)
+    $('#pop').scrollTop(poptop)
   } else if (!selected && evt.key == 'Enter' &&
     evt.shiftKey && $(':focus').hasClass('selected')) {
     // save list
     toggledrags()
   } else if (!selected && evt.key == 'Escape' &&
     $(':focus').hasClass('selected')) {
+    evt.preventDefault()
     // save list
     dragson()
     $(':focus').blur()
@@ -3571,6 +3618,10 @@ function loadpage(setload, oldselect, scrolls) {
     }
     // prevents endless loading loop
     $(document).on('keydown', keycomms)
+    $(document).on('fullscreenchange', function () {
+      location.reload()
+    })
+    $(document).on('keyup', keyup)
     $(document).on('contextmenu', function(event) {
       context(event)
       console.log($('#listcontainer > .in'));

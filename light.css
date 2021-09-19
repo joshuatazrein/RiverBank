@@ -1,6 +1,7 @@
 :root {
   --fontsize: 22px;
   --fontweight: 300;
+  --boldweight: 500;
   --background: #E4EDF1;
   --bgoverlay: rgba(228, 237, 241, 0.8);
   --select: rgb(119, 152, 171);

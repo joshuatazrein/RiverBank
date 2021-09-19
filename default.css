@@ -1,12 +1,13 @@
 :root {
   --fontsize: 24px;
-  --font-weight: 100;
+  --fontweight: 300;
+  --boldweight: 600;
   --background: black;
   --bgoverlay: rgba(0, 0, 0, 0.8);
   /* --select: rgb(135, 206, 235); */
   /* --select: rgb(74, 100, 108); */
-  --select: rgb(74, 101, 109);
-  --font: 'Garamond';
+  --select: rgb(136, 165, 174);
+  --font: 'Cormorant Garamond', serif;
   --butfont: Andale Mono;
   /* --textcolor: rgb(245, 245, 245); */
   /* --textcolor: rgb(131, 137, 150); */
@@ -15,7 +16,7 @@
   --bdcolor: rgb(128, 128, 128);
   --important: #87ceeb;
   --maybe: rgba(135, 206, 235, 0.5);
-  --event: rgba(74, 101, 109, 0.3);
+  --event: rgba(136, 165, 174, 0.3);
   --butbackground: rgba(128, 128, 128, 0.3);
   --flopbutbackground: rgba(222, 224, 227, 0.3);
   --indent: 0.5em;

@@ -19,7 +19,7 @@
   font-family: "Garamond";
   src:  url("garamond-bold-italic.ttf") format("truetype");
   font-style: italic;
-  font-weight: 500;
+  font-weight: var(--boldweight);
 }
 
 /* MAIN */
@@ -72,10 +72,14 @@ button {
   background-color: transparent;
 }
 
+#collapsebut {
+  z-index: 2;
+}
+
 #flopbuts, #popbuts {
   background-color: var(--bgoverlay);
   position: fixed;
-  z-index: 1;
+  z-index: 2;
   width: 100%;
   margin-left: 1px;
   border-radius: 3px;
@@ -92,11 +96,11 @@ button {
 #focusbar button {
   margin: 0px 5px;
 }
-
+/* 
 #focusbar div {
   width: 250px;
   max-width: calc(50vw - 20px);
-}
+} */
 
 #focusbar div div {
   width: fit-content;
@@ -150,8 +154,9 @@ input {
   margin: 0 auto;
 }
 
-#searchbarframe {
-  z-index: 2;
+#searchbar-results {
+  z-index: 4;
+  background-color: var(--background);
 }
 
 #searchbar {
@@ -248,7 +253,7 @@ p.dropdown-item {
   overflow-y: auto;
   overflow-x: hidden;
   font: inherit;
-  background-color: inherit;
+  background-color: var(--background);
   color: var(--textcolor);
   border: 1px solid var(--background);
 }
@@ -256,7 +261,7 @@ p.dropdown-item {
 #floplist {
   width: 50%;
   height: 100vh;
-  padding: 5px;
+  padding: 1px;
   float: left;
   background-color: inherit;
   border-right: 1px solid var(--bdcolor);
@@ -266,7 +271,7 @@ p.dropdown-item {
 #poplist {
   width: 50%;
   height: 100vh;
-  padding: 5px;
+  padding: 1px;
   float: left;
   background-color: inherit;
 }
@@ -378,7 +383,7 @@ textarea.listtitle, p.listtitle {
   margin: 0 3px;
   display: inline-block;
   font: 100% var(--font), serif;
-  font-weight: 500;
+  font-weight: var(--boldweight);
   word-wrap: break-word;
   background-color: inherit;
   border: none;
@@ -462,7 +467,7 @@ span.timing, span.weblink {
 }
 
 span.list {
-  text-indent: calc(var(--indent) * -1 - 5px);
+  text-indent: calc(var(--indent) * -1);
   padding-left: calc(var(--indent) + 5px);
 }
 
@@ -501,7 +506,7 @@ span.h1, span.h2, span.h3 {
 
 span.h1 {
   font-size: 150%;
-  font-weight: 500; 
+  font-weight: var(--boldweight); 
 }
 
 span.h2 {
@@ -547,6 +552,7 @@ span.complete {
 
 span.important {
   color: var(--important);
+  font-weight: var(--boldweight);
 }
 
 span.maybe {
@@ -570,7 +576,7 @@ span.timing, span.faketiming {
   padding: 0 2px;
   font-family: 'Courier New', Courier, monospace;
   font-size: 80%;
-  font-weight: 500;
+  font-weight: var(--boldweight);
 }
 
 span.deadline {
@@ -598,14 +604,14 @@ span.list textarea.in, span.note textarea.in {
 }
 
 span span.list {
-  text-indent: calc(var(--indent) * -1 - 5px);
-  padding-left: calc(var(--indent) + 5px);
+  text-indent: calc(var(--indent) * -1 + 5px);
+  padding-left: 1em;
 }
 
 span span.note {
   font-size: 0.64em !important;
   opacity: 0.85;
-  text-indent: -1em;
+  text-indent: calc(-1em + 5px);
   padding-left: 1em;
 }
 
@@ -627,7 +633,7 @@ span.weblink, span.deadline {
 
 #help .h1 {
   color: var(--select);
-  font-weight: 500;
+  font-weight: var(--boldweight);
 }
 
 #help span.left, #help span.right {
@@ -742,8 +748,8 @@ span.weblink, span.deadline {
   span span.mobhandle {
     display: inline-block;
     border: 1px solid var(--select);
-    height: 30px !important;
-    width: 30px !important;
+    height: 1em !important;
+    width: 1em !important;
     border-radius: 100%;
     padding: 0;
     margin: 1px;
@@ -753,8 +759,8 @@ span.weblink, span.deadline {
     z-index: 1;
   }
   span span span.mobhandle {
-    height: 20px !important;
-    width: 20px !important;
+    height: 0.85em !important;
+    width: 0.85em !important;
   }
   span.h1 {
     font-size: 130%;
