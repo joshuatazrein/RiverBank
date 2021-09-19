@@ -472,10 +472,10 @@ span.list {
 }
 
 span.note {
-  font-size: .6em;
+  font-size: .75em;
   text-indent: -1em;
   padding-left: calc(1em + 5px);
-  font-family: 'Courier New';
+  font-family: var(--menufont);
 }
 
 span.duedate {
@@ -574,7 +574,7 @@ span.timing, span.faketiming {
   display: inline;
   border-radius: 5px;
   padding: 0 2px;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: var(--menufont);
   font-size: 80%;
   font-weight: var(--boldweight);
 }
