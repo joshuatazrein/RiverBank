@@ -1,17 +1,22 @@
+@font-face {
+  src: url('lane.ttf');
+  font-family: 'Lane';
+}
+
 :root {
   --fontsize: 22px;
-  --fontweight: 300;
-  --boldweight: 500;
+  --fontweight: 500;
+  --boldweight: bold;
   --background: #E4EDF1;
   --bgoverlay: rgba(228, 237, 241, 0.8);
   --select: rgb(119, 152, 171);
-  --font: 'Dosis', sans-serif;
-  --butfont: 'Dosis', sans-serif;
+  --font: 'Lane', sans-serif;
+  --butfont: 'Lane', sans-serif;
   --textcolor: rgb(52, 64, 85);
-  --menufont: 'Dosis', sans-serif;
+  --menufont: 'Lane', sans-serif;
   --bdcolor: rgba(21, 35, 40, 0.5);
-  --important: rgb(135, 206, 235);
-  --maybe: rgba(135, 206, 235, 0.5);
+  --important: rgb(89, 147, 247);
+  --maybe: rgba(28, 86, 173, 0.5);
   --event: rgba(119, 152, 171, 0.3);
   --butbackground: rgba(128, 128, 128, 0.3);
   --flopbutbackground: rgba(52, 64, 85, 0.3);

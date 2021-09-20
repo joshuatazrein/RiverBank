@@ -1,27 +1,3 @@
-@font-face {
-  font-family: "Garamond";
-  src:  url("garamond.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Garamond";
-  src:  url("garamond-bold.ttf") format("truetype");
-  font-weight: bold;
-}
-
-@font-face {
-  font-family: "Garamond";
-  src:  url("garamond-italic.ttf") format("truetype");
-  font-style: italic;
-}
-
-@font-face {
-  font-family: "Garamond";
-  src:  url("garamond-bold-italic.ttf") format("truetype");
-  font-style: italic;
-  font-weight: var(--boldweight);
-}
-
 /* MAIN */
 
 html {
