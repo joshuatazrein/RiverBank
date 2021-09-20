@@ -56,6 +56,12 @@ button {
   min-width: 30px;
 }
 
+#leftcol button {
+  width: 30px;
+  max-width: calc(25% - 4px);
+  margin: 2px;
+}
+
 #floplist button {
   background-color: var(--flopbutbackground);
 }
@@ -70,6 +76,10 @@ button {
   flex-wrap: wrap;
   margin: 2px 0;
   background-color: transparent;
+}
+
+#mobilebuts {
+  display: none;
 }
 
 #collapsebut {
@@ -120,10 +130,6 @@ button {
   text-align: center;
   border-bottom: 1px solid var(--bdcolor);
   overflow: hidden;
-}
-
-button.opts {
-  min-width: 51px;
 }
 
 /* OTHER */
@@ -448,8 +454,8 @@ span {
 }
 
 span.in {
-  padding-bottom: 5px;
-  padding-top: 2px;
+  padding-bottom: 3px;
+  padding-top: 3px;
   padding-left: 5px;
   padding-right: 5px;
   position: relative;
@@ -501,7 +507,8 @@ span.link {
 span.h1, span.h2, span.h3 {
   margin-top: 0.5em;
   text-align: var(--headingalign);
-  line-height: 1em;
+  vertical-align: bottom;
+  /* line-height: 1em; */
 }
 
 span.h1 {
@@ -535,7 +542,8 @@ span.bold-italic {
 span.dateheading {
   color: var(--select);
   margin: 0;
-  padding-top: 0;
+  padding-bottom: 0;
+  padding-top: 5px;
 }
 
 span.placeholder {
@@ -604,15 +612,15 @@ span.list textarea.in, span.note textarea.in {
 }
 
 span span.list {
-  text-indent: calc(var(--indent) * -1 + 5px);
-  padding-left: 1em;
+  text-indent: calc(var(--indent) * -1);
+  padding-left: calc(var(--indent) + 5px);
 }
 
 span span.note {
   font-size: 0.64em !important;
   opacity: 0.85;
-  text-indent: calc(-1em + 5px);
-  padding-left: 1em;
+  text-indent: -1em;
+  padding-left: 1em + 5px;
 }
 
 span.link, span.bold, span.italic, span.bold-italic, 
@@ -669,8 +677,15 @@ span.weblink, span.deadline {
   #listcontainer {
     color: var(--textcolor);
   }
-  button.opts {
-    min-width: 0px;
+  #listcontainer:not(.fullwidth) {
+    width: calc(50vw);
+  }
+  #listcontainer.fullwidth {
+    width: calc(100vw - 35px) !important;
+  }
+  .collapsed {
+    display: block;
+    margin-left: calc(-50vw + 35px);
   }
   #floplist, #poplist {
     width: 100%;
@@ -703,6 +718,26 @@ span.weblink, span.deadline {
   .leftcolumn {
     font-size: 24px;
     height: 100%;
+    width: 50vw;
+  }
+  #desktopbuts, #help {
+    float: left;
+    width: calc(100% - 35px);
+  }
+  #lists {
+    width: calc(100% + 5px);
+  }
+  #mobilebuts {
+    width: 35px;
+    float: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    flex-wrap: wrap;
+    margin: 2px 0;
+    background-color: transparent;
+    border-left: 1px solid var(--bdcolor);
+    height: 100vh;
   }
   input, #searchbarframe {
     font-size: 24px;
@@ -727,15 +762,6 @@ span.weblink, span.deadline {
   div.leftcolumn div.butbar {
     margin: 0;
   }
-  .leftcolumn .butbar button {
-    width: calc(50% - 5px);
-    padding: 3px;
-    margin: 2px;
-  }
-  #listbuts button {
-    width: calc(33% - 5px);
-    margin: 1px;
-  }
   .leftcolumn .butbar {
     width: 100%;
   }
@@ -745,23 +771,6 @@ span.weblink, span.deadline {
   #context-menu {
     background: var(--background);
   }
-  span span.mobhandle {
-    display: inline-block;
-    border: 1px solid var(--select);
-    height: 1em !important;
-    width: 1em !important;
-    border-radius: 100%;
-    padding: 0;
-    margin: 1px;
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    z-index: 1;
-  }
-  span span span.mobhandle {
-    height: 0.85em !important;
-    width: 0.85em !important;
-  }
   span.h1 {
     font-size: 130%;
   }
@@ -770,23 +779,6 @@ span.weblink, span.deadline {
   }
   span.h3 {
     font-size: 110%;
-  }
-  /* add the padding-right to subspan widths */
-  span.in {
-    padding-right: 40px;
-  }
-  .rendered > span.in {
-    margin-right: 20px;
-    width: calc(100% - 20px);
-  }
-  span.in span.in {
-    width: calc(100% + 5px + 40px - var(--indent));
-  }
-  span.list span.in, span.note span.in {
-    width: calc(100% + 5px + 40px);
-  }
-  span span.event {
-    width: calc(100% + var(--indent) + 40px);
   }
 }
 

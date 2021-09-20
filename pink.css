@@ -1,19 +1,22 @@
 :root {
-  --background: rgb(171, 176, 208);
+  /* --background: rgb(171, 176, 208); */
+  --background: rgb(230, 230, 250);
   --fontweight: 300;
   --boldweight: 500;
-  --bgoverlay: /* rgb(199, 203, 229); rgba(171, 176, 208, 0.8); */ rgba(171, 176, 208, 0.8);
+  --bgoverlay: /* rgb(199, 203, 229); rgba(171, 176, 208, 0.8); */ rgba(230, 230, 250, 0.8);
   --fontsize: 21px;
-  --select: rgb(251, 217, 253);
+  /* --select: rgb(251, 217, 253); */
+  /* --select: #D8B2D1; */
+  --select:rgb(242, 172, 229);
   --font: 'Josefin Sans', sans-serif;
   --butfont: 'Josefin Sans', sans-serif;
   --textcolor: rgb(53, 3, 58);
   --menufont: 'Josefin Sans', sans-serif;
   --bdcolor: rgba(53, 3, 58, 0.3);
-  --important: rgb(254, 187, 248);
+  --important: rgb(242, 172, 229);
   --maybe: rgba(254, 187, 248, 0.5);
   --event: rgba(251, 217, 253, 0.3);
-  --butbackground: #BEC1DA;
-  --flopbutbackground: rgba(230, 230, 250, 0.3);
-  --indent: 0.5em;
+  --butbackground: rgba(200, 200, 230, 0.3);
+  --flopbutbackground: rgba(200, 200, 230, 0.3);
+  --indent: 0.75em;
 }

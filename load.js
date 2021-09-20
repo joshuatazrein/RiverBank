@@ -24,8 +24,8 @@ function getCookie(cname) {
 function load() {
   // tries to load current cookie's data; if not, redirects to welcome
   if (!navigator.onLine || window.location.href.includes('file')) {
-    alert('No connection detected; saving locally')
     if (!navigator.onLine) {
+      alert('No connection detected; saving locally')
       offline = true
     }
     console.log('offline mode');

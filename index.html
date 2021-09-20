@@ -47,6 +47,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300;1,600;1,700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@200;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
   <div id='logoimage' class='show'>
@@ -60,113 +61,120 @@
       </div>
     </div>
     <div class='leftcolumn' id='leftcol'>
-      <p id='username'></p>
-      <div id='editbuts' class='butbar'>
-        <button title='set task type' class='opts' id='typebut' function='setOptions()'>*</button>
-        <button title='options' class='opts' id='optionsbut' function='context(ev)'>...</button>
-      </div>
-      <div id='searchbarframe'>
-        <input id='searchbar' placeholder="search (d: date)">
-        <div id='searchbar-results' class='dropdown' style='position:absolute;'></div>
-      </div>
-      <div class='butbar' id='movebuts'>
-        <div class='butbar'>
-          <button function="moveTask('up')" title='move up'>↑</button>
-          <button function="moveTask('down')" title='move down'>↓</button>
-          <button function="editTask()" title='edit'>o</button>
-          <button function="deleteTask()" title='delete'>x</button>
+      <div id='desktopbuts'>
+        <div id='desktopbutstop' style='height:fit-content;'>
+          <p id='username'></p>
+          <div id='editbuts' class='butbar'>
+            <button title='set task type' class='mobilebut opts' id='typebut' function='setOptions()'>*</button>
+            <button title='options' class='mobilebut opts' id='optionsbut' function='context(ev)'>...</button>
+          </div>
+          <div id='searchbarframe'>
+            <input id='searchbar' placeholder="search (d: date)">
+            <div id='searchbar-results' class='dropdown' style='position:absolute;'></div>
+          </div>
+          <div class='butbar' id='movebuts'>
+            <div class='butbar'>
+              <button class='mobilebut' function="moveTask('up')" title='move up'>↑</button>
+              <button class='mobilebut' function="moveTask('down')" title='move down'>↓</button>
+              <button class='mobilebut' function="editTask()" title='edit'>o</button>
+              <button class='mobilebut' function="deleteTask()" title='delete'>x</button>
+            </div>
+            <div class='butbar'>
+              <button class='mobilebut' title='unfold' function='toggleSubtasks()'>[</button>
+              <button class='mobilebut' title='fold' function='toggleSubtasks()'>]</button>
+              <button class='mobilebut' title='unindent' function='indentTask(false)'>{</button>
+              <button class='mobilebut' title='indent' function='indentTask(true)'>}</button>
+            </div>
+          </div>
+          <input id='timerent' placeholder="timer" />
+          <div class='butbar'>
+            <div class='butbar'>
+              <button id='timer25But' title='25 minutes'>25</button>
+              <button id='timer15But' title='15 minutes'>15</button>
+              <button id='timer5But' title='5 minutes'>5</button>
+            </div>
+            <div class='butbar' id='timerbuts'>
+              <button id='timer+2But' title='+2 minutes'>+2</button>
+              <button id='timer-2But' title='-2 minutes'>-2</button>
+              <button id='timerStartBut' title='start timer' style='font-family: monospace !important'>&#9654;</button>
+              <button id='timerStopBut' title='stop timer' style='font-family: monospace !important'>■</button>
+            </div>
+          </div>
+          <p class='title' id='lists'>LISTS</p>
+          <div class='butbar' id='listbuts'>
+            <button function="newlist()" title='new list'>+</button>
+            <button function="deletelist()" title='delete list'>x</button>
+            <button function="dragsoff()" title='edit list'>o</button>
+          </div>
         </div>
-        <div class='mobilehide butbar'>
-          <button title='unfold' function='toggleSubtasks()'>[</button>
-          <button title='fold' function='toggleSubtasks()'>]</button>
-          <button title='unindent' function='indentTask(false)'>{</button>
-          <button title='indent' function='indentTask(true)'>}</button>
+        <div id='loads' class='loads'> <!-- this is used to store list names -->
         </div>
+        <p id='help' class='help'>
+          <span class='h1' style='border-bottom:none;color:var(--textcolor);font-size:125%;'>help</span>
+          <span class='h1' style='border-bottom:none;'><button onclick='tutorial()' style='font-size:20px;font:inherit;'>tutorial</button></span>
+          <span class='h1'>controls</span>
+          <span class='command'><span class='left'>click</span><span class='right'>select task</span></span>
+          <span class='command'><span class='left'>right-click</span><span class='right'>options</span></span>
+          <span class='command'><span class='left'>double-click</span><span class='right'>edit task</span></span>
+          <span class='command'><span class='left'>escape</span><span class='right'>save task / unselect</span></span>
+          <span class='command'><span class='left'>drag/drop</span><span class='right'>move after target</span></span>
+          <span class='command'><span class='left'>option drag/drop</span><span class='right'>move as subtask</span></span>
+          <span class='command'><span class='left'>command drag/drop</span><span class='right'>move before target</span></span>
+          <span class='h1'>commands</span>
+          <span class='command'><span class='left'>shift return</span><span class='right'>edit/save task</span></span>
+          <span class='command'><span class='left'>return</span><span class='right'>new task</span></span>
+          <span class='command'><span class='left'>option return</span><span class='right'>new subtask</span></span>
+          <span class='command'><span class='left'>command return</span><span class='right'>new task above</span></span>
+          <span class='command'><span class='left'>delete</span><span class='right'>delete task</span></span>
+          <span class='command'><span class='left'>up/down</span><span class='right'>select above/below</span></span>
+          <span class='command'><span class='left'>right/left</span><span class='right'>select between bank & river</span></span>
+          <span class='command'><span class='left'>shift up/down</span><span class='right'>select heading above/below</span></span>
+          <span class='command'><span class='left'>option up/down</span><span class='right'>move up/down</span></span>
+          <span class='command'><span class='left'>option right/left</span><span class='right'>move between bank & river</span></span>
+          <span class='command'><span class='left'>[ or ]</span><span class='right'>fold/unfold</span></span>
+          <span class='command'><span class='left'>option [ or ]</span><span class='right'>indent/unindent</span></span>
+          <span class='command'><span class='left'>option i</span><span class='right'>toggle important</span></span>
+          <span class='command'><span class='left'>option m</span><span class='right'>toggle maybe</span></span>
+          <span class='command'><span class='left'>space</span><span class='right'>complete/uncomplete</span></span>
+          <span class='command'><span class='left'>shift space</span><span class='right'>archive</span></span>
+          <span class='command'><span class='left'>control T</span><span class='right'>go to today</span></span>
+          <span class='command'><span class='left'>control F</span><span class='right'>search</span></span>
+          <span class='command'><span class='left'>control H</span><span class='right'>toggle sidebar</span></span>
+          <span class='h1'>syntax</span>
+          <span class='command'><span class='left'># task</span><span class='right h1' style='color:var(--textcolor)'>h1</span></span>
+          <span class='command'><span class='left'>## task</span><span class='right h2'>h2</span></span>
+          <span class='command'><span class='left'>### task</span><span class='right h3'>h3</span></span>
+          <span class='command'><span class='left'>• task</span><span class='right'>• list</span></span>
+          <span class='command'><span class='left'>- task</span><span class='right note'>- note</span></span>
+          <span class='command'><span class='left'>_text_</span><span class='right italic'>italic</span></span>
+          <span class='command'><span class='left'>*text* </span><span class='right bold'>bold</span></span>
+          <span class='command'><span class='left'>_*text*_ </span><span class='right bold-italic'>bold-italic</span></span>
+          <span class='command'><span class='left'>[[text]]</span><span class='right'><span class='link'>link</span><br>(click to search)</span></span>
+          <span class='command'><span class='left'>task >date</span><span class='right'><span class='deadline'>deadline</span> <br>(click to jump to date)</span></span>
+          <span class='command'><span class='left'>@time task</span><span class='event'><span class='timing'>time</span>event <br>(click on time to change)</span></span>
+          <span class='command'><span class='left'>task ~time</span><span class='right'>repeat <br>(ex: ~1d, ~M or ~Mon, ~2w)</span></span>
+          <span class='command'><span class='left'>- list</span><span class='right'>sublist <br>(right-click on parent list to fold)</span></span>
+          <span class='h1'>dates</span>
+          <span><span class='right'>Type "d:" into the search bar to search a date</span>
+          <span class='command'><span class='left'>month/day/year or month/day</span><span class='right'>date<br>(change format between<br>m/d/y, d.m.y, & y-m-d in options)</span></span>
+          <span class='command'><span class='left'>M or Mon</span><span class='right'>monday</span></span>
+          <span class='command'><span class='left'>T or Tue</span><span class='right'>tuesday</span></span>
+          <span class='command'><span class='left'>W or Wed</span><span class='right'>wednesday</span></span>
+          <span class='command'><span class='left'>R or Thu</span><span class='right'>thursday</span></span>
+          <span class='command'><span class='left'>F or Fri</span><span class='right'>friday</span></span>
+          <span class='command'><span class='left'>S or Sat</span><span class='right'>saturday</span></span>
+          <span class='command'><span class='left'>U or Sun</span><span class='right'>sunday</span></span>
+          <span class='command'><span class='left'>0d</span><span class='right'>today</span></span>
+          <span class='command'><span class='left'>+/- # d/w/m/y</span><span class='right'>change by time unit</span></span>
+          <span class='command'><span class='left'>d</span><span class='right'>days<br>(ex: +1d)</span></span>
+          <span class='command'><span class='left'>w</span><span class='right'>weeks<br>(ex: 10/1+3w)</span></span>
+          <span class='command'><span class='left'>m</span><span class='right'>months<br>(ex: 0d-2m)</span></span>
+          <span class='command'><span class='left'>y</span><span class='right'>years<br>(ex: Mon+1y)</span></span>
+        </p>
       </div>
-      <input id='timerent' placeholder="timer" />
-      <div class='butbar'>
-        <div class='mobilehide butbar'>
-          <button id='timer25But' title='25 minutes'>25</button>
-          <button id='timer15But' title='15 minutes'>15</button>
-          <button id='timer5But' title='5 minutes'>5</button>
-        </div>
-        <div class='butbar'>
-          <button class='mobilehide' id='timer+2But' title='+2 minutes'>+2</button>
-          <button class='mobilehide' id='timer-2But' title='-2 minutes'>-2</button>
-          <button id='timerStartBut' title='start timer' style='font-family: monospace !important'>&#9654;</button>
-          <button id='timerStopBut' title='stop timer' style='font-family: monospace !important'>■</button>
-        </div>
+      <div id='mobilebuts'>
+
       </div>
-      <p class='title' id='lists'>LISTS</p>
-      <div class='butbar' id='listbuts'>
-        <button function="newlist()" title='new list'>+</button>
-        <button function="deletelist()" title='delete list'>x</button>
-        <button function="dragsoff()" title='edit list'>o</button>
-      </div>
-      <div id='loads' class='loads'> <!-- this is used to store list names -->
-      </div>
-      <p id='help' class='help'>
-        <span class='h1' style='border-bottom:none;color:var(--textcolor);font-size:125%;'>help</span>
-        <span class='h1' style='border-bottom:none;'><button onclick='tutorial()' style='font-size:20px;font:inherit;'>tutorial</button></span>
-        <span class='h1'>controls</span>
-        <span class='command'><span class='left'>click</span><span class='right'>select task</span></span>
-        <span class='command'><span class='left'>right-click</span><span class='right'>options</span></span>
-        <span class='command'><span class='left'>double-click</span><span class='right'>edit task</span></span>
-        <span class='command'><span class='left'>escape</span><span class='right'>save task / unselect</span></span>
-        <span class='command'><span class='left'>drag/drop</span><span class='right'>move after target</span></span>
-        <span class='command'><span class='left'>option drag/drop</span><span class='right'>move as subtask</span></span>
-        <span class='command'><span class='left'>command drag/drop</span><span class='right'>move before target</span></span>
-        <span class='h1'>commands</span>
-        <span class='command'><span class='left'>shift return</span><span class='right'>edit/save task</span></span>
-        <span class='command'><span class='left'>return</span><span class='right'>new task</span></span>
-        <span class='command'><span class='left'>option return</span><span class='right'>new subtask</span></span>
-        <span class='command'><span class='left'>command return</span><span class='right'>new task above</span></span>
-        <span class='command'><span class='left'>delete</span><span class='right'>delete task</span></span>
-        <span class='command'><span class='left'>up/down</span><span class='right'>select above/below</span></span>
-        <span class='command'><span class='left'>right/left</span><span class='right'>select between bank & river</span></span>
-        <span class='command'><span class='left'>shift up/down</span><span class='right'>select heading above/below</span></span>
-        <span class='command'><span class='left'>option up/down</span><span class='right'>move up/down</span></span>
-        <span class='command'><span class='left'>option right/left</span><span class='right'>move between bank & river</span></span>
-        <span class='command'><span class='left'>[ or ]</span><span class='right'>fold/unfold</span></span>
-        <span class='command'><span class='left'>option [ or ]</span><span class='right'>indent/unindent</span></span>
-        <span class='command'><span class='left'>option i</span><span class='right'>toggle important</span></span>
-        <span class='command'><span class='left'>option m</span><span class='right'>toggle maybe</span></span>
-        <span class='command'><span class='left'>space</span><span class='right'>complete/uncomplete</span></span>
-        <span class='command'><span class='left'>shift space</span><span class='right'>archive</span></span>
-        <span class='command'><span class='left'>control T</span><span class='right'>go to today</span></span>
-        <span class='command'><span class='left'>control F</span><span class='right'>search</span></span>
-        <span class='command'><span class='left'>control H</span><span class='right'>toggle sidebar</span></span>
-        <span class='h1'>syntax</span>
-        <span class='command'><span class='left'># task</span><span class='right h1' style='color:var(--textcolor)'>h1</span></span>
-        <span class='command'><span class='left'>## task</span><span class='right h2'>h2</span></span>
-        <span class='command'><span class='left'>### task</span><span class='right h3'>h3</span></span>
-        <span class='command'><span class='left'>• task</span><span class='right'>• list</span></span>
-        <span class='command'><span class='left'>- task</span><span class='right note'>- note</span></span>
-        <span class='command'><span class='left'>_text_</span><span class='right italic'>italic</span></span>
-        <span class='command'><span class='left'>*text* </span><span class='right bold'>bold</span></span>
-        <span class='command'><span class='left'>_*text*_ </span><span class='right bold-italic'>bold-italic</span></span>
-        <span class='command'><span class='left'>[[text]]</span><span class='right'><span class='link'>link</span><br>(click to search)</span></span>
-        <span class='command'><span class='left'>task >date</span><span class='right'><span class='deadline'>deadline</span> <br>(click to jump to date)</span></span>
-        <span class='command'><span class='left'>@time task</span><span class='event'><span class='timing'>time</span>event <br>(click on time to change)</span></span>
-        <span class='command'><span class='left'>task ~time</span><span class='right'>repeat <br>(ex: ~1d, ~M or ~Mon, ~2w)</span></span>
-        <span class='command'><span class='left'>- list</span><span class='right'>sublist <br>(right-click on parent list to fold)</span></span>
-        <span class='h1'>dates</span>
-        <span><span class='right'>Type "d:" into the search bar to search a date</span>
-        <span class='command'><span class='left'>month/day/year or month/day</span><span class='right'>date<br>(change format between<br>m/d/y, d.m.y, & y-m-d in options)</span></span>
-        <span class='command'><span class='left'>M or Mon</span><span class='right'>monday</span></span>
-        <span class='command'><span class='left'>T or Tue</span><span class='right'>tuesday</span></span>
-        <span class='command'><span class='left'>W or Wed</span><span class='right'>wednesday</span></span>
-        <span class='command'><span class='left'>R or Thu</span><span class='right'>thursday</span></span>
-        <span class='command'><span class='left'>F or Fri</span><span class='right'>friday</span></span>
-        <span class='command'><span class='left'>S or Sat</span><span class='right'>saturday</span></span>
-        <span class='command'><span class='left'>U or Sun</span><span class='right'>sunday</span></span>
-        <span class='command'><span class='left'>0d</span><span class='right'>today</span></span>
-        <span class='command'><span class='left'>+/- # d/w/m/y</span><span class='right'>change by time unit</span></span>
-        <span class='command'><span class='left'>d</span><span class='right'>days<br>(ex: +1d)</span></span>
-        <span class='command'><span class='left'>w</span><span class='right'>weeks<br>(ex: 10/1+3w)</span></span>
-        <span class='command'><span class='left'>m</span><span class='right'>months<br>(ex: 0d-2m)</span></span>
-        <span class='command'><span class='left'>y</span><span class='right'>years<br>(ex: Mon+1y)</span></span>
-      </p>
     </div>
     <div id='listcontainer'>
       <div id='floplist'>
@@ -178,7 +186,7 @@
           <button function="selectRandom()" title='select random flop'>?</button>
           <button function="moveTask('pop');$('#searchbar').focus()" title='move task to river'>→</button>
         </div>
-        <p id='flop' class='rendered in' ondrop='dropTask(event)' ondragover='draggingOver(event)'></p>
+        <p id='flop' class='rendered in'></p>
       </div>
       <div id='poplist'>
         <div class='butbar' id='popbuts'>
@@ -188,7 +196,7 @@
           <button class='flopbut' id='popBut' title='new task in river'>+ RIVER</button>
           <button function="archiveTask()" title='complete'>!</button>
         </div>
-        <p id='pop' class='rendered in' ondrop='dropTask(event)' ondragover='draggingOver(event)'></p>        
+        <p id='pop' class='rendered in'></p>        
       </div>
     </div>
   </div>
