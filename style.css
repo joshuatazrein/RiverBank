@@ -651,7 +651,7 @@ span.weblink, span.deadline {
     font-size: 12px;
   }
   .container {
-    height: calc(100vh - 80px);
+    height: calc(100vh - 75px);
     border-bottom: 1px solid var(--bdcolor);
     background: var(--background);
   }
@@ -680,8 +680,9 @@ span.weblink, span.deadline {
     border-left: 1px solid var(--bdcolor);
     border-right: none;
   }
-  #listcontainer > .in {
-    width: 100%;
+  #listcontainer > span {
+    width: calc(100% - 30px);
+    margin-left: 5px;
   }
   .loads {
     width: calc(100% + 5px);

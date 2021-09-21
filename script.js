@@ -1266,14 +1266,6 @@ function updateSpanDrags() {
     $('span.in').focusout(function() {
       saveTask()
     })
-    try {
-      $('span.in').attr('draggable', 'false')
-      $('span.in').draggable('destroy')
-      $('span.in').droppable('destroy')
-      return
-    } catch (err) {
-      console.log(err);
-    }
   } else {
     $('.mobhandle').remove()
     $('span.in:not(.dateheading)').draggable({
@@ -1319,7 +1311,7 @@ function updateSpanDrags() {
   //     select(ui.draggable[0], true)
   //   }
   // })
-  // $('span.in').attr('draggable', 'true')
+  $('span.in').attr('draggable', 'true')
 }
 
 function mobileDragOver(event) {
