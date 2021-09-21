@@ -26,7 +26,6 @@ var justclicked
 var dragtimer
 var mobile
 var draggingtask
-var listchanged = false
 var linestarts = {
   '# ': 'h1',
   '## ': 'h2',
@@ -65,6 +64,7 @@ function display(x) {
 }
 
 function mobiletest() {
+  return true
   if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
     .test(navigator.userAgent)) {
     // console.log(true);
@@ -110,8 +110,16 @@ timer.on('end', function () {
     const timersnd = new Audio('snd/timer.mp3')
     timersnd.play()
   }
-  // $('#timersnd')[0].pause()
-  $('#timerent').val('')
+  var timertime = new Date().getTime()
+  $('#timerent').val('0:00')
+  if (stopwatch) clearInterval(stopwatch)
+  stopwatch = setInterval(function () {
+    const curtime = new Date().getTime() - timertime
+    let minutes = Math.floor(curtime / 60000); // minutes
+    let secs = Math.floor(Math.ceil(((curtime) - minutes * 60000)) / 1000)
+    $('#timerent').val('-' + String(minutes) + ':' +
+      String(secs).padStart(2, 0))
+  }, 1000)
 })
 
 //# DRAG BEHAVIOR
@@ -131,6 +139,11 @@ function dragTaskOver(event) {
   resetdoc()
   const boxright = $('#listcontainer').offset().left
   if (event.pageX < boxright) {
+    $('#flop').find('span.in').toArray().forEach((x) => {
+      $(x).removeClass('drop-hover')
+      $(x).removeClass('taskselect')
+    })
+    $('#listcontainer > span').addClass('small')
     // load the dragged-over list
     let i = 0
     const loads = $('#loads').children().toArray()
@@ -147,21 +160,7 @@ function dragTaskOver(event) {
         }
         popscrollsave = undefined
         $('#flop, #pop').removeClass('greyedout')
-        $('.drop-hover').removeClass('.drop-hover')
         loadedlist = i
-        if (!listchanged) {
-          console.log('fixing thing');
-          // copy into test if first list
-          const selectindex = $('#flop').find('span.in').toArray()
-            .indexOf(selected[0])
-          console.log(selectindex);
-          $('#test').empty()
-          $('#test').html($('#flop').html())
-          console.log($('#test').html());
-          selected = $($('#test').find('span.in').toArray()[selectindex])
-          console.log(selected);
-          listchanged = true
-        }
         $('#flop').empty()
         $('#flop').html(data.flop[loadedlist].text)
         $(list).removeClass('unselected')
@@ -173,7 +172,7 @@ function dragTaskOver(event) {
       i++
     }
   } else {
-    console.log('dragover', selected.text());
+    $('#listcontainer > span').removeClass('small')
     const timertime = 3
     const offsetwidth = 50
     const scrollChange = 1
@@ -384,6 +383,11 @@ function loadList(saving) { //updates the list display
     $(loads[loadedlist]).blur()
   }
   $('#flop').scrollTop(0)
+  if (mobiletest() && !$('#leftcol').hasClass('collapsed') && saving) {
+    // collapse menu again
+    togglecollapse()
+  }
+  $(window).trigger('clickoff')
 }
 
 function toggleFoldList(saving) {
@@ -1256,12 +1260,21 @@ function updateSpanDrags() {
       },
       drag: function (event) {
         mobileDragOver(event)
+        $('#listcontainer > span').removeClass('in')
       },
     })
     $('span.in').off('focusout')
     $('span.in').focusout(function() {
       saveTask()
     })
+    try {
+      $('span.in').attr('draggable', 'false')
+      $('span.in').draggable('destroy')
+      $('span.in').droppable('destroy')
+      return
+    } catch (err) {
+      console.log(err);
+    }
   } else {
     $('.mobhandle').remove()
     $('span.in:not(.dateheading)').draggable({
@@ -1278,6 +1291,7 @@ function updateSpanDrags() {
       },
       drag: function (event) {
         dragTaskOver(event)
+        $('#listcontainer > span').removeClass('in')
       },
     })
   }
@@ -1293,6 +1307,7 @@ function updateSpanDrags() {
       // select(ui.draggable[0], true)
     }
   })
+  $('span.in').on('focus', function () { console.log($(this), 'focused') })
   // not working right now
   // $('p.rendered').droppable({
   //   accept: 'span.in',
@@ -1305,7 +1320,7 @@ function updateSpanDrags() {
   //     select(ui.draggable[0], true)
   //   }
   // })
-  $('span.in').attr('draggable', 'true')
+  // $('span.in').attr('draggable', 'true')
 }
 
 function mobileDragOver(event) {
@@ -1999,7 +2014,6 @@ function editTask() {
     while (selected.val().charAt(selected.val().length - 1) == '\n') {
       selected.val(selected.val().slice(0, selected.val().length - 1))
     }
-    console.log(isHeading(selected.prev().prev()), selected.next().text());
     if (selected.prev().prev().text().charAt(0) == '•' &&
       selected.val() == '' ||
       (isHeading(selected.prev().prev()) &&
@@ -2009,11 +2023,10 @@ function editTask() {
       selected.val('• ' + selected.val())
     }
     updateHeight()
-    selected.click(function (e) { $(this).focus() });
-    setTimeout(function () { 
-      selected.trigger('click');
-      selected.click();
-    }, 200);
+    selected.click(function (e) { 
+      $(this).focus() 
+      console.log($(this), 'yes');
+    });
   }
 }
 
@@ -2080,10 +2093,6 @@ function archiveTask() {
     // add in an extra heading
     heading = $('<span class=\'in h2\' folded=\'false\'>' +
       'completed ...</span>')
-    heading.attr('ondragstart', 'dragTask(event)')
-    heading.attr('ondragover', 'draggingOver(event)')
-    heading.attr('ondrop', 'dropTask(event)')
-    heading.attr('draggable', 'true')
     heading.attr('folded', 'true')
     if (getHeadingChildren(day).length >= 1) {
       getHeadingChildren(day)[
@@ -2148,7 +2157,7 @@ function toggleComplete(task) {
       }
     }
   }
-  if (!completetask.hasClass('complete') && data.play == 'true') {
+  if (!task && !completetask.hasClass('complete') && data.play == 'true') {
     // pop!
     new Audio('snd/pop.mp3').play()
   }
@@ -2211,9 +2220,10 @@ function stopTimer() {
 
 function timertest(ev) {
   if (ev.key == 'Enter') {
+    ev.preventDefault()
     startTimer()
   } else if (ev.key == 'Escape') {
-    evt.preventDefault()
+    ev.preventDefault()
     stopTimer()
   } else if (ev.key == ' ') {
     ev.preventDefault()
@@ -2244,9 +2254,22 @@ function dragTask(evt) {
     selected.parents().toArray().includes($('#pop')[0])) {
     return; // stops from reordering dates
   }
-  // plaintext alternative? for compatibility?
-  //specify allowed transfer
-  // evt.dataTransfer.effectAllowed = 'move'
+  const oldselect = selected
+  // copy into test if first list
+  const selectindex = $('#flop').find('span.in').toArray()
+    .indexOf(selected[0])
+  $('#test').empty()
+  $('#test').html($('#flop').html())
+  selected = $($('#test').find('span.in').toArray()[selectindex])
+  // clear current select
+  if (isHeading(oldselect)) {
+    for (child of getHeadingChildren(oldselect)) {
+      $(child).remove()
+    }
+  }
+  $('.taskselect').removeClass('taskselect')
+  selected.addClass('taskselect')
+  oldselect.remove()
 }
 
 function togglecollapse() {
@@ -2267,17 +2290,15 @@ function togglefocus(collapse) {
     $('#focusbar').prepend($('#focusbut'))
     $('#searchbarcont').append($('#searchbarframe'))
     $('#timerentcont').append($('#timerent'))
-    getFrame(selected).parent().css('width', '100vw')
+    getFrame(selected).parent().parent().addClass('fullwidth')
     getFrame(selected).parent().css('height', '100%')
     getFrame(selected).parent().css('border-right', 'none')
     getFrame(selected).parent().css('border-left', 'none')
     if (getFrame(selected).attr('id') == 'flop') {
       // hide other thing and this' buttons
       $('#poplist').hide()
-      $('#floplist').css('padding', '0 10px')
     } else if (getFrame(selected).attr('id') == 'pop') {
       $('#floplist').hide()
-      $('#poplist').css('padding', '0 10px')
     }
     $('#focusbar').show()
     if (!collapse && !$('#leftcol').hasClass('collapsed')) { togglecollapse() }
@@ -2288,21 +2309,17 @@ function togglefocus(collapse) {
     $('#movebuts').after($('#timerent'))
     $('#collapsebut').after($('#focusbut'))
     for (thing of [$('#flop'), $('#pop')]) {
-      thing.parent().css('width', '')
+      thing.parent().parent().removeClass('fullwidth')
       thing.parent().css('height', '')
-      thing.parent().css('border-right', '')
-      thing.parent().css('border-left', '')
     }
     if (!$('#poplist').is(':visible')) {
       $('#poplist').show()
-      $('#floplist').css('padding-left', '')
     } else if (!$('#floplist').is(':visible')) {
       $('#floplist').show()
-      $('#poplist').css('padding-left', '')
     }
     $('#focusbar').hide()
     focusmode = false
-    if (!collapse && $('#leftcol').hasClass('collapsed')) {
+    if (!collapse && $('#leftcol').hasClass('collapsed') && !(mobiletest())) {
       togglecollapse()
     }
   }
@@ -2316,6 +2333,7 @@ function dropTask(ev) {
   draggingtask = false
   let children = []
   const el = $(ev.target)
+  console.log(selected, el);
   if (selected.hasClass('h1') || selected.hasClass('h2') ||
     selected.hasClass('h3')) {
     // drop all the tasks
@@ -2354,6 +2372,7 @@ function dropTask(ev) {
       $(el).before(selected)
     } else {
       $(el).after(selected)
+      console.log('dropped', el, selected);
     }
   }
   for (i = children.length - 1; i >= 0; i--) {
@@ -2362,7 +2381,6 @@ function dropTask(ev) {
   }
   save()
   updateSpanDrags()
-  listchanged = false
 }
 
 function toggleSubtasks() {
@@ -2533,17 +2551,20 @@ function setStyle(style, alert) {
   if (navigator.onLine || offlinemode) {
     data.style = style
     $.get(
-      data.style,
+      style,
       function () {
         // console.log(oldstyle, $('link[href="' + oldstyle + '"]'));
         $('#theme').remove()
         $('head').append(
           $("<link id='theme' rel='stylesheet' type='text/css' href='" +
-            data.style + "' />")
+            style + "' />")
         );
         uploadData()
         $('#flop').scrollTop(floptop)
-        select(dateToHeading(stringToDate('0d')))
+        $('#pop').scrollTop($(dateToHeading(stringToDate('0d')))
+          .position().top)
+        console.log($(dateToHeading(stringToDate('0d')))
+        .position().top);
       }
     )
   } else if (alert != false) {
@@ -2834,12 +2855,41 @@ function clickoff(ev) {
     $('#flop').removeClass('greyedout')
     popscrollsave = undefined
     $('#pop').removeClass('greyedout')
+    console.log('did thing');
+  }
+  if ($(ev.target).attr('id') == 'popBut') {
+    if (selected == undefined || getFrame(selected).attr('id') != 'pop') {
+      select(dateToHeading(stringToDate('0d')), true)
+    }
+    newTask()
+  } else if ($(ev.target).attr('id') == 'flopBut') {
+    if (selected == undefined || getFrame(selected).attr('id') != 'flop') {
+      // insert after selected
+      const newtask = $('<span class="in"></span>')
+      $($('#flop').children()[0]).after(newtask)
+      select(newtask)
+      newTask()
+      newtask.remove()
+    } else {
+      newTask()
+    }
+  } else if ($(ev.target).attr('id') == 'newHeadingFlopBut') {
+    if (selected == undefined || getFrame(selected).attr('id') != 'flop') {
+      // insert after selected
+      const newtask = $('<span class="in"></span>')
+      $('#flop').prepend(newtask)
+      select(newtask)
+      newTask()
+      newtask.remove()
+    } else {
+      newTask()
+    }
+    selected.val('# ')
+  } else if ($(ev.target).hasClass('dropdown-item') && !justclicked) {
+    eval($(ev.target).attr('function'))
   }
   // on revert drags on mobile
   $('.drop-hover').removeClass('drop-hover')
-  if ($(ev.target).hasClass('dropdown-item') && !justclicked) {
-    eval($(ev.target).attr('function'))
-  }
   if (!justclicked) $('nav').hide()
 }
 
@@ -2863,19 +2913,7 @@ function clicked(ev) {
   resetdoc(); // fixes weird shit
   $('.slider').remove() // remove sliders
   // click events
-  if ($(ev.target).attr('id') == 'newHeadingFlopBut') {
-    if (selected == undefined || getFrame(selected).attr('id') != 'flop') {
-      // insert after selected
-      const newtask = $('<span class="in"></span>')
-      $('#flop').prepend(newtask)
-      select(newtask)
-      newTask()
-      newtask.remove()
-    } else {
-      newTask()
-    }
-    selected.val('# ')
-  } else if ($(ev.target).attr('id') == 'todayBut') {
+  if ($(ev.target).attr('id') == 'todayBut') {
     select(dateToHeading(stringToDate('0d')), true)
     save()
   } else if ($(ev.target).attr('id') == 'addDateBut') {
@@ -2921,22 +2959,6 @@ function clicked(ev) {
     startTimer()
   } else if ($(ev.target).attr('id') == 'timerStopBut') {
     stopTimer()
-  } else if ($(ev.target).attr('id') == 'popBut') {
-    if (selected == undefined || getFrame(selected).attr('id') != 'pop') {
-      select(dateToHeading(stringToDate('0d')), true)
-    }
-    newTask()
-  } else if ($(ev.target).attr('id') == 'flopBut') {
-    if (selected == undefined || getFrame(selected).attr('id') != 'flop') {
-      // insert after selected
-      const newtask = $('<span class="in"></span>')
-      $($('#flop').children()[0]).after(newtask)
-      select(newtask)
-      newTask()
-      newtask.remove()
-    } else {
-      newTask()
-    }
   } else if ($(ev.target)[0].tagName == 'BUTTON') {
      // execute button functions
     eval($(ev.target).attr('function'))
@@ -3105,12 +3127,6 @@ function dblclick(ev) {
     !$(ev.target).hasClass('dateheading')) {
     select($(ev.target))
     editTask()
-    // trigger mobile keyboard
-    selected.click(function (e) { $(this).focus() })
-    setTimeout(function () { 
-      selected.trigger('click')
-      selected.click()
-    }, 200)
   } else if (['bold', 'italic', 'bold-italic'].includes(
     $(ev.target).attr('class'))) {
     select($(ev.target).parent())
@@ -3287,6 +3303,7 @@ function keycomms(evt) {
   } else if (!selected && evt.key == 'Enter' &&
     $(':focus').hasClass('listtitle')) {
     // new list
+    evt.preventDefault()
     newlist()
   } else if (selected && evt.key == 'Enter' &&
     evt.shiftKey) {

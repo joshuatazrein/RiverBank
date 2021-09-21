@@ -215,7 +215,7 @@ p.dropdown-item {
   position: relative;
 }
 
-#listcontainer > .in {
+#listcontainer > span {
   color: var(--select);
   width: 50%;
 }
@@ -435,6 +435,11 @@ span.in {
   padding-left: 5px;
   padding-right: 5px;
   position: relative;
+}
+
+.small {
+  transform: scale(0.5, 0.5);
+  width: 10px;
 }
 
 .taskselect {

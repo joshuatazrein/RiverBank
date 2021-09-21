@@ -38,3 +38,7 @@ span.list span.in, span.note span.in {
 span span.event {
   width: calc(100% + var(--indent) + 40px);
 }
+.slider::-webkit-slider-thumb {
+  height: 16px;
+  width: 16px;
+}
