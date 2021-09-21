@@ -64,7 +64,6 @@ function display(x) {
 }
 
 function mobiletest() {
-  return true
   if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
     .test(navigator.userAgent)) {
     // console.log(true);
