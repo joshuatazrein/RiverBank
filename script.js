@@ -2884,6 +2884,8 @@ function clickoff(ev) {
       newTask()
     }
     selected.val('# ')
+  } else if ($(ev.target).attr('id') == 'newSubtaskBut') {
+    eval($(ev.target).attr('function'))
   } else if ($(ev.target).hasClass('dropdown-item') && !justclicked) {
     eval($(ev.target).attr('function'))
   }
@@ -2958,8 +2960,11 @@ function clicked(ev) {
     startTimer()
   } else if ($(ev.target).attr('id') == 'timerStopBut') {
     stopTimer()
+  } else if (['newSubtaskBut'].includes($(ev.target).attr('id'))) {
+    // buttons evaluated with clickoff() (for selection purposes)
+    return
   } else if ($(ev.target)[0].tagName == 'BUTTON') {
-     // execute button functions
+    // execute button functions
     eval($(ev.target).attr('function'))
   } else if ($(ev.target).hasClass('listtitle')) {
     if (mobiletest() && $(ev.target).val() != '') {
