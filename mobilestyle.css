@@ -4,9 +4,6 @@ body {
   height: calc(100vh - 50px);
   overflow-y: visible;
 }
-#logoimage {
-  position: static;
-}
 span span span.mobhandle {
   /* height: 0.85em !important;
   width: 0.85em !important; */
