@@ -3764,11 +3764,11 @@ function loadpage(setload, oldselect, scrolls) {
       // behavior for initial scroll
       $(document).on('touchend', function () {
         console.log('scrolling');
-        // $('#logoimage').animate(
-        //   {opacity: 0}, 500)
-        // setTimeout(function() { $('#logoimage').remove() }, 500)
-        // $('body').css('overflow', 'hidden')
-        // resetdoc()
+        setTimeout(function() { 
+          $('#logoimage').remove() 
+          resetdoc()
+          $('body').css('overflow', 'hidden')
+        }, 500)
         document.off('touchend')
       })
     }
