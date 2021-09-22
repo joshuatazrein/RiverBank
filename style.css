@@ -385,13 +385,12 @@ textarea.in, p.incopy {
 
 #texttest {
   height: max-content;
-  display: none;
   /* display: block; */
   /* position: absolute;
   top: 100px;
   left: 300px; */
   /* z-index: 1; */
-  /* overflow: visible; */
+  overflow: visible;
   /* color: white; */
 }
 
