@@ -3720,8 +3720,10 @@ function loadpage(setload, oldselect, scrolls) {
       $("<link id='theme' rel='stylesheet' type='text/css' href='" +
         data.style + "' />")
     )
-    $.get(data.style, 
-      function () { $('#logoimage').remove() })
+    if (!mobiletest()) {
+      $.get(data.style, 
+        function () { $('#logoimage').remove() })
+    }
     if (data.weekdays == 'M') {
       weekdaysStr = { 0: 'U', 1: 'M', 2: 'T', 3: 'W', 4: 'R', 5: 'F', 6: 'S' }
     } else if (data.weekdays == 'Mon') {
@@ -3759,6 +3761,15 @@ function loadpage(setload, oldselect, scrolls) {
     }
     if (mobiletest()) {
       $('head').append('<link href="mobilestyle.css" rel="stylesheet">')
+      // behavior for initial scroll
+      $(document).on('scroll', function () {
+        console.log('scrolling');
+        $('#logoimage').animate(
+          {opacity: 0}, 500)
+        setTimeout(function() { $('#logoimage').remove() }, 500)
+        $('body').css('overflow', 'hidden')
+        resetdoc()
+      })
     }
   }
   if ($('#theme').attr('href') != data.style) {

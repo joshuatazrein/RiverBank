@@ -1,7 +1,11 @@
 /* add the padding-right to subspan widths */
 body {
-  overflow-y: visible !important;
-  margin-top: 100vh;
+  /* overflow-y: visible !important; */
+  height: calc(100vh - 50px);
+  overflow-y: visible;
+}
+#logoimg {
+  position: static;
 }
 span span span.mobhandle {
   /* height: 0.85em !important;
