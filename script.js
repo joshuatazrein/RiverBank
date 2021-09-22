@@ -3764,9 +3764,9 @@ function loadpage(setload, oldselect, scrolls) {
       // behavior for initial scroll
       $(document).on('touchend', function () {
         console.log('scrolling');
-        $('#logoimage').animate(
-          {opacity: 0}, 500)
-        setTimeout(function() { $('#logoimage').remove() }, 500)
+        // $('#logoimage').animate(
+        //   {opacity: 0}, 500)
+        // setTimeout(function() { $('#logoimage').remove() }, 500)
         // $('body').css('overflow', 'hidden')
         // resetdoc()
         document.off('touchend')
