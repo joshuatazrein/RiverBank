@@ -3763,7 +3763,7 @@ function loadpage(setload, oldselect, scrolls) {
         setTimeout(function() { 
           $('#logoimage').remove() 
           resetdoc()
-          $('body').css('overflow', 'hidden')
+          // $('body').css('overflow', 'hidden')
         }, 500)
         document.off('touchend')
       })
