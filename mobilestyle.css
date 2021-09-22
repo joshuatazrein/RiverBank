@@ -26,6 +26,9 @@ span span.mobhandle {
   right: 2px;
   z-index: 1;
 }
+#flopbuts, #popbuts {
+  position: absolute;
+}
 span.in {
   padding-right: 40px;
 }

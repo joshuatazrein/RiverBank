@@ -77,7 +77,11 @@ function mobiletest() {
 }
 
 function resetdoc() {
-  $(document).scrollTop(0)
+  if (mobiletest()) {
+    $(document).scrollTop(100)
+  } else {
+    $(document).scrollTop(0)
+  }
   $(document.body).css('zoom', "100%")
 }
 
