@@ -3547,6 +3547,7 @@ function tutorial() {
 }
 
 function uploadData(reloading) {
+  if (getCookie('user') == '') return // no user loaded (for demo)
   display('--- upload started ---')
   if (JSON.stringify(data) == prevupload) {
     display('identical');
@@ -3694,7 +3695,9 @@ function reload2() {
 
 function loadpage(setload, oldselect, scrolls) {
   // right after signing in
-  $('#username').text(getCookie('user'))
+  try {
+    $('#username').text(getCookie('user'))
+  } catch (err) { /* no user */ }
   if (setload != false) {
     if (window.innerWidth < 600) mobile = true
     else if (window.innerWidth < 600) mobile = false

@@ -61,22 +61,25 @@ function load() {
   }
   // try the current cookie (synchronous request)
   const fname = getCookie('fname')
-  console.log(document.cookie);
   if (fname == '') {
     console.log('no user loaded');
-    // no user loaded
-    if (offlinemode) {
-      window.location = window.location.href.replace(
-        'index.html', 'welcome.html')
+    if (window.location != 'https://riverbank.app/welcome.html') {
+      // no user loaded
+      if (offlinemode) {
+        window.location = window.location.href.replace(
+          'index.html', 'welcome.html')
+      } else {
+        window.location = 'https://riverbank.app/welcome.html'
+      }
     } else {
-      window.location = 'https://riverbank.app/welcome.html'
+      data = resetstring
+      initialize()
     }
     return
   }
   console.log('getting file', '/users/' + getCookie('fname') + '.json');
   $.get('users/' + getCookie('fname') + '.json',
     function (datastr, status, xhr) {
-      console.log('success on get');
       if (xhr.responseText == '') { 
         console.log('get failed');
         // no file found
