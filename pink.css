@@ -3,6 +3,7 @@
   --background: rgb(230, 230, 250);
   --fontweight: 300;
   --boldweight: 500;
+  --lineheight: 1.15em;
   --bgoverlay: /* rgb(199, 203, 229); rgba(171, 176, 208, 0.8); */ rgba(230, 230, 250, 0.8);
   --fontsize: 21px;
   /* --select: rgb(251, 217, 253); */
@@ -13,10 +14,14 @@
   --textcolor: rgb(53, 3, 58);
   --menufont: 'Josefin Sans', sans-serif;
   --bdcolor: rgba(53, 3, 58, 0.3);
-  --important: rgb(212, 93, 194);
+  --important: rgb(226, 156, 210);
   --maybe: rgba(212, 93, 194, 0.5);
   --event: rgba(251, 217, 253, 0.3);
   --butbackground: rgba(200, 200, 230, 0.3);
   --flopbutbackground: rgba(200, 200, 230, 0.3);
-  --indent: 0.75em;
+  --indent: 0.8em;
+}
+
+span.h1, span.h2, span.h3 {
+  padding: 0.3em 0 0.1em 0 !important;
 }

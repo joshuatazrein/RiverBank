@@ -2,6 +2,7 @@
   --fontsize: 26px;
   --fontweight: 400;
   --boldweight: 600;
+  --lineheight: 1.15em;
   --background: rgb(27, 30, 33);
   --bgoverlay: rgba(27, 30, 33, 0.8);
   --select: rgb(236, 229, 240);
@@ -16,5 +17,5 @@
   --event: rgba(236, 229, 240, 0.3);
   --flopbutbackground: rgba(165, 188, 213, 0.3);
   --butbackground: rgba(224, 223, 225, 0.3);
-  --indent: 0.5em;
+  --indent: 0.45em;
 }

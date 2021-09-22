@@ -3,6 +3,7 @@
   --fontweight: 300;
   --boldweight: 600;
   --background: black;
+  --lineheight: 1.15em;
   --bgoverlay: rgba(0, 0, 0, 0.8);
   /* --select: rgb(135, 206, 235); */
   /* --select: rgb(74, 100, 108); */
@@ -20,4 +21,8 @@
   --butbackground: rgba(128, 128, 128, 0.3);
   --flopbutbackground: rgba(222, 224, 227, 0.3);
   --indent: 0.5em;
+}
+
+span.h1, span.h2, span.h3 {
+  padding: 0.1em 0 0.3em 0 !important;
 }

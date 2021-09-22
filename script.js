@@ -23,9 +23,11 @@ var prevupload = JSON.stringify(data)
 var flopscrollsave
 var popscrollsave
 var justclicked
+var dblclicked
 var dragtimer
 var mobile
 var draggingtask
+var justdropped
 var linestarts = {
   '# ': 'h1',
   '## ': 'h2',
@@ -254,6 +256,7 @@ function dropList(evt) {
 
 //enable you to edit titles
 function toggledrags(saving) {
+  console.log('toggledrags', saving);
   loads = $('#loads').children().toArray()
   if (dragsenabled === true) {
     loads.forEach((i) => {
@@ -266,6 +269,8 @@ function toggledrags(saving) {
     if (saving != false) {
       save()
       setTimeout(function () { loads[loadedlist].focus() }, 300)
+    } else {
+      $('.selected').blur()
     }
   } else {
     loads.forEach((x) => {
@@ -280,6 +285,7 @@ function toggledrags(saving) {
     }
     if (saving != false) save()
     $(':focus').blur()
+    $('.selected').blur()
   }
   updateSizes()
 }
@@ -566,10 +572,32 @@ function clean() {
   $('span.in').removeAttr('ondrop')
 }
 
+function undo() {
+  if (!savedata) return
+  // undo
+  const floptop = $('#flop').scrollTop()
+  const poptop = $('#pop').scrollTop()
+  data = JSON.parse(JSON.stringify(savedata))
+  select()
+  const oldload = Number(loadedlist)
+  $('#pop').html(data.pop)
+  $('#loads').empty()
+  for (list of data.flop) {
+    newlist(list.title, list.text, false)
+    $('.taskselect').removeClass('taskselect')
+  }
+  loadedlist = oldload
+  loadList(false)
+  dragson(false)
+  select()
+  $('#flop').scrollTop(floptop)
+  $('#pop').scrollTop(poptop)
+}
+
 // Storing data:
-function save(undo) {
+function save(undoing, cleaning) {
   unfilter(false)
-  if (undo) savedata = JSON.parse(JSON.stringify(data))
+  if (undoing) savedata = JSON.parse(JSON.stringify(data))
   // save data
   data.pop = $('#pop').html()
   if (loadedlist != undefined) {
@@ -582,13 +610,15 @@ function save(undo) {
     }
   }
   data.loadedlist = loadedlist
-  // clean up styling
-  $('span.in:visible').attr('style', '')
-  clean()
-  updatedeadlines() // updateSpanDrags() called in updatedeadlines
-  resetdoc() // fixes scroll
-  // backup data to the server after setting localstorage data
-  uploadData()
+  if (cleaning != false) {
+    // clean up styling
+    $('span.in:visible').attr('style', '')
+    clean()
+    updatedeadlines() // updateSpanDrags() called in updatedeadlines
+    resetdoc() // fixes scroll
+    // backup data to the server after setting localstorage data
+    uploadData()
+  }
 }
 
 function clearEmptyDates(saving) {
@@ -958,6 +988,7 @@ function search(skiplinks, deadline) {
     searchtext = searchtext.slice(0, searchtext.length - 1)
   }
   searchtext = searchtext.replace(/\s\s/, ' ')
+  const searchexp = new RegExp(searchtext, 'gi')
   const searches = data.flop.concat([{
     'title': 'pop',
     'text': data.pop
@@ -970,7 +1001,7 @@ function search(skiplinks, deadline) {
     children = $('#test').find('span.in')
     for (let child of children) {
       // if it's a match, add to matches
-      if (stripChildren($(child)).includes(searchtext)) {
+      if (searchexp.test(stripChildren($(child)))) {
         // add to matches
         if (skiplinks &&
           $(child).text().includes('[[' + searchtext)) {
@@ -1252,6 +1283,7 @@ function updateSpanDrags() {
       helper: 'clone',
       refreshPositions: true,
       zIndex: 1,
+      distance: 20,
       addClasses: false,
       start: function (event) {
         // $(this).hide()
@@ -1272,6 +1304,7 @@ function updateSpanDrags() {
       containment: 'window',
       revert: true,
       appendTo: $('#listcontainer'),
+      distance: 20,
       helper: 'clone',
       refreshPositions: true,
       zIndex: 1,
@@ -1298,7 +1331,6 @@ function updateSpanDrags() {
       // select(ui.draggable[0], true)
     }
   })
-  $('span.in').on('focus', function () { console.log($(this), 'focused') })
   // not working right now
   // $('p.rendered').droppable({
   //   accept: 'span.in',
@@ -1436,10 +1468,10 @@ function deleteTask() {
 }
 
 function indentTask(indent) {
- if (selected.parent()[0].tagName == 'SPAN' && !indent) {
+ if (selected.parent()[0].tagName == 'SPAN' && indent == false) {
     selected.parent().after(selected)
-  } else if (indent) {
-    selected.prev().append(selected)
+  } else if (indent && !isHeading(taskAbove())) {
+    taskAbove().append(selected)
   }
 }
 
@@ -1606,7 +1638,7 @@ function dragTime(el) {
   })
 }
 
-function saveTask() {  // analyze format of task and create new <span> elt for it
+function saveTask() { // analyze format of task and create new <span> elt for it
   const savetask = selected.prev() // looks at item before it
   savetask.attr('class', 'in')
   selected.next().remove() // removes appended children
@@ -1624,14 +1656,19 @@ function saveTask() {  // analyze format of task and create new <span> elt for i
     selected.remove()
     return
   }
-  if (
-    selected.val().slice(0, 2) == '# ' &&
-    savetask.parents().filter('#pop').length != 0
-  ) {
-    const date = stringToDate(selected.val().slice(2))
-    savetask.remove()
+  if (selected.val().slice(0, 2) == '# ' &&
+    savetask.parents().filter('#pop').length != 0) {
+    $('#searchbar').val('d: ' + selected.val().slice(2))
     selected.remove()
-    select(dateToHeading(date))
+    savetask.remove()
+    $('#searchbar').focus()
+    const date = dateToHeading(
+      stringToDate($('#searchbar').val().slice(2)), false, true)
+    console.log(date);
+    select(date, true)
+    console.log(selected);
+    $('#searchbar').val('')
+    $('#searchbar').blur()
     // makes new date
     return
   }
@@ -1657,10 +1694,8 @@ function saveTask() {  // analyze format of task and create new <span> elt for i
       endindex = selected.val().length
       addspace = true
     } else endindex += index
-    if (
-      stringToDate(selected.val().slice(index + 1, endindex)) ==
-      'Invalid Date'
-    ) {
+    if (stringToDate(selected.val().slice(index + 1, endindex)) ==
+      'Invalid Date') {
       alert('invalid date entered')
       selected.val(
         selected.val().slice(0, index) +
@@ -2043,7 +2078,8 @@ function newTask(subtask) {
   if (selected[0].tagName == 'P' && selected.hasClass('in')) {
     // blank before buffer
     $(e.children()[e.children().length - 1]).before(newspan)
-  } else if (selected[0].tagName == 'SPAN' && subtask) {
+  } else if (selected[0].tagName == 'SPAN' && subtask && 
+    !isHeading(selected)) {
     // subtask
     e.append(newspan)
   } else if (['SPAN'].includes(selected[0].tagName)) {
@@ -2101,6 +2137,7 @@ function archiveTask() {
   }
  if (!selected.hasClass('complete')) {
     toggleComplete(selected)
+    new Audio('snd/pop.mp3').play()
   }
   heading.after(selected)
   // formatting
@@ -2234,6 +2271,7 @@ function timertest(ev) {
 function dragTask(evt) {
   select(evt.target)
   draggingtask = true
+  save(true, false)
   if (mobiletest()) {
     $('.nav').hide()
     return
@@ -2241,16 +2279,15 @@ function dragTask(evt) {
   //start drag
   if (selected[0].tagName == 'TEXTAREA') {
     return; // stops from dragging edited subtasks
-  } else if (stringToDate(selected.text()) != 'Invalid Date' &&
-    selected.parents().toArray().includes($('#pop')[0])) {
+  } else if (selected.hasClass('dateheading')) {
     return; // stops from reordering dates
   }
   const oldselect = selected
   // copy into test if first list
-  const selectindex = $('#flop').find('span.in').toArray()
+  const selectindex = getFrame(selected).find('span.in').toArray()
     .indexOf(selected[0])
   $('#test').empty()
-  $('#test').html($('#flop').html())
+  $('#test').html(getFrame(selected).html())
   selected = $($('#test').find('span.in').toArray()[selectindex])
   // clear current select
   if (isHeading(oldselect)) {
@@ -2282,6 +2319,7 @@ function togglefocus(collapse) {
     $('#searchbarcont').append($('#searchbarframe'))
     $('#timerentcont').append($('#timerent'))
     getFrame(selected).parent().parent().addClass('fullwidth')
+    getFrame(selected).parent().css('width', '100%')
     getFrame(selected).parent().css('height', '100%')
     getFrame(selected).parent().css('border-right', 'none')
     getFrame(selected).parent().css('border-left', 'none')
@@ -2302,6 +2340,7 @@ function togglefocus(collapse) {
     for (thing of [$('#flop'), $('#pop')]) {
       thing.parent().parent().removeClass('fullwidth')
       thing.parent().css('height', '')
+      thing.parent().css('width', '')
     }
     if (!$('#poplist').is(':visible')) {
       $('#poplist').show()
@@ -2318,9 +2357,13 @@ function togglefocus(collapse) {
 
 //dropping
 function dropTask(ev) {
+  // logs that drop succeeded so you can check for revert (jQuery hack)
+  justdropped = true
+  setTimeout(function () { justdropped = false }, 300)
   // ev: event, obj: selected
   if (!draggingtask) return
   // drops selected task
+  $('#listcontainer > span').hide()
   draggingtask = false
   let children = []
   const el = $(ev.target)
@@ -2343,7 +2386,8 @@ function dropTask(ev) {
     }
   } 
   // dropping task (according to key commands)
-  if (ev.altKey && $(ev.target).parent()[0].tagName != 'SPAN') {
+  if (ev.altKey && $(ev.target).parent()[0].tagName != 'SPAN' &&
+    !isHeading($(ev.target))) {
     if (ev.metaKey) {
       const subtasks = $(el).children().toArray().filter(
         (x) => {
@@ -2369,6 +2413,18 @@ function dropTask(ev) {
   for (i = children.length - 1; i >= 0; i--) {
     // append each child after for headings
     selected.after(children[i])
+  }
+  if (mobiletest()) {
+    if (flopscrollsave) {
+      $('#flop').scrollTop(flopscrollsave)
+    }
+    if (popscrollsave) {
+      $('#pop').scrollTop(popscrollsave)
+    }
+    flopscrollsave = undefined
+    $('#flop').removeClass('greyedout')
+    popscrollsave = undefined
+    $('#pop').removeClass('greyedout')
   }
   save()
   updateSpanDrags()
@@ -2511,6 +2567,7 @@ function toggleButs(saving) {
     $(':root').css('--butheight', '0px')
   }
   if (saving != false) save()
+  updateSizes()
 }
 
 function toggleHelp() {
@@ -2550,12 +2607,11 @@ function setStyle(style, alert) {
           $("<link id='theme' rel='stylesheet' type='text/css' href='" +
             style + "' />")
         );
-        uploadData()
-        $('#flop').scrollTop(floptop)
-        $('#pop').scrollTop($(dateToHeading(stringToDate('0d')))
-          .position().top)
-        console.log($(dateToHeading(stringToDate('0d')))
-        .position().top);
+        setTimeout(function () {
+          uploadData()
+          $('#flop').scrollTop(floptop)
+          scrollToToday()
+        }, 1000)
       }
     )
   } else if (alert != false) {
@@ -2828,8 +2884,56 @@ function setTask(type) {
 
 function clickoff(ev) {
   if (draggingtask) { 
+    setTimeout(function () {
+      draggingtask = false
+      if (!justdropped) {
+        undo()
+      }
+    }, 100)
     return 
   }
+  if (dblclicked) {
+    console.log('true');
+    if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
+      // prevents interfering with edits
+      return
+    }
+    if (ev.target.tagName == 'TEXTAREA' &&
+      $(ev.target).hasClass('selected')) {
+      if (!mobiletest()) {
+        dragsoff()
+      } else {
+        context(ev)
+      }
+    } else if ($(ev.target)[0].tagName == 'TEXTAREA') {
+      return
+    } else if (selected && 
+      selected.hasClass('in') && 
+      selected[0].tagName == 'P') {
+      newTask()
+      selected.click(function (e) { $(this).focus() })
+      setTimeout(function () { 
+        selected.trigger('click')
+      }, 200)
+    } else if ($(ev.target).hasClass('in') &&
+      ev.target.tagName != 'TEXTAREA' &&
+      !$(ev.target).hasClass('dateheading')) {
+      select($(ev.target))
+      editTask()
+    } else if (['bold', 'italic', 'bold-italic'].includes(
+      $(ev.target).attr('class'))) {
+      select($(ev.target).parent())
+      editTask()
+    } else if (($(ev.target).hasClass('selected') ||
+      $(ev.target).hasClass('unselected'))) {
+      dragsoff()
+    } else if ($(ev.target).hasClass('loads')) {
+      newlist()
+    }
+    return
+  }
+  dblclicked = true
+  setTimeout(function () { dblclicked = false }, 300)
   if (mobiletest()) {
     if ($(ev.target).hasClass('mobhandle') && !draggingtask) {
       // context menu
@@ -2846,7 +2950,6 @@ function clickoff(ev) {
     $('#flop').removeClass('greyedout')
     popscrollsave = undefined
     $('#pop').removeClass('greyedout')
-    console.log('did thing');
   }
   if ($(ev.target).attr('id') == 'popBut') {
     if (selected == undefined || getFrame(selected).attr('id') != 'pop') {
@@ -2876,7 +2979,8 @@ function clickoff(ev) {
       newTask()
     }
     selected.val('# ')
-  } else if ($(ev.target).attr('id') == 'newSubtaskBut') {
+  } else if (['newSubtaskBut', 'scheduleBut']
+    .includes($(ev.target).attr('id'))) {
     eval($(ev.target).attr('function'))
   } else if ($(ev.target).hasClass('dropdown-item') && !justclicked) {
     eval($(ev.target).attr('function'))
@@ -2922,6 +3026,10 @@ function clicked(ev) {
     stopTimer()
     $('#timerent').val('15:00')
     startTimer()
+  } else if ($(ev.target).attr('id') == 'timer10But') {
+    stopTimer()
+    $('#timerent').val('10:00')
+    startTimer()
   } else if ($(ev.target).attr('id') == 'timer5But') {
     stopTimer()
     $('#timerent').val('5:00')
@@ -2949,10 +3057,12 @@ function clicked(ev) {
     }
     startTimer()
   } else if ($(ev.target).attr('id') == 'timerStartBut') {
+    const timerval = $('#timerent').val()
+    if (!timerval.includes(':')) $('#timerent').val(timerval + ':00')
     startTimer()
   } else if ($(ev.target).attr('id') == 'timerStopBut') {
     stopTimer()
-  } else if (['newSubtaskBut'].includes($(ev.target).attr('id'))) {
+  } else if (['newSubtaskBut', 'scheduleBut'].includes($(ev.target).attr('id'))) {
     // buttons evaluated with clickoff() (for selection purposes)
     return
   } else if ($(ev.target)[0].tagName == 'BUTTON') {
@@ -3096,45 +3206,6 @@ function moveTask(direction) {
   else select()
 }
 
-function dblclick(ev) {
-  if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
-    // prevents interfering with edits
-    return
-  }
-  if (ev.target.tagName == 'TEXTAREA' &&
-    $(ev.target).hasClass('selected')) {
-    if (!mobiletest()) {
-      dragsoff()
-    } else {
-      context(ev)
-    }
-  } else if ($(ev.target)[0].tagName == 'TEXTAREA') {
-    return
-  } else if (selected && 
-    selected.hasClass('in') && 
-    selected[0].tagName == 'P') {
-    newTask()
-    selected.click(function (e) { $(this).focus() })
-    setTimeout(function () { 
-      selected.trigger('click')
-    }, 200)
-  } else if ($(ev.target).hasClass('in') &&
-    ev.target.tagName != 'TEXTAREA' &&
-    !$(ev.target).hasClass('dateheading')) {
-    select($(ev.target))
-    editTask()
-  } else if (['bold', 'italic', 'bold-italic'].includes(
-    $(ev.target).attr('class'))) {
-    select($(ev.target).parent())
-    editTask()
-  } else if (($(ev.target).hasClass('selected') ||
-    $(ev.target).hasClass('unselected'))) {
-    dragsoff()
-  } else if ($(ev.target).hasClass('loads')) {
-    newlist()
-  }
-}
-
 function unfilter(update) {
   // show everything which is filtered
   if (filtered) {
@@ -3267,25 +3338,7 @@ function keycomms(evt) {
     select()
     if (filtered) unfilter()
   } else if (evt.key == 'z' && evt.ctrlKey) {
-    // undo
-    const floptop = $('#flop').scrollTop()
-    const poptop = $('#pop').scrollTop()
-    data = JSON.parse(JSON.stringify(savedata))
-    select()
-    const oldload = Number(loadedlist)
-    $('#pop').html(data.pop)
-    $('#loads').empty()
-    for (list of data.flop) {
-      newlist(list.title, list.text)
-      $('.taskselect').removeClass('taskselect')
-    }
-    loadedlist = oldload
-    loadList()
-    dragson()
-    $(':focus').blur()
-    select()
-    $('#flop').scrollTop(floptop)
-    $('#pop').scrollTop(poptop)
+    undo()
   } else if (!selected && evt.key == 'Enter' &&
     evt.shiftKey && $(':focus').hasClass('selected')) {
     // save list
@@ -3673,7 +3726,6 @@ function loadpage(setload, oldselect, scrolls) {
     })
     $(document).on('mousedown', event, clicked)
     $(document).on('mouseup', event, clickoff)
-    $(document).on('dblclick', event, dblclick)
     $('#timer').on('click', function () {
       if (Notification.permission != 'granted') {
         Notification.requestPermission()

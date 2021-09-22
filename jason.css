@@ -7,6 +7,7 @@
   /* --background: rgb(45, 73, 88); */
   --fontweight: 100;
   --boldweight: 400;
+  --lineheight: 1.5em;
   --background: rgb(31, 40, 52);
   --bgoverlay: rgba(31, 40, 52, 0.8);
   --select: rgb(145, 163, 176);
@@ -15,12 +16,10 @@
   --textcolor: whitesmoke;
   --menufont: 'Roboto Mono', monospace;
   --bdcolor: rgba(176, 194, 212);
-  --contextcolor: rgba(0, 0, 0, 0.8);
-  --contextfontcolor: grey;
   --important: rgb(141, 175, 214);
   --maybe: rgba(141, 175, 214, 0.5);
   --event: rgba(145, 163, 176, 0.3);
   --butbackground: rgba(128, 128, 128, 0.3);
   --flopbutbackground: rgba(245, 245, 245, 0.3);
-  --indent: 1em;
+  --indent: 1.2em;
 }
