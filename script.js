@@ -3726,7 +3726,6 @@ function loadpage(setload, oldselect, scrolls) {
     } else {
       $('head').append('<link href="mobilestyle.css" rel="stylesheet">')
       $.get(data.style, function () { 
-        $('#logoimage').css('position:static')
         // behavior for initial scroll
         $(document).on('touchend', function () {
           console.log('scrolling');
