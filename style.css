@@ -650,7 +650,6 @@ span.weblink, span.deadline {
     font-size: 12px;
   }
   .container {
-    height: calc(100vh - 75px);
     border-bottom: 1px solid var(--bdcolor);
     background: var(--background);
   }

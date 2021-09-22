@@ -180,7 +180,6 @@
         </p>
       </div>
       <div id='mobilebuts'>
-
       </div>
     </div>
     <div id='listcontainer'>
@@ -207,95 +206,96 @@
       </div>
     </div>
   </div>
-  <div style='height:1000px;background-color:transparent;'></div>
-  <p id='test' style='display:none;position:absolute;'><p>
-  <p id='texttest' class='incopy'></p>
-  <nav id="context-menu">
-    <p function="editTask()" 
-    class='dropdown-item' id='context-editTask'>edit task (shift return)</p>
-    <p function="newTask()" 
-    class='dropdown-item' id='context-newTask'>new task (return)</p>
-    <p function='newTask(true)' class='dropdown-item' id='context-newSubtask'>new subtask (option return)</p>
-    <p function='deleteTask()' class='dropdown-item' id='context-deleteTask'>delete (delete)</p>
-    <p function='archiveTask()' class='dropdown-item' id='context-archiveTask'>archive (shift space)</p>
-    <p function='' class='dropdown-item' id='context-divider'>————————————</p>
-
-    <p function='moveToList()' class='dropdown-item' id='context-moveToList'>move to list</p>
-    <p function='toggleComplete()' class='dropdown-item' id='context-toggleComplete'>toggle complete (space)</p>
-    <p function='toggleImportant()' class='dropdown-item' id='context-toggleimportant'>toggle important (option i)</p>
-    <p function='toggleMaybe()' class='dropdown-item' id='context-toggleMaybe'>toggle maybe (option m)</p>
-    <p function='toggleSubtasks()' class='dropdown-item' id='context-toggleSubtasks'>toggle fold ([ or ])</p>
-    <p function='indentTask(true)' class='dropdown-item' id='context-indentTask'>indent (option ])</p>
-    <p function='indentTask(false)' class='dropdown-item' id='context-unIndentTask'>unindent (option [)</p>
-    <p function='archiveComplete()' class='dropdown-item' id='context-archiveComplete'>archive completed</p>
-    <p function='clearEmptyHeadlines()' class='dropdown-item' id='context-clearEmptyHeadlines'>clear empty</p>
-    <p function='select(dateToHeading(stringToDate("t")))' class='dropdown-item' id='context-goToToday'>go to today</p>
-
-    <p function='newlist()' class='dropdown-item' id='context-newlist'>new</p>
-    <p function='dragsoff()' class='dropdown-item' id='context-toggledrags'>edit</p>
-    <p function='deletelist()' class='dropdown-item' id='context-deletelist'>delete</p>
-    <p function='toggleFoldList()' class='dropdown-item' id='context-toggleFoldList'>toggle fold</p>
-
-    <p function='toggleHelp()' class='dropdown-item' id='context-toggleHelp'>toggle help</p>
-    <p function='toggleButs()' class='dropdown-item' id='context-toggleButs'>toggle buttons</p>
-
-    <p function='reset()' class='dropdown-item' id='context-reset'>reset</p>
-    <p function='switchUser()' class='dropdown-item' id='context-switchUser'>sign out</p>
-    <p function='upload()' class='dropdown-item' id='context-upload'>upload backup</p>
-    <p function='download()' class='dropdown-item' id='context-download'>download backup</p>
-    <p function='togglePlay()' class='dropdown-item' id='context-togglePlay'>toggle sounds</p>
-
-    <p function='setStyle("default.css")' class='dropdown-item' id='context-styleDefault'>style: space</p>
-    <p function='setStyle("jason.css")' class='dropdown-item' id='context-styleJason'>style: water</p>
-    <p function='setStyle("light.css")' class='dropdown-item' id='context-styleLight'>style: sky</p>
-    <p function='setStyle("pink.css")' class='dropdown-item' id='context-stylePink'>style: fire</p>
-    <p function='setStyle("earth.css")' class='dropdown-item' id='context-styleGreen'>style: earth</p>
-
-    <p function='toggleHeadingAlign()' class='dropdown-item' id='context-toggleHeadingAlign'>toggle heading centering</p>
-    <p function='toggleWeekdayFormat()' class='dropdown-item' id='context-weekdaysToggle'>weekdays: M/Mon</p>
-    <p function='changeDateFormat("dd.mm.yyyy")' class='dropdown-item' id='context-changeDate1'>dates: dd.mm.yyyy</p>
-    <p function='changeDateFormat("mm/dd/yyyy")' class='dropdown-item' id='context-changeDate2'>dates: mm/dd/yyyy</p>
-    <p function='changeDateFormat("yyyy-mm-dd")' class='dropdown-item' id='context-changeDate3'>dates: yyyy-mm-dd</p>
-
-  </nav>
-  <nav id='settype-menu'>
-    <p class='dropdown-item' title='set h1' function='setTask("h1")'># h1</p>
-    <p class='dropdown-item'  title='set h2' function='setTask("h2")'>## h2</p>
-    <p class='dropdown-item'  title='set h3' function='setTask("h3")'>### h3</p>
-    <p class='dropdown-item'  title='set event' function='setTask("event")'>@ event</p>
-    <p class='dropdown-item' title='set list' function='setTask("list")'>• list</p>
-    <p class='dropdown-item' title='set note' function='setTask("note")'>- note</p>
-    <p class='dropdown-item' title='set repeat' function='setTask("repeat")'>~ repeat</p>
-    <p class='dropdown-item' title='set deadline' function='setTask("deadline")'>> deadline</p>
-    <p class='dropdown-item' title='toggle important' function='toggleImportant()'>! important</p>
-    <p class='dropdown-item' title='toggle maybe' function='toggleMaybe()'>? maybe</p>
-    <p class='dropdown-item' title='set blank' function='setTask("")'>_ blank</p>
-  </nav>
-  <div id='tutorial' style='display:none'>
-    <span class='banner'>tutorial <button style='top:-1.5em;position:relative;' onclick='$("#tutorial").hide()'>done</button></span>
-    <br><br><br>
-    <span class='h1'>lists</span>
-    <video controls class='tutorial-vid'><source  src="tutorial/new-list.m4v" type="video/mp4"></video>
-    <span class='h1'>tasks</span>
-    <video controls class='tutorial-vid'><source  src="tutorial/new-task.m4v" type="video/mp4"></video>
-    <span class='h1'>headings</span>
-    <video controls class='tutorial-vid'><source  src="tutorial/headings.m4v" type="video/mp4"></video>
-    <span class='h1'>subtasks</span>
-    <video controls class='tutorial-vid'><source  src="tutorial/subtasks.m4v" type="video/mp4"></video>
-    <span class='h1'>dragging</span>
-    <video controls class='tutorial-vid'><source  src="tutorial/drags.m4v" type="video/mp4"></video>
-    <span class='h1'>types</span>
-    <video controls class='tutorial-vid'><source  src="tutorial/format-tasks.m4v" type="video/mp4"></video>
-    <span class='h1'>styles</span>
-    <video controls class='tutorial-vid'><source  src="tutorial/inline-formatting.m4v" type="video/mp4"></video>
-    <span class='h1'>dates</span>
-    <video controls class='tutorial-vid'><source  src="tutorial/search.m4v" type="video/mp4"></video>
-    <span class='h1'>timer</span>
-    <video controls class='tutorial-vid'><source  src="tutorial/timer.m4v" type="video/mp4"></video>
-    <span class='h1'>buttons</span>
-    <video controls class='tutorial-vid'><source  src="tutorial/buttons.m4v" type="video/mp4"></video>
-    <span class='h1'>mobile</span>
-    <video controls class='tutorial-vid'><source  src="tutorial/mobile.m4v" type="video/mp4"></video>
+  <div style='float:left'>
+    <p id='test' style='display:none;position:absolute;'><p>
+    <p id='texttest' class='incopy' style='display:none;'></p>
+    <nav id="context-menu">
+      <p function="editTask()" 
+      class='dropdown-item' id='context-editTask'>edit task (shift return)</p>
+      <p function="newTask()" 
+      class='dropdown-item' id='context-newTask'>new task (return)</p>
+      <p function='newTask(true)' class='dropdown-item' id='context-newSubtask'>new subtask (option return)</p>
+      <p function='deleteTask()' class='dropdown-item' id='context-deleteTask'>delete (delete)</p>
+      <p function='archiveTask()' class='dropdown-item' id='context-archiveTask'>archive (shift space)</p>
+      <p function='' class='dropdown-item' id='context-divider'>————————————</p>
+  
+      <p function='moveToList()' class='dropdown-item' id='context-moveToList'>move to list</p>
+      <p function='toggleComplete()' class='dropdown-item' id='context-toggleComplete'>toggle complete (space)</p>
+      <p function='toggleImportant()' class='dropdown-item' id='context-toggleimportant'>toggle important (option i)</p>
+      <p function='toggleMaybe()' class='dropdown-item' id='context-toggleMaybe'>toggle maybe (option m)</p>
+      <p function='toggleSubtasks()' class='dropdown-item' id='context-toggleSubtasks'>toggle fold ([ or ])</p>
+      <p function='indentTask(true)' class='dropdown-item' id='context-indentTask'>indent (option ])</p>
+      <p function='indentTask(false)' class='dropdown-item' id='context-unIndentTask'>unindent (option [)</p>
+      <p function='archiveComplete()' class='dropdown-item' id='context-archiveComplete'>archive completed</p>
+      <p function='clearEmptyHeadlines()' class='dropdown-item' id='context-clearEmptyHeadlines'>clear empty</p>
+      <p function='select(dateToHeading(stringToDate("t")))' class='dropdown-item' id='context-goToToday'>go to today</p>
+  
+      <p function='newlist()' class='dropdown-item' id='context-newlist'>new</p>
+      <p function='dragsoff()' class='dropdown-item' id='context-toggledrags'>edit</p>
+      <p function='deletelist()' class='dropdown-item' id='context-deletelist'>delete</p>
+      <p function='toggleFoldList()' class='dropdown-item' id='context-toggleFoldList'>toggle fold</p>
+  
+      <p function='toggleHelp()' class='dropdown-item' id='context-toggleHelp'>toggle help</p>
+      <p function='toggleButs()' class='dropdown-item' id='context-toggleButs'>toggle buttons</p>
+  
+      <p function='reset()' class='dropdown-item' id='context-reset'>reset</p>
+      <p function='switchUser()' class='dropdown-item' id='context-switchUser'>sign out</p>
+      <p function='upload()' class='dropdown-item' id='context-upload'>upload backup</p>
+      <p function='download()' class='dropdown-item' id='context-download'>download backup</p>
+      <p function='togglePlay()' class='dropdown-item' id='context-togglePlay'>toggle sounds</p>
+  
+      <p function='setStyle("default.css")' class='dropdown-item' id='context-styleDefault'>style: space</p>
+      <p function='setStyle("jason.css")' class='dropdown-item' id='context-styleJason'>style: water</p>
+      <p function='setStyle("light.css")' class='dropdown-item' id='context-styleLight'>style: sky</p>
+      <p function='setStyle("pink.css")' class='dropdown-item' id='context-stylePink'>style: fire</p>
+      <p function='setStyle("earth.css")' class='dropdown-item' id='context-styleGreen'>style: earth</p>
+  
+      <p function='toggleHeadingAlign()' class='dropdown-item' id='context-toggleHeadingAlign'>toggle heading centering</p>
+      <p function='toggleWeekdayFormat()' class='dropdown-item' id='context-weekdaysToggle'>weekdays: M/Mon</p>
+      <p function='changeDateFormat("dd.mm.yyyy")' class='dropdown-item' id='context-changeDate1'>dates: dd.mm.yyyy</p>
+      <p function='changeDateFormat("mm/dd/yyyy")' class='dropdown-item' id='context-changeDate2'>dates: mm/dd/yyyy</p>
+      <p function='changeDateFormat("yyyy-mm-dd")' class='dropdown-item' id='context-changeDate3'>dates: yyyy-mm-dd</p>
+  
+    </nav>
+    <nav id='settype-menu'>
+      <p class='dropdown-item' title='set h1' function='setTask("h1")'># h1</p>
+      <p class='dropdown-item'  title='set h2' function='setTask("h2")'>## h2</p>
+      <p class='dropdown-item'  title='set h3' function='setTask("h3")'>### h3</p>
+      <p class='dropdown-item'  title='set event' function='setTask("event")'>@ event</p>
+      <p class='dropdown-item' title='set list' function='setTask("list")'>• list</p>
+      <p class='dropdown-item' title='set note' function='setTask("note")'>- note</p>
+      <p class='dropdown-item' title='set repeat' function='setTask("repeat")'>~ repeat</p>
+      <p class='dropdown-item' title='set deadline' function='setTask("deadline")'>> deadline</p>
+      <p class='dropdown-item' title='toggle important' function='toggleImportant()'>! important</p>
+      <p class='dropdown-item' title='toggle maybe' function='toggleMaybe()'>? maybe</p>
+      <p class='dropdown-item' title='set blank' function='setTask("")'>_ blank</p>
+    </nav>
+    <div id='tutorial' style='display:none'>
+      <span class='banner'>tutorial <button style='top:-1.5em;position:relative;' onclick='$("#tutorial").hide()'>done</button></span>
+      <br><br><br>
+      <span class='h1'>lists</span>
+      <video controls class='tutorial-vid'><source  src="tutorial/new-list.m4v" type="video/mp4"></video>
+      <span class='h1'>tasks</span>
+      <video controls class='tutorial-vid'><source  src="tutorial/new-task.m4v" type="video/mp4"></video>
+      <span class='h1'>headings</span>
+      <video controls class='tutorial-vid'><source  src="tutorial/headings.m4v" type="video/mp4"></video>
+      <span class='h1'>subtasks</span>
+      <video controls class='tutorial-vid'><source  src="tutorial/subtasks.m4v" type="video/mp4"></video>
+      <span class='h1'>dragging</span>
+      <video controls class='tutorial-vid'><source  src="tutorial/drags.m4v" type="video/mp4"></video>
+      <span class='h1'>types</span>
+      <video controls class='tutorial-vid'><source  src="tutorial/format-tasks.m4v" type="video/mp4"></video>
+      <span class='h1'>styles</span>
+      <video controls class='tutorial-vid'><source  src="tutorial/inline-formatting.m4v" type="video/mp4"></video>
+      <span class='h1'>dates</span>
+      <video controls class='tutorial-vid'><source  src="tutorial/search.m4v" type="video/mp4"></video>
+      <span class='h1'>timer</span>
+      <video controls class='tutorial-vid'><source  src="tutorial/timer.m4v" type="video/mp4"></video>
+      <span class='h1'>buttons</span>
+      <video controls class='tutorial-vid'><source  src="tutorial/buttons.m4v" type="video/mp4"></video>
+      <span class='h1'>mobile</span>
+      <video controls class='tutorial-vid'><source  src="tutorial/mobile.m4v" type="video/mp4"></video>
+    </div>
   </div>
   <!-- sounds -->
   <script type='text/javascript' src='script.js'></script>
