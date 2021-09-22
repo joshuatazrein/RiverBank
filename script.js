@@ -3723,21 +3723,6 @@ function loadpage(setload, oldselect, scrolls) {
     if (!mobiletest()) {
       $.get(data.style, 
         function () { $('#logoimage').remove() })
-    } else {
-      $('head').append('<link href="mobilestyle.css" rel="stylesheet">')
-      $.get(data.style, function () { 
-        $('#logoimage').css('position:static')
-        // behavior for initial scroll
-        $(document).on('touchend', function () {
-          console.log('scrolling');
-          setTimeout(function() { 
-            $('#logoimage').remove() 
-            resetdoc()
-            $('body').css('overflow', 'hidden')
-          }, 500)
-          document.off('touchend')
-        })
-      })
     }
     if (data.weekdays == 'M') {
       weekdaysStr = { 0: 'U', 1: 'M', 2: 'T', 3: 'W', 4: 'R', 5: 'F', 6: 'S' }
@@ -3773,6 +3758,19 @@ function loadpage(setload, oldselect, scrolls) {
     if (window.innerWidth < 600) { 
       if (!$('#leftcol').hasClass('collapsed')) 
       togglecollapse()
+    }
+    if (mobiletest()) {
+      $('head').append('<link href="mobilestyle.css" rel="stylesheet">')
+      // behavior for initial scroll
+      $(document).on('touchend', function () {
+        console.log('scrolling');
+        setTimeout(function() { 
+          $('#logoimage').remove() 
+          resetdoc()
+          $('body').css('overflow', 'hidden')
+        }, 500)
+        document.off('touchend')
+      })
     }
   }
   if ($('#theme').attr('href') != data.style) {
