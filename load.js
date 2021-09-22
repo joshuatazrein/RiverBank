@@ -23,7 +23,8 @@ function getCookie(cname) {
 
 function load() {
   // tries to load current cookie's data; if not, redirects to welcome
-  if (!navigator.onLine || window.location.href.includes('file')) {
+  if (!navigator.onLine || window.location.href.includes('file') ||
+    window.parent.location.href.includes('welcome')) {
     if (!navigator.onLine) {
       alert('No connection detected; saving locally')
       offline = true
@@ -33,19 +34,22 @@ function load() {
       offlinemode = true;
     }
     // offline mode
-    try {
-      data = JSON.parse(localStorage.getItem('data'))
-      $('head').append(
-        $("<link rel='stylesheet' type='text/css' href='" +
-        data.style + "' />")
-      );
-    } catch (err) {
-      data = JSON.parse(JSON.stringify(resetstring))
-      $('head').append(
-        $("<link rel='stylesheet' type='text/css' href='" +
-        data.style + "' />")
-      );
+    if (window.parent.location.href.includes('welcome')) {
+      // welcome mode; set to demo
+      console.log('yes');
+      data = JSON.parse(resetstring)
+    } else {
+      try {
+        data = JSON.parse(localStorage.getItem('data'))
+        
+      } catch (err) {
+        data = JSON.parse(resetstring)
+      }
     }
+    $('head').append(
+      $("<link rel='stylesheet' type='text/css' href='" +
+      data.style + "' />")
+    );
     if (data.weekdays == 'M') {
       weekdaysStr = {0:'U', 1:'M', 2:'T', 3:'W', 4:'R', 5:'F', 6:'S'}
     } else if (data.weekdays == 'Mon') {

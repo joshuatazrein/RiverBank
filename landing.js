@@ -104,8 +104,11 @@ function newUser() {
 
 function setTutorialHeight() {
   if (window.innerWidth > 600) { 
-    $("#tutorial").css("height", 
-      Math.max($("#welcome").height(), window.innerHeight - 110) + "px")
+    const height = window.innerHeight - 110 - $('#login').height()
+    $("#tutorial").css("height", height - 50 + 'px')
+    $('#text').css('height', height + 'px')
+  } else {
+    $('#tutorial, #text').css('height', '')
   }
 }
 

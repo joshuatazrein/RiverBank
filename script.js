@@ -3547,8 +3547,11 @@ function tutorial() {
 }
 
 function uploadData(reloading) {
-  if (getCookie('user') == '') return // no user loaded (for demo)
-  display('--- upload started ---')
+  if (window.parent.location.href.includes('welcome')) {
+    console.log('true');
+    return // for demo
+  }
+  display('--- upload started ---') 
   if (JSON.stringify(data) == prevupload) {
     display('identical');
     return
@@ -3644,6 +3647,10 @@ function diffsLog(oldString, newString) {
 }
 
 function reload() {
+  if (window.parent.location.href.includes('welcome')) {
+    reload2()
+    return
+  }
   display('--- download started ---');
   if (!navigator.onLine || offlinemode) {
     // skip upload
@@ -3695,9 +3702,9 @@ function reload2() {
 
 function loadpage(setload, oldselect, scrolls) {
   // right after signing in
-  try {
+  if (!window.location.href.includes('welcome')) {
     $('#username').text(getCookie('user'))
-  } catch (err) { /* no user */ }
+  }
   if (setload != false) {
     if (window.innerWidth < 600) mobile = true
     else if (window.innerWidth < 600) mobile = false

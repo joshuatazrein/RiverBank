@@ -35,6 +35,7 @@ body {
   margin: 0;
   background-color: var(--background);
   color: var(--textcolor);
+  overflow: hidden;
 }
 
 * {
@@ -65,6 +66,8 @@ input {
   font: inherit;
   background-color: var(--background);
   color: var(--textcolor);
+  display: inline-block;
+  width: 40%;
 }
 
 button {
@@ -85,41 +88,74 @@ button:hover, button.clicked {
   height: 0.7em;
 }
 
-#tutorial {
+/* DIVS */
+
+#welcome {
   width: 50%;
-  background-color: var(--background);
-  color: white;
-  overflow: auto;
   float: left;
   padding: 0 15px;
+}
+
+#main {
+  margin-top: 96px;
+}
+
+#tutorial {
+  height: 100%;
+  width: 50%;
+  float: left;
+}
+
+.tutorial-frame {
+  width: 100%;
+  height: 100%;
+  background-color: var(--background);
+  color: white;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 15px;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  height: calc(100vh - 110px);
+  flex-direction: column;
+  overflow-x: scroll;
+}
+
+#text {
+  height: 100%;
+  overflow-y: auto;
+  width: 50%;
+  float: left;
+}
+
+#demo {
+  width: 50%;
+  float: left;
 }
 
 .banner {
   width: 100%;
   text-align: center;
   font-family: inherit;
-  letter-spacing: calc(6vw - 0.8em);
-  font-size: 150%;
+  letter-spacing: 4px;
+  font-size: 100%;
   color: white;
   background: #000;
   margin-top: 24px;
 }
 
 .tutorial-vid { 
-  width: 50%;
-  padding: 0 10px;
-  max-width: 400px;
-  /* margin-top: 35px; */
+  display: block;
+  margin: 0 5px;
 }
 
-/* .tutorial-vid video {
-  height: 110%;
-  margin-top: -15%;
-} */
+video {
+  width: 100%;
+}
+
+.demoframe {
+  width: 100%;
+  height: calc(100vh - 100px - 1.5em);
+  border: none;
+}
 
 p {
   margin: 0;
@@ -157,34 +193,66 @@ span.h1 {
   margin: 0 auto;
 }
 
-#welcome {
-  width: 50%;
-  float: left;
-  padding: 0 15px;
+#demobut {
+  display: none;
 }
 
-#main {
-  margin-top: 96px;
+@media only screen and (max-width: 1200px) and (min-width: 600px) {
+  #welcome, #demo {
+    width: 100%;
+  }
+  #demobut {
+    display: inline-block;
+  }
+  body {
+    overflow: visible;
+  }
+  .tutorial-vid {
+    width: 50%;
+    float: left;
+    margin: 0;
+    padding: 0 5px;
+  }
+  .tutorial-frame {
+    display: block;
+  }
+  #demo {
+    margin-top: 3.5em;
+  }
+
 }
 
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 600px) {
   body {
     font: 18px var(--font), serif;
+    overflow: visible;
+  }
+  #demo {
+    margin-top: 5em;
+  }
+  #demobut {
+    display: inline-block;
   }
   #main {
     margin-top: 14vw;
   }
-  #tutorial, #welcome {
+  #tutorial, #welcome, #text, #demo {
     width: 100%;
   }
   #tutorial {
-    height: fit-content !important;
+    height: 300px;
+  }
+  .tutorial-frame {
+    flex-direction: row;
+    overflow-y: hidden;
   }
   .tutorial-vid {
-    padding: 0 5px;
+    padding: 0 2px;
+    width: 400px;
   }
   .tutorial-vid .h1 {
     font-size: 8vw;
+    width: 200px;
   }
   .title {
     font-size: 7vw;
@@ -194,6 +262,10 @@ span.h1 {
   .banner {
     letter-spacing: calc((100vw - 200px) / 8);
     font-size: 36px;
+  }
+  .demoframe {
+    height: calc(100vh - 100px - 1.5em);
+    margin-bottom: 0;
   }
 }
 
