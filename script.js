@@ -78,7 +78,7 @@ function mobiletest() {
 
 function resetdoc() {
   if (mobiletest()) {
-    $(document).scrollTop(100)
+    $(document).scrollTop(window.innerHeight)
   } else {
     $(document).scrollTop(0)
   }
