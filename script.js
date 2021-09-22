@@ -3762,13 +3762,14 @@ function loadpage(setload, oldselect, scrolls) {
     if (mobiletest()) {
       $('head').append('<link href="mobilestyle.css" rel="stylesheet">')
       // behavior for initial scroll
-      $(document).on('scroll', function () {
+      $(document).on('touchend', function () {
         console.log('scrolling');
         $('#logoimage').animate(
           {opacity: 0}, 500)
         setTimeout(function() { $('#logoimage').remove() }, 500)
         $('body').css('overflow', 'hidden')
         resetdoc()
+        document.off('touchend')
       })
     }
   }
