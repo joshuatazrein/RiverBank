@@ -3767,8 +3767,8 @@ function loadpage(setload, oldselect, scrolls) {
         $('#logoimage').animate(
           {opacity: 0}, 500)
         setTimeout(function() { $('#logoimage').remove() }, 500)
-        $('body').css('overflow', 'hidden')
-        resetdoc()
+        // $('body').css('overflow', 'hidden')
+        // resetdoc()
         document.off('touchend')
       })
     }
