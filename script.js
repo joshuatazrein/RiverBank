@@ -3730,8 +3730,8 @@ function loadpage(setload, oldselect, scrolls) {
         $(document).on('touchend', function () {
           console.log('scrolling');
           setTimeout(function() { 
-            resetdoc()
             $('#logoimage').remove() 
+            resetdoc()
             $('body').css('overflow', 'hidden')
           }, 500)
           document.off('touchend')
