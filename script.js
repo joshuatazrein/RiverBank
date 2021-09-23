@@ -80,6 +80,19 @@ function mobiletest() {
 function resetdoc() {
   $(document).scrollTop(0)
   $(document.body).css('zoom', "100%")
+  document.firstElementChild.style.zoom = "reset";
+  if (mobiletest()) {
+    if (flopscrollsave) {
+      $('#flop').scrollTop(flopscrollsave)
+    }
+    if (popscrollsave) {
+      $('#pop').scrollTop(popscrollsave)
+    }
+    flopscrollsave = undefined
+    $('#flop').removeClass('greyedout')
+    popscrollsave = undefined
+    $('#pop').removeClass('greyedout')
+  }
 }
 
 //# TIMER
@@ -469,10 +482,6 @@ function updateSizes() {
       $(list).css('overflow-y', 'hidden')
     }
   }
-  $('#flopbuts, #popbuts').css('width',
-    String(
-    ($('.rendered:visible').width() / window.innerWidth) * 100) +
-    'vw')
   if (window.innerWidth > 600 && mobile) {
     location.reload()
   } else if (window.innerWidth < 600 && !mobile) {
@@ -2944,6 +2953,7 @@ function clickoff(ev) {
       draggingtask = false
       if (!justdropped) {
         undo()
+        resetdoc()
       }
     }, 100)
     return 
@@ -2990,24 +3000,11 @@ function clickoff(ev) {
   }
   dblclicked = true
   setTimeout(function () { dblclicked = false }, 300)
-  if (mobiletest()) {
-    if ($(ev.target).hasClass('mobhandle') && !draggingtask) {
-      // context menu
-      select($(ev.target).parent(), false)
-      context(ev, true)
-    }
-    if (flopscrollsave) {
-      $('#flop').scrollTop(flopscrollsave)
-    }
-    if (popscrollsave) {
-      $('#pop').scrollTop(popscrollsave)
-    }
-    flopscrollsave = undefined
-    $('#flop').removeClass('greyedout')
-    popscrollsave = undefined
-    $('#pop').removeClass('greyedout')
-  }
-  if ($(ev.target).attr('id') == 'popBut') {
+  if (mobiletest() && $(ev.target).hasClass('mobhandle') && !draggingtask) {
+    // context menu
+    select($(ev.target).parent(), false)
+    context(ev, true)
+  } else if ($(ev.target).attr('id') == 'popBut') {
     if (selected == undefined || getFrame(selected).attr('id') != 'pop') {
       select(dateToHeading(stringToDate('0d')), true)
     }
@@ -3048,7 +3045,11 @@ function clickoff(ev) {
 }
 
 function addTime(time) {
-  timer.stop()
+  if ($('#timerent').val().includes('-')) {
+    stopTimer()
+  } else {
+    timer.stop()
+  }
   if ($('#timerent').val().split(':').length > 1) {
     $('#timerent').val(
       String(Number($('#timerent').val().split(':')[0]) + time) +
@@ -3760,7 +3761,11 @@ function loadpage(setload, oldselect, scrolls) {
     )
     if (!mobiletest()) {
       $.get(data.style, 
-        function () { $('#logoimage').remove() })
+        function () { 
+          $('#logoimage').animate({opacity: 0}, 500)
+          setTimeout(function() { $('#logoimage').remove() }, 500)
+        }
+      )
     }
     if (data.weekdays == 'M') {
       weekdaysStr = { 0: 'U', 1: 'M', 2: 'T', 3: 'W', 4: 'R', 5: 'F', 6: 'S' }

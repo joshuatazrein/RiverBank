@@ -30,12 +30,14 @@ button {
   border-radius: 6px;
   border: none;
   padding: 4px;
-  min-width: 30px;
+  /* width: 30px; */
+  min-width: 25px;
 }
 
 #leftcol button {
   width: 30px;
-  max-width: calc(25% - 4px);
+  max-width: calc(25% - 6px);
+  min-width: 0px;
   margin: 2px;
 }
 
@@ -67,7 +69,7 @@ button {
   background-color: var(--bgoverlay);
   position: absolute;
   z-index: 2;
-  width: 100%;
+  width: calc(100% - 5px);
   margin-left: 1px;
   border-radius: 3px;
   margin-top: 1px;
@@ -249,6 +251,7 @@ p.dropdown-item {
   background-color: inherit;
   border-right: 1px solid var(--bdcolor);
   border-left: 1px solid var(--bdcolor);
+  position: relative;
 }
 
 #poplist {
@@ -257,6 +260,7 @@ p.dropdown-item {
   padding: 1px;
   float: left;
   background-color: inherit;
+  position: relative;
 }
 
 #help {
@@ -646,6 +650,9 @@ span.weblink, span.deadline {
 /* # MOBILE */
 
 @media only screen and (max-width: 600px) {
+  :root {
+    --butwidth: 35px;
+  }
   #help {
     height: 30%;
     overflow-wrap: break-word;
@@ -664,11 +671,15 @@ span.weblink, span.deadline {
     width: calc(50vw);
   }
   #listcontainer.fullwidth {
-    width: calc(100vw - 35px) !important;
+    width: calc(100vw - var(--butwidth)) !important;
   }
   .collapsed {
     display: block;
-    margin-left: calc(-50vw + 35px);
+    margin-left: calc(-50vw + var(--butwidth));
+  }
+  #flopbuts button, #popbuts button {
+    height: calc(var(--butwidth) - 5px);
+    min-width: calc(var(--butwidth) - 5px);
   }
   #floplist, #poplist {
     width: 100%;
@@ -706,13 +717,13 @@ span.weblink, span.deadline {
   }
   #desktopbuts, #help {
     float: left;
-    width: calc(100% - 35px);
+    width: calc(100% - var(--butwidth));
   }
   #lists {
     width: calc(100% + 5px);
   }
   #mobilebuts {
-    width: 35px;
+    width: var(--butwidth);
     float: left;
     display: flex;
     flex-direction: column;
@@ -722,6 +733,12 @@ span.weblink, span.deadline {
     background-color: transparent;
     border-left: 1px solid var(--bdcolor);
     height: 100vh;
+  }
+  #mobilebuts button {
+    width: calc(var(--butwidth) - 5px) !important;
+    height: calc(var(--butwidth) - 5px) !important;
+    /* min-width: var(--butwidth); */
+    max-width: var(--butwidth);
   }
   input, #searchbarframe {
     font-size: 24px;
