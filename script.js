@@ -1302,6 +1302,14 @@ function updateSpanDrags() {
     $('span.in').prepend(
       '<span class="mobhandle"></span>')
     $('span.in').attr('draggable', 'false')
+    $('span.in').toArray().forEach(function (x) {
+      try { $(x).draggable('destroy') }
+      catch (err) { console.log('draggable failed: ' + $(x).text()) }
+    })
+    $('span.in').toArray().forEach(function (x) {
+      try { $(x).droppable('destroy') }
+      catch (err) { console.log('droppable failed: ' + $(x).text()) }
+    })
     return
     $('span.in:not(.dateheading)').draggable({
       handle: '.mobhandle',
