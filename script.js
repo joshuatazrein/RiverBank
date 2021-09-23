@@ -1302,17 +1302,14 @@ function updateSpanDrags() {
     $('span.in').prepend(
       '<span class="mobhandle"></span>')
     $('span.in').attr('draggable', 'false')
-    $('span.in').toArray().forEach(function (x) {
-      try { $(x).draggable('destroy') }
-      catch (err) { console.log('draggable failed: ' + $(x).text()) }
-    })
-    $('span.in').toArray().forEach(function (x) {
-      try { $(x).droppable('destroy') }
-      catch (err) { console.log('droppable failed: ' + $(x).text()) }
-    })
-    $('.ui-draggable-handle').removeClass('ui-draggable-handle')
-    $('.ui-droppable').removeClass('ui-droppable')
-    return
+    // $('span.in').toArray().forEach(function (x) {
+    //   try { $(x).draggable('destroy') }
+    //   catch (err) { console.log('draggable failed: ' + $(x).text()) }
+    // })
+    // $('span.in').toArray().forEach(function (x) {
+    //   try { $(x).droppable('destroy') }
+    //   catch (err) { console.log('droppable failed: ' + $(x).text()) }
+    // })
     $('span.in:not(.dateheading)').draggable({
       handle: '.mobhandle',
       containment: 'window',
@@ -1337,6 +1334,8 @@ function updateSpanDrags() {
     $('span.in').focusout(function() {
       saveTask()
     })
+    $('.ui-draggable-handle').removeClass('ui-draggable-handle')
+    $('.ui-droppable').removeClass('ui-droppable')
   } else {
     $('.mobhandle').remove()
     $('span.in:not(.dateheading)').draggable({
