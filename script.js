@@ -3690,6 +3690,9 @@ function diffsLog(oldString, newString) {
 }
 
 function reload() {
+  $('body').prepend("<div id='logoimage' class='show'><img src='logo.png'></div>")
+  $('#logoimage').css('opacity', '0')
+  $('#logoimage').animate({opacity: 0.1}, 500)
   if (window.parent.location.href.includes('welcome')) {
     reload2()
     return
@@ -3904,7 +3907,12 @@ function loadpage(setload, oldselect, scrolls) {
     $(loads[loadedlist]).blur()
   }
   updateSizes()
-  display('loaded')
+  if (setload == false) {
+    // remove image after reload
+    // $('#logoimage').stop(true)
+    $('#logoimage').animate({opacity: 0}, 500)
+    setTimeout(function() { $('#logoimage').remove() }, 500)
+  }
 }
 
 function scrollToToday() {
