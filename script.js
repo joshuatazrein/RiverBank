@@ -1302,14 +1302,6 @@ function updateSpanDrags() {
     $('span.in').prepend(
       '<span class="mobhandle"></span>')
     $('span.in').attr('draggable', 'false')
-    // $('span.in').toArray().forEach(function (x) {
-    //   try { $(x).draggable('destroy') }
-    //   catch (err) { console.log('draggable failed: ' + $(x).text()) }
-    // })
-    // $('span.in').toArray().forEach(function (x) {
-    //   try { $(x).droppable('destroy') }
-    //   catch (err) { console.log('droppable failed: ' + $(x).text()) }
-    // })
     $('span.in:not(.dateheading)').draggable({
       handle: '.mobhandle',
       containment: 'window',
@@ -1329,10 +1321,6 @@ function updateSpanDrags() {
         mobileDragOver(event)
         $('#listcontainer > span').removeClass('in')
       },
-    })
-    $('span.in').off('focusout')
-    $('span.in').focusout(function() {
-      saveTask()
     })
     $('.ui-draggable-handle').removeClass('ui-draggable-handle')
     $('.ui-droppable').removeClass('ui-droppable')
@@ -2091,6 +2079,11 @@ function editTask() {
       $(this).focus() 
       console.log($(this), 'yes');
     });
+    // not working
+    // selected.blur(function (e) {
+    //   alert("blur")
+    //   saveTask()
+    // })
   }
 }
 
@@ -2415,6 +2408,11 @@ function togglefocus(collapse) {
 //dropping
 function dropTask(ev) {
   // logs that drop succeeded so you can check for revert (jQuery hack)
+  if ((isHeading(selected) && isSubtask($(ev.target))) ||
+    isHeading(selected) && ev.altKey) {
+    // can't drop headings as subtasks
+    return
+  }
   justdropped = true
   setTimeout(function () { justdropped = false }, 300)
   // ev: event, obj: selected

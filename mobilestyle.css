@@ -33,10 +33,6 @@ span span.mobhandle {
 span.in {
   padding-right: 40px;
 }
-.rendered > span.in {
-  margin-right: 20px;
-  width: calc(100% - 20px);
-}
 span.in span.in {
   width: calc(100% + 5px + 40px - var(--indent));
 }
