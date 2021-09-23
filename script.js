@@ -1310,6 +1310,8 @@ function updateSpanDrags() {
       try { $(x).droppable('destroy') }
       catch (err) { console.log('droppable failed: ' + $(x).text()) }
     })
+    $('.ui-draggable-handle').removeClass('ui-draggable-handle')
+    $('.ui-droppable').removeClass('ui-droppable')
     return
     $('span.in:not(.dateheading)').draggable({
       handle: '.mobhandle',
