@@ -28,6 +28,7 @@ var dragtimer
 var mobile
 var draggingtask
 var justdropped
+var justcollapsed
 var linestarts = {
   '# ': 'h1',
   '## ': 'h2',
@@ -85,8 +86,12 @@ function resetdoc() {
 var timer = new Timer({
   tick: 1,
   ontick: function (sec) {
-    let minutes = Math.floor(sec / 60000); // minutes
-    let secs = Math.ceil((sec - (Math.floor(sec / 60000) * 60000)) / 1000)
+    let minutes = Math.floor((sec) / 60000); // minutes
+    let secs = Math.ceil((sec - (minutes * 60000)) / 1000)
+    if (secs == 60) {
+      minutes += 1
+      secs = 0
+    }
     $('#timerent').val(String(minutes) + ':' +
       String(secs).padStart(2, 0))
   },
@@ -575,10 +580,14 @@ function clean() {
 function undo() {
   if (!savedata) return
   // undo
+  let oldselect
+  if (selected) {
+    oldselect = [getFrame(selected), 
+      getFrame(selected).find('span.in').toArray().indexOf(selected[0])]
+  }
   const floptop = $('#flop').scrollTop()
   const poptop = $('#pop').scrollTop()
   data = JSON.parse(JSON.stringify(savedata))
-  select()
   const oldload = Number(loadedlist)
   $('#pop').html(data.pop)
   $('#loads').empty()
@@ -589,9 +598,11 @@ function undo() {
   loadedlist = oldload
   loadList(false)
   dragson(false)
-  select()
   $('#flop').scrollTop(floptop)
   $('#pop').scrollTop(poptop)
+  if (oldselect) {
+    select(oldselect[0].find('span.in')[oldselect[1]])
+  }
 }
 
 // Storing data:
@@ -845,9 +856,14 @@ function stringToDate(string, weekday, future) {
     } else {
       datestring = string
     }
+    const today = new Date()
     if (data.dateSplit == 'dd.mm.yyyy') {
       const list = datestring.split('.')
       date.setDate(list[0])
+      if (date.getDate() < today.getDate()) {
+        // goes to earliest future occurrence
+        date.setMonth(date.getMonth() + 1)
+      }
       if (list.length >= 2) {
         date.setMonth(list[1] - 1)
       }
@@ -862,6 +878,10 @@ function stringToDate(string, weekday, future) {
       const list = datestring.split('/')
       if (list.length == 1) {
         date.setDate(list[0])
+        if (date.getDate() < today.getDate()) {
+          // goes to earliest future occurrence
+          date.setMonth(date.getMonth() + 1)
+        }
       } else {
         date.setMonth(list[0] - 1)
         date.setDate(list[1])
@@ -877,6 +897,10 @@ function stringToDate(string, weekday, future) {
       const list = datestring.split('-')
       if (list.length == 1) {
         date.setDate(list[0])
+        if (date.getDate() < today.getDate()) {
+          // goes to earliest future occurrence
+          date.setMonth(date.getMonth() + 1)
+        }
       } else if (list.length == 2) {
         date.setDate(list[1])
         date.setMonth(list[0] - 1)
@@ -1122,6 +1146,7 @@ function topChild(frame) {
 }
 
 function updatedeadlines() {
+  if (filtered) return
   updateSpanDrags()
   migrate()
   clearEmptyDates(false)
@@ -1253,7 +1278,9 @@ function migrate() {
           })
         } else {
           for (let child of headingchildren) {
-            if (/^uncompleted/.test($(child).text())) { 
+            if (/^uncompleted/.test($(child).text()) && 
+            isHeading($(child)) &&
+            getHeadingChildren($(child)).length > 0) { 
               $(child).remove()
               break
             }
@@ -1274,6 +1301,8 @@ function updateSpanDrags() {
     $('.mobhandle').remove()
     $('span.in').prepend(
       '<span class="mobhandle"></span>')
+    $('span.in').attr('draggable', 'false')
+    return
     $('span.in:not(.dateheading)').draggable({
       handle: '.mobhandle',
       containment: 'window',
@@ -1318,6 +1347,7 @@ function updateSpanDrags() {
         $('#listcontainer > span').removeClass('in')
       },
     })
+    $('span.in').attr('draggable', 'true')
   }
   // reset drops
   try { $('span.in').droppable('destroy') }
@@ -1343,7 +1373,6 @@ function updateSpanDrags() {
   //     select(ui.draggable[0], true)
   //   }
   // })
-  $('span.in').attr('draggable', 'true')
 }
 
 function mobileDragOver(event) {
@@ -2061,7 +2090,8 @@ function createBlankTask() {
   return savetask
 }
 
-function newTask(subtask) {
+function newTask(subtask, prepend) {
+  console.trace()
   if (loadedlist == undefined || loadedlist > data.flop.length - 1) {
     alert('no list selected; create or select a list first')
     return
@@ -2071,6 +2101,10 @@ function newTask(subtask) {
   if (selected == undefined) return; // prevents glitches
   if (selected.attr('folded') == 'true') {
     togglefold(selected)
+    setTimeout(function() {
+      newTask(subtask, prepend)
+    }, 610)
+    return
     const children = getHeadingChildren(selected)
     select(children[children.length - 1])
   }
@@ -2081,7 +2115,15 @@ function newTask(subtask) {
   } else if (selected[0].tagName == 'SPAN' && subtask && 
     !isHeading(selected)) {
     // subtask
-    e.append(newspan)
+    if (prepend) {
+      console.log(stripChildren(e), getChildren(e), newspan[0].outerHTML);
+      e.html(stripChildren(e) + newspan[0].outerHTML + getChildren(e))
+      select(e.find('span.in')[0])
+      editTask()
+      return
+    } else {
+      e.append(newspan)
+    }
   } else if (['SPAN'].includes(selected[0].tagName)) {
     // regular task
     e.after(newspan)
@@ -2137,7 +2179,7 @@ function archiveTask() {
   }
  if (!selected.hasClass('complete')) {
     toggleComplete(selected)
-    new Audio('snd/pop.mp3').play()
+    playPop()
   }
   heading.after(selected)
   // formatting
@@ -2187,13 +2229,19 @@ function toggleComplete(task) {
   }
   if (!task && !completetask.hasClass('complete') && data.play == 'true') {
     // pop!
-    new Audio('snd/pop.mp3').play()
+    playPop()
   }
   completetask.toggleClass('complete')
   if (!task) {
     clearEmptyDates()
     save(true)
   }
+}
+
+function playPop() {
+  const pop = document.getElementById('popsnd')
+  pop.currentTime = 0
+  pop.play()
 }
 
 function toggleImportant() {
@@ -2307,8 +2355,8 @@ function togglecollapse() {
   } else {
     $('#listcontainer').removeClass('fullwidth')
   }
-  if (focusmode) togglefocus(false) // unfocus if uncollapse
   updateSizes()
+  if (focusmode) togglefocus(false) // unfocus if uncollapse
 }
 
 function togglefocus(collapse) {
@@ -2336,7 +2384,7 @@ function togglefocus(collapse) {
     // unfocus
     $('#editbuts').after($('#searchbarframe'))
     $('#movebuts').after($('#timerent'))
-    $('#collapsebut').after($('#focusbut'))
+    $('#collapseBut').after($('#focusbut'))
     for (thing of [$('#flop'), $('#pop')]) {
       thing.parent().parent().removeClass('fullwidth')
       thing.parent().css('height', '')
@@ -2551,17 +2599,17 @@ function toggleButs(saving) {
     $('#typebut').show()
     data.hidebuts = 'false'
     $(':root').css('--butheight', $('#flopbuts').height() + 5 + 'px')
-    $('#collapsebut').removeAttr('style')
-    $('#flopbuts').prepend($('#collapsebut'))
+    $('#collapseBut').removeAttr('style')
+    $('#flopbuts').prepend($('#collapseBut'))
   } else {
     $('.butbar:not(#editbuts)').hide()
     $('#typebut').hide()
     $('#focusbut').hide()
     if (mobiletest()) {
-      $('#collapsebut').css('top', '0')
-      $('#collapsebut').css('left', '0')
-      $('#collapsebut').css('position', 'absolute')
-      $('#listcontainer').prepend($('#collapsebut'))
+      $('#collapseBut').css('top', '0')
+      $('#collapseBut').css('left', '0')
+      $('#collapseBut').css('position', 'absolute')
+      $('#listcontainer').prepend($('#collapseBut'))
     }
     data.hidebuts = 'true'
     $(':root').css('--butheight', '0px')
@@ -2607,11 +2655,11 @@ function setStyle(style, alert) {
           $("<link id='theme' rel='stylesheet' type='text/css' href='" +
             style + "' />")
         );
+        uploadData()
         setTimeout(function () {
-          uploadData()
-          $('#flop').scrollTop(floptop)
-          scrollToToday()
-        }, 1000)
+          select(dateToHeading(stringToDate('0d')), true, false)
+          select()
+        }, 500)
       }
     )
   } else if (alert != false) {
@@ -2883,6 +2931,7 @@ function setTask(type) {
 }
 
 function clickoff(ev) {
+  console.log($(ev.target).attr('id'));
   if (draggingtask) { 
     setTimeout(function () {
       draggingtask = false
@@ -2956,7 +3005,7 @@ function clickoff(ev) {
       select(dateToHeading(stringToDate('0d')), true)
     }
     newTask()
-  } else if ($(ev.target).attr('id') == 'flopBut') {
+  } else if ($(ev.target).attr('id') == 'flopBut' && !justcollapsed) {
     if (selected == undefined || getFrame(selected).attr('id') != 'flop') {
       // insert after selected
       const newtask = $('<span class="in"></span>')
@@ -2979,7 +3028,7 @@ function clickoff(ev) {
       newTask()
     }
     selected.val('# ')
-  } else if (['newSubtaskBut', 'scheduleBut']
+  } else if (['newSubtaskBut', 'scheduleBut', 'collapseBut']
     .includes($(ev.target).attr('id'))) {
     eval($(ev.target).attr('function'))
   } else if ($(ev.target).hasClass('dropdown-item') && !justclicked) {
@@ -2988,6 +3037,20 @@ function clickoff(ev) {
   // on revert drags on mobile
   $('.drop-hover').removeClass('drop-hover')
   if (!justclicked) $('nav').hide()
+  resetdoc()
+}
+
+function addTime(time) {
+  timer.stop()
+  if ($('#timerent').val().split(':').length > 1) {
+    $('#timerent').val(
+      String(Number($('#timerent').val().split(':')[0]) + time) +
+      ':' + $('#timerent').val().split(':')[1]
+    )
+  } else {
+    $('#timerent').val(Number($('#timerent').val() + time) + ':00')
+  }
+  startTimer()
 }
 
 function clicked(ev) {
@@ -3018,51 +3081,14 @@ function clicked(ev) {
     $('#searchbar').val('d:')
     select()
     $('#searchbar').focus()
-  } else if ($(ev.target).attr('id') == 'timer25But') {
-    stopTimer()
-    $('#timerent').val('25:00')
-    startTimer()
-  } else if ($(ev.target).attr('id') == 'timer15But') {
-    stopTimer()
-    $('#timerent').val('15:00')
-    startTimer()
-  } else if ($(ev.target).attr('id') == 'timer10But') {
-    stopTimer()
-    $('#timerent').val('10:00')
-    startTimer()
-  } else if ($(ev.target).attr('id') == 'timer5But') {
-    stopTimer()
-    $('#timerent').val('5:00')
-    startTimer()
-  } else if ($(ev.target).attr('id') == 'timer+2But') {
-    timer.stop()
-    if ($('#timerent').val().split(':').length > 1) {
-      $('#timerent').val(
-        String(Number($('#timerent').val().split(':')[0]) + 2) +
-        ':' + $('#timerent').val().split(':')[1]
-      )
-    } else {
-      $('#timerent').val(Number($('#timerent').val() + 2))
-    }
-    startTimer()
-  } else if ($(ev.target).attr('id') == 'timer-2But') {
-    timer.stop()
-    if ($('#timerent').val().split(':').length > 1) {
-      $('#timerent').val(
-        String(Number($('#timerent').val().split(':')[0]) - 2) +
-        ':' + $('#timerent').val().split(':')[1]
-      )
-    } else {
-      $('#timerent').val(Number($('#timerent').val() - 2))
-    }
-    startTimer()
   } else if ($(ev.target).attr('id') == 'timerStartBut') {
     const timerval = $('#timerent').val()
     if (!timerval.includes(':')) $('#timerent').val(timerval + ':00')
     startTimer()
   } else if ($(ev.target).attr('id') == 'timerStopBut') {
     stopTimer()
-  } else if (['newSubtaskBut', 'scheduleBut'].includes($(ev.target).attr('id'))) {
+  } else if (['newSubtaskBut', 'scheduleBut', 'collapseBut']
+    .includes($(ev.target).attr('id'))) {
     // buttons evaluated with clickoff() (for selection purposes)
     return
   } else if ($(ev.target)[0].tagName == 'BUTTON') {
@@ -3307,10 +3333,9 @@ function keycomms(evt) {
       // filter tags
       const searchstr = $('#searchbar').val()
       filtered = true
-      filteredlist = $('#pop').find('span.in:visible').toArray().concat(
-        $('#flop').find('span.in:visible').toArray(),
-        $('.placeholder:visible').toArray(),
-        $('.deadline:visible').toArray()).filter((x) => {
+      filteredlist = $('#pop').find('span.in:visible:not(.dateheading)')
+        .toArray().concat($('#flop').find('span.in:visible').toArray(),
+        $('.duedate').toArray()).filter((x) => {
           return !stripChildren($(x)).includes(searchstr)
         })
       filteredlist.forEach((x) => { $(x).hide() })
@@ -3364,6 +3389,10 @@ function keycomms(evt) {
     } else if (selected[0].tagName == 'SPAN') {
       editTask()
     }
+  } else if (selected != undefined && evt.key == 'Enter' && 
+    evt.metaKey && evt.altKey) {
+    evt.preventDefault()
+    newTask(true, true)
   } else if (selected != undefined && evt.key == 'Enter' &&
     evt.metaKey) {
     // new task above
@@ -3371,10 +3400,16 @@ function keycomms(evt) {
     if (selected[0].tagName == 'TEXTAREA') {
       saveTask()
     }
-    if ($(taskAbove())[0] != selected[0]) {
+    if ($(taskAbove())[0] == selected.parent()[0]) {
+      // first subtask
+      select(taskAbove())
+      newTask(true, true)
+    } else if ($(taskAbove())[0] != selected[0]) {
+      // normal
       select(taskAbove())
       newTask()
     } else {
+      // first task
       const newspan = $('<span class="in">try task</span>')
       selected.before(newspan)
       select(newspan)
@@ -3767,6 +3802,10 @@ function loadpage(setload, oldselect, scrolls) {
         }, 500)
         document.off('touchend')
       })
+      setTimeout(function () {
+        $('#logoimage').remove() 
+        resetdoc()
+      }, 3000)
     }
   }
   if ($('#theme').attr('href') != data.style) {

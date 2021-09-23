@@ -65,7 +65,7 @@ button {
 
 #flopbuts, #popbuts {
   background-color: var(--bgoverlay);
-  position: fixed;
+  position: absolute;
   z-index: 2;
   width: 100%;
   margin-left: 1px;
@@ -262,7 +262,7 @@ p.dropdown-item {
 #help {
   font: inherit;
   font-size: 18px;
-  background-color: inherit;
+  background-color: var(--background);
   color: var(--textcolor);
   overflow-y: auto;
   overflow-x: hidden;
@@ -271,13 +271,17 @@ p.dropdown-item {
   margin: 0;
   padding: 0;
   bottom: 0;
+  z-index: 1;
   left: 0;
   width: 100%;
   border-top: 1px solid var(--bdcolor);
 }
 
-#help button {
+#help button#tutorialbut {
   font-size: 18px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  color: var(--select);
 }
 
 #help span.h1 {
@@ -732,12 +736,6 @@ span.weblink, span.deadline {
   }
   button {
     font-size: 18px !important;
-  }
-  #help button {
-    font-size: 2.7vw !important;
-    padding: 5px 1px;
-    word-wrap: break-word;
-    width: 100%;
   }
   button#optionsbut {
     font-size: 12px !important;
