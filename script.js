@@ -194,7 +194,7 @@ function dragTaskOver(event) {
     $('#listcontainer > span').removeClass('small')
     const timertime = 3
     const offsetwidth = 50
-    const scrollChange = 1
+    const scrollChange = 2
     const flopoffset = $('#flop').offset().top
     const flopheight = $('#flop').height()
     const popoffset = $('#pop').offset().top
@@ -641,17 +641,29 @@ function save(undoing, cleaning) {
   }
 }
 
-function clearEmptyDates(saving) {
+function clearEmptyDates(saving, clearing) {
   $('.placeholder').remove()
+  $('.futuredate').removeClass('futuredate')
   // take away empty dates
   const dateslist = $('#pop').children().filter('.dateheading')
+  const now = stringToDate('0d').getTime()
   for (date of dateslist) {
-    if (
-      getHeadingChildren($(date)).length == 0 &&
-      stringToDate($(date).text(), true).getTime() !=
-      stringToDate('0d').getTime() &&
-      date != selected
-    ) { date.remove() }
+    const thistime = stringToDate($(date).text(), true).getTime()
+    if (getHeadingChildren($(date)).length == 0 &&
+      thistime != now &&
+      date != selected) { 
+      if (thistime < now || thistime > now + 2629800000) {
+        // clear the date if it's past or more than a month from now
+        $(date).remove() 
+      } else {
+        // minimize the date
+        if (clearing) {
+          $(date).remove()
+        } else {
+          $(date).addClass('futuredate')
+        }
+      }
+    }
   }
   if (saving != false) { save() }
 }
@@ -1001,7 +1013,7 @@ function dateToHeading(date, saving, print) {
     // add in relative dates underneath
     const newelt = $('<span class="placeholder">' + datesToRelative(today,
       stringToDate(dateToString(date))) + '</span>')
-    $(heading2).before(newelt)
+    $(heading2).append(newelt)
     if (saving != false) {
       select(heading2) 
       save()
@@ -1196,11 +1208,7 @@ function updatedeadlines() {
     togglefold($(heading), false)
   }
   // creating relative dates
-  today = new Date()
-  today.setHours(0);
-  today.setMinutes(0);
-  today.setSeconds(0);
-  today.setMilliseconds(0)
+  today = stringToDate('0d')
   for (heading of $('#pop').children().filter('.dateheading')) {
     // add in relative dates underneath
     const newelt = createBlankTask()
@@ -1209,7 +1217,7 @@ function updatedeadlines() {
       stringToDate(stripChildren($(heading)), true)))
     newelt.addClass('placeholder')
     newelt.removeClass('in')
-    $(heading).before(newelt)
+    $(heading).append(newelt)
   }
   // adds in scroll buffers if needed
   if (!$('#flop').children().filter('.buffer')[0]) {
@@ -1219,6 +1227,28 @@ function updatedeadlines() {
   if (!$('#pop').children().filter('.buffer')[0]) {
     $('#pop').prepend('<span class="buffer" style="height:var(--butheight)"></span>')
     $('#pop').append('<span class="buffer bottom" style="height:90%"></span>')
+  }
+  // update future dates up to 30 days from now
+  const futuredate = stringToDate('0d')
+  futuredate.setDate(today.getDate() + 29)
+  console.log(futuredate, dateToString(futuredate, true), today);
+  if (!$('#pop').children().filter('.dateheading')
+    .toArray().map((x) => { return $(x).text() })
+    .includes(dateToString(futuredate, true))) {
+    // if future not filled out
+    console.log('no future');
+    const curdate = today.getDate()
+    for (let i = 0; i < 30; i ++) {
+      console.log('doing');
+      const futuredate = new Date()
+      futuredate.setDate(curdate + i)
+      console.log(curdate + i, futuredate);
+      const newdate = dateToHeading(futuredate)
+    }
+  } else {
+    const newdate = new Date()
+    newdate.setDate(today.getDate() + 30)
+    const newheading = dateToHeading(newdate)
   }
 }
 
@@ -2251,7 +2281,7 @@ function toggleComplete(task) {
 
 function playPop() {
   const pop = document.getElementById('popsnd')
-  pop.currentTime = 0
+  pop.src = pop.src
   pop.play()
 }
 
@@ -3041,7 +3071,7 @@ function clickoff(ev) {
   // on revert drags on mobile
   $('.drop-hover').removeClass('drop-hover')
   if (!justclicked) $('nav').hide()
-  resetdoc()
+  if (ev.target.tagName != 'TEXTAREA') resetdoc()
 }
 
 function addTime(time) {
@@ -3286,7 +3316,59 @@ function keycomms(evt) {
     resetdoc()
   }
   // makes sure to unselect on proper things
-  if (evt.key == 'Escape' && selected != undefined &&
+  console.log(evt.code);
+  if (selected[0].tagName == 'TEXTAREA' && evt.ctrlKey) {
+    const selectstart = selected[0].selectionStart
+    const selectend = selected[0].selectionEnd
+    const val = selected.val()
+    if (evt.key == '1') {
+      selected.val('# ' + val)
+      selected[0].selectionStart = selectstart + 2
+      selected[0].selectionEnd = selectend + 2
+    } else if (evt.key == '2') {
+      selected.val('## ' + val)
+      selected[0].selectionStart = selectstart + 3
+      selected[0].selectionEnd = selectend + 3
+    } else if (evt.key == '3') {
+      selected.val('### ' + val)
+      selected[0].selectionStart = selectstart + 4
+      selected[0].selectionEnd = selectend + 4
+    } else if (evt.key == '8') {
+      selected.val('• ' + val)
+      selected[0].selectionStart = selectstart + 2
+      selected[0].selectionEnd = selectend + 2
+    } else if (evt.key == '9') {
+      selected.val('- ' + val)
+      selected[0].selectionStart = selectstart + 2
+      selected[0].selectionEnd = selectend + 2
+    } else if (evt.key == 'b') {
+      selected.val(val.slice(0, selectstart) +
+        '*' + val.slice(selectstart, selectend) + '*' + 
+        val.slice(selectend))
+      selected[0].selectionStart = selectstart + 1
+      selected[0].selectionEnd = selectend + 1
+    } else if (evt.key == 'i') {
+      selected.val(val.slice(0, selectstart) +
+        '_' + val.slice(selectstart, selectend) + '_' + 
+        val.slice(selectend))
+      selected[0].selectionStart = selectstart + 1
+      selected[0].selectionEnd = selectend + 1
+    } else if (evt.key == 'l') {
+      selected.val(val.slice(0, selectstart) +
+        '[[' + val.slice(selectstart, selectend) + ']]' + 
+        val.slice(selectend))
+      selected[0].selectionStart = selectstart + 2
+      selected[0].selectionEnd = selectend + 2
+    } else if (evt.key == 'r') {
+      selected.val(val + ' ~')
+      selected[0].selectionStart = val.length + 2
+      selected[0].selectionEnd = val.length + 2
+    } else if (evt.code == 'Period') {
+      selected.val(val + ' >')
+      selected[0].selectionStart = val.length + 2
+      selected[0].selectionEnd = val.length + 2
+    }
+  } else if (evt.key == 'Escape' && selected != undefined &&
     selected[0].tagName == 'TEXTAREA') {
     // save task
     evt.preventDefault()

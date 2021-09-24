@@ -36,7 +36,7 @@ button {
 
 #leftcol button {
   width: 30px;
-  max-width: calc(25% - 6px);
+  max-width: calc(25% - 4px);
   min-width: 0px;
   margin: 2px;
 }
@@ -399,6 +399,7 @@ textarea.in, p.incopy {
   left: 300px; */
   /* z-index: 1; */
   overflow: visible;
+  color: var(--background);
   /* color: white; */
 }
 
@@ -531,15 +532,33 @@ span.bold-italic {
 
 span.dateheading {
   color: var(--select);
-  margin: 0 0 0.2em 0 !important;
+  margin: 0.5em 0 0 0 !important;
+  padding: 0 0 0 0;
+}
+
+span.futuredate {
+  font-size: 0.5em;
+  color: var(--select);
+  opacity: 0.8;
+  margin: 0;
+  text-align: top;
+  line-height: 20px;
+  height: 20px;
+}
+
+span.futuredate > span.placeholder {
+  display: none;
 }
 
 span.placeholder {
-  text-align: var(--headingalign);
+  position: absolute;
+  text-align: right;
   font-family: var(--butfont), monospace;
   font-size: 12px;
-  padding: 0;
-  margin: 0 0 0 0;
+  padding: 0 10px;
+  width: 50px;
+  right: 0;
+  top: 0;
 }
 
 span.complete {
