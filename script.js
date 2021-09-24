@@ -1260,12 +1260,12 @@ function migrate() {
       try {
         if (selected &&
           (selected[0] == heading ||
-            (getHeading(selected, true) && getHeading(selected, true)[0]
+            (getHeading(selected) && getHeading(selected)[0]
               == heading))) {
           continue
         }
       } catch (err) {
-        display([err, getHeading(selected, true)])
+        display([err, getHeading(selected)])
         continue
       }
       // migrate all uncompleted tasks
@@ -1871,7 +1871,7 @@ function saveTask() { // analyze format of task and create new <span> elt for it
   if (stripChildren(selected).includes('>')) { updatedeadlines() }
 }
 
-function getHeading(el, actual) {
+function getHeading(el) {
   if (!el) return
   // gets the heading
   try {
@@ -1879,9 +1879,7 @@ function getHeading(el, actual) {
   } catch (TypeError) { return }
   let heading = el.prev()
   while (heading[0] && !isHeading($(heading))) heading = $(heading).prev()
-  if ($(heading).hasClass('dateheading') &&
-    actual != true) return $(heading).prev() // actual bypasses placeholders
-  else if ($(heading)[0]) return $(heading)
+  if ($(heading)[0]) return $(heading)
 }
 
 function select(el, scroll, animate) {
@@ -1915,7 +1913,7 @@ function select(el, scroll, animate) {
     }
     if (scroll) {
       if (!selected.is(':visible') && getHeading(selected)) {
-        togglefold($(getHeading(selected, true)))
+        togglefold($(getHeading(selected)))
       }
       if (getFrame(selected)) {
         // only execute if not clicked
@@ -1953,14 +1951,6 @@ function select(el, scroll, animate) {
               scrollTop: scrolllocation
             }, scrolltime)
           }
-        } else if (selected.hasClass('dateheading')) {
-          const scrolllocation = Number(
-            oldscroll +
-            selected.prev().offset().top) -
-            Number(getFrame(selected).offset().top)
-          parent.animate({
-            scrollTop: scrolllocation
-          }, scrolltime)
         } else if (isHeading(selected)) {
           const scrolllocation = Number(
             oldscroll +
@@ -2146,8 +2136,6 @@ function newTask(subtask, prepend) {
       newTask(subtask, prepend)
     }, 610)
     return
-    const children = getHeadingChildren(selected)
-    select(children[children.length - 1])
   }
   let e = selected
   if (selected[0].tagName == 'P' && selected.hasClass('in')) {
@@ -3165,7 +3153,7 @@ function clicked(ev) {
     // jump to deadline
     $('#searchbar').val(stripChildren($(ev.target)).slice(2))
     search('deadline', dateToString(stringToDate(
-      getHeading($(ev.target), true).text(), true)))
+      getHeading($(ev.target)).text(), true)))
   } else if (getFrame($(ev.target)) && $(ev.target).hasClass('in')) {
     // select allowable elements
     select(ev.target, false)
