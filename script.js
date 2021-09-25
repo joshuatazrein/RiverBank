@@ -3826,7 +3826,7 @@ function loadpage(setload, oldselect, scrolls) {
   }
   if (setload != false) {
     if (window.innerWidth < 600) mobile = true
-    else if (window.innerWidth < 600) mobile = false
+    else if (window.innerWidth > 600) mobile = false
     // initial loads (not called on reloads)
     $('#focusbar').hide()
     if (data.play === undefined) { data.play = 'true' }
