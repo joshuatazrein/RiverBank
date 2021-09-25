@@ -3821,6 +3821,7 @@ function reload2() {
 
 function loadpage(setload, oldselect, scrolls) {
   // right after signing in
+  alert('loading')
   if (!window.location.href.includes('welcome')) {
     $('#username').text(getCookie('user'))
   }
