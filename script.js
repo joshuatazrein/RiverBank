@@ -3868,6 +3868,7 @@ function diffsLog(oldString, newString) {
     }
   }
   display(diffs)
+  return diffs
 }
 
 function reload() {
@@ -3898,17 +3899,18 @@ function reload() {
       }
     }
     $.post('download.php',
-    function (datastr, status, xhr) {
-      diffsLog(JSON.stringify(data), xhr.responseText)
-      if (JSON.stringify(data) != JSON.stringify(xhr.responseText)) {
+      function (datastr, status, xhr) {
+        const diffs = diffsLog(JSON.stringify(data), xhr.responseText)
+        if (diffs == 'Diffs:') {
+          display('*** identical ***')
+          $('#logoimage').animate({'opacity': 0}, 500)
+          setTimeout(function () {$('#logoimage').remove()}, 500)
+        } else {
           display('*** download finished, reloading ***');
           // only reload if data differs
           data = JSON.parse(xhr.responseText)
           reload2()
-      } else {
-        display('*** identical ***')
-        $('#logoimage').remove()
-      }
+        }
       }
     )
   }
