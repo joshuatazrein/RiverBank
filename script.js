@@ -3908,6 +3908,7 @@ function reload2() {
 
 function loadpage(setload, oldselect, scrolls) {
   // right after signing in
+  console.log('loading...');
   if (!window.location.href.includes('welcome')) {
     $('#username').text(getCookie('user'))
   }
@@ -3981,6 +3982,7 @@ function loadpage(setload, oldselect, scrolls) {
         resetdoc()
       }, 3000)
     }
+    console.log('loaded settings');
   }
   if ($('#theme').attr('href') != data.style) {
     // reloads theme if it was changed
@@ -4030,6 +4032,7 @@ function loadpage(setload, oldselect, scrolls) {
     loadList(false)
   }
   dragson(false)
+  console.log('loaded lists...');
   $('#searchbar').val('')
   // show buttons and help right
   if (data.help == 'show') $('#help').show()
@@ -4070,6 +4073,7 @@ function loadpage(setload, oldselect, scrolls) {
     $('#logoimage').animate({opacity: 0}, 500)
     setTimeout(function() { $('#logoimage').remove() }, 500)
   }
+  console.log('loaded appearances');
 }
 
 function scrollToToday() {
