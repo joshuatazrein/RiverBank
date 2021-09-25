@@ -69,10 +69,8 @@ function display(x) {
 function mobiletest() {
   if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
     .test(navigator.userAgent)) {
-    // // console.log(true);
     return true
   } else {
-    // // console.log(false);
     return false
   }
 }
@@ -114,7 +112,6 @@ timer.on('end', function () {
   // display notification and sound
   if (window.Notification) {
     if (Notification.permission === 'granted') {
-      // console.log('notifying');
       // notify
       var notify = new Notification('RiverBank', {
         body: 'timer complete',
@@ -123,7 +120,6 @@ timer.on('end', function () {
     }
   }
   if (data.play == 'true') {
-    // console.log('playing');
     const timersnd = new Audio('snd/timer.mp3')
     timersnd.play()
   }
@@ -186,7 +182,6 @@ function dragTaskOver(event) {
         $(list).removeClass('unselected')
         $(list).addClass('selected')
         updateSpanDrags()
-        // console.log(selected.text());
         return
       }
       i++
@@ -275,7 +270,6 @@ function dropList(evt) {
 
 //enable you to edit titles
 function toggledrags(saving) {
-  // console.log('toggledrags', saving);
   loads = $('#loads').children().toArray()
   if (dragsenabled === true) {
     loads.forEach((i) => {
@@ -563,7 +557,6 @@ function clean() {
       stringToDate(stripChildren($(b)), true).getTime()
   })) {
     if ([' ...', '...'].includes(stripChildren($(heading)))) {
-      console.log('cleaning', heading);
       heading.remove()
       continue
     }
@@ -801,7 +794,6 @@ function changeDateFormat(format) {
   $('.dateheading').toArray().forEach((x) => {
     // change all dates in pop
     const getdate = stringToDate(stripChildren($(x)), true)
-    console.log(stripChildren($(x)), stringToDate(stripChildren($(x))))
     data.dateSplit = format
     $(x).text(dateToString(getdate, true))
     data.dateSplit = thisformat
@@ -1224,8 +1216,6 @@ function updatedeadlines() {
   }
   // creating relative dates
   today = stringToDate('0d')
-  console.log($('#pop').children().filter('.dateheading:not(.futuredate)').toArray()
-    .map((x) => { return stripChildren($(x)) }))
   for (heading of $('#pop').children().filter('.dateheading:not(.futuredate)')) {
     // add in relative dates underneath
     const newelt = createBlankTask()
@@ -1248,18 +1238,14 @@ function updatedeadlines() {
   // update future dates up to 30 days from now
   const futuredate = stringToDate('0d')
   futuredate.setDate(today.getDate() + 29)
-  // console.log(futuredate, dateToString(futuredate, true), today);
   if (!$('#pop').children().filter('.dateheading')
     .toArray().map((x) => { return stripChildren($(x)) })
     .includes(dateToString(futuredate, true))) {
     // if future not filled out
-    // console.log('no future');
     const curdate = today.getDate()
     for (let i = 0; i < 30; i ++) {
-      // console.log('doing');
       const futuredate = new Date()
       futuredate.setDate(curdate + i)
-      // console.log(curdate + i, futuredate);
       const newdate = dateToHeading(futuredate, false)
     }
   } else {
@@ -1595,7 +1581,6 @@ function timeCheck() {
     return $(x).hasClass('event') && 
       /^\d/.test($(x).text().split(' ')[0])
   })
-  // console.log(eventslist);
   const now = new Date()
   const testtime = [now.getHours(), now.getMinutes()]
   let pm = false // for am/pm
@@ -1617,9 +1602,7 @@ function timeCheck() {
     }
     else timelist[0] = Number(hours)
     // test for match
-    // console.log(testtime, timelist);
     if (JSON.stringify(testtime) == JSON.stringify(timelist)) {
-      // console.log('match');
       new Notification('RiverBank', {body: task.text()})
     }
     curhour = timelist[0]
@@ -1629,7 +1612,6 @@ function timeCheck() {
 function dragTime(el) {
   let pretext = el.text().split('-')
   function timetest(text, placement, included) {
-    // // console.log(placement, pretext);
     // replaces pm and am
     if ((pretext[placement].includes('11:30a') && text.includes('12')) ||
     (pretext[placement].includes('12a') && text.includes('11:30'))) {
@@ -1647,7 +1629,6 @@ function dragTime(el) {
     else if (placement == 1) return text + endof2
   }
   // sets up sliders to drag times on events
-  // // console.log('dragtime');
   $('.slider').remove()
   slider = $('<input type="range" min="-12" max="12" value="0"' +
     ' class="slider slider-vert">')
@@ -1758,9 +1739,7 @@ function saveTask() { // analyze format of task and create new <span> elt for it
     $('#searchbar').focus()
     const date = dateToHeading(
       stringToDate($('#searchbar').val().slice(2)), false, true)
-    // console.log(date);
     select(date, true)
-    // console.log(selected);
     $('#searchbar').val('')
     $('#searchbar').blur()
     // makes new date
@@ -2153,7 +2132,6 @@ function editTask() {
     updateHeight()
     selected.click(function (e) { 
       $(this).focus() 
-      // console.log($(this), 'yes');
     });
     // not working
     // selected.blur(function (e) {
@@ -2192,7 +2170,6 @@ function newTask(subtask, prepend) {
     !isHeading(selected)) {
     // subtask
     if (prepend) {
-      // console.log(stripChildren(e), getChildren(e), newspan[0].outerHTML);
       e.html(stripChildren(e, 'html') + newspan[0].outerHTML + getChildren(e))
       select(e.find('span.in')[0])
       editTask()
@@ -2281,7 +2258,6 @@ function toggleComplete(task) {
   }
   else completetask = $(task)
   const text = stripChildren(completetask).split(' ')
-  // console.log(text);
   if (!completetask.hasClass('complete') &&
     /^~/.test(text[text.length - 2])) {
     if (stringToDate(text[text.length - 2].slice(1)) == 'Invalid Date') {
@@ -2293,7 +2269,6 @@ function toggleComplete(task) {
       if (task) {
         date.setDate(date.getDate() - 1)
       }
-      // console.log(date);
       // save so it doesn't immediately delete
       const heading = dateToHeading(date, false)
       const newtask = completetask.clone()
@@ -2525,7 +2500,6 @@ function dropTask(ev) {
   draggingtask = false
   let children = []
   const el = $(ev.target)
-  // console.log(selected, el);
   if (selected.hasClass('h1') || selected.hasClass('h2') ||
     selected.hasClass('h3')) {
     // drop all the tasks
@@ -2565,7 +2539,6 @@ function dropTask(ev) {
       $(el).before(selected)
     } else {
       $(el).after(selected)
-      // console.log('dropped', el, selected);
     }
   }
   for (i = children.length - 1; i >= 0; i--) {
@@ -2686,10 +2659,8 @@ function getHeadingChildren(el) {
 
 // toggle fold of a heading
 function togglefold(e, saving) {
-  console.log(e.attr('folded'), e, saving);
   // hide or show everything underneath
   const keepfolded = []
-  console.log(getHeadingChildren(e));
   for (child of getHeadingChildren(e)) {
     // fold everything
     if (e.attr('folded') == 'false') {
@@ -2790,7 +2761,6 @@ function setStyle(style, alert) {
     $.get(
       style,
       function () {
-        // // console.log(oldstyle, $('link[href="' + oldstyle + '"]'));
         $('#theme').remove()
         $('head').append(
           $("<link id='theme' rel='stylesheet' type='text/css' href='" +
@@ -2968,7 +2938,6 @@ function context(e, mobile) {
     window.innerHeight - $('#context-menu').height()) - 20)
   $('#context-menu').css('left', Math.min(e.pageX,
     window.innerWidth - $('#context-menu').width()) - 40)
-  // // // console.log($('#context-menu').offset());
   if ($('#context-menu').offset().top < 0) {
     $('#context-menu').css('top', '0')
   }
@@ -3075,7 +3044,6 @@ function setTask(type) {
 }
 
 function clickoff(ev) {
-  // console.log($(ev.target).attr('id'));
   if (draggingtask) { 
     setTimeout(function () {
       draggingtask = false
@@ -3087,7 +3055,6 @@ function clickoff(ev) {
     return 
   }
   if (dblclicked) {
-    // console.log('true');
     if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
       // prevents interfering with edits
       return
@@ -3415,7 +3382,6 @@ function keycomms(evt) {
     resetdoc()
   }
   // makes sure to unselect on proper things
-  // console.log(evt.code);
   if (selected && selected[0].tagName == 'TEXTAREA' && evt.ctrlKey) {
     const selectstart = selected[0].selectionStart
     const selectend = selected[0].selectionEnd
@@ -3510,7 +3476,6 @@ function keycomms(evt) {
       const date = dateToHeading(
         stringToDate($('#searchbar').val().slice(2)), false, true)
       select(date, true)
-      // console.log(selected);
       $('#searchbar').val('')
       $('#searchbar').blur()
       if (movetask != undefined) {
@@ -3573,7 +3538,6 @@ function keycomms(evt) {
     evt.preventDefault()
     // edit/save task
     if (selected[0].tagName == 'TEXTAREA') {
-      // console.log('saving task');
       saveTask()
     } else if (selected[0].tagName == 'SPAN') {
       editTask()
@@ -3772,7 +3736,6 @@ function tutorial() {
 
 function uploadData(reloading) {
   if (window.parent.location.href.includes('welcome')) {
-    // console.log('true');
     return // for demo
   }
   display('--- upload started ---') 
@@ -3982,7 +3945,6 @@ function loadpage(setload, oldselect, scrolls) {
     $(document).on('keyup', keyup)
     $(document).on('contextmenu', function(event) {
       context(event)
-      // console.log($('#listcontainer > .in'));
       $('#listcontainer > .in').hide()
     })
     $(document).on('mousedown', event, clicked)
@@ -4008,7 +3970,6 @@ function loadpage(setload, oldselect, scrolls) {
       $('head').append('<link href="mobilestyle.css" rel="stylesheet">')
       // behavior for initial scroll
       $(document).on('touchend', function () {
-        // console.log('scrolling');
         setTimeout(function() { 
           $('#logoimage').remove() 
           resetdoc()
@@ -4021,7 +3982,6 @@ function loadpage(setload, oldselect, scrolls) {
         resetdoc()
       }, 3000)
     }
-    console.log('here');
   }
   if ($('#theme').attr('href') != data.style) {
     // reloads theme if it was changed
@@ -4038,7 +3998,6 @@ function loadpage(setload, oldselect, scrolls) {
   $('#pop').html(data.pop)
   // loads data
   let oldload
-  // // console.log(data.loadedlist, setload);
   // load lists if there is one
   if (setload == false) {
     // fixes weird loadlist glitch
@@ -4046,7 +4005,6 @@ function loadpage(setload, oldselect, scrolls) {
   } else if (data.loadedlist != undefined) {
     oldload = Number(data.loadedlist)
   }
-  // // console.log(oldload);
   for (i of data.flop) {
     const newthing = $('<textarea class="listtitle unselected"></textarea>')
     newthing.attr('ondragstart', 'dragList(event)')
@@ -4058,7 +4016,6 @@ function loadpage(setload, oldselect, scrolls) {
     $('#loads').append(newthing)
   }
   const children = $('#loads').children().toArray()
-  console.log('here');
   for (i in children) {
     // remember folding
     const val = $(children[i]).val()
@@ -4083,7 +4040,6 @@ function loadpage(setload, oldselect, scrolls) {
   } else if (data.hidebuts == 'true') {
     data.hidebuts = 'false'
   }
-  console.log('here');
   toggleButs(false)
   $('.taskselect').removeClass('taskselect')
   resetdoc()
@@ -4091,7 +4047,6 @@ function loadpage(setload, oldselect, scrolls) {
   clean()
   updatedeadlines()
   updateSpanDrags()
-  // // console.log(scrolls);
   if (scrolls) {
     $('#flop').scrollTop(scrolls[0])
     $('#pop').scrollTop(scrolls[1])
@@ -4116,7 +4071,6 @@ function loadpage(setload, oldselect, scrolls) {
     $('#logoimage').animate({opacity: 0}, 500)
     setTimeout(function() { $('#logoimage').remove() }, 500)
   }
-  console.log('loaded');
 }
 
 function scrollToToday() {
