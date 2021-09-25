@@ -480,6 +480,7 @@ span.duedate {
   /* font-style: italic; */
   border-radius: 5px;
   padding-right: 15px;
+  padding-left: 5px;
 }
 
 span.horizline {
