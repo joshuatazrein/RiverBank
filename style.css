@@ -479,6 +479,7 @@ span.duedate {
   color: var(--select);
   /* font-style: italic; */
   border-radius: 5px;
+  padding-right: 15px;
 }
 
 span.horizline {
@@ -533,15 +534,20 @@ span.bold-italic {
 span.dateheading {
   color: var(--select);
   margin: 0.5em 0 0 0 !important;
-  padding: 0 0 0 0;
+  padding-right: 30px !important;
 }
 
-span.futuredate {
+span.dateheading.futuredate {
   font-size: 0.5em;
   color: var(--select);
   opacity: 0.8;
-  margin: 0;
   text-align: top;
+  line-height: 20px;
+  height: 20px;
+}
+
+span.dateheading.complete.folded {
+  font-size: 0.5em;
   line-height: 20px;
   height: 20px;
 }
@@ -555,9 +561,8 @@ span.placeholder {
   text-align: right;
   font-family: var(--butfont), monospace;
   font-size: 12px;
-  padding: 0 10px;
-  width: 50px;
-  right: 0;
+  width: fit-content;
+  right: 5px;
   top: 0;
 }
 

@@ -41,10 +41,14 @@ function load() {
     } else {
       try {
         data = JSON.parse(localStorage.getItem('data'))
-        
       } catch (err) {
+        localStorage.setItem('data', resetstring)
         data = JSON.parse(resetstring)
       }
+    }
+    if (data == null) {
+      localStorage.setItem('data', resetstring)
+      data = JSON.parse(resetstring)
     }
     $('head').append(
       $("<link rel='stylesheet' type='text/css' href='" +

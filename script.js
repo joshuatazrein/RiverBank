@@ -63,16 +63,16 @@ var filtered
 var filteredlist
 
 function display(x) {
-  console.log(x)
+  // console.log(x)
 }
 
 function mobiletest() {
   if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
     .test(navigator.userAgent)) {
-    // console.log(true);
+    // // console.log(true);
     return true
   } else {
-    // console.log(false);
+    // // console.log(false);
     return false
   }
 }
@@ -116,7 +116,7 @@ timer.on('end', function () {
   // display notification and sound
   if (window.Notification) {
     if (Notification.permission === 'granted') {
-      console.log('notifying');
+      // console.log('notifying');
       // notify
       var notify = new Notification('RiverBank', {
         body: 'timer complete',
@@ -125,7 +125,7 @@ timer.on('end', function () {
     }
   }
   if (data.play == 'true') {
-    console.log('playing');
+    // console.log('playing');
     const timersnd = new Audio('snd/timer.mp3')
     timersnd.play()
   }
@@ -185,7 +185,7 @@ function dragTaskOver(event) {
         $(list).removeClass('unselected')
         $(list).addClass('selected')
         updateSpanDrags()
-        console.log(selected.text());
+        // console.log(selected.text());
         return
       }
       i++
@@ -274,7 +274,7 @@ function dropList(evt) {
 
 //enable you to edit titles
 function toggledrags(saving) {
-  console.log('toggledrags', saving);
+  // console.log('toggledrags', saving);
   loads = $('#loads').children().toArray()
   if (dragsenabled === true) {
     loads.forEach((i) => {
@@ -553,8 +553,8 @@ function clean() {
   // sort headings
   const headingslist = $('#pop').children().filter('.dateheading').toArray()
   for (heading of headingslist.sort((a, b) => {
-    return stringToDate($(a).text(), true).getTime() -
-      stringToDate($(b).text(), true).getTime()
+    return stringToDate(stripChildren($(a)), true).getTime() -
+      stringToDate(stripChildren($(b)), true).getTime()
   })) {
     const children = getHeadingChildren($(heading)).reverse()
     $('#pop').append($(heading))
@@ -642,13 +642,12 @@ function save(undoing, cleaning) {
 }
 
 function clearEmptyDates(saving, clearing) {
-  $('.placeholder').remove()
   $('.futuredate').removeClass('futuredate')
   // take away empty dates
   const dateslist = $('#pop').children().filter('.dateheading')
   const now = stringToDate('0d').getTime()
   for (date of dateslist) {
-    const thistime = stringToDate($(date).text(), true).getTime()
+    const thistime = stringToDate(stripChildren($(date)), true).getTime()
     if (getHeadingChildren($(date)).length == 0 &&
       thistime != now &&
       date != selected) { 
@@ -661,6 +660,7 @@ function clearEmptyDates(saving, clearing) {
           $(date).remove()
         } else {
           $(date).addClass('futuredate')
+          $(date).addClass('dateheading')
         }
       }
     }
@@ -803,8 +803,8 @@ function changeDateFormat(format) {
     for (x of $('#test').find('.deadline')) {
       // change all deadlines
       data.dateSplit = thisformat
-      const getdate = stringToDate($(x).text().slice(
-        1, $(x).text().length - 1), false)
+      const getdate = stringToDate(stripChildren($(x)).slice(
+        1, stripChildren($(x).length) - 1), false)
       data.dateSplit = format
       $(x).text('>' + dateToString(getdate, false) + ' ')
     }
@@ -976,13 +976,13 @@ function stringToDate(string, weekday, future) {
   return date
 }
 
-function dateToHeading(date, saving, print) {
+function dateToHeading(date, saving) {
   if (date === undefined) return
   if (dateToString(date).includes('NaN')) return
   // find the matching date, or create if not
   // sort date headings to be correct
   const headingslist = $('#pop').children().toArray().filter((x) => {
-    return stringToDate($(x).text(), true) != 'Invalid Date' &&
+    return stringToDate(stripChildren($(x)), true) != 'Invalid Date' &&
       $(x).hasClass('dateheading')
   })
   let heading1 = headingslist.find((x) => {
@@ -994,10 +994,9 @@ function dateToHeading(date, saving, print) {
     const heading2 = $('<span class="in h1 dateheading" folded="false" ' +
       'draggable="false">' + 
       dateToString(date, true) + '</span>')
-    if (print) console.log(heading2);
     let headingafter = headingslist.find((x) => {
-      return stringToDate($(x).text(), true).getTime() >
-        stringToDate($(heading2).text(), true).getTime()
+      return stringToDate(stripChildren($(x)), true).getTime() >
+        stringToDate(stripChildren($(heading2)), true).getTime()
     })
     if (!headingafter) {
       // insert before buffer
@@ -1015,7 +1014,7 @@ function dateToHeading(date, saving, print) {
       stringToDate(dateToString(date))) + '</span>')
     $(heading2).append(newelt)
     if (saving != false) {
-      select(heading2) 
+      select(heading2)
       save()
     }
     return heading2
@@ -1170,7 +1169,6 @@ function updatedeadlines() {
   if (filtered) return
   updateSpanDrags()
   migrate()
-  clearEmptyDates(false)
   $('.duedate').remove()
   $('.placeholder').remove()
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
@@ -1218,6 +1216,7 @@ function updatedeadlines() {
     newelt.addClass('placeholder')
     newelt.removeClass('in')
     $(heading).append(newelt)
+    console.log(newelt.text());
   }
   // adds in scroll buffers if needed
   if (!$('#flop').children().filter('.buffer')[0]) {
@@ -1231,32 +1230,34 @@ function updatedeadlines() {
   // update future dates up to 30 days from now
   const futuredate = stringToDate('0d')
   futuredate.setDate(today.getDate() + 29)
-  console.log(futuredate, dateToString(futuredate, true), today);
+  // console.log(futuredate, dateToString(futuredate, true), today);
   if (!$('#pop').children().filter('.dateheading')
-    .toArray().map((x) => { return $(x).text() })
+    .toArray().map((x) => { return stripChildren($(x)) })
     .includes(dateToString(futuredate, true))) {
     // if future not filled out
-    console.log('no future');
+    // console.log('no future');
     const curdate = today.getDate()
     for (let i = 0; i < 30; i ++) {
-      console.log('doing');
+      // console.log('doing');
       const futuredate = new Date()
       futuredate.setDate(curdate + i)
-      console.log(curdate + i, futuredate);
-      const newdate = dateToHeading(futuredate)
+      // console.log(curdate + i, futuredate);
+      const newdate = dateToHeading(futuredate, false)
     }
   } else {
     const newdate = new Date()
     newdate.setDate(today.getDate() + 30)
-    const newheading = dateToHeading(newdate)
+    const newheading = dateToHeading(newdate, false)
   }
+  clearEmptyDates(false)
+
 }
 
 function migrate() {
   const today = stringToDate('0d').getTime()
   const todayheading = $(dateToHeading(stringToDate('0d'), false))
   for (heading of $('#pop').children().filter('.dateheading').toArray()) {
-    if (stringToDate($(heading).text(), true).getTime() < today) {
+    if (stringToDate(stripChildren($(heading)), true).getTime() < today) {
       try {
         if (selected &&
           (selected[0] == heading ||
@@ -1566,7 +1567,7 @@ function timeCheck() {
     return $(x).hasClass('event') && 
       /^\d/.test($(x).text().split(' ')[0])
   })
-  console.log(eventslist);
+  // console.log(eventslist);
   const now = new Date()
   const testtime = [now.getHours(), now.getMinutes()]
   let pm = false // for am/pm
@@ -1588,9 +1589,9 @@ function timeCheck() {
     }
     else timelist[0] = Number(hours)
     // test for match
-    console.log(testtime, timelist);
+    // console.log(testtime, timelist);
     if (JSON.stringify(testtime) == JSON.stringify(timelist)) {
-      console.log('match');
+      // console.log('match');
       new Notification('RiverBank', {body: task.text()})
     }
     curhour = timelist[0]
@@ -1600,7 +1601,7 @@ function timeCheck() {
 function dragTime(el) {
   let pretext = el.text().split('-')
   function timetest(text, placement, included) {
-    // console.log(placement, pretext);
+    // // console.log(placement, pretext);
     // replaces pm and am
     if ((pretext[placement].includes('11:30a') && text.includes('12')) ||
     (pretext[placement].includes('12a') && text.includes('11:30'))) {
@@ -1618,7 +1619,7 @@ function dragTime(el) {
     else if (placement == 1) return text + endof2
   }
   // sets up sliders to drag times on events
-  // console.log('dragtime');
+  // // console.log('dragtime');
   $('.slider').remove()
   slider = $('<input type="range" min="-12" max="12" value="0"' +
     ' class="slider slider-vert">')
@@ -1729,9 +1730,9 @@ function saveTask() { // analyze format of task and create new <span> elt for it
     $('#searchbar').focus()
     const date = dateToHeading(
       stringToDate($('#searchbar').val().slice(2)), false, true)
-    console.log(date);
+    // console.log(date);
     select(date, true)
-    console.log(selected);
+    // console.log(selected);
     $('#searchbar').val('')
     $('#searchbar').blur()
     // makes new date
@@ -1974,6 +1975,10 @@ function setText(el) {
 }
 
 function stripChildren(el, mode) {
+  if ($(el).hasClass('dateheading') || $(el).hasClass('futuredate')) {
+    // dateheadings just filter our their subspans
+    return $(el).html().split('<span')[0]
+  }
   // retrieve text from only the parent span and any of its formatting
   const testelt = el.clone()
   testelt.html(testelt.html().replace(/<br>/g, '\n'))
@@ -1997,10 +2002,8 @@ function stripChildren(el, mode) {
 
 function isSubtask(el) {
   // tests inline spans until it gets one, otherwise returns true
-  for (lineinner of [
-    'link', 'italic', 'bold', 'bold-italic', 'deadline', 'weblink', 'timing',
-    'mobhandle', 'faketiming'
-  ]) {
+  for (lineinner of ['link', 'italic', 'bold', 'bold-italic', 'deadline', 
+    'weblink', 'timing', 'mobhandle', 'faketiming', 'placeholder']) {
     if (el.hasClass(lineinner)) {
       return false
     }
@@ -2106,7 +2109,7 @@ function editTask() {
     updateHeight()
     selected.click(function (e) { 
       $(this).focus() 
-      console.log($(this), 'yes');
+      // console.log($(this), 'yes');
     });
     // not working
     // selected.blur(function (e) {
@@ -2145,7 +2148,7 @@ function newTask(subtask, prepend) {
     !isHeading(selected)) {
     // subtask
     if (prepend) {
-      console.log(stripChildren(e), getChildren(e), newspan[0].outerHTML);
+      // console.log(stripChildren(e), getChildren(e), newspan[0].outerHTML);
       e.html(stripChildren(e) + newspan[0].outerHTML + getChildren(e))
       select(e.find('span.in')[0])
       editTask()
@@ -2182,7 +2185,7 @@ function archiveTask() {
   let heading
   const day = $(dateToHeading(stringToDate('0d')))
   const childText = getHeadingChildren(day).map((x) => {
-    return $(x).text()
+    return stripChildren($(x))
   })
   if (
     !(childText.includes('completed') ||
@@ -2230,7 +2233,7 @@ function toggleComplete(task) {
   }
   else completetask = $(task)
   const text = stripChildren(completetask).split(' ')
-  console.log(text);
+  // console.log(text);
   if (!completetask.hasClass('complete') &&
     /^~/.test(text[text.length - 2])) {
     if (stringToDate(text[text.length - 2].slice(1)) == 'Invalid Date') {
@@ -2242,7 +2245,7 @@ function toggleComplete(task) {
       if (task) {
         date.setDate(date.getDate() - 1)
       }
-      console.log(date);
+      // console.log(date);
       // save so it doesn't immediately delete
       const heading = dateToHeading(date, false)
       const newtask = completetask.clone()
@@ -2449,7 +2452,7 @@ function dropTask(ev) {
   draggingtask = false
   let children = []
   const el = $(ev.target)
-  console.log(selected, el);
+  // console.log(selected, el);
   if (selected.hasClass('h1') || selected.hasClass('h2') ||
     selected.hasClass('h3')) {
     // drop all the tasks
@@ -2489,7 +2492,7 @@ function dropTask(ev) {
       $(el).before(selected)
     } else {
       $(el).after(selected)
-      console.log('dropped', el, selected);
+      // console.log('dropped', el, selected);
     }
   }
   for (i = children.length - 1; i >= 0; i--) {
@@ -2555,7 +2558,7 @@ function getHeadingChildren(el) {
     thisclass = 'h3'
   }
   const children = el.parent().children()
-    .filter(':not(.placeholder):not(.buffer)')
+    .filter(':not(.buffer)')
   const start = children.toArray().indexOf(el[0]) + 1
   for (let i = start; i < children.length; i++) {
     let toggle = true
@@ -2683,7 +2686,7 @@ function setStyle(style, alert) {
     $.get(
       style,
       function () {
-        // console.log(oldstyle, $('link[href="' + oldstyle + '"]'));
+        // // console.log(oldstyle, $('link[href="' + oldstyle + '"]'));
         $('#theme').remove()
         $('head').append(
           $("<link id='theme' rel='stylesheet' type='text/css' href='" +
@@ -2858,7 +2861,7 @@ function context(e, mobile) {
     window.innerHeight - $('#context-menu').height()) - 20)
   $('#context-menu').css('left', Math.min(e.pageX,
     window.innerWidth - $('#context-menu').width()) - 40)
-  // // console.log($('#context-menu').offset());
+  // // // console.log($('#context-menu').offset());
   if ($('#context-menu').offset().top < 0) {
     $('#context-menu').css('top', '0')
   }
@@ -2965,7 +2968,7 @@ function setTask(type) {
 }
 
 function clickoff(ev) {
-  console.log($(ev.target).attr('id'));
+  // console.log($(ev.target).attr('id'));
   if (draggingtask) { 
     setTimeout(function () {
       draggingtask = false
@@ -2977,7 +2980,7 @@ function clickoff(ev) {
     return 
   }
   if (dblclicked) {
-    console.log('true');
+    // console.log('true');
     if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
       // prevents interfering with edits
       return
@@ -3304,8 +3307,8 @@ function keycomms(evt) {
     resetdoc()
   }
   // makes sure to unselect on proper things
-  console.log(evt.code);
-  if (selected[0].tagName == 'TEXTAREA' && evt.ctrlKey) {
+  // console.log(evt.code);
+  if (selected && selected[0].tagName == 'TEXTAREA' && evt.ctrlKey) {
     const selectstart = selected[0].selectionStart
     const selectend = selected[0].selectionEnd
     const val = selected.val()
@@ -3399,7 +3402,7 @@ function keycomms(evt) {
       const date = dateToHeading(
         stringToDate($('#searchbar').val().slice(2)), false, true)
       select(date, true)
-      console.log(selected);
+      // console.log(selected);
       $('#searchbar').val('')
       $('#searchbar').blur()
       if (movetask != undefined) {
@@ -3462,7 +3465,7 @@ function keycomms(evt) {
     evt.preventDefault()
     // edit/save task
     if (selected[0].tagName == 'TEXTAREA') {
-      console.log('saving task');
+      // console.log('saving task');
       saveTask()
     } else if (selected[0].tagName == 'SPAN') {
       editTask()
@@ -3661,7 +3664,7 @@ function tutorial() {
 
 function uploadData(reloading) {
   if (window.parent.location.href.includes('welcome')) {
-    console.log('true');
+    // console.log('true');
     return // for demo
   }
   display('--- upload started ---') 
@@ -3853,7 +3856,7 @@ function loadpage(setload, oldselect, scrolls) {
     $(document).on('keyup', keyup)
     $(document).on('contextmenu', function(event) {
       context(event)
-      console.log($('#listcontainer > .in'));
+      // console.log($('#listcontainer > .in'));
       $('#listcontainer > .in').hide()
     })
     $(document).on('mousedown', event, clicked)
@@ -3879,7 +3882,7 @@ function loadpage(setload, oldselect, scrolls) {
       $('head').append('<link href="mobilestyle.css" rel="stylesheet">')
       // behavior for initial scroll
       $(document).on('touchend', function () {
-        console.log('scrolling');
+        // console.log('scrolling');
         setTimeout(function() { 
           $('#logoimage').remove() 
           resetdoc()
@@ -3908,7 +3911,7 @@ function loadpage(setload, oldselect, scrolls) {
   $('#pop').html(data.pop)
   // loads data
   let oldload
-  // console.log(data.loadedlist, setload);
+  // // console.log(data.loadedlist, setload);
   // load lists if there is one
   if (setload == false) {
     // fixes weird loadlist glitch
@@ -3916,7 +3919,7 @@ function loadpage(setload, oldselect, scrolls) {
   } else if (data.loadedlist != undefined) {
     oldload = Number(data.loadedlist)
   }
-  // console.log(oldload);
+  // // console.log(oldload);
   for (i of data.flop) {
     const newthing = $('<textarea class="listtitle unselected"></textarea>')
     newthing.attr('ondragstart', 'dragList(event)')
@@ -3959,7 +3962,7 @@ function loadpage(setload, oldselect, scrolls) {
   clean()
   updatedeadlines()
   updateSpanDrags()
-  // console.log(scrolls);
+  // // console.log(scrolls);
   if (scrolls) {
     $('#flop').scrollTop(scrolls[0])
     $('#pop').scrollTop(scrolls[1])
@@ -3988,7 +3991,7 @@ function loadpage(setload, oldselect, scrolls) {
 function scrollToToday() {
   const butheight = $(':root').css('--butheight')
   $('#pop').animate({
-    scrollTop: $(dateToHeading(stringToDate('0d'))).prev().offset().top
+    scrollTop: $(dateToHeading(stringToDate('0d'))).offset().top
       - $('#pop').offset().top - butheight.slice(0, butheight.length - 2)
   }, 500)
 }
