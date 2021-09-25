@@ -3840,7 +3840,6 @@ function reload() {
     return
   }
   $('body').prepend("<div id='logoimage' class='show' style='z-index:2;opacity:0'><img src='logo.png'></div>")
-  $('#logoimage').animate({'opacity': 0.1}, 500)
   display('--- download started ---');
   if (!navigator.onLine || offlinemode) {
     // skip upload
@@ -3866,10 +3865,10 @@ function reload() {
         const diffs = diffsLog(JSON.stringify(data), xhr.responseText)
         if (diffs == 'Diffs:') {
           display('*** identical ***')
-          $('#logoimage').animate({'opacity': 0}, 500)
-          setTimeout(function () {$('#logoimage').remove()}, 500)
+          $('#logoimage').remove()
         } else {
           display('*** download finished, reloading ***');
+          $('#logoimage').animate({'opacity': 0.1}, 300)
           // only reload if data differs
           data = JSON.parse(xhr.responseText)
           reload2()
