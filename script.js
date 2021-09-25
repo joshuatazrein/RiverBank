@@ -1182,6 +1182,7 @@ function updatedeadlines(saving) {
     updateSpanDrags() 
   }
   migrate()
+  console.log($('#pop').children().filter('.dateheading').toArray().map((x) => { return x.innerHTML }))
   console.log('migrated');
   $('.duedate').remove()
   $('.placeholder').remove()
@@ -1271,7 +1272,7 @@ function migrate() {
   const todayheading = $(dateToHeading(stringToDate('0d'), false))
   console.log(today, todayheading);
   const headings = $('#pop').children().filter('.dateheading').toArray()
-  console.log(headings);
+  console.log(headings.map((x) => { return x.innerHTML }));
   for (heading of headings) {
     if (stringToDate(stripChildren($(heading)), true).getTime() < today) {
       console.log('migrating', $(heading).text(), stripChildren($(heading)), stringToDate(stripChildren($(heading)), true));
@@ -4063,9 +4064,12 @@ function loadpage(setload, oldselect, scrolls) {
   toggleButs(false)
   $('.taskselect').removeClass('taskselect')
   resetdoc()
+  console.log($('#pop').children().filter('.dateheading').toArray().map((x) => { return x.innerHTML }))
   clean()
+  console.log($('#pop').children().filter('.dateheading').toArray().map((x) => { return x.innerHTML }))
   console.log('cleaned');
   updatedeadlines(false)
+  console.log($('#pop').children().filter('.dateheading').toArray().map((x) => { return x.innerHTML }))
   console.log('deadlines updated');
   updateSpanDrags()
   console.log('drags updated');
