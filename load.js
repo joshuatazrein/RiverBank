@@ -113,6 +113,7 @@ function load() {
 
 function initialize() {
   // tries to load until it's actually loaded
+  console.log('initializing...');
   try {
     loadpage()
   } catch (err) {

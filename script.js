@@ -682,7 +682,7 @@ function switchUser() {
   document.cookie = 'user=;expires=' + past + ';' + ';path=/;'
   document.cookie = 'fname=;expires=' + past + ';' + ';path=/;'
   document.cookie = 'pw=;expires=' + past + ';' + ';path=/;'
-  // location.reload()
+  location.reload()
 }
 
 function upload() {
