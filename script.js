@@ -515,6 +515,11 @@ function loadthis(event) {
 function clean() {
   $('#test').empty()
   $('textarea.in').remove()
+  $('span.dateheading').toArray().forEach((x) => {
+    // rewrite dates
+    if ($(x).text().includes('undefined')) $(x).remove()
+    else $(x).text(dateToString(stringToDate(stripChildren($(x)), true), true))
+  })
   if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
     selected.parent().hasClass('in')) {
     // clear open tasks
@@ -796,6 +801,7 @@ function changeDateFormat(format) {
   $('.dateheading').toArray().forEach((x) => {
     // change all dates in pop
     const getdate = stringToDate(stripChildren($(x)), true)
+    console.log(stripChildren($(x)), stringToDate(stripChildren($(x))))
     data.dateSplit = format
     $(x).text(dateToString(getdate, true))
     data.dateSplit = thisformat
@@ -809,8 +815,8 @@ function changeDateFormat(format) {
     for (x of $('#test').find('.deadline')) {
       // change all deadlines
       data.dateSplit = thisformat
-      const getdate = stringToDate(stripChildren($(x)).slice(
-        1, stripChildren($(x).length) - 1), false)
+      const getdate = stringToDate(stripChildren($(x))
+        .slice(1, stripChildren($(x)).length - 1), false)
       data.dateSplit = format
       $(x).text('>' + dateToString(getdate, false) + ' ')
     }
@@ -833,17 +839,17 @@ function dateToString(date, weekday) {
     datestr += weekdaysStr[date.getDay()] + ' '
   }
   if (data.dateSplit == 'dd.mm.yyyy') {
-    datestr += String(date.getDate()).padStart(2, 0) + '.' +
-      String(Number(date.getMonth()) + 1).padStart(2, 0) + '.' +
-      date.getFullYear()
+    datestr += String(date.getDate()) + '.' +
+      String(Number(date.getMonth()) + 1) + '.' +
+      String(date.getFullYear()).slice(2)
   } else if (data.dateSplit == 'mm/dd/yyyy') {
-    datestr += String(Number(date.getMonth() + 1)).padStart(2, 0) +
-      '/' + String(date.getDate()).padStart(2, 0) + '/' +
-      date.getFullYear()
+    datestr += String(Number(date.getMonth() + 1)) +
+      '/' + String(date.getDate()) + '/' +
+      String(date.getFullYear()).slice(2)
   } else if (data.dateSplit == 'yyyy-mm-dd') {
-    datestr += date.getFullYear() + '-' +
-      String(Number(date.getMonth() + 1)).padStart(2, 0) + '-' +
-      String(date.getDate()).padStart(2, 0)
+    datestr += String(date.getFullYear()).slice(2) + '-' +
+      String(Number(date.getMonth() + 1)) + '-' +
+      String(date.getDate())
   }
   return datestr
 }
@@ -861,9 +867,7 @@ function stringToDate(string, weekday, future) {
     string = string.slice(1)
   }
   let date = new Date()
-  if (
-    Object.keys(weekdaysNum).includes(string.split(/(\+|-|\s)/)[0])
-  ) {
+  if (Object.keys(weekdaysNum).includes(string.split(/(\+|-|\s)/)[0])) {
     // analyze as a weekday string
     weekday = weekdaysNum[string.split(/(\+|-|\s)/)[0]]
     if (future) {
@@ -896,7 +900,7 @@ function stringToDate(string, weekday, future) {
       }
       if (list.length == 3) {
         if (list[2].length == 2) {
-          date.setFullYear('20' + list[2])
+          date.setFullYear(Number('20' + list[2]))
         } else if (list[2].length == 4) {
           date.setFullYear(list[2])
         }
@@ -914,7 +918,7 @@ function stringToDate(string, weekday, future) {
         date.setDate(list[1])
         if (list.length == 3) {
           if (list[2].length == 2) {
-            date.setFullYear('20' + list[2])
+            date.setFullYear(Number('20' + list[2]))
           } else {
             date.setFullYear(list[2])
           }
@@ -935,7 +939,7 @@ function stringToDate(string, weekday, future) {
         date.setDate(list[2])
         date.setMonth(list[1] - 1)
         if (list[0].length == 2) {
-          date.setFullYear('20' + list[0])
+          date.setFullYear(Number('20' + list[0]))
         } else if (list[0].length == 4) {
           date.setFullYear(list[0])
         }
@@ -987,10 +991,17 @@ function dateToHeading(date, saving) {
   if (dateToString(date).includes('NaN')) return
   // find the matching date, or create if not
   // sort date headings to be correct
-  const headingslist = $('#pop').children().toArray().filter((x) => {
+  let headingslist = $('#pop').children().toArray().filter((x) => {
     return stringToDate(stripChildren($(x)), true) != 'Invalid Date' &&
       $(x).hasClass('dateheading')
   })
+  const now = new Date()
+  if (date.getTime() > now.getTime()) {
+    // if after today, start at today for search
+    headingslist = headingslist.slice(headingslist.findIndex((x) => {
+      return stripChildren($(x)).includes(dateToString(now))
+    }))
+  }
   let heading1 = headingslist.find((x) => {
     return stringToDate(stripChildren($(x)), true).getTime() ==
       stringToDate(dateToString(date)).getTime()
@@ -1351,47 +1362,53 @@ function updateSpanDrags() {
     $('span.in').prepend(
       '<span class="mobhandle"></span>')
     $('span.in').attr('draggable', 'false')
-    $('span.in:not(.dateheading)').draggable({
-      handle: '.mobhandle',
-      containment: 'window',
-      axis: 'y',
-      revert: true,
-      appendTo: $('#listcontainer'),
-      helper: 'clone',
-      refreshPositions: true,
-      zIndex: 1,
-      distance: 20,
-      addClasses: false,
-      start: function (event) {
-        // $(this).hide()
-        dragTask(event, $(this))
-      },
-      drag: function (event) {
-        mobileDragOver(event)
-        $('#listcontainer > span').removeClass('in')
-      },
+    $('span.in:not(.dateheading)').toArray().forEach((x) => {
+      $(x).draggable({
+        handle: '.mobhandle',
+        containment: 'window',
+        axis: 'y',
+        revert: true,
+        appendTo: $('#listcontainer'),
+        helper: 'clone',
+        cursorAt: {left: $('#flop').width() / 2, top: $(x).height() / 2},
+        refreshPositions: true,
+        zIndex: 1,
+        distance: 20,
+        addClasses: false,
+        start: function (event) {
+          // $(this).hide()
+          dragTask(event, $(this))
+        },
+        drag: function (event) {
+          mobileDragOver(event)
+          $('#listcontainer > span').removeClass('in')
+        },
+      })
     })
     $('.ui-draggable-handle').removeClass('ui-draggable-handle')
     $('.ui-droppable').removeClass('ui-droppable')
   } else {
     $('.mobhandle').remove()
-    $('span.in:not(.dateheading)').draggable({
-      containment: 'window',
-      revert: true,
-      appendTo: $('#listcontainer'),
-      distance: 20,
-      helper: 'clone',
-      refreshPositions: true,
-      zIndex: 1,
-      addClasses: false,
-      start: function (event) {
-        // $(this).hide()
-        dragTask(event, $(this))
-      },
-      drag: function (event) {
-        dragTaskOver(event)
-        $('#listcontainer > span').removeClass('in')
-      },
+    $('span.in:not(.dateheading)').toArray().forEach((x) => {
+      $(x).draggable({
+        containment: 'window',
+        revert: true,
+        appendTo: $('#listcontainer'),
+        distance: 20,
+        helper: 'clone',
+        cursorAt: {left: $('#flop').width() / 2, top: $(x).height() / 2},
+        refreshPositions: true,
+        zIndex: 1,
+        addClasses: false,
+        start: function (event) {
+          // $(this).hide()
+          dragTask(event, $(this))
+        },
+        drag: function (event) {
+          dragTaskOver(event)
+          $('#listcontainer > span').removeClass('in')
+        },
+      })
     })
     $('span.in').attr('draggable', 'true')
   }
@@ -1887,11 +1904,18 @@ function saveTask() { // analyze format of task and create new <span> elt for it
 function getHeading(el) {
   if (!el) return
   // gets the heading
-  try {
-    while (el.parent()[0].tagName != 'P') el = el.parent()
-  } catch (TypeError) { return }
+  el = $(el)
+  while (el.parent()[0].tagName != 'P') el = el.parent()
+  let hclasses = ['h1', 'h2', 'h3']
+  if (isHeading(el)) {
+    if (el.hasClass('h1')) return // h1s don't have headings
+    else if (el.hasClass('h2')) hclasses = ['h1']
+    else if (el.hasClass('h3')) hclasses = ['h2', 'h1']
+  }
   let heading = el.prev()
-  while (heading[0] && !isHeading($(heading))) heading = $(heading).prev()
+  while (heading[0] && !hierarchyCheck(heading, hclasses)) {
+    heading = $(heading).prev()
+  }
   if ($(heading)[0]) return $(heading)
 }
 
@@ -1926,7 +1950,15 @@ function select(el, scroll, animate) {
     }
     if (scroll) {
       if (!selected.is(':visible') && getHeading(selected)) {
-        togglefold($(getHeading(selected)))
+        heading = $(getHeading(selected))
+        while (!heading.is(':visible')) {
+          // finds currently folded heading to unfold
+          if (heading.hasClass('folded')) {
+            togglefold(heading, false)
+          }
+          heading = $(getHeading(heading))
+        }
+        togglefold(heading)
       }
       if (getFrame(selected)) {
         // only execute if not clicked
@@ -2161,7 +2193,7 @@ function newTask(subtask, prepend) {
     // subtask
     if (prepend) {
       // console.log(stripChildren(e), getChildren(e), newspan[0].outerHTML);
-      e.html(stripChildren(e) + newspan[0].outerHTML + getChildren(e))
+      e.html(stripChildren(e, 'html') + newspan[0].outerHTML + getChildren(e))
       select(e.find('span.in')[0])
       editTask()
       return
@@ -2556,6 +2588,39 @@ function dropTask(ev) {
   updateSpanDrags()
 }
 
+function collapseAll() {
+  if (selected.hasClass('dateheading')) {
+    alert("try in Bank; folds are automatic in River")
+    return
+  }
+  // collapse all headings at same level as selected
+  let hclass
+  if (selected.hasClass('h2')) {
+    hclass = 'h2'
+  } else if (selected.hasClass('h3')) {
+    hclass = 'h3'
+  }
+  let collapselist
+  if (!selected || !getHeading(selected) || !hclass) {
+    // toggle all primaey hs in flop
+    collapselist = $('#flop').children().toArray().filter((x) => {
+      return isHeading($(x)) && !getHeading($(x))
+    })
+  } else {
+    // if it has heading
+    collapselist = getHeadingChildren($(getHeading($(selected))))
+      .filter((x) => { return $(x).hasClass(hclass) })
+  }
+  let fold
+  if (collapselist.length == 0) return
+  if ($(collapselist[0]).attr('folded') == 'true') { fold = 'true' }
+  else { fold = 'false' }
+  collapselist.forEach((x) => {
+    if ($(x).attr('folded') == fold) { togglefold($(x)) }
+  })
+  setTimeout(function () { select(selected, true) }, 350)
+}
+
 function toggleSubtasks() {
   if (selected.hasClass('h1') || selected.hasClass('h2') ||
     selected.hasClass('h3')) {
@@ -2621,16 +2686,14 @@ function getHeadingChildren(el) {
 
 // toggle fold of a heading
 function togglefold(e, saving) {
-  children = e.parent().children().toArray()
-  start = children.indexOf(e[0]) + 1
-  hides = []
+  console.log(e.attr('folded'), e, saving);
   // hide or show everything underneath
-  let thisclass
   const keepfolded = []
+  console.log(getHeadingChildren(e));
   for (child of getHeadingChildren(e)) {
     // fold everything
     if (e.attr('folded') == 'false') {
-      if (saving === undefined) child.hide(500)
+      if (saving === undefined) child.hide(300)
       else child.hide()
     } else {
       // if unfolding, keep folded headings folded
@@ -2638,8 +2701,8 @@ function togglefold(e, saving) {
         keepfolded.push(child)
       }
       if (saving === undefined) {
-        child.show(500)
-      } else child.show()
+        child.show(300)
+      } else if (saving == false) child.show()
     }
   }
   if (e.attr('folded') == 'true') {
@@ -2836,6 +2899,9 @@ function context(e, mobile) {
       ['SPAN'], ['in']
     ],
     '#context-toggleSubtasks': [
+      ['SPAN'], ['in']
+    ],
+    '#context-collapseAll': [
       ['SPAN'], ['in']
     ],
     '#context-archiveComplete': [
@@ -3290,7 +3356,7 @@ function moveTask(direction) {
     $('#flop').append(selected)
   } else if (direction == 'down') {
     // move the task down
-    if (taskBelow()) taskBelow().after(selected)
+    if (selected.next()[0]) selected.next().after(selected)
     else select(selected, false)
   } else if (direction == 'up') {
     // move the task up
@@ -3298,7 +3364,7 @@ function moveTask(direction) {
     else select(selected, false)
   }
   save(true)
-  if (selected.is(':visible')) select(selected, false)
+  if (selected.is(':visible')) { select(selected, true) }
   else select()
 }
 
@@ -3316,6 +3382,7 @@ function unfilter(update) {
 }
 
 function hierarchyCheck(task, headings) {
+  // returns true if the task is above the current one in the hierarchy
   for (heading of headings) {
     if ($(task).hasClass(heading)) return true
   }
@@ -3804,7 +3871,7 @@ function diffsLog(oldString, newString) {
 }
 
 function reload() {
-  $('body').prepend("<div id='logoimage' class='show'><img src='logo.png'></div>")
+  $('body').prepend("<div id='logoimage' class='show' style='z-index:2'><img src='logo.png'></div>")
   $('#logoimage').css('opacity', '0')
   if (window.parent.location.href.includes('welcome')) {
     reload2()
