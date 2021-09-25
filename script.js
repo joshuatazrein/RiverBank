@@ -651,7 +651,7 @@ function clearEmptyDates(saving, clearing) {
   const dateslist = $('#pop').children().filter('.dateheading')
   const now = stringToDate('0d').getTime()
   for (date of dateslist) {
-    console.log('clearing date', stripChildren($(date)), stringToDate(stripChildren($(date)), true));
+    console.log('clearing date', $(date).text(), stripChildren($(date)), stringToDate(stripChildren($(date)), true));
     const thistime = stringToDate(stripChildren($(date)), true).getTime()
     if (getHeadingChildren($(date)).length == 0 &&
       thistime != now &&
@@ -1175,10 +1175,13 @@ function topChild(frame) {
   return childrenlist[0]
 }
 
-function updatedeadlines() {
+function updatedeadlines(saving) {
   if (filtered) return
-  updateSpanDrags()
+  if (saving != false) { 
+    updateSpanDrags() 
+  }
   migrate()
+  console.log('migrated');
   $('.duedate').remove()
   $('.placeholder').remove()
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
@@ -1218,6 +1221,7 @@ function updatedeadlines() {
   // creating relative dates
   today = stringToDate('0d')
   for (heading of $('#pop').children().filter('.dateheading:not(.futuredate)')) {
+    console.log('relative date', $(heading).text());
     // add in relative dates underneath
     const newelt = createBlankTask()
     newelt.text(datesToRelative(
@@ -1242,12 +1246,13 @@ function updatedeadlines() {
   if (!$('#pop').children().filter('.dateheading')
     .toArray().map((x) => { return stripChildren($(x)) })
     .includes(dateToString(futuredate, true))) {
-    // if future not filled out
-    const curdate = today.getDate()
-    for (let i = 0; i < 30; i ++) {
-      const futuredate = new Date()
-      futuredate.setDate(curdate + i)
-      const newdate = dateToHeading(futuredate, false)
+      // if future not filled out
+      const curdate = today.getDate()
+      for (let i = 0; i < 30; i ++) {
+        const futuredate = new Date()
+        futuredate.setDate(curdate + i)
+        const newdate = dateToHeading(futuredate, false)
+        console.log('filling futures', newdate);
     }
   } else {
     const newdate = new Date()
@@ -1255,14 +1260,17 @@ function updatedeadlines() {
     const newheading = dateToHeading(newdate, false)
   }
   clearEmptyDates(false)
+  console.log('cleared empty dates');
 
 }
 
 function migrate() {
   const today = stringToDate('0d').getTime()
   const todayheading = $(dateToHeading(stringToDate('0d'), false))
+  console.log(today, todayheading);
   for (heading of $('#pop').children().filter('.dateheading').toArray()) {
     if (stringToDate(stripChildren($(heading)), true).getTime() < today) {
+      console.log('migrating', $(heading).text());
       try {
         if (selected &&
           (selected[0] == heading ||
@@ -4046,11 +4054,9 @@ function loadpage(setload, oldselect, scrolls) {
   toggleButs(false)
   $('.taskselect').removeClass('taskselect')
   resetdoc()
-  clearEmptyDates(false)
-  console.log('cleared empty dates');
   clean()
   console.log('cleaned');
-  updatedeadlines()
+  updatedeadlines(false)
   console.log('deadlines updated');
   updateSpanDrags()
   console.log('drags updated');
