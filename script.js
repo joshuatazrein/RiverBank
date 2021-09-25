@@ -26,6 +26,7 @@ var justclicked
 var dblclicked
 var dragtimer
 var mobile
+var loading
 var draggingtask
 var justdropped
 var justcollapsed
@@ -1299,8 +1300,10 @@ function migrate() {
         ch.children().filter('span.in:not(.complete)').toArray().forEach(
           (x) => { appends.push(x) })
         if (ch.hasClass('event') && !ch.hasClass('complete')) {
-          console.log('toggling complete');
-          toggleComplete(ch, false)
+          if (!loading) {
+            console.log('toggling complete');
+            toggleComplete(ch, false)
+          }
         } else if (!ch.hasClass('complete') && !isHeading(ch)) {
           appends.push(ch)
         }
@@ -3921,6 +3924,7 @@ function reload2() {
 }
 
 function loadpage(setload, oldselect, scrolls) {
+  loading = true
   // right after signing in
   display('loading...');
   if (!window.location.href.includes('welcome')) {
@@ -4092,6 +4096,7 @@ function loadpage(setload, oldselect, scrolls) {
     setTimeout(function() { $('#logoimage').remove() }, 500)
   }
   console.log('fully loaded.');
+  loading = false
 }
 
 function scrollToToday() {
