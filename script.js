@@ -63,7 +63,7 @@ var filtered
 var filteredlist
 
 function display(x) {
-  // console.log(x)
+  console.log(x)
 }
 
 function mobiletest() {
@@ -81,18 +81,16 @@ function resetdoc() {
   $(document).scrollTop(0)
   $(document.body).css('zoom', "100%")
   document.firstElementChild.style.zoom = "reset";
-  if (mobiletest()) {
-    if (flopscrollsave) {
-      $('#flop').scrollTop(flopscrollsave)
-    }
-    if (popscrollsave) {
-      $('#pop').scrollTop(popscrollsave)
-    }
-    flopscrollsave = undefined
-    $('#flop').removeClass('greyedout')
-    popscrollsave = undefined
-    $('#pop').removeClass('greyedout')
+  if (flopscrollsave) {
+    $('#flop').scrollTop(flopscrollsave)
   }
+  if (popscrollsave) {
+    $('#pop').scrollTop(popscrollsave)
+  }
+  flopscrollsave = undefined
+  popscrollsave = undefined
+  $('#flop').removeClass('greyedout')
+  $('#pop').removeClass('greyedout')
 }
 
 //# TIMER
@@ -173,10 +171,13 @@ function dragTaskOver(event) {
         $(loads[loadedlist]).removeClass('selected')
         $(loads[loadedlist]).addClass('unselected')
         data.flop[loadedlist].text = $('#flop').html()
-        flopscrollsave = undefined
+        if (flopscrollsave) {
+          $('#flop').scrollTop(flopscrollsave)
+        }
         if (popscrollsave) {
           $('#pop').scrollTop(popscrollsave)
         }
+        flopscrollsave = undefined
         popscrollsave = undefined
         $('#flop, #pop').removeClass('greyedout')
         loadedlist = i
@@ -556,6 +557,11 @@ function clean() {
     return stringToDate(stripChildren($(a)), true).getTime() -
       stringToDate(stripChildren($(b)), true).getTime()
   })) {
+    if ([' ...', '...'].includes(stripChildren($(heading)))) {
+      console.log('cleaning', heading);
+      heading.remove()
+      continue
+    }
     const children = getHeadingChildren($(heading)).reverse()
     $('#pop').append($(heading))
     children.forEach((x) => {
@@ -633,7 +639,7 @@ function save(undoing, cleaning) {
   if (cleaning != false) {
     // clean up styling
     $('span.in:visible').attr('style', '')
-    clean()
+    // clean()
     updatedeadlines() // updateSpanDrags() called in updatedeadlines
     resetdoc() // fixes scroll
     // backup data to the server after setting localstorage data
@@ -1207,7 +1213,9 @@ function updatedeadlines() {
   }
   // creating relative dates
   today = stringToDate('0d')
-  for (heading of $('#pop').children().filter('.dateheading')) {
+  console.log($('#pop').children().filter('.dateheading:not(.futuredate)').toArray()
+    .map((x) => { return stripChildren($(x)) }))
+  for (heading of $('#pop').children().filter('.dateheading:not(.futuredate)')) {
     // add in relative dates underneath
     const newelt = createBlankTask()
     newelt.text(datesToRelative(
@@ -1216,7 +1224,6 @@ function updatedeadlines() {
     newelt.addClass('placeholder')
     newelt.removeClass('in')
     $(heading).append(newelt)
-    console.log(newelt.text());
   }
   // adds in scroll buffers if needed
   if (!$('#flop').children().filter('.buffer')[0]) {
@@ -1272,9 +1279,11 @@ function migrate() {
       // migrate all uncompleted tasks
       for (child of getHeadingChildren($(heading))) {
         const ch = $(child)
-        if (/^uncompleted/.test(ch.text()) && 
+        if ((/^uncompleted/.test(ch.text()) ||
+          /^completed/.test(ch.text())) && 
           heading != todayheading[0]) {
           // takes out the uncompleted heading
+          if (ch.hasClass('folded')) { togglefold($(heading), false) }
           ch.remove()
           continue
         }
@@ -1426,10 +1435,13 @@ function mobileDragOver(event) {
         $(loads[loadedlist]).addClass('unselected')
         selected.detach()
         data.flop[loadedlist].text = $('#flop').html()
-        flopscrollsave = undefined
+        if (flopscrollsave) {
+          $('#flop').scrollTop(flopscrollsave)
+        }
         if (popscrollsave) {
           $('#pop').scrollTop(popscrollsave)
         }
+        flopscrollsave = undefined
         popscrollsave = undefined
         $('#flop, #pop').removeClass('greyedout')
         $('.drop-hover').removeClass('.drop-hover')
@@ -1500,7 +1512,7 @@ function mobileDragOver(event) {
       }
     } else if (mobiletest() &&
       event.pageY < popoffset && !popscrollsave) {
-      // scroll flop to end
+      // scroll pop to beginning
       if (flopscrollsave) {
         $('#flop').scrollTop(flopscrollsave)
       }
@@ -2179,7 +2191,11 @@ function archiveAll() {
 }
 
 function archiveTask() {
-  let taskabove = taskAbove()
+  if (!selected.hasClass('complete')) {
+    toggleComplete(selected)
+    playPop()
+  }
+  let taskabove = taskBelow()
   if (taskabove[0] == selected[0]) { taskabove = getFrame(selected) }
   // archives the selected Flop to the current day
   let heading
@@ -2209,10 +2225,6 @@ function archiveTask() {
       }
     })
   }
- if (!selected.hasClass('complete')) {
-    toggleComplete(selected)
-    playPop()
-  }
   heading.after(selected)
   // formatting
   if (heading.attr('folded') == 'true') {
@@ -2229,6 +2241,10 @@ function toggleComplete(task) {
     completetask = selected
     if (selected && selected[0].tagName == 'P') {
       return
+    }
+    if (!completetask.hasClass('complete') && data.play == 'true') {
+      // pop!
+      playPop()
     }
   }
   else completetask = $(task)
@@ -2258,10 +2274,6 @@ function toggleComplete(task) {
         save()
       }
     }
-  }
-  if (!task && !completetask.hasClass('complete') && data.play == 'true') {
-    // pop!
-    playPop()
   }
   completetask.toggleClass('complete')
   if (!task) {
@@ -2380,14 +2392,43 @@ function dragTask(evt) {
   oldselect.remove()
 }
 
-function togglecollapse() {
-  $('#leftcol').toggleClass('collapsed')
-  if ($('#leftcol').hasClass('collapsed')) {
-    $('#listcontainer').addClass('fullwidth')
+function togglecollapse(animate) {
+  if (animate) {
+    const length = 666
+    if (!$('#leftcol').hasClass('collapsed')) {
+      $('#leftcol').animate({'margin-left': -1 * $('#leftcol').width()}, length)
+      $('#listcontainer').animate({'width': '100vw'}, length)
+      setTimeout(function () {
+        $('#leftcol').addClass('collapsed')
+        $('#listcontainer').addClass('fullwidth')
+        $('#leftcol').css('margin-left', '')
+        $('#listcontainer').css('width', '')
+        updateSizes()
+      }, length)
+    } else {
+      $('#leftcol').css('margin-left', -1 * $('#leftcol').width())
+      $('#listcontainer').css('width', $('#listcontainer').css('width'))
+      $('#listcontainer').removeClass('fullwidth')
+      $('#leftcol').removeClass('collapsed')
+      updateSizes()
+      $('#listcontainer').animate({'width': window.innerWidth - 
+        $('#leftcol').width() - 10}, length)
+      $('#leftcol').animate({'margin-left': 0}, length)
+      setTimeout(function () {
+        $('#leftcol').css('margin-left', '')
+        $('#listcontainer').css('width', '')
+      }, length)
+    }
   } else {
-    $('#listcontainer').removeClass('fullwidth')
+    if (!$('#leftcol').hasClass('collapsed')) {
+      $('#leftcol').addClass('collapsed')
+      $('#listcontainer').addClass('fullwidth')
+    } else {
+      $('#listcontainer').removeClass('fullwidth')
+      $('#leftcol').removeClass('collapsed')
+    }
+    updateSizes()
   }
-  updateSizes()
   if (focusmode) togglefocus(false) // unfocus if uncollapse
 }
 
@@ -2499,18 +2540,18 @@ function dropTask(ev) {
     // append each child after for headings
     selected.after(children[i])
   }
-  if (mobiletest()) {
-    if (flopscrollsave) {
-      $('#flop').scrollTop(flopscrollsave)
-    }
-    if (popscrollsave) {
-      $('#pop').scrollTop(popscrollsave)
-    }
-    flopscrollsave = undefined
-    $('#flop').removeClass('greyedout')
-    popscrollsave = undefined
-    $('#pop').removeClass('greyedout')
-  }
+  // if (mobiletest()) {
+  //   if (flopscrollsave) {
+  //     $('#flop').scrollTop(flopscrollsave)
+  //   }
+  //   if (popscrollsave) {
+  //     $('#pop').scrollTop(popscrollsave)
+  //   }
+  //   flopscrollsave = undefined
+  //   $('#flop').removeClass('greyedout')
+  //   popscrollsave = undefined
+  //   $('#pop').removeClass('greyedout')
+  // }
   save()
   updateSpanDrags()
 }
@@ -3765,7 +3806,6 @@ function diffsLog(oldString, newString) {
 function reload() {
   $('body').prepend("<div id='logoimage' class='show'><img src='logo.png'></div>")
   $('#logoimage').css('opacity', '0')
-  $('#logoimage').animate({opacity: 0.1}, 500)
   if (window.parent.location.href.includes('welcome')) {
     reload2()
     return
@@ -3776,7 +3816,7 @@ function reload() {
     diffsLog(JSON.stringify(data), localStorage.getItem('data'))
     data = JSON.parse(localStorage.getItem('data'))
     display('*** local download finished ***')
-    reload2()
+    $('#logoimage').remove()
   } else {
     if (navigator.onLine && offline) {
       // upload data once navigator comes online
@@ -3790,13 +3830,19 @@ function reload() {
         alert('downloading from cloud...')
       }
     }
-    $.post(
-      'download.php',
-      function (datastr, status, xhr) {
-        diffsLog(JSON.stringify(data), xhr.responseText)
-        display('*** download finished ***');
-        data = JSON.parse(xhr.responseText)
-        reload2()
+    $.post('download.php',
+    function (datastr, status, xhr) {
+      diffsLog(JSON.stringify(data), xhr.responseText)
+      if (JSON.stringify(data) != xhr.responseText) {
+          display('*** download finished, reloading ***');
+          // only reload if data differs
+          $('#logoimage').animate({opacity: 0.1}, 500)
+          data = JSON.parse(xhr.responseText)
+          reload2()
+        } else {
+          display('*** identical ***')
+          $('#logoimage').remove()
+        }
       }
     )
   }
@@ -3804,11 +3850,22 @@ function reload() {
 
 function reload2() {
   let selectframe, selectindex
-  if (selected && selected[0].tagName == 'SPAN') {
-    selectframe = getFrame(selected)
-    selectindex = selectframe.find('span.in').toArray().indexOf(selected[0])
-  } else if (selected && getFrame(selected)) {
-    selectframe = getFrame(selected)
+  try {
+    if (selected && selected[0].tagName == 'SPAN') {
+      selectframe = getFrame(selected)
+      selectindex = selectframe.find('span.in').toArray().indexOf(selected[0])
+    } else if (selected && getFrame(selected)) {
+      selectframe = getFrame(selected)
+    }
+  } catch (err) {
+    const floptop = $('#flop').scrollTop()
+    const poptop = $('#pop').scrollTop()
+    $('#pop').empty()
+    $('#flop').empty()
+    $('#loads').empty()
+    loadpage(false, undefined, [floptop, poptop])
+    $(':focus').blur()
+    return
   }
   const floptop = $('#flop').scrollTop()
   const poptop = $('#pop').scrollTop()
