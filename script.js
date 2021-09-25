@@ -651,6 +651,7 @@ function clearEmptyDates(saving, clearing) {
   const dateslist = $('#pop').children().filter('.dateheading')
   const now = stringToDate('0d').getTime()
   for (date of dateslist) {
+    console.log('clearing date', stripChildren($(date)), stringToDate(stripChildren($(date)), true));
     const thistime = stringToDate(stripChildren($(date)), true).getTime()
     if (getHeadingChildren($(date)).length == 0 &&
       thistime != now &&
