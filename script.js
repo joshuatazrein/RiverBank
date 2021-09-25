@@ -3895,6 +3895,7 @@ function loadpage(setload, oldselect, scrolls) {
         resetdoc()
       }, 3000)
     }
+    console.log('here');
   }
   if ($('#theme').attr('href') != data.style) {
     // reloads theme if it was changed
@@ -3931,6 +3932,7 @@ function loadpage(setload, oldselect, scrolls) {
     $('#loads').append(newthing)
   }
   const children = $('#loads').children().toArray()
+  console.log('here');
   for (i in children) {
     // remember folding
     const val = $(children[i]).val()
@@ -3955,6 +3957,7 @@ function loadpage(setload, oldselect, scrolls) {
   } else if (data.hidebuts == 'true') {
     data.hidebuts = 'false'
   }
+  console.log('here');
   toggleButs(false)
   $('.taskselect').removeClass('taskselect')
   resetdoc()
@@ -3986,6 +3989,7 @@ function loadpage(setload, oldselect, scrolls) {
     $('#logoimage').animate({opacity: 0}, 500)
     setTimeout(function() { $('#logoimage').remove() }, 500)
   }
+  console.log('loaded');
 }
 
 function scrollToToday() {
