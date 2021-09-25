@@ -483,9 +483,9 @@ function updateSizes() {
     }
   }
   if (window.innerWidth > 600 && mobile) {
-    location.reload()
+    // location.reload()
   } else if (window.innerWidth < 600 && !mobile) {
-    location.reload()
+    // location.reload()
   }
   // update height of loads
   let loadsheight = window.innerHeight - 10 - $('#desktopbutstop').height()
@@ -678,7 +678,7 @@ function switchUser() {
   document.cookie = 'user=;expires=' + past + ';' + ';path=/;'
   document.cookie = 'fname=;expires=' + past + ';' + ';path=/;'
   document.cookie = 'pw=;expires=' + past + ';' + ';path=/;'
-  location.reload()
+  // location.reload()
 }
 
 function upload() {
