@@ -1268,10 +1268,11 @@ function migrate() {
   const today = stringToDate('0d').getTime()
   const todayheading = $(dateToHeading(stringToDate('0d'), false))
   console.log(today, todayheading);
-  console.log($('#pop').children().filter('.dateheading').toArray());
-  for (heading of $('#pop').children().filter('.dateheading').toArray()) {
+  const headings = $('#pop').children().filter('.dateheading').toArray()
+  console.log(headings);
+  for (heading of headings) {
     if (stringToDate(stripChildren($(heading)), true).getTime() < today) {
-      console.log('migrating', $(heading).text());
+      console.log('migrating', $(heading).text(), stripChildren($(heading)), stringToDate(stripChildren($(heading)), true));
       try {
         if (selected &&
           (selected[0] == heading ||
@@ -1349,6 +1350,7 @@ function migrate() {
       }
     }
   }
+  debugger
 }
 
 function updateSpanDrags() {
