@@ -1356,7 +1356,6 @@ function migrate() {
       }
     }
   }
-  debugger
 }
 
 function updateSpanDrags() {
