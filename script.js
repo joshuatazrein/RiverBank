@@ -1268,6 +1268,7 @@ function migrate() {
   const today = stringToDate('0d').getTime()
   const todayheading = $(dateToHeading(stringToDate('0d'), false))
   console.log(today, todayheading);
+  console.log($('#pop').children().filter('.dateheading').toArray());
   for (heading of $('#pop').children().filter('.dateheading').toArray()) {
     if (stringToDate(stripChildren($(heading)), true).getTime() < today) {
       console.log('migrating', $(heading).text());
