@@ -1279,12 +1279,11 @@ function migrate() {
       try {
         if (selected &&
           (selected[0] == heading ||
-            (getHeading(selected) && getHeading(selected)[0]
-              == heading))) {
+          (getHeading(selected) && getHeading(selected)[0] == heading))) {
           continue
         }
       } catch (err) {
-        display([err, getHeading(selected)])
+        display(err)
         continue
       }
       // migrate all uncompleted tasks
