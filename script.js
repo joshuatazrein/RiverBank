@@ -3870,12 +3870,12 @@ function diffsLog(oldString, newString) {
 }
 
 function reload() {
-  $('body').prepend("<div id='logoimage' class='show' style='z-index:2'><img src='logo.png'></div>")
-  $('#logoimage').css('opacity', '0')
   if (window.parent.location.href.includes('welcome')) {
     reload2()
     return
   }
+  $('body').prepend("<div id='logoimage' class='show' style='z-index:2'><img src='logo.png'></div>")
+  $('#logoimage').css('opacity', '0')
   display('--- download started ---');
   if (!navigator.onLine || offlinemode) {
     // skip upload
@@ -3899,16 +3899,16 @@ function reload() {
     $.post('download.php',
     function (datastr, status, xhr) {
       diffsLog(JSON.stringify(data), xhr.responseText)
-      if (JSON.stringify(data) != xhr.responseText) {
+      if (JSON.stringify(data) != JSON.stringify(xhr.responseText)) {
           display('*** download finished, reloading ***');
           // only reload if data differs
           $('#logoimage').animate({opacity: 0.1}, 500)
           data = JSON.parse(xhr.responseText)
           reload2()
-        } else {
-          display('*** identical ***')
-          $('#logoimage').remove()
-        }
+      } else {
+        display('*** identical ***')
+        $('#logoimage').remove()
+      }
       }
     )
   }
