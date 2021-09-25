@@ -1299,7 +1299,8 @@ function migrate() {
         ch.children().filter('span.in:not(.complete)').toArray().forEach(
           (x) => { appends.push(x) })
         if (ch.hasClass('event') && !ch.hasClass('complete')) {
-          toggleComplete(ch)
+          console.log('toggling complete');
+          toggleComplete(ch, false)
         } else if (!ch.hasClass('complete') && !isHeading(ch)) {
           appends.push(ch)
         }
@@ -2256,7 +2257,7 @@ function archiveTask() {
   save(true)
 }
 
-function toggleComplete(task) {
+function toggleComplete(task, saving) {
   // task is for autocompleting yesterday's events
   let completetask
   if (!task) {
@@ -2296,7 +2297,7 @@ function toggleComplete(task) {
     }
   }
   completetask.toggleClass('complete')
-  if (!task) {
+  if (!task || saving != false) {
     clearEmptyDates()
     save(true)
   }
