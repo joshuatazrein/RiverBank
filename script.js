@@ -1265,6 +1265,7 @@ function updatedeadlines(saving) {
 }
 
 function migrate() {
+  console.trace()
   const today = stringToDate('0d').getTime()
   const todayheading = $(dateToHeading(stringToDate('0d'), false))
   console.log(today, todayheading);
