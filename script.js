@@ -2018,7 +2018,8 @@ function setText(el) {
 function stripChildren(el, mode) {
   if ($(el).hasClass('dateheading') || $(el).hasClass('futuredate')) {
     // dateheadings just filter our their subspans
-    return $(el).html().split('<span')[0]
+    console.log($(el).html().replace(/<span>(.+)<\/span>/g, ''), $(el).html());
+    return $(el).html().replace(/<span>(.+)<\/span>/g, '')
   }
   // retrieve text from only the parent span and any of its formatting
   const testelt = el.clone()
