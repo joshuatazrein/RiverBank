@@ -1904,6 +1904,7 @@ function getHeading(el) {
   if (!el) return
   // gets the heading
   el = $(el)
+  if (!el.parent()) return
   while (el.parent()[0].tagName != 'P') el = el.parent()
   let hclasses = ['h1', 'h2', 'h3']
   if (isHeading(el)) {
@@ -3876,6 +3877,7 @@ function reload() {
   }
   $('body').prepend("<div id='logoimage' class='show' style='z-index:2'><img src='logo.png'></div>")
   $('#logoimage').css('opacity', '0')
+  $('#logoimage').animate({'opacity': '0.3'}, 500)
   display('--- download started ---');
   if (!navigator.onLine || offlinemode) {
     // skip upload
@@ -3902,7 +3904,7 @@ function reload() {
       if (JSON.stringify(data) != JSON.stringify(xhr.responseText)) {
           display('*** download finished, reloading ***');
           // only reload if data differs
-          $('#logoimage').animate({opacity: 0.1}, 500)
+          // $('#logoimage').animate({opacity: 0.1}, 500)
           data = JSON.parse(xhr.responseText)
           reload2()
       } else {
