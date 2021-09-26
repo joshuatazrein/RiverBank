@@ -591,7 +591,7 @@ function undo() {
   }
   loadedlist = oldload
   loadList(false)
-  dragson(false)
+  dragsOn(false)
   $('#flop').scrollTop(floptop)
   $('#pop').scrollTop(poptop)
   if (oldselect) {
@@ -866,7 +866,7 @@ function loadPage(setload, oldselect, scrolls) {
     loadedlist = Number(oldload)
     loadList(false)
   }
-  dragson(false)
+  dragsOn(false)
   display('loaded lists...');
   $('#searchbar').val('')
   // show buttons and help right
