@@ -83,13 +83,20 @@ button {
   background-color: var(--bgoverlay);
   position: absolute;
   left: 0;
-  width: 100%;
+  width: calc(100% - 8px);
   margin: calc(var(--butheight) - 5px) 1px 0 1px;
   color: var(--select);
-  z-index: 2;
-  text-align: right;
-  padding-right: 20px;
+  z-index: 1;
+  padding-right: 12px;
   padding-bottom: 3px;
+  font-size: 0.75em;
+  text-align: right;
+}
+
+span.falselink {
+  display: inline;
+  margin: 2px;
+  /* display: inline-block; */
 }
 
 #focusbar {
@@ -487,13 +494,10 @@ textarea.sublist {
 
 /* # SPANS */
 
-span {
-  width: calc(100% - 2px);
-  display: inline-block;
+span.in, #help span {
   font-family: inherit;
-}
-
-span.in {
+  display: inline-block;
+  width: calc(100% - 2px);
   padding-bottom: 3px;
   padding-top: 3px;
   padding-left: 5px;
@@ -511,8 +515,12 @@ span.in {
   border-radius: 5px;
 }
 
-span.bold, span.bold-italic, span.deadline, span.link, span.italic,
-span.timing, span.weblink {
+span.link, span.falselink, span.deadline, span.duedate {
+  cursor:pointer;
+}
+
+span.bold, span.bold-italic, span.deadline, span.link, span.falselink, 
+span.italic, span.timing, span.weblink {
   display: inline;
   padding: 0;
 }
@@ -547,7 +555,7 @@ span.folded {
   opacity: 0.7;
 }
 
-span.link {
+span.link, span.falselink {
   color: var(--select);
 }
 
@@ -619,6 +627,9 @@ span.placeholder {
   width: fit-content;
   right: 5px;
   top: 0;
+  max-width: 35px;
+  word-wrap: break-word;
+  line-height: 16px;
 }
 
 span.complete {
@@ -691,7 +702,7 @@ span span.note {
 }
 
 span.link, span.bold, span.italic, span.bold-italic, 
-span.weblink, span.deadline {
+span.weblink, span.deadline, span.falselink {
   padding-left: 0 !important;
   display: inline;
 }

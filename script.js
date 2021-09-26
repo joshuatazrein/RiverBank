@@ -30,6 +30,7 @@ var loading
 var draggingtask
 var justdropped
 var justcollapsed
+var flopdeadlines
 var linestarts = {
   '# ': 'h1',
   '## ': 'h2',
@@ -1035,14 +1036,17 @@ function dateToHeading(date, saving) {
 
 function search(skiplinks, deadline) {
   // find all matches with the searchtext
+  while (/\s/.test($('#searchbar').val()
+    .charAt($('#searchbar').val().length - 1))) {
+    // chop off end spaces
+    const val = $('#searchbar').val()
+    $('#searchbar').val(val.slice(0, val.length - 1))
+  }
   let searchtext = $('#searchbar').val()
   if (searchtext == '') return
-  while (/\s/.test(searchtext.charAt(searchtext.length - 1))) {
-    // chop off end spaces
-    searchtext = searchtext.slice(0, searchtext.length - 1)
-  }
   searchexptext = searchtext
-    .replace(/\s\s/, ' ')
+    .replace(/\s\s/, '\\s')
+    .replace(/\s/g, '\\s')
     .replace(/([\*\+\?\.\|\[\]\(\)\{\}\^\$])/g, '\\$1')
   const searchexp = new RegExp(searchexptext, 'gi')
   console.log(searchexp);
@@ -1059,15 +1063,14 @@ function search(skiplinks, deadline) {
     for (let child of children) {
       // if it's a match, add to matches
       if (searchexp.test(stripChildren($(child)))) {
+        console.log(stripChildren($(child)), searchtext + ' >' + deadline)
         // add to matches
         if (skiplinks &&
           $(child).text().includes('[[' + searchtext)) {
           // test for links
           continue
         } else if (skiplinks == 'deadline' &&
-          !stripChildren($(child)).includes(
-            searchtext + ' >' + deadline
-          )) {
+          !$(child).text().includes(deadline)) {
           // finds only deadlines with exact match to text and date
           continue
         } else {
@@ -1097,6 +1100,7 @@ function search(skiplinks, deadline) {
   $('#searchbar-results').show()
   if ($('#searchbar-results').children().length == 1) {
     // go automatically to first item if that works
+    console.log('working');
     gotosearch($($('#searchbar-results').children()[0]))
     $('#searchbar').val('')
     $('#searchbar-results').hide()
@@ -1183,6 +1187,7 @@ function updatedeadlines(saving) {
   migrate()
   $('.duedate').remove()
   $('.placeholder').remove()
+  flopdeadlines = []
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
     (x) => { return ($(x).attr('folded') == 'true') })
   // uncollapses then recollapses to prevent weirdness
@@ -1212,6 +1217,12 @@ function updatedeadlines(saving) {
       duedate.addClass('duedate')
       duedate.removeClass('in')
       $(heading).after(duedate)
+      if (list.title != 'pop') {
+        flopdeadlines.push({
+          'title': duedate.text().slice(2),
+          'end': date
+        })
+      }
     }
   }
   for (heading of collapselist) {
@@ -1280,7 +1291,7 @@ function updatedeadlines(saving) {
     newelt.attr('title', ($(x).parent().text().slice(0, $(x).parent().text().indexOf(' >'))))
     newelt.attr('start', 
       stringToDate(stripChildren($(getHeading($(x))))).getTime())
-    newelt.attr('end', stringToDate($(x).text().slice(1)).getTime())
+    newelt.attr('end', $(x).text().slice(1)) // as text for searching
     $(x).append(newelt)
   })
   clearEmptyDates(false)
@@ -1289,19 +1300,29 @@ function updatedeadlines(saving) {
 function updatetitles() {
   // updates titles of any continuous events in view with current date
   const curdate = stringToDate(stripChildren($($('#pop .dateheading')
-    .toArray().filter((x) => 
-    { return $(x).position().top > 0 })[0])), true).getTime()
-  console.log(curdate);
-  const inview = $('#pop .continuous').toArray()
-    .filter((x) => { return $(x).attr('end') > curdate &&
-    $(x).attr('start') < curdate })
-  console.log(inview);
-  $('#events').html(inview.map((x) => 
-    {return $(x).attr('title')}).join(' | '))
+    .toArray().filter((x) => { 
+      return $(x).position().top > 0 
+    })[0])), true).getTime()
+  const inview = $('#pop .continuous').toArray().filter((x) => { 
+    return stringToDate($(x).attr('end')).getTime() > curdate &&
+      $(x).attr('start') < curdate
+  })
+  const list = inview.map((x) => {
+    return {title: $(x).attr('title'), end: $(x).attr('end')} 
+  }).concat(flopdeadlines.filter((x) => { 
+    return stringToDate(x.end).getTime() > curdate 
+  })).map((x) => { 
+    return '<p style="margin:0;"><span class="falselink" deadline="' +
+      x.end + '">' + x.title + 
+      '</span><span style="position:absolute;left:0px">' + x.end + 
+      '</span></p>'
+  })
+  console.log(list);
+  $('#events').html(list.join(''))
+  
 }
 
 function migrate() {
-  console.trace()
   const today = stringToDate('0d').getTime()
   const todayheading = $(dateToHeading(stringToDate('0d'), false))
   const headings = $('#pop').children().filter('.dateheading').toArray()
@@ -1990,7 +2011,14 @@ function select(el, scroll, animate) {
       if (getFrame(selected)) {
         // only execute if not clicked
         parent = getFrame(selected)
-        const butheight = $(':root').css('--butheight')
+        let butheight = $(':root').css('--butheight')
+        if (getFrame(selected).attr('id') == 'pop') {
+          // add in titles
+          butheight = Number(butheight.slice(0, butheight.length - 2))
+          butheight += Number($('#events').height())
+          butheight += 'px'
+        }
+        console.log(butheight);
         const oldscroll = parent.scrollTop() -
           Number(butheight.slice(0, butheight.length - 2))
         let scrolltime
@@ -3277,6 +3305,11 @@ function clicked(ev) {
     // search the task
     $('#searchbar').val($(ev.target).text().slice(2, -2))
     search(true)
+  } else if ($(ev.target).hasClass('falselink')) {
+    // search the task
+    $('#searchbar').val($(ev.target).text())
+    console.log($(ev.target).attr('deadline'));
+    search('deadline', $(ev.target).attr('deadline'))
   } else if ($(ev.target).hasClass('weblink')) {
     let title = $(ev.target).attr('title')
     if (!title.includes('https://www.')) title = 'https://www.' + title
