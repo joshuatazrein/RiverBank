@@ -1,4 +1,5 @@
-//start of drag
+// # DRAGGING
+
 function dragList(ev) {
   //start drag
   loadedlistobj = ev.target
@@ -51,8 +52,10 @@ function dropList(ev) {
   loadList()
 }
 
-//enable you to edit titles
+// # EDITING
+
 function toggledrags(saving) {
+  // enable drags or disable to allow editing of selected list
   loads = $('#loads').children().toArray()
   if (dragsenabled === true) {
     loads.forEach((i) => {
@@ -87,21 +90,23 @@ function toggledrags(saving) {
 }
 
 function dragsoff(saving) {
+  // turn off drags
   if (dragsenabled) {
     toggledrags(saving)
   }
 }
 
 function dragson(saving) {
+  // turn on drags
  if (!dragsenabled) {
     toggledrags(saving)
   }
 }
 
-// # DATA BEHAVIOR
+// # CREATION/DELETION
 
-// new list
 function newlist(title, text, saving) {
+  // create a new list
   let savetitle
   if (!title) {
     savetitle = ''
@@ -146,8 +151,8 @@ function newlist(title, text, saving) {
   dragsoff(saving)
 }
 
-// remove list from display and data
 function deletelist() {
+  // delete selected list
   yes = confirm('are you sure you want to delete this list?')
   if (yes) {
     $('#loads').children()[loadedlist].remove()
@@ -162,37 +167,10 @@ function deletelist() {
   }
 }
 
-function loadList(saving) { //updates the list display
-  if (loadedlist === undefined) {
-    display('no loaded list')
-    return
-  }
-  unFilter()
-  const loads = $('#loads').children().toArray()
-  loads.forEach(function (i) {
-    $(i).removeClass('selected')
-    $(i).addClass('unselected')
-  })
-  $(loads[loadedlist]).removeClass('unselected')
-  $(loads[loadedlist]).addClass('selected')
-  $('#flop').html(data.flop[loadedlist].text)
-  updateSpanDrags()
-  $('.taskselect').removeClass('taskselect')
-  if (saving != false) {
-    save()
-  } else {
-    $(loads[loadedlist]).blur()
-  }
-  $('#flop').scrollTop(0)
-  if (mobiletest() && !$('#leftcol').hasClass('collapsed') && saving) {
-    // collapse menu again
-    toggleCollapse()
-  }
-  $(window).trigger('clickoff')
-}
+// # FOLDING
 
 function toggleFoldList(saving) {
-  // folds list into sublists
+  // fold/undold sublists
   let sublist = Number(loadedlist) + 1
   const children = $('#loads').children().toArray()
   if ($(children[sublist]).hasClass('sublist')) {
@@ -224,8 +202,40 @@ function toggleFoldList(saving) {
   if (saving != false) save()
 }
 
-// picks a new loadlist
+// # LOADING
+
+function loadList(saving) { 
+  // load the current loadedlist into Flop
+  if (loadedlist === undefined) {
+    display('no loaded list')
+    return
+  }
+  unFilter()
+  const loads = $('#loads').children().toArray()
+  loads.forEach(function (i) {
+    $(i).removeClass('selected')
+    $(i).addClass('unselected')
+  })
+  $(loads[loadedlist]).removeClass('unselected')
+  $(loads[loadedlist]).addClass('selected')
+  $('#flop').html(data.flop[loadedlist].text)
+  updateSpanDrags()
+  $('.taskselect').removeClass('taskselect')
+  if (saving != false) {
+    save()
+  } else {
+    $(loads[loadedlist]).blur()
+  }
+  $('#flop').scrollTop(0)
+  if (mobiletest() && !$('#leftcol').hasClass('collapsed') && saving) {
+    // collapse menu again
+    toggleCollapse()
+  }
+  $(window).trigger('clickoff')
+}
+
 function loadthis(event) {
+  // load the clicked on list
   let movetask
   if (movetolist) {
     movetask = selected.detach()

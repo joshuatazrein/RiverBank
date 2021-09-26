@@ -1,8 +1,12 @@
+// # BROWSER 
+
 function display(x) {
+  // for permanent console logs
   console.log(x)
 }
 
 function resetCookies() {
+  // delete cookies
   let past = new Date()
   past.setTime(
     past.getTime() - 10000000)
@@ -12,35 +16,10 @@ function resetCookies() {
   document.cookie = 'pw=;expires=' + past + ';'
 }
 
-function undo() {
-  if (!savedata) return
-  // undo
-  let oldselect
-  if (selected) {
-    oldselect = [getFrame(selected), 
-      getFrame(selected).find('span.in').toArray().indexOf(selected[0])]
-  }
-  const floptop = $('#flop').scrollTop()
-  const poptop = $('#pop').scrollTop()
-  data = JSON.parse(JSON.stringify(savedata))
-  const oldload = Number(loadedlist)
-  $('#pop').html(data.pop)
-  $('#loads').empty()
-  for (list of data.flop) {
-    newlist(list.title, list.text, false)
-    $('.taskselect').removeClass('taskselect')
-  }
-  loadedlist = oldload
-  loadList(false)
-  dragson(false)
-  $('#flop').scrollTop(floptop)
-  $('#pop').scrollTop(poptop)
-  if (oldselect) {
-    select(oldselect[0].find('span.in')[oldselect[1]])
-  }
-}
+// # CLEANING
 
 function clean() {
+  // cleans up data
   $('#test').empty()
   $('textarea.in').remove()
   const dates = []
@@ -148,34 +127,8 @@ function clean() {
   $('span.in').removeAttr('ondrop')
 }
 
-// Storing data:
-function save(undoing, cleaning) {
-  unFilter(false)
-  if (undoing) savedata = JSON.parse(JSON.stringify(data))
-  // save data
-  data.pop = $('#pop').html()
-  if (loadedlist != undefined) {
-    if (loadedlist > data.flop.length - 1) {
-      loadedlist = undefined
-    } else {
-      data.flop[loadedlist].text = $('#flop').html()
-      data.flop[loadedlist].title =
-        $('#loads').children()[loadedlist].value
-    }
-  }
-  data.loadedlist = loadedlist
-  if (cleaning != false) {
-    // clean up styling
-    $('span.in:visible').attr('style', '')
-    // clean()
-    updatedeadlines() // updateSpanDrags() called in updatedeadlines
-    // backup data to the server after setting localstorage data
-    uploadData()
-  }
-}
-
 function clearEmptyHeadlines() {
-  // clears empty headlines'
+  // clears empty headlines
   let parent
   if (selected == undefined) {
     return
@@ -205,8 +158,8 @@ function clearEmptyHeadlines() {
 }
 
 function clearEmptyDates(saving, clearing) {
-  $('.futuredate').removeClass('futuredate')
   // take away empty dates
+  $('.futuredate').removeClass('futuredate')
   const dateslist = $('#pop').children().filter('.dateheading')
   const now = stringToDate('0d').getTime()
   for (date of dateslist) {
@@ -232,6 +185,7 @@ function clearEmptyDates(saving, clearing) {
 }
 
 function migrate() {
+  // move past tasks to today
   const today = stringToDate('0d').getTime()
   const todayheading = $(dateToHeading(stringToDate('0d'), false))
   const headings = $('#pop').children().filter('.dateheading').toArray()
@@ -318,8 +272,8 @@ function migrate() {
   }
 }
 
-function updatetitles() {
-  // updates titles of any continuous events in view with current date
+function updateTitles() {
+  // update titles of any continuous events in view with current date
   let bh = $(':root').css('--butheight')
   // add in titles
   bh = Number(bh.slice(0, bh.length - 2)) + 
@@ -351,7 +305,8 @@ function updatetitles() {
   list.forEach((x) => { $('#events').append(x) })
 }
 
-function updatedeadlines(saving) {
+function updateDeadlines(saving) {
+  // update displayed deadlines to match data
   if (filtered) return
   if (saving != false) { 
     updateSpanDrags() 
@@ -484,49 +439,36 @@ function updatedeadlines(saving) {
   }
 }
 
-function uploadData(reloading) {
-  if (window.parent.location.href.includes('welcome')) {
-    return // for demo
-  }
-  display('--- upload started ---') 
-  if (JSON.stringify(data) == prevupload) {
-    display('identical');
-    return
-  }
-  if (navigator.onLine && !offlinemode) {
-    $.post("upload.php", {
-      datastr: JSON.stringify(data),
-    }, function (data, status, xhr) {
-      diffsLog(prevupload, xhr.responseText)
-      display('*** upload finished ***')
-      prevupload = xhr.responseText
-      localStorage.setItem('data', JSON.stringify(data))
-      if (reloading) reload() // reloads page
-    });
-  } else {
-    if (!navigator.onLine && !offline) {
-      // if it's offline save that
-      alert('Connection lost; saving locally')
-      offline = true
-    } else if (navigator.onLine && offline) {
-      reload()
-      return
+// # SAVING
+
+function save(undoing, cleaning) {
+  // stores data
+  unFilter(false)
+  if (undoing) savedata = JSON.parse(JSON.stringify(data))
+  // save data
+  data.pop = $('#pop').html()
+  if (loadedlist != undefined) {
+    if (loadedlist > data.flop.length - 1) {
+      loadedlist = undefined
+    } else {
+      data.flop[loadedlist].text = $('#flop').html()
+      data.flop[loadedlist].title =
+        $('#loads').children()[loadedlist].value
     }
-    // offline mode
-    localStorage.setItem('data', JSON.stringify(data))
-    diffsLog(prevupload, JSON.stringify(data))
-    display('*** local upload finished ***')
-    prevupload = JSON.stringify(data)
-    if (reloading) {
-      display('reloading from upload (offline)');
-      reload() // reloads page
-      return
-    }
+  }
+  data.loadedlist = loadedlist
+  if (cleaning != false) {
+    // clean up styling
+    $('span.in:visible').attr('style', '')
+    // clean()
+    updateDeadlines() // updateSpanDrags() called in updatedeadlines
+    // backup data to the server after setting localstorage data
+    uploadData()
   }
 }
 
 function diffsLog(oldString, newString) {
-  // log the diffs
+  // log diffs between previous data and new data
   let diffs = 'Diffs:'
   if (!oldString) oldString = JSON.stringify({ flop: [], pop: '' })
   const initialjson = JSON.parse(oldString)
@@ -584,7 +526,81 @@ function diffsLog(oldString, newString) {
   return diffs
 }
 
+function uploadData(reloading) {
+  // upload data to the server
+  if (window.parent.location.href.includes('welcome')) {
+    return // for demo
+  }
+  display('--- upload started ---') 
+  if (JSON.stringify(data) == prevupload) {
+    display('identical');
+    return
+  }
+  if (navigator.onLine && !offlinemode) {
+    $.post("upload.php", {
+      datastr: JSON.stringify(data),
+    }, function (data, status, xhr) {
+      diffsLog(prevupload, xhr.responseText)
+      display('*** upload finished ***')
+      prevupload = xhr.responseText
+      localStorage.setItem('data', JSON.stringify(data))
+      if (reloading) reload() // reloads page
+    });
+  } else {
+    if (!navigator.onLine && !offline) {
+      // if it's offline save that
+      alert('Connection lost; saving locally')
+      offline = true
+    } else if (navigator.onLine && offline) {
+      reload()
+      return
+    }
+    // offline mode
+    localStorage.setItem('data', JSON.stringify(data))
+    diffsLog(prevupload, JSON.stringify(data))
+    display('*** local upload finished ***')
+    prevupload = JSON.stringify(data)
+    if (reloading) {
+      display('reloading from upload (offline)');
+      reload() // reloads page
+      return
+    }
+  }
+}
+
+// # LOADING
+
+function undo() {
+  // reset to previous save
+  if (!savedata) return
+  // undo
+  let oldselect
+  if (selected) {
+    oldselect = [getFrame(selected), 
+      getFrame(selected).find('span.in').toArray().indexOf(selected[0])]
+  }
+  const floptop = $('#flop').scrollTop()
+  const poptop = $('#pop').scrollTop()
+  data = JSON.parse(JSON.stringify(savedata))
+  const oldload = Number(loadedlist)
+  $('#pop').html(data.pop)
+  $('#loads').empty()
+  for (list of data.flop) {
+    newlist(list.title, list.text, false)
+    $('.taskselect').removeClass('taskselect')
+  }
+  loadedlist = oldload
+  loadList(false)
+  dragson(false)
+  $('#flop').scrollTop(floptop)
+  $('#pop').scrollTop(poptop)
+  if (oldselect) {
+    select(oldselect[0].find('span.in')[oldselect[1]])
+  }
+}
+
 function reload() {
+  // begin reload by downloading server data
   if (window.parent.location.href.includes('welcome')) {
     reload2()
     return
@@ -629,6 +645,7 @@ function reload() {
 }
 
 function reload2() {
+  // data is downloaded, prepare page for reload
   let selectframe, selectindex
   try {
     if (selected && selected[0].tagName == 'SPAN') {
@@ -643,7 +660,7 @@ function reload2() {
     $('#pop').empty()
     $('#flop').empty()
     $('#loads').empty()
-    loadpage(false, undefined, [floptop, poptop])
+    loadPage(false, undefined, [floptop, poptop])
     $(':focus').blur()
     return
   }
@@ -652,11 +669,12 @@ function reload2() {
   $('#pop').empty()
   $('#flop').empty()
   $('#loads').empty()
-  loadpage(false, [selectframe, selectindex], [floptop, poptop])
+  loadPage(false, [selectframe, selectindex], [floptop, poptop])
   $(':focus').blur()
 }
 
-function loadpage(setload, oldselect, scrolls) {
+function loadPage(setload, oldselect, scrolls) {
+  // load the page with current data
   loading = true
   // right after signing in
   display('loading...');
@@ -757,13 +775,13 @@ function loadpage(setload, oldselect, scrolls) {
       }
     }
     // prevents endless loading loop
-    $(document).on('keydown', keyComms)
+    $(document).on('keydown', keyDown)
     $(document).on('keyup', keyUp)
     $(document).on('contextmenu', function(event) {
       context(event)
       $('#listcontainer > .in').hide()
     })
-    $(document).on('mousedown', event, clicked)
+    $(document).on('mousedown', event, clickOn)
     $(document).on('mouseup', event, clickOff)
     $('#timer').on('click', function () {
       if (Notification.permission != 'granted') {
@@ -772,7 +790,7 @@ function loadpage(setload, oldselect, scrolls) {
     })
     setInterval(timeCheck, 60000) // checks every minute for reminders
     $(window).resize(updateSizes)
-    $('#pop').scroll(updatetitles)
+    $('#pop').scroll(updateTitles)
     window.addEventListener('focus', function () {
       reload()
     })
@@ -861,7 +879,7 @@ function loadpage(setload, oldselect, scrolls) {
   }
   toggleButs(false)
   $('.taskselect').removeClass('taskselect')
-  updatedeadlines(false)
+  updateDeadlines(false)
   updateSpanDrags()
   if (scrolls) {
     $('#flop').scrollTop(scrolls[0])

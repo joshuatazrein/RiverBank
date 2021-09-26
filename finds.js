@@ -1,3 +1,5 @@
+// # DATES
+
 function datesToRelative(a, b) {
   // converts two dates into the relation between them as a string
   let returnstring = ''
@@ -194,6 +196,7 @@ function stringToDate(string, weekday, future) {
 }
 
 function dateToHeading(date, saving) {
+  // find or create the dateheading corresponding to the given date
   if (date === undefined) return
   if (dateToString(date).includes('NaN')) return
   // find the matching date, or create if not
@@ -247,6 +250,8 @@ function dateToHeading(date, saving) {
   }
 }
 
+// # HIERARCHY
+
 function isSubtask(el) {
   // tests inline spans until it gets one, otherwise returns true
   for (lineinner of ['link', 'italic', 'bold', 'bold-italic', 'deadline', 
@@ -259,6 +264,7 @@ function isSubtask(el) {
 }
 
 function isHeading(el) {
+  // finds if el is heading
   if (el.hasClass('h1') || el.hasClass('h2') ||
     el.hasClass('h3')) {
     return true
@@ -268,6 +274,7 @@ function isHeading(el) {
 }
 
 function getFrame(task) {
+  // gets flop or pop of current task
   if (task.attr('id') == 'flop') return $('#flop')
   else if (task.attr('id') == 'pop') return $('#pop')
   const parents = task.parents().toArray()
@@ -276,8 +283,8 @@ function getFrame(task) {
 }
 
 function getHeading(el) {
-  if (!el) return
   // gets the heading
+  if (!el) return
   el = $(el)
   try {
     while (el.parent()[0].tagName != 'P') el = el.parent()
@@ -296,7 +303,7 @@ function getHeading(el) {
 }
 
 function getHeadingChildren(el) {
-  // gets all subtasks of a heading
+  // gets all children of a heading
   // headings to stop folding at
   const folds = {
     'h1': ['h1'],
@@ -387,6 +394,104 @@ function stripChildren(el, mode) {
   }
 }
 
+// # ORDER
+
+function taskAbove() {
+  // returns task above
+  let returntask
+  if ((selected.prev()[0] == undefined || !selected.prev().hasClass('in')) &&
+    selected.parent()[0].tagName == 'SPAN') {
+    returntask = selected.parent()
+  } else if (selected.prev()[0] != undefined) {
+    returntask = selected.prev()
+  } // nonedisplays are not selected
+ while (returntask[0] && !returntask.hasClass('in')) {
+    returntask = returntask.prev()
+  }
+  if (returntask[0] && !returntask.is(':visible')) {
+    // while invisible
+    select(returntask, false)
+    return taskAbove()
+ } else if (!returntask[0] || !returntask.hasClass('in')) {
+    return selected
+  } else {
+    return returntask
+  }
+}
+
+function taskBelow() {
+  // returns task below
+  let returntask
+  if (getChildren(selected) != '') {
+    // subtasks
+    let child = false
+    for (child of selected.children()) {
+      if (isSubtask($(child))) {
+        returntask = $(child)
+        child = true
+        break
+      }
+    }
+    if (!child) {
+      // if no subtasks, regular next task
+      returntask = selected.next()
+    }
+  } else if (selected.next()[0] == undefined) {
+    // end of parent item
+    const parents = selected.parents().toArray()
+    returntask = $(parents[0]).next()
+    let i = 0
+    while (!returntask[0]) {
+      i += 1
+      if (['flop', 'pop'].includes($(parents[i]).attr('id'))) return
+      if (!(parents[i])) return
+      else returntask = $(parents[i]).next()
+    }
+  } else if (selected.next()[0] != undefined) {
+    // regular next task
+    returntask = selected.next()
+  }
+ while (returntask[0] != undefined && !returntask.hasClass('in')) {
+    returntask = returntask.next()
+  }
+  if (returntask[0] != undefined && !returntask.is(':visible')) {
+    // while invisible
+    select(returntask, false)
+    return taskBelow()
+  } else if (returntask[0] == undefined || !returntask.hasClass('in')) {
+    return selected
+  } else {
+    return returntask
+  }
+}
+
+function moveTask(direction) {
+  // move task above or below
+  if (!selected) return
+  if (selected.hasClass('dateheading')) return
+  if (direction == 'pop') {
+    $('#searchbar').val('d:')
+    $('#searchbar').focus()
+    movetask = selected
+  } else if (direction == 'flop' &&
+    getFrame(selected).attr('id') == 'pop') {
+    $('#flop').append(selected)
+  } else if (direction == 'down') {
+    // move the task down
+    if (selected.next()[0]) selected.next().after(selected)
+    else select(selected, false)
+  } else if (direction == 'up') {
+    // move the task up
+    if (taskAbove()) taskAbove().before(selected)
+    else select(selected, false)
+  }
+  save(true)
+  if (selected.is(':visible')) { select(selected, true) }
+  else select()
+}
+
+// # SEARCHING
+
 function unFilter(update) {
   // show everything which is filtered
   if (filtered) {
@@ -394,7 +499,7 @@ function unFilter(update) {
     filtered = false
     filteredlist = []
     if (update != false) {
-      updatedeadlines()
+      updateDeadlines()
     }
     $('#searchbar').val('')
   }
@@ -498,7 +603,10 @@ function search(skiplinks, deadline) {
   }
 }
 
+// # SELECTING
+
 function selectRandom() {
+  // select a random task in the current scope
   let headinglist
   // get children
   if (selected != undefined && isHeading(selected)) {
@@ -524,100 +632,8 @@ function selectRandom() {
   }
 }
 
-function taskAbove() {
-  // returns task above
-  let returntask
-  if ((selected.prev()[0] == undefined || !selected.prev().hasClass('in')) &&
-    selected.parent()[0].tagName == 'SPAN') {
-    returntask = selected.parent()
-  } else if (selected.prev()[0] != undefined) {
-    returntask = selected.prev()
-  } // nonedisplays are not selected
- while (returntask[0] && !returntask.hasClass('in')) {
-    returntask = returntask.prev()
-  }
-  if (returntask[0] && !returntask.is(':visible')) {
-    // while invisible
-    select(returntask, false)
-    return taskAbove()
- } else if (!returntask[0] || !returntask.hasClass('in')) {
-    return selected
-  } else {
-    return returntask
-  }
-}
-
-function taskBelow() {
-  // returns task below
-  let returntask
-  if (getChildren(selected) != '') {
-    // subtasks
-    let child = false
-    for (child of selected.children()) {
-      if (isSubtask($(child))) {
-        returntask = $(child)
-        child = true
-        break
-      }
-    }
-    if (!child) {
-      // if no subtasks, regular next task
-      returntask = selected.next()
-    }
-  } else if (selected.next()[0] == undefined) {
-    // end of parent item
-    const parents = selected.parents().toArray()
-    returntask = $(parents[0]).next()
-    let i = 0
-    while (!returntask[0]) {
-      i += 1
-      if (['flop', 'pop'].includes($(parents[i]).attr('id'))) return
-      if (!(parents[i])) return
-      else returntask = $(parents[i]).next()
-    }
-  } else if (selected.next()[0] != undefined) {
-    // regular next task
-    returntask = selected.next()
-  }
- while (returntask[0] != undefined && !returntask.hasClass('in')) {
-    returntask = returntask.next()
-  }
-  if (returntask[0] != undefined && !returntask.is(':visible')) {
-    // while invisible
-    select(returntask, false)
-    return taskBelow()
-  } else if (returntask[0] == undefined || !returntask.hasClass('in')) {
-    return selected
-  } else {
-    return returntask
-  }
-}
-
-function moveTask(direction) {
-  if (!selected) return
-  if (selected.hasClass('dateheading')) return
-  if (direction == 'pop') {
-    $('#searchbar').val('d:')
-    $('#searchbar').focus()
-    movetask = selected
-  } else if (direction == 'flop' &&
-    getFrame(selected).attr('id') == 'pop') {
-    $('#flop').append(selected)
-  } else if (direction == 'down') {
-    // move the task down
-    if (selected.next()[0]) selected.next().after(selected)
-    else select(selected, false)
-  } else if (direction == 'up') {
-    // move the task up
-    if (taskAbove()) taskAbove().before(selected)
-    else select(selected, false)
-  }
-  save(true)
-  if (selected.is(':visible')) { select(selected, true) }
-  else select()
-}
-
 function select(el, scroll, animate) {
+  // select the given element
   if (el &&
     $(el)[0].tagName == 'SPAN' && !isSubtask($(el))) el = $(el).parent()
   if ($(el).hasClass('buffer')) {

@@ -1,10 +1,16 @@
+// # SOUNDS
+
 function playPop() {
+  // plays completion sound
   const pop = document.getElementById('popsnd')
   pop.src = pop.src
   pop.play()
 }
 
+// # WINDOW
+
 function mobiletest() {
+  // test if mobile browser or not
   if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
     .test(navigator.userAgent)) {
     return true
@@ -14,6 +20,7 @@ function mobiletest() {
 }
 
 function resetdoc() {
+  // reset document zoom and scroll
   if (selected && selected[0].tagName == 'TEXTAREA') return
   $(document).scrollTop(0)
   $(document.body).css('zoom', "100%")
@@ -30,7 +37,19 @@ function resetdoc() {
   $('#pop').removeClass('greyedout')
 }
 
+function updateHeight() {
+  // update height of currently edited task
+  $('#texttest').removeAttr('class')
+  $('#texttest').removeAttr('style')
+  $('#texttest').css('font', selected.css('font'))
+  $('#texttest').css('padding', selected.css('padding'))
+  $('#texttest').text(selected.val() + ' x')
+  $('#texttest').css('width', selected.width() + 'px')
+  selected.css('height', 'calc(' + $('#texttest').height() + 'px + 0.25em')
+}
+
 function updateSizes() {
+  // update sizes of left column objects
   for (list of [
       [$('#timerent')[0], 6],
       [$('#searchbar')[0], 5],
@@ -79,7 +98,10 @@ function updateSizes() {
   else if (window.innerWidth > 600) mobile = false
 }
 
+// # BACKUPS
+
 function upload() {
+  // upload backup
   var fileinput = $('<input type="file" id="fileinput" />')
   fileinput.on('change', function () {
     const fileReader = new FileReader()
@@ -95,6 +117,7 @@ function upload() {
 }
 
 function download() {
+  // download backup
   var blob = new Blob([JSON.stringify(data)], {
     type: 'text/plain;charset=utf-8'
   })
@@ -102,8 +125,8 @@ function download() {
   saveAs(blob, 'RiverBank-backup-' + dateToString(date) + '.json')
 }
 
-// Reset data to store in the browser
 function reset() {
+  // reset data
   yes = confirm("Are you sure you want to reset?")
   if (yes) {
     data = JSON.parse(resetstring)
@@ -111,7 +134,23 @@ function reset() {
   }
 }
 
+function switchUser() {
+  // switches data and reloads page
+  save()
+  let past = new Date()
+  past.setTime(
+    past.getTime() - 10000000)
+  past = past.toUTCString()
+  document.cookie = 'user=;expires=' + past + ';' + ';path=/;'
+  document.cookie = 'fname=;expires=' + past + ';' + ';path=/;'
+  document.cookie = 'pw=;expires=' + past + ';' + ';path=/;'
+  location.reload()
+}
+
+// # TOGGLES
+
 function toggleWeekdayFormat() {
+  // change between short and long weekdays
   if (data.weekdays == 'M') {
     data.weekdays = 'Mon'
     weekdaysStr = {
@@ -146,6 +185,7 @@ function toggleWeekdayFormat() {
 }
 
 function changeDateFormat(format) {
+  // changes bewteen dd.mm.yy, mm/dd/yy, and yy-mm-dd formats
   const thisformat = data.dateSplit
   $('.dateheading').toArray().forEach((x) => {
     // change all dates in pop
@@ -179,20 +219,8 @@ function changeDateFormat(format) {
   uploadData(true)
 }
 
-function switchUser() {
-  // switches data and reloads page
-  save()
-  let past = new Date()
-  past.setTime(
-    past.getTime() - 10000000)
-  past = past.toUTCString()
-  document.cookie = 'user=;expires=' + past + ';' + ';path=/;'
-  document.cookie = 'fname=;expires=' + past + ';' + ';path=/;'
-  document.cookie = 'pw=;expires=' + past + ';' + ';path=/;'
-  location.reload()
-}
-
 function toggleHeadingAlign() {
+  // switch headings between centered and left aligned
   if (data.headingalign == 'left') data.headingalign = 'center'
   else data.headingalign = 'left'
   save()
@@ -200,17 +228,8 @@ function toggleHeadingAlign() {
     data.headingalign)
 }
 
-function updateHeight() {
-  $('#texttest').removeAttr('class')
-  $('#texttest').removeAttr('style')
-  $('#texttest').css('font', selected.css('font'))
-  $('#texttest').css('padding', selected.css('padding'))
-  $('#texttest').text(selected.val() + ' x')
-  $('#texttest').css('width', selected.width() + 'px')
-  selected.css('height', 'calc(' + $('#texttest').height() + 'px + 0.25em')
-}
-
 function toggleButs(saving) {
+  // toggle buttons show/hide
   if (data.hidebuts == 'true') {
     $('.butbar').show()
     $('#focusbut').show() // just in case it's moved in focusmode
@@ -237,6 +256,7 @@ function toggleButs(saving) {
 }
 
 function toggleHelp() {
+  // help show/hide
   if (data.help == 'show') {
     $("#help").hide()
     data.help = 'hide'
@@ -249,6 +269,7 @@ function toggleHelp() {
 }
 
 function togglePlay() {
+  // play on/off
   if (data.play == 'true') {
     data.play = 'false'
     alert('sounds off')
@@ -261,6 +282,7 @@ function togglePlay() {
 }
 
 function setStyle(style, alert) {
+  // sets the current style
   const floptop = $('#flop').scrollTop()
   if (navigator.onLine || offlinemode) {
     data.style = style
@@ -284,7 +306,10 @@ function setStyle(style, alert) {
   }
 }
 
+// # VIEWS
+
 function toggleCollapse(animate) {
+  // collapse/uncollapse left column
   if (animate == true) {
     $('#leftcol').css('transition', 'margin-left 1s')
     $('#listcontainer').css('transition', 'width 1s')
@@ -307,6 +332,7 @@ function toggleCollapse(animate) {
 }
 
 function toggleFocus(collapse) {
+  // focus on current frame only
   if (!focusmode) {
     if (!selected) select(dateToHeading(stringToDate('0d')))
     // focus
@@ -351,6 +377,7 @@ function toggleFocus(collapse) {
 }
 
 function tutorial() {
+  // view tutorial
   $('#tutorial').show()
   $('video').toArray().forEach((x) => {
     x.currentTime = 0
@@ -359,6 +386,7 @@ function tutorial() {
 }
 
 function scrollToToday() {
+  // view today
   const butheight = $(':root').css('--butheight')
   $('#pop').animate({
     scrollTop: $(dateToHeading(stringToDate('0d'))).offset().top
@@ -366,7 +394,10 @@ function scrollToToday() {
   }, 500)
 }
 
+// # MENUS
+
 function context(ev, mobile) {
+  // right-click menu
   justclicked = true
   setTimeout(function () { justclicked = false }, 500)
   if (selected != undefined &&
@@ -543,7 +574,10 @@ function setOptions() {
   $('#settype-menu').show()
 }
 
+// # COMMANDS
+
 function clickOff(ev) {
+  // mouse off
   if (draggingtask) { 
     setTimeout(function () {
       draggingtask = false
@@ -641,7 +675,8 @@ function clickOff(ev) {
   }
 }
 
-function clicked(ev) {
+function clickOn(ev) {
+  // mouse down
   if (movetolist && !$(ev.target).hasClass('listtitle')) {
     // cancels move to list
     movetolist = false
@@ -744,6 +779,7 @@ function clicked(ev) {
 }
 
 function keyUp(ev) {
+  // key up
   if (ev.key == 'Control') {
     // re-enable drags
     try {
@@ -756,7 +792,8 @@ function keyUp(ev) {
   }
 }
 
-function keyComms(ev) {
+function keyDown(ev) {
+  // key down
   if (ev.key == 'Control') {
     // cancel draggables
     try {

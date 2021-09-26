@@ -1,8 +1,7 @@
-function toggleSomeday() {
-  selected.toggleClass('someday')
-}
+// # TASK MODES
 
 function archiveComplete() {
+  // archive all complete tasks under current heading
   let list
   if (isHeading(selected)) {
     list = getHeadingChildren(selected)
@@ -28,6 +27,7 @@ function archiveComplete() {
 }
 
 function archiveTask(play) {
+  // complete and move task to "completed ..." heading of today
   if (selected.hasClass('dateheading')) { 
     alert("can't archive dates")
     return 
@@ -76,7 +76,8 @@ function archiveTask(play) {
 }
 
 function toggleComplete(task, saving) {
-  // task is for autocompleting yesterday's events
+  // toggle complete on selected task
+  // "task" is for autocompleting yesterday's events
   let completetask
   if (!task) {
     completetask = selected
@@ -121,6 +122,7 @@ function toggleComplete(task, saving) {
 }
 
 function toggleImportant() {
+  // toggle important mode on task
   if (selected[0].tagName == 'SPAN') {
     selected.removeClass('maybe')
     selected.toggleClass('important')
@@ -129,6 +131,7 @@ function toggleImportant() {
 }
 
 function toggleMaybe() {
+  // toggle maybe mode on selected task
   if (selected[0].tagName == 'SPAN') {
     selected.removeClass('important')
     selected.toggleClass('maybe')
@@ -137,10 +140,12 @@ function toggleMaybe() {
 }
 
 function moveToList() {
+  // prepare for next clicked list to suck task in
   movetolist = true
 }
 
 function setTask(type) {
+  // set type of selected task
   if (!selected || selected.hasClass('dateheading')) return
   const list = stripChildren(selected).split(' ').filter((x) => {
     return x != ''
@@ -182,131 +187,10 @@ function setTask(type) {
   }
 }
 
-function mod12(val) {
-  if (val > 12.9) return val - 12
-  else if (val < 1) return val + 12
-  else return val
-}
+// # DRAGGING
 
-function compareTimes(a, b) {
-  // compares prev/after times based on 6h before
-  if (a >= 6) {
-    // 6-12
-    if (b > a) return 1
-    else return -1 // same counts as before
-  } else {
-    // 1-6
-    if (b > a && b < mod12(a - 6)) return 1
-    else return -1
-  }
-}
-
-function dragTime(el) {
-  let pretext = el.text().split('-')
-  function timetest(text, placement, included) {
-    // replaces pm and am
-    if ((pretext[placement].includes('11:30a') && text.includes('12')) ||
-    (pretext[placement].includes('12a') && text.includes('11:30'))) {
-      // rollover pms
-      if (placement == 0) endof = endof.replace('a', 'p')
-      else if (placement == 1) endof2 = endof2.replace('a', 'p')
-    } else if ((pretext[placement].includes('11:30p') && text.includes('12')) ||
-    (pretext[placement].includes('12p') && text.includes('11:30'))) {
-      // rollover ams
-      if (placement == 0) endof = endof.replace('p', 'a')
-      else if (placement == 1) endof2 = endof2.replace('p', 'a')
-    }
-    if (placement == 0 && included != false) return text + endof
-    else if (placement == 0) return text
-    else if (placement == 1) return text + endof2
-  }
-  // sets up sliders to drag times on events
-  $('.slider').remove()
-  slider = $('<input type="range" min="-12" max="12" value="0"' +
-    ' class="slider slider-vert">')
-  $(document.body).append(slider)
-  slider.css('top', el.offset().top + 5)
-  slider.css('left', el.offset().left - 210)
-  durslider = $(
-    '<input type="range" min="-12" max="12" value="0" class="slider">')
-  $(document.body).append(durslider)
-  durslider.css('top', el.offset().top + 25)
-  durslider.css('left', el.offset().left - 195 + el.width() / 2)
-  const splitlist = el.text().split('-')
-  let durval
-  // cleans out nonrounded values
-  const endmatch = splitlist[0].match(/[a-z]+$/)
-  let endof = ''
-  let endof2 = ''
-  if (endmatch) { 
-    endof = endmatch[0] 
-    splitlist[0] = splitlist[0].slice(0, splitlist[0].search(endof))
-  }
-  if (!/\d+:30/.test(splitlist[0]) && !/^\d+$/.test(splitlist[0])) {
-    splitlist[0] = splitlist[0].split(':')[0] + ':30'
-  }
-  const origvalue = Number(splitlist[0].replace(':30', '.5'))
-  if (splitlist[1]) {
-    // set endpoint if it exists
-    const endmatch2 = splitlist[1].match(/[a-z]+$/)
-    if (endmatch2) { 
-      endof2 = endmatch2[0] 
-      splitlist[1] = splitlist[1].slice(0, splitlist[1].search(endof2))
-    }
-    if (!/:30/.test(splitlist[1]) && !/^\d+$/.test(splitlist[1])) {
-      splitlist[1] = splitlist[1].split(':')[0] + ':30'
-    }
-    durval = Number(splitlist[1].replace(':30', '.5'))
-  } else durval = origvalue
-
-  slider.on('input', function () {
-    // change time
-    if (durslider) durslider.remove()
-    let changeval = mod12(origvalue + slider.val() / 2)
-    if (durval != origvalue) {
-      durchangeval = mod12(durval + slider.val() / 2)
-      el.text(timetest(String(changeval).replace('.5', ':30'), 0) + 
-        '-' + timetest(String(durchangeval).replace('.5', ':30'), 1))
-    } else {
-      el.text(timetest(String(changeval).replace('.5', ':30'), 0))
-    }
-    pretext = el.text().split('-')
-  })
-  durslider.on('input', function () {
-    // change duration
-    if (slider) slider.remove()
-    durchangeval = mod12(durval + durslider.val() / 2)
-    // prevent earlier
-    if (compareTimes(origvalue, durchangeval) <= 0 &&
-      durslider.val() <= 0) {
-      el.text(timetest(splitlist[0], 0))
-      pretext = [el.text()]
-        .concat([el.text()])
-    } else {
-      if (!endof2) {
-        endof2 = endof
-        pretext = [timetest(splitlist[0], 0)]
-          .concat(String(durchangeval).replace('.5', ':30') + endof2)
-      }
-      el.text(timetest(splitlist[0], 0) + '-' +
-        timetest(String(durchangeval).replace('.5', ':30'), 1))
-      pretext = el.text().split('-')
-    }
-  })
-  durslider.on('mouseup touchend', function () {
-    slider.remove()
-    durslider.remove()
-    save()
-  })
-  slider.on('mouseup touchend', function () {
-    slider.remove()
-    durslider.remove()
-    save()
-  })
-}
-
-//start of drag
 function dragTask(ev) {
+  // begin the drag
   select(ev.target)
   draggingtask = true
   save(true, false)
@@ -338,8 +222,8 @@ function dragTask(ev) {
   oldselect.remove()
 }
 
-//dropping
 function dropTask(ev) {
+  // drops selected task onto target
   // logs that drop succeeded so you can check for revert (jQuery hack)
   if ((isHeading(selected) && isSubtask($(ev.target))) ||
     isHeading(selected) && ev.altKey) {
@@ -416,8 +300,8 @@ function dropTask(ev) {
   updateSpanDrags()
 }
 
-// for desktops
 function dragTaskOver(event) {
+  // dragging task over other one; for desktop
   resetdoc()
   const boxright = $('#listcontainer').offset().left
   if (event.pageX < boxright) {
@@ -494,6 +378,7 @@ function dragTaskOver(event) {
 }
 
 function mobileDragOver(event) {
+  // dragging selected task; for mobile
   const boxright = $('#listcontainer').offset().left
   if (event.pageX < boxright) {
     // load the dragged-over list
@@ -598,6 +483,7 @@ function mobileDragOver(event) {
 }
 
 function updateSpanDrags() {
+  // add handles for drags on mobile, or enable jQuery drags on desktop
   if (mobiletest()) {
     $('.mobhandle').remove()
     $('span.in').prepend(
@@ -679,7 +565,10 @@ function updateSpanDrags() {
   // })
 }
 
+// # FOLDING
+
 function collapseAll() {
+  // collapse all selected headings
   if (selected.hasClass('dateheading')) {
     alert("try in Bank; folds are automatic in River")
     return
@@ -712,7 +601,6 @@ function collapseAll() {
   setTimeout(function () { select(selected, true) }, 350)
 }
 
-// toggle fold of a heading
 function toggleFold(el, saving) {
   // hide or show everything underneath
   const keepfolded = []
@@ -760,6 +648,7 @@ function toggleFold(el, saving) {
 }
 
 function toggleSubtasks() {
+  // fold a task's subtasks, or if a heading toggleFold it
   if (selected.hasClass('h1') || selected.hasClass('h2') ||
     selected.hasClass('h3')) {
     toggleFold(selected)
@@ -784,14 +673,18 @@ function toggleSubtasks() {
 }
 
 function indentTask(indent) {
+  // indent selected
   if (selected.parent()[0].tagName == 'SPAN' && indent == false) {
      selected.parent().after(selected)
    } else if (indent && !isHeading(taskAbove())) {
      taskAbove().append(selected)
    }
- }
+}
+
+// # SAVING
 
 function deleteTask() {
+  // delete selected
   if (!selected || selected[0].tagName == 'P' ||
     selected.hasClass('dateheading')) {
     return
@@ -812,7 +705,8 @@ function deleteTask() {
   clearEmptyDates()
 }
 
-function saveTask() { // analyze format of task and create new <span> elt for it
+function saveTask() {
+  // save currently open task
   const savetask = selected.prev() // looks at item before it
   savetask.attr('class', 'in')
   selected.next().remove() // removes appended children
@@ -975,10 +869,11 @@ function saveTask() { // analyze format of task and create new <span> elt for it
     parent = parent.parent()
   }
   save(true)
-  if (stripChildren(selected).includes('>')) { updatedeadlines() }
+  if (stripChildren(selected).includes('>')) { updateDeadlines() }
 }
 
 function editTask() {
+  // edit selected task
   el = selected
   if (selected.hasClass('dateheading')) return
   if (selected != undefined) {
@@ -1069,11 +964,13 @@ function editTask() {
 }
 
 function createBlankTask() {
+  // create new blank task
   const savetask = $('<span class="in"></span>')
   return savetask
 }
 
 function newTask(subtask, prepend) {
+  // create new task
   console.trace()
   if (loadedlist == undefined || loadedlist > data.flop.length - 1) {
     alert('no list selected; create or select a list first')
@@ -1108,7 +1005,7 @@ function newTask(subtask, prepend) {
     selected.after(newspan)
   }
   if (selected.hasClass('dateheading')) {
-    updatedeadlines()
+    updateDeadlines()
   }
   select(newspan)
   editTask()
