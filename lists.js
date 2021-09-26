@@ -54,7 +54,7 @@ function dropList(ev) {
 
 // # EDITING
 
-function toggledrags(saving) {
+function toggleDrags(saving) {
   // enable drags or disable to allow editing of selected list
   loads = $('#loads').children().toArray()
   if (dragsenabled === true) {
@@ -89,17 +89,17 @@ function toggledrags(saving) {
   updateSizes()
 }
 
-function dragsoff(saving) {
+function dragsOff(saving) {
   // turn off drags
   if (dragsenabled) {
-    toggledrags(saving)
+    toggleDrags(saving)
   }
 }
 
-function dragson(saving) {
+function dragsOn(saving) {
   // turn on drags
  if (!dragsenabled) {
-    toggledrags(saving)
+    toggleDrags(saving)
   }
 }
 
@@ -148,7 +148,7 @@ function newlist(title, text, saving) {
   } else {
     $($('#loads').children()[loadedlist]).removeClass('sublist')
   }
-  dragsoff(saving)
+  dragsOff(saving)
 }
 
 function deletelist() {

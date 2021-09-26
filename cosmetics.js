@@ -596,7 +596,7 @@ function clickOff(ev) {
     if (ev.target.tagName == 'TEXTAREA' &&
       $(ev.target).hasClass('selected')) {
       if (!mobiletest()) {
-        dragsoff()
+        dragsOff()
       } else {
         context(ev)
       }
@@ -621,7 +621,7 @@ function clickOff(ev) {
       editTask()
     } else if (($(ev.target).hasClass('selected') ||
       $(ev.target).hasClass('unselected'))) {
-      dragsoff()
+      dragsOff()
     } else if ($(ev.target).hasClass('loads')) {
       newlist()
     }
@@ -719,9 +719,9 @@ function clickOn(ev) {
     if (mobiletest() && $(ev.target).val() != '') {
       ev.preventDefault()
       $(':focus').blur()
-      dragson()
+      dragsOn()
     } else if ($(ev.target).hasClass('unselected')) {
-      dragson()
+      dragsOn()
     }
     if (movetolist != true) select()
   } else if ($(ev.target).hasClass('buffer')) {
@@ -954,12 +954,12 @@ function keyDown(ev) {
   } else if (!selected && ev.key == 'Enter' &&
     ev.shiftKey && $(':focus').hasClass('selected')) {
     // save list
-    toggledrags()
+    toggleDrags()
   } else if (!selected && ev.key == 'Escape' &&
     $(':focus').hasClass('selected')) {
     ev.preventDefault()
     // save list
-    dragson()
+    dragsOn()
     $(':focus').blur()
   } else if (!selected && ev.key == 'Enter' &&
     $(':focus').hasClass('listtitle')) {
