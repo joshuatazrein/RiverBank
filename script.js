@@ -65,7 +65,7 @@ var filtered
 var filteredlist
 
 function display(x) {
-  console.log(x)
+// console.log(x)
 }
 
 function mobiletest() {
@@ -512,11 +512,35 @@ function loadthis(event) {
 function clean() {
   $('#test').empty()
   $('textarea.in').remove()
-  $('span.dateheading').toArray().forEach((x) => {
+  const dates = []
+  const duplicates = []
+  console.log($('.dateheading'));
+  $('.dateheading').toArray().forEach((x) => {
     // rewrite dates
     if ($(x).text().includes('undefined')) $(x).remove()
-    else $(x).text(dateToString(stringToDate(stripChildren($(x)), true), true))
+    else {
+      $(x).text(dateToString(stringToDate(stripChildren($(x)), true), true))
+    }
+    const text = stripChildren($(x)).replace(' ...', '')
+    if (!dates.includes(text)) { dates.push(text) }
+    else { duplicates.push(text) }
   })
+  console.log(dates, duplicates);
+  console.log('cleaning');
+  for (duplicate of duplicates) {
+    console.log(duplicate);
+    // merge duplicate dates
+    const headingslist = $('.dateheading').toArray().filter((x) => {
+      return stripChildren($(x)).includes(duplicate)
+    })
+    const firstheading = $(headingslist[0])
+    for (heading of headingslist.slice(1)) {
+      getHeadingChildren($(heading)).forEach((x) => {
+        firstheading.prepend(x)
+      })
+    }
+    headingslist.slice(1).forEach((x) => { x.remove() })
+  }
   if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
     selected.parent().hasClass('in')) {
     // clear open tasks
@@ -1049,7 +1073,7 @@ function search(skiplinks, deadline) {
     .replace(/\s/g, '\\s')
     .replace(/([\*\+\?\.\|\[\]\(\)\{\}\^\$])/g, '\\$1')
   const searchexp = new RegExp(searchexptext, 'gi')
-  console.log(searchexp);
+  // console.log(searchexp);
   const searches = data.flop.concat([{
     'title': 'pop',
     'text': data.pop
@@ -1063,7 +1087,7 @@ function search(skiplinks, deadline) {
     for (let child of children) {
       // if it's a match, add to matches
       if (searchexp.test(stripChildren($(child)))) {
-        console.log(stripChildren($(child)), searchtext + ' >' + deadline)
+      // console.log(stripChildren($(child)), searchtext + ' >' + deadline)
         // add to matches
         if (skiplinks &&
           $(child).text().includes('[[' + searchtext)) {
@@ -1100,7 +1124,7 @@ function search(skiplinks, deadline) {
   $('#searchbar-results').show()
   if ($('#searchbar-results').children().length == 1) {
     // go automatically to first item if that works
-    console.log('working');
+  // console.log('working');
     gotosearch($($('#searchbar-results').children()[0]))
     $('#searchbar').val('')
     $('#searchbar-results').hide()
@@ -1279,13 +1303,13 @@ function updatedeadlines(saving) {
       return String(phallus).slice(0, String(phallus).indexOf('.'))
     }
     const targetdate = $(dateToHeading(stringToDate($(x).text().slice(1))))
-    console.log(x, targetdate)
+  // console.log(x, targetdate)
     const newelt = $('<div class="continuous"></div>')
     const scrolltop = $('#pop').scrollTop()
     const xpos = $(x).offset().top - $('#pop').offset().top
     newelt.css('top', '0')
     const target = $(getHeadingChildren(targetdate).filter((y) => { 
-      console.log($(y).text().slice(2), $(x).parent().text());
+    // console.log($(y).text().slice(2), $(x).parent().text());
       // finds target deadline
       return $(y).hasClass('duedate') && 
         $(x).parent().text().includes(
@@ -1340,7 +1364,7 @@ function updatetitles() {
     return stringToDate($($(a).children()[0]).attr('deadline')).getTime() - 
       stringToDate($($(b).children()[0]).attr('deadline')).getTime()
   })
-  console.log(list);
+// console.log(list);
   $('#events').empty()
   list.forEach((x) => { $('#events').append(x) })
 }
@@ -2046,7 +2070,7 @@ function select(el, scroll, animate) {
           butheight += Number($('#importants').height())
           butheight += 'px'
         }
-        console.log(butheight);
+      // console.log(butheight);
         const oldscroll = parent.scrollTop() -
           Number(butheight.slice(0, butheight.length - 2))
         let scrolltime
@@ -2253,7 +2277,7 @@ function editTask() {
       getFrame(selected).animate({
         scrollTop: scrollto
       }, 500)
-      console.log('scrolled');
+    // console.log('scrolled');
     }
   }
 }
@@ -3338,7 +3362,7 @@ function clicked(ev) {
   } else if ($(ev.target).hasClass('falselink')) {
     // search the task
     $('#searchbar').val($(ev.target).text())
-    console.log($(ev.target).attr('deadline'));
+  // console.log($(ev.target).attr('deadline'));
     search('deadline', $(ev.target).attr('deadline'))
   } else if ($(ev.target).hasClass('falselinkimp')) {
     // search the task
@@ -4135,7 +4159,6 @@ function loadpage(setload, oldselect, scrolls) {
         resetdoc()
       }, 3000)
     }
-    clean()
     display('loaded settings');
   }
   if ($('#theme').attr('href') != data.style) {
@@ -4233,6 +4256,10 @@ function loadpage(setload, oldselect, scrolls) {
   $('.dropdown-item').mouseleave(function () { 
     $(this).css('color', '')
   })
+  if (setload != false) {
+    clean()
+    clearEmptyDates(false)
+  }
 }
 
 function scrollToToday() {

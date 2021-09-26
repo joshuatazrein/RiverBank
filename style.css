@@ -89,11 +89,11 @@ button {
   z-index: 1;
   padding-right: 12px;
   padding-bottom: 3px;
-  font-size: 0.75em;
-  text-align: right;
+  font-size: 16px;
+  text-align: left;
   max-height: 20%;
   overflow-y: scroll;
-  line-height: 1em;
+  line-height: 20px;
 }
 
 span.falselink, span.falselinkimp {
@@ -104,7 +104,7 @@ span.falselink, span.falselinkimp {
 
 span.eventspan, span.impspan {
   position: absolute;
-  left: 5px;
+  right: 5px;
 }
 
 #focusbar {
@@ -543,8 +543,9 @@ span.in {
   border-radius: 5px;
 }
 
-span.link, span.falselink, span.deadline, span.duedate {
-  cursor:pointer;
+span.link, span.falselink, span.deadline, span.duedate,
+span.impspan, span.falselinkimp {
+  cursor: pointer;
 }
 
 span.list {
