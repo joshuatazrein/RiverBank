@@ -480,9 +480,9 @@ function updateSizes() {
     }
   }
   if (window.innerWidth > 600 && mobile) {
-    // location.reload()
+    location.reload()
   } else if (window.innerWidth < 600 && !mobile) {
-    // location.reload()
+    location.reload()
   }
   // update height of loads
   let loadsheight = window.innerHeight - 10 - $('#desktopbutstop').height()
@@ -1041,8 +1041,11 @@ function search(skiplinks, deadline) {
     // chop off end spaces
     searchtext = searchtext.slice(0, searchtext.length - 1)
   }
-  searchtext = searchtext.replace(/\s\s/, ' ')
-  const searchexp = new RegExp(searchtext, 'gi')
+  searchexptext = searchtext
+    .replace(/\s\s/, ' ')
+    .replace(/([\*\+\?\.\|\[\]\(\)\{\}\^\$])/g, '\\$1')
+  const searchexp = new RegExp(searchexptext, 'gi')
+  console.log(searchexp);
   const searches = data.flop.concat([{
     'title': 'pop',
     'text': data.pop
@@ -1062,12 +1065,9 @@ function search(skiplinks, deadline) {
           // test for links
           continue
         } else if (skiplinks == 'deadline' &&
-          (!stripChildren($(child)).includes('>') ||
-            !stripChildren($(child)).includes(deadline) ||
-            stripChildren($(child)).replace(searchtext, '').replace(
-              /•\s/, '').replace(/\-\s/, '').split(' ').filter((x) => {
-                return x != ''
-              }).length > 1)) {
+          !stripChildren($(child)).includes(
+            searchtext + ' >' + deadline
+          )) {
           // finds only deadlines with exact match to text and date
           continue
         } else {
@@ -1256,8 +1256,48 @@ function updatedeadlines(saving) {
     newdate.setDate(today.getDate() + 30)
     const newheading = dateToHeading(newdate, false)
   }
+  // update continous dates from pop
+  $('.continuous').remove()
+  $('#pop').find('span.in:not(.complete) > .deadline').toArray().forEach((x) => {
+    function castrate(phallus) {
+      return String(phallus).slice(0, String(phallus).indexOf('.'))
+    }
+    const targetdate = $(dateToHeading(stringToDate($(x).text().slice(1))))
+    console.log(x, targetdate)
+    const newelt = $('<div class="continuous"></div>')
+    const scrolltop = $('#pop').scrollTop()
+    const xpos = $(x).offset().top - $('#pop').offset().top
+    newelt.css('top', '0')
+    const target = $(getHeadingChildren(targetdate).filter((y) => { 
+      console.log($(y).text().slice(2), $(x).parent().text());
+      // finds target deadline
+      return $(y).hasClass('duedate') && 
+        $(x).parent().text().includes(
+        $(y).text().slice(2, $(y).text().length - 1))
+    }))[0]
+    newelt.css('height', castrate(
+      target.position().top + target.height() - xpos) + 'px')
+    newelt.attr('title', ($(x).parent().text().slice(0, $(x).parent().text().indexOf(' >'))))
+    newelt.attr('start', 
+      stringToDate(stripChildren($(getHeading($(x))))).getTime())
+    newelt.attr('end', stringToDate($(x).text().slice(1)).getTime())
+    $(x).append(newelt)
+  })
   clearEmptyDates(false)
+}
 
+function updatetitles() {
+  // updates titles of any continuous events in view with current date
+  const curdate = stringToDate(stripChildren($($('#pop .dateheading')
+    .toArray().filter((x) => 
+    { return $(x).position().top > 0 })[0])), true).getTime()
+  console.log(curdate);
+  const inview = $('#pop .continuous').toArray()
+    .filter((x) => { return $(x).attr('end') > curdate &&
+    $(x).attr('start') < curdate })
+  console.log(inview);
+  $('#events').html(inview.map((x) => 
+    {return $(x).attr('title')}).join(' | '))
 }
 
 function migrate() {
@@ -1891,8 +1931,9 @@ function getHeading(el) {
   if (!el) return
   // gets the heading
   el = $(el)
-  if (!el.parent()) return
-  while (el.parent()[0].tagName != 'P') el = el.parent()
+  try {
+    while (el.parent()[0].tagName != 'P') el = el.parent()
+  } catch (err) { return }
   let hclasses = ['h1', 'h2', 'h3']
   if (isHeading(el)) {
     if (el.hasClass('h1')) return // h1s don't have headings
@@ -2084,7 +2125,8 @@ function editTask() {
     newelt.css('font', selected.css('font'))
     el.after(newelt)
     el.hide()
-    select(newelt, true)
+    if (isHeading(selected)) { select(newelt) }
+    else { select(newelt, true) }
     let parent = selected.parent()
     while (parent[0].tagName == 'SPAN') {
       // disable drags
@@ -2144,11 +2186,16 @@ function editTask() {
     selected.click(function (e) { 
       $(this).focus() 
     });
-    // not working
-    // selected.blur(function (e) {
-    //   alert("blur")
-    //   saveTask()
-    // })
+    if (selected.val().includes('#')) {
+      // scroll to headings manually
+      getFrame(selected).animate({
+        scrollTop: getFrame(selected).scrollTop() + 
+        selected.offset().top - getFrame(selected).offset().top -
+        Number($(':root').css('--butheight')
+        .slice(0, $(':root').css('--butheight').length - 2))
+      }, 500)
+      console.log('scrolled');
+    }
   }
 }
 
@@ -2203,19 +2250,37 @@ function toggleSomeday() {
   selected.toggleClass('someday')
 }
 
-function archiveAll() {
-  $('span').filter('#flop .complete').toArray().forEach((x) => {
-    select(x);
-    archiveTask()
+function archiveComplete() {
+  let list
+  if (isHeading(selected)) {
+    list = getHeadingChildren(selected)
+  } else if (selected && getHeading(selected)) {
+    list = getHeadingChildren($getHeading(selected))
+  } else {
+    list = $('#flop').find('span.in.complete').toArray()
+  } 
+  list.forEach((x) => {
+    if ($(x).hasClass('complete')) {
+      // archive task
+      select(x)
+      archiveTask(false)
+    } else {
+      // archive subtasks
+      for (task of $(x).find('span.in.complete')) {
+        select(task)
+        archiveTask(false)
+      }
+    }
   })
+  playPop()
 }
 
-function archiveTask() {
+function archiveTask(play) {
   if (selected.hasClass('dateheading')) { 
     alert("can't archive dates")
     return 
   }
-  if (!selected.hasClass('complete')) {
+  if (!selected.hasClass('complete') && play != false) {
     toggleComplete(selected)
     playPop()
   }
@@ -2299,7 +2364,6 @@ function toggleComplete(task, saving) {
   }
   completetask.toggleClass('complete')
   if (!task || saving != false) {
-    clearEmptyDates()
     save(true)
   }
 }
@@ -2415,41 +2479,23 @@ function dragTask(evt) {
 }
 
 function togglecollapse(animate) {
-  if (animate) {
-    const length = 666
-    if (!$('#leftcol').hasClass('collapsed')) {
-      $('#leftcol').animate({'margin-left': -1 * $('#leftcol').width()}, length)
-      $('#listcontainer').animate({'width': '100vw'}, length)
-      setTimeout(function () {
-        $('#leftcol').addClass('collapsed')
-        $('#listcontainer').addClass('fullwidth')
-        $('#leftcol').css('margin-left', '')
-        $('#listcontainer').css('width', '')
-        updateSizes()
-      }, length)
-    } else {
-      $('#leftcol').css('margin-left', -1 * $('#leftcol').width())
-      $('#listcontainer').css('width', $('#listcontainer').css('width'))
-      $('#listcontainer').removeClass('fullwidth')
-      $('#leftcol').removeClass('collapsed')
-      updateSizes()
-      $('#listcontainer').animate({'width': window.innerWidth - 
-        $('#leftcol').width() - 10}, length)
-      $('#leftcol').animate({'margin-left': 0}, length)
-      setTimeout(function () {
-        $('#leftcol').css('margin-left', '')
-        $('#listcontainer').css('width', '')
-      }, length)
-    }
+  if (animate == true) {
+    $('#leftcol').css('transition', 'margin-left 1s')
+    $('#listcontainer').css('transition', 'width 1s')
+  }
+  if (!$('#leftcol').hasClass('collapsed')) {
+    $('#leftcol').addClass('collapsed')
+    $('#listcontainer').addClass('fullwidth')
   } else {
-    if (!$('#leftcol').hasClass('collapsed')) {
-      $('#leftcol').addClass('collapsed')
-      $('#listcontainer').addClass('fullwidth')
-    } else {
-      $('#listcontainer').removeClass('fullwidth')
-      $('#leftcol').removeClass('collapsed')
-    }
-    updateSizes()
+    $('#listcontainer').removeClass('fullwidth')
+    $('#leftcol').removeClass('collapsed')
+  }
+  updateSizes()
+  if (animate == true) {
+    setTimeout(function () {
+      $('#leftcol').css('transition', '')
+      $('#listcontainer').css('transition', '')
+    }, 1000)
   }
   if (focusmode) togglefocus(false) // unfocus if uncollapse
 }
@@ -2544,7 +2590,7 @@ function dropTask(ev) {
       if (subtasks.length == 0) {
         $(el).append(selected)
       } else {
-        $(subtasks[0]).prepend(selected)
+        $(subtasks[0]).before(selected)
       }
     } else {
       $(el).append(selected)
@@ -2795,7 +2841,7 @@ function setStyle(style, alert) {
 
 function context(e, mobile) {
   justclicked = true
-  setTimeout(function () { justclicked = false }, 300)
+  setTimeout(function () { justclicked = false }, 500)
   if (selected != undefined &&
     selected[0].tagName == 'TEXTAREA') {
     saveTask()
@@ -2963,7 +3009,7 @@ function context(e, mobile) {
 
 function setOptions() {
   justclicked = true
-  setTimeout(function () { justclicked = false }, 300)
+  setTimeout(function () { justclicked = false }, 500)
   $('#settype-menu').css('top', $('#typebut').offset().top)
   $('#settype-menu').css('left', $('#typebut').offset().left)
   $('#settype-menu').show()
@@ -3246,7 +3292,7 @@ function clicked(ev) {
     // jump to deadline
     $('#searchbar').val(stripChildren($(ev.target)).slice(2))
     search('deadline', dateToString(stringToDate(
-      getHeading($(ev.target)).text(), true)))
+      stripChildren($(getHeading($(ev.target)))), true)))
   } else if (getFrame($(ev.target)) && $(ev.target).hasClass('in')) {
     // select allowable elements
     select(ev.target, false)
@@ -3378,6 +3424,10 @@ function keyup(ev) {
     try {
       $('span.in').draggable('option', 'disabled', false)
     } catch (err) {}
+  } else if (ev.key == 'Alt') {
+    for (let button of $('#timertimes').children()) {
+      $(button).text('+' + $(button).text().slice(1))
+    }
   }
 }
 
@@ -3387,6 +3437,11 @@ function keycomms(evt) {
     try {
       $('span.in').draggable('option', 'disabled', true)
     } catch (err) {}
+  }
+  if (evt.key == 'Alt') {
+    for (let button of $('#timertimes').children()) {
+      $(button).text('-' + $(button).text().slice(1))
+    }
   }
   if (['Command', 'Shift', 'Alt'].includes(evt.key)) {
     return
@@ -3569,6 +3624,7 @@ function keycomms(evt) {
     if (selected[0].tagName == 'TEXTAREA') {
       saveTask()
     }
+    const oldselect = selected
     if ($(taskAbove())[0] == selected.parent()[0]) {
       // first subtask
       select(taskAbove())
@@ -3584,6 +3640,9 @@ function keycomms(evt) {
       select(newspan)
       newTask()
       newspan.remove()
+    }
+    if (oldselect.hasClass('list')) { 
+      selected.val('• ')
     }
   } else if (selected && evt.key == 'Enter' && evt.altKey &&
     !isHeading(selected)) {
@@ -3973,6 +4032,7 @@ function loadpage(setload, oldselect, scrolls) {
     })
     setInterval(timeCheck, 60000) // checks every minute for reminders
     $(window).resize(updateSizes)
+    $('#pop').scroll(updatetitles)
     window.addEventListener('focus', function () {
       reload()
     })

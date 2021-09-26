@@ -19,3 +19,7 @@
   --butbackground: rgba(224, 223, 225, 0.3);
   --indent: 0.45em;
 }
+
+span.h1, span.h2, span.h3 {
+  padding: 0.2em 0 0.2em 0 !important;
+}
