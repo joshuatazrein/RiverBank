@@ -91,6 +91,8 @@ button {
   padding-bottom: 3px;
   font-size: 0.75em;
   text-align: right;
+  max-height: 30vh;
+  overflow-y: scroll;
 }
 
 span.falselink {

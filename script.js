@@ -1312,13 +1312,17 @@ function updatetitles() {
   }).concat(flopdeadlines.filter((x) => { 
     return stringToDate(x.end).getTime() > curdate 
   })).map((x) => { 
-    return '<p style="margin:0;"><span class="falselink" deadline="' +
+    return $('<p style="margin:0;"><span class="falselink" deadline="' +
       x.end + '">' + x.title + 
       '</span><span style="position:absolute;left:0px">' + x.end + 
-      '</span></p>'
+      '</span></p>')
+  }).sort((a, b) => { 
+    return stringToDate($($(a).children()[0]).attr('deadline')).getTime() - 
+      stringToDate($($(b).children()[0]).attr('deadline')).getTime()
   })
   console.log(list);
-  $('#events').html(list.join(''))
+  $('#events').empty()
+  list.forEach((x) => { $('#events').append(x) })
   
 }
 
