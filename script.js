@@ -77,6 +77,7 @@ function mobiletest() {
 }
 
 function resetdoc() {
+  if (selected && selected[0].tagName == 'TEXTAREA') return
   $(document).scrollTop(0)
   $(document.body).css('zoom', "100%")
   document.firstElementChild.style.zoom = "reset";
@@ -640,7 +641,6 @@ function save(undoing, cleaning) {
     $('span.in:visible').attr('style', '')
     // clean()
     updatedeadlines() // updateSpanDrags() called in updatedeadlines
-    resetdoc() // fixes scroll
     // backup data to the server after setting localstorage data
     uploadData()
   }
@@ -652,7 +652,6 @@ function clearEmptyDates(saving, clearing) {
   const dateslist = $('#pop').children().filter('.dateheading')
   const now = stringToDate('0d').getTime()
   for (date of dateslist) {
-    console.log('clearing date', $(date).text(), stripChildren($(date)), stringToDate(stripChildren($(date)), true));
     const thistime = stringToDate(stripChildren($(date)), true).getTime()
     if (getHeadingChildren($(date)).length == 0 &&
       thistime != now &&
@@ -1182,8 +1181,6 @@ function updatedeadlines(saving) {
     updateSpanDrags() 
   }
   migrate()
-  console.log($('#pop').children().filter('.dateheading').toArray().map((x) => { return x.innerHTML }))
-  console.log('migrated');
   $('.duedate').remove()
   $('.placeholder').remove()
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
@@ -1223,7 +1220,6 @@ function updatedeadlines(saving) {
   // creating relative dates
   today = stringToDate('0d')
   for (heading of $('#pop').children().filter('.dateheading:not(.futuredate)')) {
-    console.log('relative date', $(heading).text());
     // add in relative dates underneath
     const newelt = createBlankTask()
     newelt.text(datesToRelative(
@@ -1254,7 +1250,6 @@ function updatedeadlines(saving) {
         const futuredate = new Date()
         futuredate.setDate(curdate + i)
         const newdate = dateToHeading(futuredate, false)
-        console.log('filling futures', newdate);
     }
   } else {
     const newdate = new Date()
@@ -1262,7 +1257,6 @@ function updatedeadlines(saving) {
     const newheading = dateToHeading(newdate, false)
   }
   clearEmptyDates(false)
-  console.log('cleared empty dates');
 
 }
 
@@ -1270,12 +1264,9 @@ function migrate() {
   console.trace()
   const today = stringToDate('0d').getTime()
   const todayheading = $(dateToHeading(stringToDate('0d'), false))
-  console.log(today, todayheading);
   const headings = $('#pop').children().filter('.dateheading').toArray()
-  console.log(headings.map((x) => { return x.innerHTML }));
   for (heading of headings) {
     if (stringToDate(stripChildren($(heading)), true).getTime() < today) {
-      console.log('migrating', $(heading).text(), stripChildren($(heading)), stringToDate(stripChildren($(heading)), true));
       try {
         if (selected &&
           (selected[0] == heading ||
@@ -1302,7 +1293,6 @@ function migrate() {
           (x) => { appends.push(x) })
         if (ch.hasClass('event') && !ch.hasClass('complete')) {
           if (!loading) {
-            console.log('toggling complete');
             toggleComplete(ch, false)
           }
         } else if (!ch.hasClass('complete') && !isHeading(ch)) {
@@ -1372,7 +1362,7 @@ function updateSpanDrags() {
         revert: true,
         appendTo: $('#listcontainer'),
         helper: 'clone',
-        cursorAt: {left: 0, top: $(x).height() / 2},
+        cursorAt: {left: $('#flop').width() / 2, top: $(x).height() / 2},
         refreshPositions: true,
         zIndex: 1,
         distance: 20,
@@ -1556,7 +1546,8 @@ function deleteTask() {
   if (selected.attr('folded') == 'true') {
     // unfold deleted headings before deleting
     togglefold(selected)
-    setTimeout(null, 500)
+    setTimeout(deleteTask, 500)
+    return
   }
   selected.remove()
   select(newselect)
@@ -1922,7 +1913,6 @@ function select(el, scroll, animate) {
     select(getFrame($(el)), scroll)
     return
   }
-  resetdoc(); // fixes weird shit
   // switch selection
   if (selected != undefined) {
     $('.taskselect').removeClass('taskselect')
@@ -2019,7 +2009,6 @@ function stripChildren(el, mode) {
     // dateheadings just filter our their subspans
     const newelt = $(el).clone()
     newelt.find('span').remove()
-    console.log(el.text(), newelt.text());
     return newelt.text()
   }
   // retrieve text from only the parent span and any of its formatting
@@ -2090,6 +2079,7 @@ function editTask() {
   // }
   if (selected != undefined) {
     $('#context-menu').hide()
+    const classes = selected.attr('class') // for processing placeholder
     const newelt = $('<textarea class=\'in edit\'></textarea>')
     newelt.css('font', selected.css('font'))
     el.after(newelt)
@@ -2106,7 +2096,8 @@ function editTask() {
       selected.after('<span style="display:none;"></span>')
     } else {
       // appends children after
-      selected.after('<span>' + getChildren(el) + '</span>')
+      selected.after('<span class="' + classes + '">' + 
+        getChildren(el) + '</span>')
     }
     // (el).html()
     el.html(el.html()
@@ -2220,6 +2211,10 @@ function archiveAll() {
 }
 
 function archiveTask() {
+  if (selected.hasClass('dateheading')) { 
+    alert("can't archive dates")
+    return 
+  }
   if (!selected.hasClass('complete')) {
     toggleComplete(selected)
     playPop()
@@ -3155,8 +3150,10 @@ function clickoff(ev) {
   }
   // on revert drags on mobile
   $('.drop-hover').removeClass('drop-hover')
-  if (!justclicked) $('nav').hide()
-  if (ev.target.tagName != 'TEXTAREA') resetdoc()
+  if (!justclicked) { $('nav').hide() }
+  if (ev.target.tagName != 'TEXTAREA') {
+    resetdoc()
+  }
 }
 
 function addTime(time) {
@@ -3193,7 +3190,6 @@ function clicked(ev) {
     saveTask()
   }
   $('nav').hide() 
-  resetdoc(); // fixes weird shit
   $('.slider').remove() // remove sliders
   // click events
   if ($(ev.target).attr('id') == 'todayBut') {
@@ -4003,6 +3999,7 @@ function loadpage(setload, oldselect, scrolls) {
         resetdoc()
       }, 3000)
     }
+    clean()
     display('loaded settings');
   }
   if ($('#theme').attr('href') != data.style) {
@@ -4065,16 +4062,8 @@ function loadpage(setload, oldselect, scrolls) {
   }
   toggleButs(false)
   $('.taskselect').removeClass('taskselect')
-  resetdoc()
-  console.log($('#pop').children().filter('.dateheading').toArray().map((x) => { return x.innerHTML }))
-  clean()
-  console.log($('#pop').children().filter('.dateheading').toArray().map((x) => { return x.innerHTML }))
-  console.log('cleaned');
   updatedeadlines(false)
-  console.log($('#pop').children().filter('.dateheading').toArray().map((x) => { return x.innerHTML }))
-  console.log('deadlines updated');
   updateSpanDrags()
-  console.log('drags updated');
   if (scrolls) {
     $('#flop').scrollTop(scrolls[0])
     $('#pop').scrollTop(scrolls[1])
@@ -4093,7 +4082,6 @@ function loadpage(setload, oldselect, scrolls) {
   }
   display('loaded drags...')
   updateSizes()
-  console.log('updated sizes');
   if (setload == false) {
     // remove image after reload
     // $('#logoimage').stop(true)
@@ -4101,7 +4089,7 @@ function loadpage(setload, oldselect, scrolls) {
     $('#logoimage').animate({opacity: 0}, 500)
     setTimeout(function() { $('#logoimage').remove() }, 500)
   }
-  console.log('fully loaded.');
+  resetdoc()
   loading = false
 }
 
