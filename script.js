@@ -1299,9 +1299,14 @@ function updatedeadlines(saving) {
 
 function updatetitles() {
   // updates titles of any continuous events in view with current date
+  let butheight = $(':root').css('--butheight')
+  // add in titles
+  butheight = Number(butheight.slice(0, butheight.length - 2)) + 
+    Number($('#events').height())
+  butheight += 'px'
   const curdate = stringToDate(stripChildren($($('#pop .dateheading')
     .toArray().filter((x) => { 
-      return $(x).position().top > 0 
+      return $(x).position().top > butheight
     })[0])), true).getTime()
   const inview = $('#pop .continuous').toArray().filter((x) => { 
     return stringToDate($(x).attr('end')).getTime() > curdate &&
