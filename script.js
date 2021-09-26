@@ -1194,12 +1194,23 @@ function updatedeadlines(saving) {
   for (heading of collapselist) {
     togglefold($(heading), false)
   }
+  const importants = []
+  let counter = 0
   for (list of data.flop.concat([{
     'title': 'pop',
     'text': $('#pop').html()
   }])) {
     $('#test').empty()
     $('#test').html(list.text)
+    $('#test').find('span.important:not(.complete)').toArray()
+      .forEach((x) => {
+        // add all important tasks to a list
+        importants.push($('<p><span class="impspan" list="' + 
+          counter + '">' + list.title + '</span>' + 
+          '<span class="falselinkimp">' + stripChildren($(x)) + 
+          '</span></p>'))
+      })
+    counter ++
     for (let deadline of $('#test').find('.deadline').filter(function () {
       return !$(this).parent().hasClass('complete')
     })) {
@@ -1228,6 +1239,9 @@ function updatedeadlines(saving) {
   for (heading of collapselist) {
     togglefold($(heading), false)
   }
+  // add all importants to importants
+  $('#importants').empty()
+  importants.forEach((x) => { $('#importants').append(x) })
   // creating relative dates
   today = stringToDate('0d')
   for (heading of $('#pop').children().filter('.dateheading:not(.futuredate)')) {
@@ -1239,15 +1253,6 @@ function updatedeadlines(saving) {
     newelt.addClass('placeholder')
     newelt.removeClass('in')
     $(heading).append(newelt)
-  }
-  // adds in scroll buffers if needed
-  if (!$('#flop').children().filter('.buffer')[0]) {
-    $('#flop').prepend('<span class="buffer" style="height:var(--butheight)"></span>')
-    $('#flop').append('<span class="buffer bottom" style="height:90%;"></span>')
-  }
-  if (!$('#pop').children().filter('.buffer')[0]) {
-    $('#pop').prepend('<span class="buffer" style="height:var(--butheight)"></span>')
-    $('#pop').append('<span class="buffer bottom" style="height:90%"></span>')
   }
   // update future dates up to 30 days from now
   const futuredate = stringToDate('0d')
@@ -1295,18 +1300,27 @@ function updatedeadlines(saving) {
     $(x).append(newelt)
   })
   clearEmptyDates(false)
+  // adds in scroll buffers if needed
+  $('.buffer').remove()
+  if (!$('#flop').children().filter('.buffer')[0]) {
+    $('#flop').prepend('<span class="buffer"></span>')
+    $('#flop').append('<span class="buffer bottom"></span>')
+  }
+  if (!$('#pop').children().filter('.buffer')[0]) {
+    $('#pop').prepend('<span class="buffer"></span>')
+    $('#pop').append('<span class="buffer bottom"></span>')
+  }
 }
 
 function updatetitles() {
   // updates titles of any continuous events in view with current date
-  let butheight = $(':root').css('--butheight')
+  let bh = $(':root').css('--butheight')
   // add in titles
-  butheight = Number(butheight.slice(0, butheight.length - 2)) + 
+  bh = Number(bh.slice(0, bh.length - 2)) + 
     Number($('#events').height())
-  butheight += 'px'
   const curdate = stringToDate(stripChildren($($('#pop .dateheading')
     .toArray().filter((x) => { 
-      return $(x).position().top > butheight
+      return $(x).position().top > bh
     })[0])), true).getTime()
   const inview = $('#pop .continuous').toArray().filter((x) => { 
     return stringToDate($(x).attr('end')).getTime() > curdate &&
@@ -1318,8 +1332,9 @@ function updatetitles() {
     return stringToDate(x.end).getTime() > curdate 
   })).map((x) => { 
     return $('<p style="margin:0;"><span class="falselink" deadline="' +
-      x.end + '">' + x.title + 
-      '</span><span style="position:absolute;left:0px">' + x.end + 
+      x.end + '">' + x.title + '</span>' + 
+      '<span class="eventspan" onclick="select(dateToHeading(' + 
+      'stringToDate($(this).text())), true)">' + x.end + 
       '</span></p>')
   }).sort((a, b) => { 
     return stringToDate($($(a).children()[0]).attr('deadline')).getTime() - 
@@ -1328,7 +1343,6 @@ function updatetitles() {
   console.log(list);
   $('#events').empty()
   list.forEach((x) => { $('#events').append(x) })
-  
 }
 
 function migrate() {
@@ -2022,9 +2036,14 @@ function select(el, scroll, animate) {
         parent = getFrame(selected)
         let butheight = $(':root').css('--butheight')
         if (getFrame(selected).attr('id') == 'pop') {
-          // add in titles
+          // add in events
           butheight = Number(butheight.slice(0, butheight.length - 2))
           butheight += Number($('#events').height())
+          butheight += 'px'
+        } else if (getFrame(selected).attr('id') == 'flop') {
+          // add in importants
+          butheight = Number(butheight.slice(0, butheight.length - 2))
+          butheight += Number($('#importants').height())
           butheight += 'px'
         }
         console.log(butheight);
@@ -2152,9 +2171,6 @@ function updateHeight() {
 function editTask() {
   el = selected
   if (selected.hasClass('dateheading')) return
-  // if (selected.parent()[0].tagName == 'SPAN') {
-  //   selected.parent().attr('draggable', 'false')
-  // }
   if (selected != undefined) {
     $('#context-menu').hide()
     const classes = selected.attr('class') // for processing placeholder
@@ -2225,11 +2241,17 @@ function editTask() {
     });
     if (selected.val().includes('#')) {
       // scroll to headings manually
-      getFrame(selected).animate({
-        scrollTop: getFrame(selected).scrollTop() + 
+      let scrollto = getFrame(selected).scrollTop() + 
         selected.offset().top - getFrame(selected).offset().top -
         Number($(':root').css('--butheight')
-        .slice(0, $(':root').css('--butheight').length - 2))
+      .slice(0, $(':root').css('--butheight').length - 2))
+      if (getFrame(selected).attr('id') == 'flop') {
+        scrollto -= $('#importants').height()
+      } else if (getFrame(selected).attr('id') == 'pop') {
+        scrollto -= $('#events').height()
+      }
+      getFrame(selected).animate({
+        scrollTop: scrollto
       }, 500)
       console.log('scrolled');
     }
@@ -3225,7 +3247,7 @@ function clickoff(ev) {
       newTask()
     }
     selected.val('# ')
-  } else if (['newSubtaskBut', 'scheduleBut', 'collapseBut']
+  } else if (['editTaskBut', 'newSubtaskBut', 'scheduleBut', 'collapseBut']
     .includes($(ev.target).attr('id'))) {
     eval($(ev.target).attr('function'))
   } else if ($(ev.target).hasClass('dropdown-item') && !justclicked) {
@@ -3277,7 +3299,6 @@ function clicked(ev) {
   // click events
   if ($(ev.target).attr('id') == 'todayBut') {
     select(dateToHeading(stringToDate('0d')), true)
-    save()
   } else if ($(ev.target).attr('id') == 'addDateBut') {
     ev.preventDefault()
     $('#searchbar').val('d:')
@@ -3289,7 +3310,7 @@ function clicked(ev) {
     startTimer()
   } else if ($(ev.target).attr('id') == 'timerStopBut') {
     stopTimer()
-  } else if (['newSubtaskBut', 'scheduleBut', 'collapseBut']
+  } else if (['newSubtaskBut', 'scheduleBut', 'collapseBut', 'editTaskBut']
     .includes($(ev.target).attr('id'))) {
     // buttons evaluated with clickoff() (for selection purposes)
     return
@@ -3319,6 +3340,19 @@ function clicked(ev) {
     $('#searchbar').val($(ev.target).text())
     console.log($(ev.target).attr('deadline'));
     search('deadline', $(ev.target).attr('deadline'))
+  } else if ($(ev.target).hasClass('falselinkimp')) {
+    // search the task
+    $('#searchbar').val($(ev.target).text())
+    search()
+  } else if ($(ev.target).hasClass('impspan')) {
+    // search the task
+    const list = Number($(ev.target).attr('list'))
+    if (list < data.flop.length) {
+      loadedlist = list
+      loadList()
+    } else {
+      select(dateToHeading(stringToDate('0d')), true)
+    }
   } else if ($(ev.target).hasClass('weblink')) {
     let title = $(ev.target).attr('title')
     if (!title.includes('https://www.')) title = 'https://www.' + title
@@ -4193,6 +4227,12 @@ function loadpage(setload, oldselect, scrolls) {
   }
   resetdoc()
   loading = false
+  $('.dropdown-item').mouseover(function () { 
+    $(this).css('color', 'var(--select)')
+  })
+  $('.dropdown-item').mouseleave(function () { 
+    $(this).css('color', '')
+  })
 }
 
 function scrollToToday() {

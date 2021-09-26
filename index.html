@@ -76,7 +76,7 @@
             <div class='butbar' id='movebuts1'>
               <button function="moveTask('up')" title='move up'>↑</button>
               <button title='fold' function='toggleSubtasks()'>]</button>
-              <button function="editTask()" title='edit'>o</button>
+              <button id='editTaskBut' function="editTask()" title='edit'>o</button>
               <button title='indent' function='indentTask(true)'>}</button>
             </div>
             <div class='butbar' id='movebuts2'>
@@ -198,6 +198,7 @@
     </div>
     <div id='listcontainer'>
       <div id='floplist'>
+        <p id='importants'></p>
         <div class='butbar' id='flopbuts'>
           <button id='collapseBut' title='collapse menu' function='togglecollapse(true)' style='font-family: monospace !important'>≡</button>
           <button id='focusbut' title='focus on view' function='togglefocus()'>&lt;></button>
