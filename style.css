@@ -91,7 +91,7 @@ button {
   padding-bottom: 3px;
   font-size: 0.75em;
   text-align: right;
-  max-height: 30vh;
+  max-height: 20vh;
   overflow-y: scroll;
 }
 
