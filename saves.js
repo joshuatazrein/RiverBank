@@ -19,44 +19,33 @@ function resetCookies() {
 // # CLEANING
 
 function clean() {
-  return
-  // cleans up data
-  $('#test').empty()
+  // cleans data
+  $('span.in:visible').attr('style', '')
+  for (span of $('span').toArray()) {
+    if (['', ' ', '\n'].includes($(span).text())) {
+      // remove empty ones
+      $(span).remove()
+    }
+  }
+  // clean empty lists
+  let loadlist = $('#loads').children().toArray()
+  for (list in loadlist) {
+    try {
+      $('#test').html(data.flop[list].text)
+      // clears out empty lists
+      if ($(loadlist[list]).val().length <= 1 &&
+        $('#test > .in').length == 0 &&
+        loadedlist != list) {
+        data.flop.splice(list, 1)
+        $($('#loads').children()[list]).remove()
+      }
+    } catch (err) {
+      display(err)
+      $($('#loads').children()[list]).remove()
+      loadlist = $('#loads').children().toArray()
+    }
+  }
   $('textarea.in').remove()
-  const dates = []
-  const duplicates = []
-  console.log($('.dateheading'));
-  $('.dateheading').toArray().forEach((x) => {
-    // rewrite dates
-    if ($(x).text().includes('undefined')) $(x).remove()
-    else {
-      $(x).text(dateToString(stringToDate(stripChildren($(x)), true), true))
-    }
-    const text = stripChildren($(x)).replace(' ...', '')
-    if (!dates.includes(text)) { dates.push(text) }
-    else { duplicates.push(text) }
-  })
-  console.log(dates, duplicates);
-  console.log('cleaning');
-  for (duplicate of duplicates) {
-    console.log(duplicate);
-    // merge duplicate dates
-    const headingslist = $('.dateheading').toArray().filter((x) => {
-      return stripChildren($(x)).includes(duplicate)
-    })
-    const firstheading = $(headingslist[0])
-    for (heading of headingslist.slice(1)) {
-      getHeadingChildren($(heading)).forEach((x) => {
-        firstheading.prepend(x)
-      })
-    }
-    headingslist.slice(1).forEach((x) => { x.remove() })
-  }
-  if (selected != undefined && selected[0].tagName == 'TEXTAREA' &&
-    selected.parent().hasClass('in')) {
-    // clear open tasks
-    selected.remove()
-  }
   // cleans invisible things which aren't folded under headings
   let headings = $('span').toArray()
   headings = headings.filter((x) => {
@@ -82,12 +71,6 @@ function clean() {
       if ($(blinded).parent()[0].tagName != 'SPAN') $(blinded).remove()
     }
   }
-  for (span of $('span').toArray()) {
-    if (['', ' ', '\n'].includes($(span).text())) {
-      // remove empty ones
-      $(span).remove()
-    }
-  }
   // sort headings
   const headingslist = $('#pop').children().filter('.dateheading').toArray()
   for (heading of headingslist.sort((a, b) => {
@@ -104,28 +87,6 @@ function clean() {
       $(heading).after($(x))
     })
   }
-  // clean empty lists
-  let loadlist = $('#loads').children().toArray()
-  for (list in loadlist) {
-    try {
-      $('#test').html(data.flop[list].text)
-      // clears out empty lists
-      if ($(loadlist[list]).val().length <= 1 &&
-        $('#test > .in').length == 0 &&
-        loadedlist != list) {
-        data.flop.splice(list, 1)
-        $($('#loads').children()[list]).remove()
-      }
-    } catch (err) {
-      display(err)
-      $($('#loads').children()[list]).remove()
-      loadlist = $('#loads').children().toArray()
-    }
-  }
-  // clear out deprecated attributes
-  $('span.in').removeAttr('ondragstart')
-  $('span.in').removeAttr('ondragover')
-  $('span.in').removeAttr('ondrop')
 }
 
 function clearEmptyHeadlines() {
@@ -155,10 +116,10 @@ function clearEmptyHeadlines() {
       $(heading).remove()
     }
   }
-  save()
+  save('-')
 }
 
-function clearEmptyDates(saving, clearing) {
+function clearEmptyDates() {
   // take away empty dates
   $('.futuredate').removeClass('futuredate')
   const dateslist = $('#pop').children().filter('.dateheading')
@@ -173,16 +134,10 @@ function clearEmptyDates(saving, clearing) {
         $(date).remove() 
       } else {
         // minimize the date
-        if (clearing) {
-          $(date).remove()
-        } else {
-          $(date).addClass('futuredate')
-          $(date).addClass('dateheading')
-        }
+        $(date).addClass('futuredate')
       }
     }
   }
-  if (saving != false) { save() }
 }
 
 function migrate() {
@@ -306,13 +261,31 @@ function updateTitles() {
   list.forEach((x) => { $('#events').append(x) })
 }
 
+function updateTimeline() {
+  // creating relative dates
+  today = stringToDate('0d')
+  for (heading of $('#pop').children().filter('.dateheading:not(.futuredate)')) {
+    // add in relative dates underneath
+    const newelt = createBlankTask()
+    newelt.text(datesToRelative(
+      today,
+      stringToDate(stripChildren($(heading)), true)))
+    newelt.addClass('placeholder')
+    newelt.removeClass('in')
+    $(heading).append(newelt)
+  }
+  // update future dates up to 30 days from now
+  const curdate = today.getDate()
+  for (let i = 1; i < 30; i ++) {
+    const futuredate = new Date()
+    futuredate.setDate(curdate + i)
+    const newdate = dateToHeading(futuredate, false)
+    console.log(newdate);
+  }
+}
+
 function updateDeadlines(saving) {
   // update displayed deadlines to match data
-  if (filtered) return
-  if (saving != false) { 
-    updateSpanDrags() 
-  }
-  migrate()
   $('.duedate').remove()
   $('.placeholder').remove()
   flopdeadlines = []
@@ -370,40 +343,19 @@ function updateDeadlines(saving) {
   // add all importants to importants
   $('#importants').empty()
   importants.forEach((x) => { $('#importants').append(x) })
-  // creating relative dates
-  today = stringToDate('0d')
-  for (heading of $('#pop').children().filter('.dateheading:not(.futuredate)')) {
-    // add in relative dates underneath
-    const newelt = createBlankTask()
-    newelt.text(datesToRelative(
-      today,
-      stringToDate(stripChildren($(heading)), true)))
-    newelt.addClass('placeholder')
-    newelt.removeClass('in')
-    $(heading).append(newelt)
-  }
-  // update future dates up to 30 days from now
-  const curdate = today.getDate()
-  for (let i = 1; i < 30; i ++) {
-    const futuredate = new Date()
-    futuredate.setDate(curdate + i)
-    const newdate = dateToHeading(futuredate, false)
-    console.log(newdate);
-  }
   // update continous dates from pop
   $('.continuous').remove()
-  $('#pop').find('span.in:not(.complete) > .deadline').toArray().forEach((x) => {
+  $('#pop').find('span.in:not(.complete) > .deadline')
+    .toArray().forEach((x) => {
     function castrate(phallus) {
       return String(phallus).slice(0, String(phallus).indexOf('.'))
     }
     const targetdate = $(dateToHeading(stringToDate($(x).text().slice(1))))
-  // console.log(x, targetdate)
     const newelt = $('<div class="continuous"></div>')
     const scrolltop = $('#pop').scrollTop()
     const xpos = $(x).offset().top - $('#pop').offset().top
     newelt.css('top', '0')
     const target = $(getHeadingChildren(targetdate).filter((y) => { 
-    // console.log($(y).text().slice(2), $(x).parent().text());
       // finds target deadline
       return $(y).hasClass('duedate') && 
         $(x).parent().text().includes(
@@ -417,7 +369,9 @@ function updateDeadlines(saving) {
     newelt.attr('end', $(x).text().slice(1)) // as text for searching
     $(x).append(newelt)
   })
-  clearEmptyDates(false)
+}
+
+function updateBuffers() {
   // adds in scroll buffers if needed
   $('.buffer').remove()
   if (!$('#flop').children().filter('.buffer')[0]) {
@@ -432,10 +386,12 @@ function updateDeadlines(saving) {
 
 // # SAVING
 
-function save(undoing, cleaning) {
+function save(changes, changed) {
   // stores data
-  unFilter(false)
-  if (undoing) savedata = JSON.parse(JSON.stringify(data))
+  unFilter()
+  if (['+','-','>'].includes(changes)) {
+    savedata = JSON.parse(JSON.stringify(data))
+  }
   // save data
   data.pop = $('#pop').html()
   if (loadedlist != undefined) {
@@ -448,13 +404,27 @@ function save(undoing, cleaning) {
     }
   }
   data.loadedlist = loadedlist
-  if (cleaning != false) {
-    // clean up styling
-    $('span.in:visible').attr('style', '')
-    // clean()
-    updateDeadlines() // updateSpanDrags() called in updatedeadlines
-    // backup data to the server after setting localstorage data
-    uploadData()
+  uploadData()
+  console.log(changes, changed);
+  if (['>', '+'].includes(changes)) {
+    updateSpanDrags() 
+  }
+  if (['-', '+'].includes(changes) &&
+    changed && 
+    stripChildren($(changed)).includes('>')) {
+    console.log('updating deadlines');
+    updateDeadlines()
+  }
+  if (['>', '-', '+'].includes(changes) && 
+    changed &&
+    stripChildren($(changed)).includes('>')) {
+    updateTimeline()
+  }
+  if (['-'].includes(changes)) {
+    clearEmptyDates()
+  }
+  if (['L'].includes(changes)) {
+    updateBuffers()
   }
 }
 
@@ -786,7 +756,7 @@ function loadPage(setload, oldselect, scrolls) {
       reload()
     })
     $('#container').on('mouseleave', function () {
-      save()
+      save('0')
     })
     if (window.innerWidth < 600) { 
       if (!$('#leftcol').hasClass('collapsed')) 
@@ -907,6 +877,7 @@ function loadPage(setload, oldselect, scrolls) {
   })
   if (setload != false) {
     clean()
-    clearEmptyDates(false)
+    clearEmptyDates()
   }
+  updateBuffers()
 }

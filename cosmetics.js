@@ -136,7 +136,7 @@ function reset() {
 
 function switchUser() {
   // switches data and reloads page
-  save()
+  save('0')
   let past = new Date()
   past.setTime(
     past.getTime() - 10000000)
@@ -216,14 +216,14 @@ function changeDateFormat(format) {
     }
   }
   data.dateSplit = format
-  uploadData(true)
+  save('0')
 }
 
 function toggleHeadingAlign() {
   // switch headings between centered and left aligned
   if (data.headingalign == 'left') data.headingalign = 'center'
   else data.headingalign = 'left'
-  save()
+  save('0')
   document.documentElement.style.setProperty('--headingalign',
     data.headingalign)
 }
@@ -251,7 +251,7 @@ function toggleButs(saving) {
     data.hidebuts = 'true'
     $(':root').css('--butheight', '0px')
   }
-  if (saving != false) save()
+  if (saving != false) save('0')
   updateSizes()
 }
 
@@ -264,7 +264,7 @@ function toggleHelp() {
     $("#help").show()
     data.help = 'show'
   }
-  save()
+  save('0')
   updateSizes()
 }
 
@@ -273,11 +273,11 @@ function togglePlay() {
   if (data.play == 'true') {
     data.play = 'false'
     alert('sounds off')
-    save()
+    save('0')
   } else if (data.play == 'false') {
     data.play = 'true'
     alert('sounds on')
-    save()
+    save('0')
   }
 }
 
@@ -1067,13 +1067,14 @@ function keyDown(ev) {
       // cut
       copieditem = selected.clone
       selected.remove()
+      save('-', copieditem)
     } else if (ev.key == 'v' && ev.metaKey) {
       // paste
       if (copieditem) {
         selected.after(copieditem)
         select(selected.next(), true)
         copieditem = undefined
-        save()
+        save('+', selected)
       }
     } else if (ev.key == 'ArrowUp' && ev.altKey) {
       ev.preventDefault()

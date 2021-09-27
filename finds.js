@@ -242,7 +242,7 @@ function dateToHeading(date, saving) {
     $(heading2).append(newelt)
     if (saving != false) {
       select(heading2)
-      save()
+      save('+', selected)
     }
     return heading2
   } else {
@@ -485,14 +485,14 @@ function moveTask(direction) {
     if (taskAbove()) taskAbove().before(selected)
     else select(selected, false)
   }
-  save(true)
+  save('>', selected)
   if (selected.is(':visible')) { select(selected, true) }
   else select()
 }
 
 // # SEARCHING
 
-function unFilter(update) {
+function unFilter() {
   // show everything which is filtered
   if (filtered) {
     filteredlist.forEach((x) => { $(x).show() })

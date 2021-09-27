@@ -71,8 +71,9 @@ function archiveTask(play) {
   if (heading.attr('folded') == 'true') {
     selected.hide()
   }
+  const oldselect = selected.clone()
   select(taskabove)
-  save(true)
+  save('-', oldselect)
 }
 
 function toggleComplete(task, saving) {
@@ -111,13 +112,13 @@ function toggleComplete(task, saving) {
           return $(x).text()
         }).includes(completetask.text())) {
         $(heading).after(newtask)
-        save()
+        save('+', newtask)
       }
     }
   }
   completetask.toggleClass('complete')
   if (!task || saving != false) {
-    save(true)
+    save('+', selected)
   }
 }
 
@@ -126,7 +127,7 @@ function toggleImportant() {
   if (selected[0].tagName == 'SPAN') {
     selected.removeClass('maybe')
     selected.toggleClass('important')
-    save()
+    save('0')
   }
 }
 
@@ -135,7 +136,7 @@ function toggleMaybe() {
   if (selected[0].tagName == 'SPAN') {
     selected.removeClass('important')
     selected.toggleClass('maybe')
-    save()
+    save('0')
   }
 }
 
@@ -183,7 +184,7 @@ function setTask(type) {
     } else if (type == 'note') {
       selected.html('- ' + selected.html())
     }
-    save()
+    save('0')
   }
 }
 
@@ -193,7 +194,7 @@ function dragTask(ev) {
   // begin the drag
   select(ev.target)
   draggingtask = true
-  save(true, false)
+  save('-', selected)
   if (mobiletest()) {
     $('.nav').hide()
     return
@@ -296,7 +297,7 @@ function dropTask(ev) {
   //   popscrollsave = undefined
   //   $('#pop').removeClass('greyedout')
   // }
-  save()
+  save('>', selected)
   updateSpanDrags()
 }
 
@@ -699,10 +700,10 @@ function deleteTask() {
     setTimeout(deleteTask, 500)
     return
   }
+  const oldselect = selected.clone()
   selected.remove()
   select(newselect)
-  save(true)
-  clearEmptyDates()
+  save('-', oldselect)
 }
 
 function saveTask() {
@@ -868,8 +869,7 @@ function saveTask() {
     parent.attr('draggable', 'true')
     parent = parent.parent()
   }
-  save(true)
-  if (stripChildren(selected).includes('>')) { updateDeadlines() }
+  save('+', selected)
 }
 
 function editTask() {

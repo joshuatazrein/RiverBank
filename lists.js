@@ -28,7 +28,7 @@ function dropList(ev) {
       selected.after(children[i])
     }
     data.flop[index].text = $('#test').html()
-    save()
+    save('0')
     loadedlist = Number(index)
     loadList()
     return
@@ -66,7 +66,7 @@ function toggleDrags(saving) {
     $(loads[loadedlist]).val('')
     $(loads[loadedlist]).val(oldval)
     if (saving != false) {
-      save()
+      save('0')
       setTimeout(function () { loads[loadedlist].focus() }, 300)
     } else {
       $('.selected').blur()
@@ -82,7 +82,7 @@ function toggleDrags(saving) {
     } else {
       $(loads[loadedlist]).removeClass('sublist')
     }
-    if (saving != false) save()
+    if (saving != false) save('0')
     $(':focus').blur()
     $('.selected').blur()
   }
@@ -199,7 +199,7 @@ function toggleFoldList(saving) {
     sublist += 1
 
   }
-  if (saving != false) save()
+  if (saving != false) save('0')
 }
 
 // # LOADING
@@ -222,7 +222,7 @@ function loadList(saving) {
   updateSpanDrags()
   $('.taskselect').removeClass('taskselect')
   if (saving != false) {
-    save()
+    save('L')
   } else {
     $(loads[loadedlist]).blur()
   }
@@ -246,6 +246,6 @@ function loadthis(event) {
   loadList(this)
   if (movetask) {
     $('#flop > .buffer.bottom').before(movetask)
-    save()
+    save('>')
   }
 }

@@ -234,12 +234,12 @@ function dragTime(el) {
   durslider.on('mouseup touchend', function () {
     slider.remove()
     durslider.remove()
-    save()
+    save('+', selected)
   })
   slider.on('mouseup touchend', function () {
     slider.remove()
     durslider.remove()
-    save()
+    save('+', selected)
   })
 }
 
@@ -276,4 +276,5 @@ function timeCheck() {
     }
     curhour = timelist[0]
   }
+  migrate() // migrate previous dates in
 }
