@@ -706,6 +706,8 @@ function loadPage(starting, oldselect, scrolls) {
       'Su': 0, 'Mo': 1, 'Tu': 2, 'We': 3, 'Th': 4, 'Fr': 5, 'Sa': 6,
     } // weekdays conversion
     if (data.play === undefined) { data.play = 'true' } // set play
+    if (data.futurepanes === undefined) { data.futurepanes = 'show' } 
+      // set futurepanes
     if (data.headingalign === undefined) data.headingalign = 'center'
     // load style
     $('head').append(
@@ -822,15 +824,6 @@ function loadPage(starting, oldselect, scrolls) {
     $('#flop').scrollTop(scrolls[0])
     $('#pop').scrollTop(scrolls[1])
   }
-  if (oldselect) {
-    // select previous selected
-    if (oldselect[1])
-      select(oldselect[0].find('span.in').toArray()[oldselect[1]])
-    else if (oldselect[0])
-      select(oldselect[0])
-  } else {
-    setTimeout(scrollToToday, 1000)
-  }
   display('loaded drags...')
   if (starting == false) {
     // remove image after reload
@@ -838,8 +831,26 @@ function loadPage(starting, oldselect, scrolls) {
     $('#logoimage').animate({opacity: 0}, 500)
     setTimeout(function() { $('#logoimage').remove() }, 500)
   }
-  updateSizes()
   resetDoc()
   clean()
+  $('#events, #importants').hide()
   save('X', null, true)
+  setTimeout(function () {
+    $('#events, #importants').css('margin-top', '0')
+    if (data.futurepanes == 'show') {
+      $('#events, #importants').show()
+    }
+    updateSizes()
+    if (oldselect) {
+      // select previous selected
+      if (oldselect[1])
+      select(oldselect[0].find('span.in').toArray()[oldselect[1]], true)
+      else if (oldselect[0])
+      select(oldselect[0], true)
+    } else {
+      scrollToToday()
+      $('#events, #importants').css('margin-top', 
+        'calc(var(--butheight) - 5px)')
+    }
+  }, 1000)
 }

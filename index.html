@@ -75,14 +75,14 @@
           <div class='butbar' id='movebuts' style='margin:2px 0;'>
             <div class='butbar' id='movebuts1'>
               <button function="moveTask('up')" title='move up'>↑</button>
-              <button title='fold' function='toggleSubtasks()'>]</button>
+              <button function="moveTask('down')" title='move down'>↓</button>
               <button id='editTaskBut' function="editTask()" title='edit'>o</button>
-              <button title='indent' function='indentTask(true)'>}</button>
+              <button function="deleteTask()" title='delete'>x</button>
             </div>
             <div class='butbar' id='movebuts2'>
-              <button function="moveTask('down')" title='move down'>↓</button>
+              <button title='fold' function='toggleSubtasks()'>]</button>
               <button title='unfold' function='toggleSubtasks()'>[</button>
-              <button function="deleteTask()" title='delete'>x</button>
+              <button title='indent' function='indentTask(true)'>}</button>
               <button title='unindent' function='indentTask(false)'>{</button>
             </div>
             <div class='butbar'>
@@ -254,6 +254,7 @@
   
       <p function='toggleHelp()' class='dropdown-item' id='context-toggleHelp'>toggle help</p>
       <p function='toggleButs()' class='dropdown-item' id='context-toggleButs'>toggle buttons</p>
+      <p function='toggleFuturePanes()' class='dropdown-item' id='context-toggleFuturePanes'>toggle future panes</p>
   
       <p function='reset()' class='dropdown-item' id='context-reset'>reset</p>
       <p function='switchUser()' class='dropdown-item' id='context-switchUser'>sign out</p>

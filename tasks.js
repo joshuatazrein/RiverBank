@@ -715,7 +715,7 @@ function saveTask() {
   selected.next().remove() // removes appended children
   if (['', '• ', '- ', '# ', '## ', '### ', '@', '@ '
   ].includes(selected.val()) ||
-    /^•\s$/.test(selected.val())) {
+  /^•\s$/.test(selected.val())) {
     selected.remove()
     savetask.remove()
     return
@@ -782,6 +782,14 @@ function saveTask() {
         selected.val(selected.val() + ' ')
       }
     }
+  }
+  const length = selected.val().length - 1
+  if (selected.val().charAt(length) == '!') {
+    savetask.addClass('important')
+    selected.val(selected.val().slice(0, length))
+  } else if (selected.val().charAt(length) == '?') {
+    savetask.addClass('maybe')
+    selected.val(selected.val().slice(0, length))
   }
   for (linestart of Object.keys(linestarts)) {
     // test each for a match
@@ -871,7 +879,7 @@ function saveTask() {
     parent.attr('draggable', 'true')
     parent = parent.parent()
   }
-  save('+', selected, true)
+  // save('+', selected, true)
 }
 
 function editTask() {
@@ -914,6 +922,11 @@ function editTask() {
     const val = selected.val()
     if (val.charAt(val.length - 1) == ' ') {
       selected.val(val.slice(0, val.length - 1))
+    }
+    if (el.hasClass('important')) {
+      selected.val(selected.val() + ' !')
+    } else if (el.hasClass('maybe')) {
+      selected.val(selected.val() + ' ?')
     }
     // add back hashtags
     if (el.hasClass('h1')) {

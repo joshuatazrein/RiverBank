@@ -97,7 +97,9 @@ function updateSizes() {
   $('#loads').css('height', loadsheight + 'px')
   if (window.innerWidth < 600) mobile = true
   else if (window.innerWidth > 600) mobile = false
-  $(':root').css('--butheight', $('#flopbuts').height() + 5 + 'px')
+  if (data.hidebuts == 'false') {
+    $(':root').css('--butheight', $('#flopbuts').height() + 5 + 'px')
+  }
 }
 
 // # BACKUPS
@@ -239,16 +241,16 @@ function toggleButs(saving) {
     data.hidebuts = 'false'
     $('#collapseBut').removeAttr('style')
     $('#flopbuts').prepend($('#collapseBut'))
+    $(':root').css('--butheight', $('#flopbuts').height() + 'px')
   } else {
     $('.butbar:not(#editbuts)').hide()
     $('#typebut').hide()
     $('#focusbut').hide()
-    if (mobileTest()) {
-      $('#collapseBut').css('top', '0')
-      $('#collapseBut').css('left', '0')
-      $('#collapseBut').css('position', 'absolute')
-      $('#listcontainer').prepend($('#collapseBut'))
-    }
+    $('#collapseBut').css('top', '0')
+    $('#collapseBut').css('left', '2px')
+    $('#collapseBut').css('z-index', '3')
+    $('#collapseBut').css('position', 'absolute')
+    $('#listcontainer').prepend($('#collapseBut'))
     data.hidebuts = 'true'
     $(':root').css('--butheight', '0px')
   }
@@ -256,7 +258,22 @@ function toggleButs(saving) {
   updateSizes()
 }
 
-function toggleHelp() {
+function toggleFuturePanes(saving) {
+  // help show/hide
+  if (data.futurepanes == 'show') {
+    $("#events, #importants").hide()
+    data.futurepanes = 'hide'
+  } else {
+    $("#events, #importants").show()
+    data.futurepanes = 'show'
+  }
+  if (saving) {
+    save('0')
+  }
+  updateSizes()
+}
+
+function toggleHelp(saving) {
   // help show/hide
   if (data.help == 'show') {
     $("#help").hide()
@@ -265,8 +282,10 @@ function toggleHelp() {
     $("#help").show()
     data.help = 'show'
   }
-  save('0')
-  updateSizes()
+  if (saving) {
+    save('0')
+    updateSizes()
+  }
 }
 
 function togglePlay() {
@@ -311,6 +330,7 @@ function setStyle(style, alert) {
 
 function toggleCollapse(animate) {
   // collapse/uncollapse left column
+  updateSizes()
   if (animate) {
     $('#leftcol').css('transition', 'margin-left 0.7s')
     $('#listcontainer').css('transition', 'width 0.7s')
@@ -331,7 +351,6 @@ function toggleCollapse(animate) {
       updateSizes()
     }, 710)
   }
-  updateSizes()
   if (focused) toggleFocus(false) // unfocus if uncollapse
 }
 
@@ -406,10 +425,12 @@ function tutorial() {
 
 function scrollToToday() {
   // view today
-  const butheight = $(':root').css('--butheight')
+  let butheight = $(':root').css('--butheight')
+  butheight = Number(butheight.slice(0, butheight.length - 2)) + 
+    $('#events').height() + 20
   $('#pop').animate({
     scrollTop: $(dateToHeading(stringToDate('0d'))).offset().top
-      - $('#pop').offset().top - butheight.slice(0, butheight.length - 2)
+      - $('#pop').offset().top - butheight
   }, 500)
 }
 
@@ -519,6 +540,9 @@ function context(ev, mobile) {
       ['P', 'SPAN'], ['in', 'buffer']
     ],
     '#context-toggleButs': [
+      ['BUTTON'], ['opts']
+    ],
+    '#context-toggleFuturePanes': [
       ['BUTTON'], ['opts']
     ],
     '#context-toggleHeadingAlign': [
