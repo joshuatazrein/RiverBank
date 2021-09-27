@@ -28,23 +28,25 @@ function clean() {
     }
   }
   // clean empty lists
-  let loadlist = $('#loads').children().toArray()
-  for (list in loadlist) {
-    try {
-      $('#test').html(data.flop[list].text)
-      // clears out empty lists
-      if ($(loadlist[list]).val().length <= 1 &&
-        $('#test > .in').length == 0 &&
-        loadedlist != list) {
-        data.flop.splice(list, 1)
+  function cleanLists() {
+    let loadlist = $('#loads').children().toArray()
+    for (list in loadlist) {
+      try {
+        $('#test').html(data.flop[list].text)
+        // clears out empty lists
+        if ($(loadlist[list]).val().length <= 1 &&
+          $('#test > .in').length == 0 &&
+          loadedlist != list) {
+          data.flop.splice(list, 1)
+          $($('#loads').children()[list]).remove()
+        }
+      } catch (err) {
         $($('#loads').children()[list]).remove()
+        cleanLists()
       }
-    } catch (err) {
-      display(err)
-      $($('#loads').children()[list]).remove()
-      loadlist = $('#loads').children().toArray()
     }
   }
+  cleanLists()
   $('textarea.in').remove()
   // cleans invisible things which aren't folded under headings
   let headings = $('span').toArray()
@@ -715,7 +717,7 @@ function loadPage(starting, oldselect, scrolls) {
         $('#logoimage').animate({opacity: 0}, 500)
         setTimeout(function() { 
           $('#logoimage').remove() 
-          resetdoc()
+          resetDoc()
         }, 500)
       }
     )
@@ -736,6 +738,7 @@ function loadPage(starting, oldselect, scrolls) {
     })
     $(document).on('mousedown', clickOn)
     $(document).on('mouseup', clickOff)
+    $(document).on('touchend', resetDoc)
     $(window).resize(updateSizes)
     $(window).focus(function () {
       // // console.log('reloading');
@@ -763,7 +766,7 @@ function loadPage(starting, oldselect, scrolls) {
       // // console.log('window notifications disabled');
     }
     setInterval(timeCheck, 60000) // checks every minute for reminders
-    if (mobiletest()) {
+    if (mobileTest()) {
       $('head').append('<link href="mobilestyle.css" rel="stylesheet">')
     }
     display('loaded settings');
@@ -835,7 +838,7 @@ function loadPage(starting, oldselect, scrolls) {
     setTimeout(function() { $('#logoimage').remove() }, 500)
   }
   updateSizes()
-  resetdoc()
+  resetDoc()
   clean()
   save('X', null, true)
 }

@@ -228,9 +228,9 @@ function loadList(saving) {
     $(loads[loadedlist]).blur()
   }
   $('#flop').scrollTop(0)
-  if (mobiletest() && !$('#leftcol').hasClass('collapsed') && saving) {
+  if (mobileTest() && !$('#leftcol').hasClass('collapsed') && saving) {
     // collapse menu again
-    toggleCollapse()
+    toggleCollapse(true)
   }
   $(window).trigger('clickoff')
 }

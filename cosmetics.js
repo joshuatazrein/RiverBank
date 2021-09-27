@@ -9,7 +9,7 @@ function playPop() {
 
 // # WINDOW
 
-function mobiletest() {
+function mobileTest() {
   // test if mobile browser or not
   if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
     .test(navigator.userAgent)) {
@@ -19,10 +19,10 @@ function mobiletest() {
   }
 }
 
-function resetdoc() {
+function resetDoc() {
   // reset document zoom and scroll
   if (selected && selected[0].tagName == 'TEXTAREA') return
-  $(document).scrollTop(0)
+  $(document).animate({scrollTop: 0}, 500)
   $(document.body).css('zoom', "100%")
   document.firstElementChild.style.zoom = "reset";
   if (flopscrollsave) {
@@ -58,14 +58,14 @@ function updateSizes() {
     ]) {
     // update entries
     let fontsize = 24
-    if (mobiletest()) fontsize = 16
+    if (mobileTest()) fontsize = 16
     while ($(list[0]).width() / (fontsize / 2) < list[1]) {
       fontsize -= 1
     }
     $(list).css('font-size', fontsize + 'px')
   }
   // fix context menu for mobile
-  if (mobiletest()) {
+  if (mobileTest()) {
     $('.dropdown-item').toArray().forEach((x) => {
       $(x).text($(x).text().replace(/\s\((.*)\)/, ''))
     })
@@ -242,7 +242,7 @@ function toggleButs(saving) {
     $('.butbar:not(#editbuts)').hide()
     $('#typebut').hide()
     $('#focusbut').hide()
-    if (mobiletest()) {
+    if (mobileTest()) {
       $('#collapseBut').css('top', '0')
       $('#collapseBut').css('left', '0')
       $('#collapseBut').css('position', 'absolute')
@@ -311,8 +311,8 @@ function setStyle(style, alert) {
 function toggleCollapse(animate) {
   // collapse/uncollapse left column
   if (animate == true) {
-    $('#leftcol').css('transition', 'margin-left 1s')
-    $('#listcontainer').css('transition', 'width 1s')
+    $('#leftcol').css('transition', 'margin-left 0.7s')
+    $('#listcontainer').css('transition', 'width 0.7s')
   }
   if (!$('#leftcol').hasClass('collapsed')) {
     $('#leftcol').addClass('collapsed')
@@ -370,7 +370,7 @@ function toggleFocus(collapse) {
     }
     $('#focusbar').hide()
     focused = false
-    if (!collapse && $('#leftcol').hasClass('collapsed') && !(mobiletest())) {
+    if (!collapse && $('#leftcol').hasClass('collapsed') && !(mobileTest())) {
       toggleCollapse()
     }
   }
@@ -583,7 +583,7 @@ function clickOff(ev) {
       draggingtask = false
       if (!justdropped) {
         undo()
-        resetdoc()
+        resetDoc()
       }
     }, 100)
     return 
@@ -595,7 +595,7 @@ function clickOff(ev) {
     }
     if (ev.target.tagName == 'TEXTAREA' &&
       $(ev.target).hasClass('selected')) {
-      if (!mobiletest()) {
+      if (!mobileTest()) {
         dragsOff()
       } else {
         context(ev)
@@ -629,7 +629,7 @@ function clickOff(ev) {
   }
   dblclicked = true
   setTimeout(function () { dblclicked = false }, 300)
-  if (mobiletest() && $(ev.target).hasClass('mobhandle') && !draggingtask) {
+  if (mobileTest() && $(ev.target).hasClass('mobhandle') && !draggingtask) {
     // context menu
     select($(ev.target).parent(), false)
     context(ev, true)
@@ -671,7 +671,7 @@ function clickOff(ev) {
   $('.drop-hover').removeClass('drop-hover')
   if (!justclicked) { $('nav').hide() }
   if (ev.target.tagName != 'TEXTAREA') {
-    resetdoc()
+    resetDoc()
   }
 }
 
@@ -716,7 +716,7 @@ function clickOn(ev) {
     // execute button functions
     eval($(ev.target).attr('function'))
   } else if ($(ev.target).hasClass('listtitle')) {
-    if (mobiletest() && $(ev.target).val() != '') {
+    if (mobileTest() && $(ev.target).val() != '') {
       ev.preventDefault()
       $(':focus').blur()
       dragsOn()
@@ -812,7 +812,7 @@ function keyDown(ev) {
   if (ev.ctrlKey || ev.metaKey || ev.altKey || ev.key == 'Enter' ||
     ev.key == 'Escape') {
     // reset zoom and scroll to make better
-    resetdoc()
+    resetDoc()
   }
   // makes sure to unselect on proper things
   if (selected && selected[0].tagName == 'TEXTAREA' && ev.ctrlKey) {

@@ -195,7 +195,7 @@ function dragTask(ev) {
   select(ev.target)
   draggingtask = true
   save('-', selected)
-  if (mobiletest()) {
+  if (mobileTest()) {
     $('.nav').hide()
     return
   }
@@ -450,7 +450,7 @@ function mobileDragOver(event) {
     } else {
       clearTimeout(dragtimer)
     }
-    if (mobiletest() &&
+    if (mobileTest() &&
       event.pageY > popoffset && !flopscrollsave) {
       // scroll flop to end
       if (popscrollsave) {
@@ -468,7 +468,7 @@ function mobileDragOver(event) {
         $('#flop').scrollTop($('#flop').scrollTop() + flopchild.position().top +
           flopheight)
       }
-    } else if (mobiletest() &&
+    } else if (mobileTest() &&
       event.pageY < popoffset && !popscrollsave) {
       // scroll pop to beginning
       if (flopscrollsave) {
@@ -485,7 +485,7 @@ function mobileDragOver(event) {
 
 function updateSpanDrags() {
   // add handles for drags on mobile, or enable jQuery drags on desktop
-  if (mobiletest()) {
+  if (mobileTest()) {
     $('.mobhandle').remove()
     $('span.in').prepend(
       '<span class="mobhandle"></span>')
