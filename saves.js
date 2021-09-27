@@ -2,7 +2,7 @@
 
 function display(x) {
   // for permanent console logs
-  // console.log(x)
+  console.log(x)
 }
 
 function resetCookies() {
@@ -144,12 +144,11 @@ function clearEmptyDates() {
 
 function migrate() {
   // move past tasks to today
-  const today = stringToDate('0d')
-  const now = today.getTime()
-  const todayheading = $(dateToHeading(today, false))
+  const today = stringToDate('0d').getTime()
+  const todayheading = $(dateToHeading(stringToDate('0d'), false))
   const headings = $('#pop').children().filter('.dateheading').toArray()
   for (heading of headings) {
-    if (stringToDate(stripChildren($(heading)), true).getTime() < now) {
+    if (stringToDate(stripChildren($(heading)), true).getTime() < today) {
       try {
         if (selected &&
           (selected[0] == heading ||
@@ -228,23 +227,24 @@ function migrate() {
         toggleFold($(heading), false)
       }
       // creating relative dates
+      today = stringToDate('0d')
       for (heading of $('#pop').children().filter('.dateheading:not(.futuredate)')) {
         // add in relative dates underneath
         const newelt = createBlankTask()
         newelt.text(datesToRelative(
-          now,
+          today,
           stringToDate(stripChildren($(heading)), true)))
         newelt.addClass('placeholder')
         newelt.removeClass('in')
         $(heading).append(newelt)
       }
       // update future dates up to 30 days from now
-      const curdate = now.getDate()
+      const curdate = today.getDate()
       for (let i = 1; i < 30; i ++) {
         const futuredate = new Date()
         futuredate.setDate(curdate + i)
         const newdate = dateToHeading(futuredate, false)
-        // console.log(newdate);
+        console.log(newdate);
       }
     }
   }
@@ -254,34 +254,31 @@ function updateTitles() {
   // update titles of any continuous events in view with current date
   let bh = $(':root').css('--butheight')
   // add in titles
-  bh = Number(bh.slice(0, bh.length - 2))
+  bh = Number(bh.slice(0, bh.length - 2)) + 
+    Number($('#events').height())
   const curdate = stringToDate(stripChildren($($('#pop .dateheading')
     .toArray().filter((x) => { 
-      return $(x).position().top
+      return $(x).position().top > bh
     })[0])), true).getTime()
-  console.log(curdate, new Date(curdate))
   const inview = $('#pop .continuous').toArray().filter((x) => { 
-    console.log(stringToDate($(x).attr('end')), new Date(Number($(x).attr('start'))), $(x).attr('title'))
     return stringToDate($(x).attr('end')).getTime() > curdate &&
-      Number($(x).attr('start')) <= curdate
+      $(x).attr('start') < curdate
   })
-  // console.log($('#pop .continuous').toArray(), inview);
   const list = inview.map((x) => {
-    return {title: $(x).attr('title'), end: $(x).attr('end'), list: 'pop'}
+    return {title: $(x).attr('title'), end: $(x).attr('end')} 
   }).concat(window.duedates.filter((x) => { 
-    // console.log(x);
-    return stringToDate(x.end).getTime() > curdate
-  })).map((x) => {
+    return stringToDate(x.end).getTime() > curdate 
+  })).map((x) => { 
     return $('<p style="margin:0;"><span class="falselink" deadline="' +
       x.end + '">' + x.title + '</span>' + 
       '<span class="eventspan" onclick="select(dateToHeading(' + 
       'stringToDate($(this).text())), true)">' + x.end + 
       '</span></p>')
-  }).sort((a, b) => {
-    // console.log(window.duedates);
+  }).sort((a, b) => { 
     return stringToDate($($(a).children()[0]).attr('deadline')).getTime() - 
       stringToDate($($(b).children()[0]).attr('deadline')).getTime()
   })
+// console.log(list);
   $('#events').empty()
   list.forEach((x) => { $('#events').append(x) })
 }
@@ -310,43 +307,21 @@ function updateImportants() {
   importants.forEach((x) => { $('#importants').append(x) })
 }
 
-function updateDeadlines(task) {
+function updateDeadlines() {
+  // update displayed deadlines to match data
+  $('.duedate').remove()
+  $('.placeholder').remove()
+  window.duedates = []
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
     (x) => { return ($(x).attr('folded') == 'true') })
   // uncollapses then recollapses to prevent weirdness
   for (heading of collapselist) {
     toggleFold($(heading), false)
   }
-  let lists
-  if (task) {
-    let listtitle
-    if (getFrame($(task)).attr('id') == 'flop') {
-      listtitle = data.flop[loadedlist].title
-    } else if (getFrame($(task)).attr('id') == 'pop') {
-      listtitle = 'pop'
-    }
-    lists = [
-      {title: listtitle, text: $(task)[0].outerHTML}
-    ]
-    // update only the frame
-    $('.duedate[list="' + listtitle + '"]').remove()
-    if (listtitle == 'pop') { $('.continuous').remove() }
-    window.duedates = window.duedates.filter((x) => {
-      return x.list != listtitle
-    })
-    console.log(window.duedates, 'updating now');
-  } else {
-    // update displayed deadlines to match data
-    $('.duedate').remove()
-    // update continous dates from pop
-    $('.continuous').remove()
-    window.duedates = []
-    lists = data.flop.concat([{
-      'title': 'pop',
-      'text': $('#pop').html()
-    }])
-  }
-  for (list of lists) {
+  for (list of data.flop.concat([{
+    'title': 'pop',
+    'text': $('#pop').html()
+  }])) {
     $('#test').empty()
     $('#test').html(list.text)
     for (let deadline of $('#test').find('.deadline').filter(function () {
@@ -364,52 +339,45 @@ function updateDeadlines(task) {
         text.slice(0, index).replace(/^•\s/, '').replace(/^\-\s/, '') +
         text.slice(endindex))
       duedate.addClass('duedate')
-      duedate.attr('list', list.title)
       duedate.removeClass('in')
       $(heading).after(duedate)
       if (list.title != 'pop') {
         window.duedates.push({
           'title': duedate.text().slice(2),
-          'end': date,
-          'list': list.title,
+          'end': date
         })
-      }
-      if (list.title == 'pop') {
-        // create continuous date
-        function castrate(phallus) {
-          return String(phallus).slice(0, String(phallus).indexOf('.'))
-        }
-        const newelt = $('<div class="continuous"></div>')
-        const scrolltop = $('#pop').scrollTop()
-        // console.log(deadline, $('#pop').find('span.deadline').toArray());
-        const deadlineorig = $('#pop').find('span.deadline')
-          .toArray().find((x) => { return $(x).parent().text == 
-          $(deadline).parent().text })
-          // find original deadline
-        const xpos = $(deadlineorig).offset().top - $('#pop').offset().top
-          // x position of deadline
-        newelt.css('top', '0')
-        newelt.css('height', castrate(
-          duedate.position().top + duedate.height() - xpos) + 'px')
-        newelt.attr('title', ($(deadline).parent().text()
-          .slice(0, $(deadline).parent().text().indexOf(' >'))))
-        console.log(getHeading($(deadline)), $(deadline));
-        if (getHeading($(deadline))) {
-          newelt.attr('start', 
-            stringToDate(stripChildren($(getHeading($(deadline)))), 
-              true).getTime())
-          console.log(newelt.attr('start'), new Date(Number(newelt.attr('start'))))
-          newelt.attr('end', $(deadline).text().slice(1)) 
-            // as text for searching
-          // console.log(newelt);
-          $(deadlineorig).append(newelt)
-        }
       }
     }
   }
   for (heading of collapselist) {
     toggleFold($(heading), false)
   }
+  // update continous dates from pop
+  $('.continuous').remove()
+  $('#pop').find('span.in:not(.complete) > .deadline')
+    .toArray().forEach((x) => {
+    function castrate(phallus) {
+      return String(phallus).slice(0, String(phallus).indexOf('.'))
+    }
+    const targetdate = $(dateToHeading(stringToDate($(x).text().slice(1))))
+    const newelt = $('<div class="continuous"></div>')
+    const scrolltop = $('#pop').scrollTop()
+    const xpos = $(x).offset().top - $('#pop').offset().top
+    newelt.css('top', '0')
+    const target = $(getHeadingChildren(targetdate).filter((y) => { 
+      // finds target deadline
+      return $(y).hasClass('duedate') && 
+        $(x).parent().text().includes(
+        $(y).text().slice(2, $(y).text().length - 1))
+    }))[0]
+    newelt.css('height', castrate(
+      target.position().top + target.height() - xpos) + 'px')
+    newelt.attr('title', ($(x).parent().text().slice(0, $(x).parent().text().indexOf(' >'))))
+    newelt.attr('start', 
+      stringToDate(stripChildren($(getHeading($(x))))).getTime())
+    newelt.attr('end', $(x).text().slice(1)) // as text for searching
+    $(x).append(newelt)
+  })
 }
 
 function updateBuffers() {
@@ -426,14 +394,14 @@ function updateBuffers() {
 }
 
 // # SAVING
+
 function save(changes, changed, force) {
-  let now = new Date()
-  let initial = new Date().getTime()
   // stores data
   unFilter()
   if (['+','-','>'].includes(changes)) {
     prevsave = JSON.parse(JSON.stringify(data))
   }
+  // save data
   data.pop = $('#pop').html()
   if (loadedlist != undefined) {
     if (loadedlist > data.flop.length - 1) {
@@ -444,54 +412,27 @@ function save(changes, changed, force) {
         $('#loads').children()[loadedlist].value
     }
   }
+  // X updates everything without uploading data
   data.loadedlist = loadedlist
-  // save data
-  now = new Date()
-  // console.log('saved', now.getTime() - initial)
-  initial = now.getTime()
   if (changes != 'X') { uploadData() }
-  now = new Date()
-  // console.log('uploadData', now.getTime() - initial)
-  initial = now.getTime()
-    // X updates everything without uploading data
-  if (['L'].includes(changes)) {
+  console.log(changes, changed);
+  if (['>', '+', 'X'].includes(changes)) {
     updateSpanDrags()
-  } else if (changes == '+' && changed) {
-    // console.log('single update');
-    updateSpanDrags(changed)
   }
-  now = new Date()
-  // console.log('updateSpanDrags', now.getTime() - initial)
-  initial = now.getTime()
   if (['i', 'X'].includes(changes)) {
     updateImportants()
   }
-  now = new Date()
-  // console.log('updateImportants', now.getTime() - initial)
-  initial = now.getTime()
   if (['-', '+', 'X'].includes(changes) &&
-    !changed) {
-    // console.log('updating deadlines');
+    ((force || changed && stripChildren($(changed)).includes('>')))) {
+    console.log('updating deadlines');
     updateDeadlines()
-  } else if (['-', '+'] && changed) {
-    // console.log('updating single deadline');
-    updateDeadlines(changed)
   }
-  now = new Date()
-  // console.log('updateDeadlines', now.getTime() - initial)
-  initial = now.getTime()
   if (['-', 'X'].includes(changes)) {
     clearEmptyDates()
   }
-  now = new Date()
-  // console.log('clearEmptyDates', now.getTime() - initial)
-  initial = now.getTime()
   if (['L', 'X'].includes(changes)) {
     updateBuffers()
   }
-  now = new Date()
-  // console.log('updateBuffers', now.getTime() - initial)
-  initial = now.getTime()
 }
 
 function diffsLog(oldString, newString) {
@@ -803,7 +744,7 @@ function loadPage(starting, oldselect, scrolls) {
     $(document).on('touchend', resetDoc)
     $(window).resize(updateSizes)
     $(window).focus(function () {
-      // // // console.log('reloading');
+      // // console.log('reloading');
       reload()
     })
     $('#container').on('mouseleave', function () {
@@ -825,7 +766,7 @@ function loadPage(starting, oldselect, scrolls) {
         Notification.requestPermission()
       }
     } catch (err) {
-      // // // console.log('window notifications disabled');
+      // // console.log('window notifications disabled');
     }
     setInterval(timeCheck, 60000) // checks every minute for reminders
     if (mobileTest()) {
@@ -908,6 +849,8 @@ function loadPage(starting, oldselect, scrolls) {
       select(oldselect[0], true)
     } else {
       scrollToToday()
+      $('#events, #importants').css('margin-top', 
+        'calc(var(--butheight) - 5px)')
     }
   }, 1000)
 }

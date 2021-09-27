@@ -36,7 +36,7 @@ function signIn() {
       $.get(
         'users/' + xhr.responseText + '.json', 
         function (dataval, status, xhr2) {
-          // console.log(xhr2.responseText)
+          console.log(xhr2.responseText)
           data = JSON.parse(xhr2.responseText)
           window.location='https://riverbank.app'
         }
@@ -116,4 +116,4 @@ $('video').toArray().forEach((x) => {
   x.currentTime = 0;
 })
 setTimeout(function () {$('#createaccountbut').trigger('click')}, 250)
-// console.log('loaded');
+console.log('loaded');

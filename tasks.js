@@ -297,11 +297,8 @@ function dropTask(ev) {
     popscrollsave = undefined
     $('#pop').removeClass('greyedout')
   }
-  save('+')
+  save('>', selected)
   updateSpanDrags()
-  if ($(ev.target).hasClass('dateheading')) {
-    updateDeadlines()
-  }
 }
 
 function dragTaskOver(event) {
@@ -486,22 +483,14 @@ function mobileDragOver(event) {
   }
 }
 
-function updateSpanDrags(task) {
+function updateSpanDrags() {
   // add handles for drags on mobile, or enable jQuery drags on desktop
-  let selector
-  if (!task) {
-    selector = 'span.in:not(.dateheading)'
-  } else {
-    selector = task
-  }
   if (mobileTest()) {
-    if (!task) {
-      $('.mobhandle').remove()
-      $(span.in).prepend(
-        '<span class="mobhandle"></span>')
-      $(span.in).attr('draggable', 'false')
-    }
-    $(selector).toArray().forEach((x) => {
+    $('.mobhandle').remove()
+    $('span.in').prepend(
+      '<span class="mobhandle"></span>')
+    $('span.in').attr('draggable', 'false')
+    $('span.in:not(.dateheading)').toArray().forEach((x) => {
       $(x).draggable({
         handle: '.mobhandle',
         containment: 'window',
@@ -524,16 +513,11 @@ function updateSpanDrags(task) {
         },
       })
     })
-    if (!task) {
-      $('.ui-draggable-handle').removeClass('ui-draggable-handle')
-      $('.ui-droppable').removeClass('ui-droppable')
-    } else {
-      $(task).removeClass('ui-draggable-handle')
-      $(task).removeClass('ui-droppable')
-    }
+    $('.ui-draggable-handle').removeClass('ui-draggable-handle')
+    $('.ui-droppable').removeClass('ui-droppable')
   } else {
     $('.mobhandle').remove()
-    $(selector).toArray().forEach((x) => {
+    $('span.in:not(.dateheading)').toArray().forEach((x) => {
       $(x).draggable({
         containment: 'window',
         revert: true,
@@ -547,6 +531,7 @@ function updateSpanDrags(task) {
         zIndex: 1,
         addClasses: false,
         start: function (event) {
+          // $(this).hide()
           dragTask(event, $(this))
         },
         drag: function (event) {
@@ -558,32 +543,29 @@ function updateSpanDrags(task) {
     $('span.in').attr('draggable', 'true')
   }
   // reset drops
-  if (!task) {
-    try { $('span.in').droppable('destroy') }
-    catch (err) {}
-    $('span.in').droppable({
-      accept: 'span.in',
-      hoverClass: 'drop-hover',
-      greedy: true,
-      drop: function (event) {
-        dropTask(event)
-        // select(ui.draggable[0], true)
-      }
-    })
-  }
-  else {
-    try { $(task).droppable('destroy') }
-    catch (err) {}
-    $(task).droppable({
-      accept: 'span.in',
-      hoverClass: 'drop-hover',
-      greedy: true,
-      drop: function (event) {
-        dropTask(event)
-        // select(ui.draggable[0], true)
-      }
-    })
-  }
+  try { $('span.in').droppable('destroy') }
+  catch (err) {}
+  $('span.in').droppable({
+    accept: 'span.in',
+    hoverClass: 'drop-hover',
+    greedy: true,
+    drop: function (event) {
+      dropTask(event)
+      // select(ui.draggable[0], true)
+    }
+  })
+  // not working right now
+  // $('p.rendered').droppable({
+  //   accept: 'span.in',
+  //   hoverClass: 'drop-hover',
+  //   drop: function (event, ui) {
+  //     ui.draggable.css('top', '0')
+  //     ui.draggable.css('left', '0')
+  //     $($(event.target).children()[
+  //       $(event.target).children().length - 1]).before(ui.draggable[0])
+  //     select(ui.draggable[0], true)
+  //   }
+  // })
 }
 
 // # FOLDING
@@ -992,7 +974,7 @@ function editTask() {
       getFrame(selected).animate({
         scrollTop: scrollto
       }, 500)
-    // // console.log('scrolled');
+    // console.log('scrolled');
     }
   }
 }
