@@ -31,18 +31,20 @@ timer.on('end', function () {
     const timersnd = new Audio('snd/timer.mp3')
     timersnd.play()
   }
-  var timertime = new Date().getTime()
-  $('#timerent').val('0:00')
-  if (stopwatch) clearInterval(stopwatch)
-  stopwatch = setInterval(function () {
-    const curtime = new Date().getTime() - timertime
-    let minutes = Math.floor(curtime / 60000); // minutes
-    let secs = Math.floor(Math.ceil(((curtime) - minutes * 60000)) / 1000)
-    $('#timerent').val('-' + String(minutes) + ':' +
-    String(secs).padStart(2, 0))
-  }, 1000)
   if (mobileTest()) {
     setTimeout(function() { alert('timer complete') }, 1000)
+    $('#timerent').val('')
+  } else {
+    $('#timerent').val('0:00')
+    var timertime = new Date().getTime()
+    if (stopwatch) clearInterval(stopwatch)
+    stopwatch = setInterval(function () {
+      const curtime = new Date().getTime() - timertime
+      let minutes = Math.floor(curtime / 60000); // minutes
+      let secs = Math.floor(Math.ceil(((curtime) - minutes * 60000)) / 1000)
+      $('#timerent').val('-' + String(minutes) + ':' +
+      String(secs).padStart(2, 0))
+    }, 1000)
   }
 })
 

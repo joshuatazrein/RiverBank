@@ -343,6 +343,17 @@ function toggleFocus(collapse) {
     $('#focusbar').prepend($('#focusbut'))
     $('#searchbarcont').append($('#searchbarframe'))
     $('#timerentcont').append($('#timerent'))
+    if (mobileTest()) {
+      $('#timerent').css('height', '2em')
+      $('#focusbut').css('height', '2em')
+      $('#searchbar').css('height', '2em')
+      $('#focusbut').css('width', '45px')
+      $('#focusbut').css('margin-left', '0')
+      $('#focusbar').css('border-left', '1px solid var(--bdcolor)')
+    } else {
+      $('#timerent').css('height', '1em')
+      $('#searchbar').css('height', '1em')
+    }
     getFrame(selected).parent().parent().addClass('fullwidth')
     getFrame(selected).parent().css('width', '100%')
     getFrame(selected).parent().css('height', '100%')
@@ -362,8 +373,12 @@ function toggleFocus(collapse) {
     $('#editbuts').after($('#searchbarframe'))
     $('#movebuts').after($('#timerent'))
     $('#collapseBut').after($('#focusbut'))
+    $('#timerent').css('height', '')
+    $('#searchbar').css('height', '')
+    $('#focusbut').css('height', '')
+      $('#focusbut').css('width', '')
     for (thing of [$('#flop'), $('#pop')]) {
-      thing.parent().parent().removeClass('fullwidth')
+      thing.parent().removeClass('fullwidth')
       thing.parent().css('height', '')
       thing.parent().css('width', '')
     }

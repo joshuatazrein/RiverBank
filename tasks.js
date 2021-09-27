@@ -880,6 +880,7 @@ function editTask() {
   if (selected.hasClass('dateheading')) return
   if (selected != undefined) {
     $('#context-menu').hide()
+    el.removeClass('taskselect')
     const classes = selected.attr('class') // for processing placeholder
     const newelt = $('<textarea class=\'in edit\'></textarea>')
     newelt.css('font', selected.css('font'))
@@ -898,7 +899,7 @@ function editTask() {
       selected.after('<span style="display:none;"></span>')
     } else {
       // appends children after
-      selected.after('<span class="' + classes + '">' + 
+      selected.after('<span class="edit ' + classes + '">' + 
         getChildren(el) + '</span>')
     }
     // (el).html()

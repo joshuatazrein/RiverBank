@@ -69,6 +69,11 @@ button {
   z-index: 3;
 }
 
+span.edit {
+  position: relative !important;
+  top: -0.25em;
+}
+
 #flopbuts, #popbuts {
   background-color: var(--bgoverlay);
   position: absolute;
