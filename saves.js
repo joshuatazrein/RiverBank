@@ -264,7 +264,7 @@ function updateTitles() {
   })
   const list = inview.map((x) => {
     return {title: $(x).attr('title'), end: $(x).attr('end')} 
-  }).concat(flopdeadlines.filter((x) => { 
+  }).concat(window.duedates.filter((x) => { 
     return stringToDate(x.end).getTime() > curdate 
   })).map((x) => { 
     return $('<p style="margin:0;"><span class="falselink" deadline="' +
@@ -286,7 +286,7 @@ function updateImportants() {
   const importants = []
   let counter = 0
   for (list of data.flop.concat([{
-    'title': 'pop',
+    'title': 'river',
     'text': $('#pop').html()
   }])) {
     $('#test').empty()
@@ -309,7 +309,7 @@ function updateDeadlines() {
   // update displayed deadlines to match data
   $('.duedate').remove()
   $('.placeholder').remove()
-  flopdeadlines = []
+  window.duedates = []
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
     (x) => { return ($(x).attr('folded') == 'true') })
   // uncollapses then recollapses to prevent weirdness
@@ -340,7 +340,7 @@ function updateDeadlines() {
       duedate.removeClass('in')
       $(heading).after(duedate)
       if (list.title != 'pop') {
-        flopdeadlines.push({
+        window.duedates.push({
           'title': duedate.text().slice(2),
           'end': date
         })
@@ -397,7 +397,7 @@ function save(changes, changed, force) {
   // stores data
   unFilter()
   if (['+','-','>'].includes(changes)) {
-    savedata = JSON.parse(JSON.stringify(data))
+    prevsave = JSON.parse(JSON.stringify(data))
   }
   // save data
   data.pop = $('#pop').html()
@@ -410,30 +410,31 @@ function save(changes, changed, force) {
         $('#loads').children()[loadedlist].value
     }
   }
+  // X updates everything without uploading data
   data.loadedlist = loadedlist
-  uploadData()
+  if (changes != 'X') { uploadData() }
   console.log(changes, changed);
-  if (['>', '+'].includes(changes)) {
-    updateSpanDrags() 
+  if (['>', '+', 'X'].includes(changes)) {
+    updateSpanDrags()
   }
-  if (['i'].includes(changes)) {
+  if (['i', 'X'].includes(changes)) {
     updateImportants()
   }
-  if (['-', '+'].includes(changes) &&
-    ((changed && stripChildren($(changed)).includes('>')) ||
-    force)) {
+  if (['-', '+', 'X'].includes(changes) &&
+    ((force || changed && stripChildren($(changed)).includes('>')))) {
     console.log('updating deadlines');
     updateDeadlines()
   }
-  if (['-'].includes(changes)) {
+  if (['-', 'X'].includes(changes)) {
     clearEmptyDates()
   }
-  if (['L'].includes(changes)) {
+  if (['L', 'X'].includes(changes)) {
     updateBuffers()
   }
 }
 
 function diffsLog(oldString, newString) {
+  if (!oldString || !newString) return
   // log diffs between previous data and new data
   let diffs = 'Diffs:'
   if (!oldString) oldString = JSON.stringify({ flop: [], pop: '' })
@@ -538,7 +539,7 @@ function uploadData(reloading) {
 
 function undo() {
   // reset to previous save
-  if (!savedata) return
+  if (!prevsave) return
   // undo
   let oldselect
   if (selected) {
@@ -639,7 +640,7 @@ function reload2() {
   $(':focus').blur()
 }
 
-function loadPage(setload, oldselect, scrolls) {
+function loadPage(starting, oldselect, scrolls) {
   // load the page with current data
   loading = true
   // right after signing in
@@ -647,40 +648,40 @@ function loadPage(setload, oldselect, scrolls) {
   if (!window.location.href.includes('welcome')) {
     $('#username').text(getCookie('user'))
   }
-  if (setload != false) {
-    // sets variables
-    window.loadedlist = undefined
-    window.selected = undefined
-    window.focused = undefined
-    window.focusmode = undefined
-    window.dragsenabled = true
-    window.inprogress = undefined
-    window.time = undefined
-    window.pause = undefined
-    window.updated = false
-    window.searchwidth = 10
-    window.movetask = undefined
-    window.fileinput = undefined
-    window.loadedlistobj = undefined
-    window.reloading = undefined
-    window.currentupload = undefined
-    window.slider = undefined
-    window.movetolist = false
-    window.durslider = undefined
-    window.stopwatch = undefined
-    window.copieditem = undefined
-    window.prevupload = JSON.stringify(data)
-    window.flopscrollsave = undefined
-    window.popscrollsave = undefined
-    window.justclicked = undefined
-    window.dblclicked = undefined
-    window.dragtimer = undefined
-    window.mobile = undefined
-    window.loading = undefined
-    window.draggingtask = undefined
-    window.justdropped = undefined
-    window.justcollapsed = undefined
-    window.flopdeadlines = undefined
+  if (starting) {
+    // start window for first load
+    window.loadedlist = data.loadedlist // loaded list
+    window.selected = undefined // selected task
+    window.dragsenabled = true // editing lists
+    window.focused = false // focus mode
+    window.movelist = false // moving lists
+    window.movetask = undefined // moving task
+    window.movetolist = undefined // move to list mode
+    window.slider = undefined // event slider
+    window.durslider = undefined // duration slider
+    window.stopwatch = false // stopwatch
+    window.copieditem = undefined // copy/paste
+    window.prevupload = undefined // upload
+    window.prevsave = undefined // undo
+    window.flopscrollsave = undefined // dragging
+    window.popscrollsave = undefined // dragging
+    window.justclicked = false // context
+    window.dblclicked = false // doubleclick
+    window.dragtimer = undefined // autoscroll drag
+    window.draggingtask = false // drags
+    window.justdropped = false // drop check
+    window.justcollapsed = false // motion on collapsed
+    window.duedates = [] // events update
+    window.importants = [] // importants update
+    window.filtered = undefined // filtering
+    window.filteredlist = undefined // filtered tasks
+    window.activedate = new Date()
+    if (activedate.getHours() < 3) {
+      activedate.setDate(activedate.getDate() - 1) // active date
+    }
+    // mobile widths for reloading
+    if (window.innerWidth < 600) window.mobile = true
+    else if (window.innerWidth > 600) window.mobile = false
     window.linestarts = {
       '# ': 'h1',
       '## ': 'h2',
@@ -688,16 +689,7 @@ function loadPage(setload, oldselect, scrolls) {
       '•': 'list',
       '@': 'event',
       '-': 'note'
-    }
-    window.lineinners = {
-      // '_*': ['*_', 'bold-italic'],
-      // '*': ['*', 'bold'],
-      // '_': ['_', 'italic'],
-      '[[': [']]', 'link'],
-      '>': [' ', 'deadline']
-    }
-    window.savedata = undefined
-    window.weekdaysStr = undefined
+    } // span types
     window.weekdaysNum = {
       'U': 0, 'M': 1, 'T': 2, 'W': 3, 'R': 4, 'F': 5, 'S': 6,
       'u': 0, 'm': 1, 't': 2, 'w': 3, 'r': 4, 'f': 5, 's': 6,
@@ -710,28 +702,23 @@ function loadPage(setload, oldselect, scrolls) {
       'tues': 2, 'Tues': 2, 'thurs': 4, 'Thurs': 4, 'frid': 5, 'Frid': 5,
       'su': 0, 'mo': 1, 'tu': 2, 'we': 3, 'th': 4, 'fr': 5, 'sa': 6,
       'Su': 0, 'Mo': 1, 'Tu': 2, 'We': 3, 'Th': 4, 'Fr': 5, 'Sa': 6,
-    }
-    window.filtered = undefined
-    window.filteredlist = undefined
-    if (window.innerWidth < 600) window.mobile = true
-    else if (window.innerWidth > 600) window.mobile = false
-    // initial loads (not called on reloads)
-    $('#focusbar').hide()
-    if (data.play === undefined) { data.play = 'true' }
-    // removes things
+    } // weekdays conversion
+    if (data.play === undefined) { data.play = 'true' } // set play
+    if (data.headingalign === undefined) data.headingalign = 'center'
+    // load style
     $('head').append(
       $("<link id='theme' rel='stylesheet' type='text/css' href='" +
         data.style + "' />")
     )
-    if (!mobiletest()) {
-      $.get(data.style, 
-        function () { 
-          $('#logoimage').stop(true)
-          $('#logoimage').animate({opacity: 0}, 500)
-          setTimeout(function() { $('#logoimage').remove() }, 500)
-        }
-      )
-    }
+    $.get(data.style, 
+      function () { 
+        $('#logoimage').animate({opacity: 0}, 500)
+        setTimeout(function() { 
+          $('#logoimage').remove() 
+          resetdoc()
+        }, 500)
+      }
+    )
     if (data.weekdays == 'M') {
       weekdaysStr = { 0: 'U', 1: 'M', 2: 'T', 3: 'W', 4: 'R', 5: 'F', 6: 'S' }
     } else if (data.weekdays == 'Mon') {
@@ -740,48 +727,44 @@ function loadPage(setload, oldselect, scrolls) {
         6: 'Sat'
       }
     }
-    // prevents endless loading loop
+    // event bindings
     $(document).on('keydown', keyDown)
     $(document).on('keyup', keyUp)
     $(document).on('contextmenu', function(event) {
       context(event)
-      $('#listcontainer > .in').hide()
+      $('#listcontainer > span').hide()
     })
-    $(document).on('mousedown', event, clickOn)
-    $(document).on('mouseup', event, clickOff)
-    $('#timer').on('click', function () {
-      if (Notification.permission != 'granted') {
-        Notification.requestPermission()
-      }
-    })
-    setInterval(timeCheck, 60000) // checks every minute for reminders
+    $(document).on('mousedown', clickOn)
+    $(document).on('mouseup', clickOff)
     $(window).resize(updateSizes)
-    $('#pop').scroll(updateTitles)
-    window.addEventListener('focus', function () {
+    $(window).focus(function () {
+      // // console.log('reloading');
       reload()
     })
     $('#container').on('mouseleave', function () {
-      save('0')
+      save()
     })
+    $('.dropdown-item').mouseover(function () { 
+      $(this).css('color', 'var(--select)')
+    })
+    $('.dropdown-item').mouseleave(function () { 
+      $(this).css('color', '')
+    })
+    $('#pop').on('scroll', updateTitles)
     if (window.innerWidth < 600) { 
-      if (!$('#leftcol').hasClass('collapsed')) 
+      // collapse menu
       toggleCollapse()
     }
+    try {
+      if (Notification.permission != 'granted') {
+        Notification.requestPermission()
+      }
+    } catch (err) {
+      // // console.log('window notifications disabled');
+    }
+    setInterval(timeCheck, 60000) // checks every minute for reminders
     if (mobiletest()) {
       $('head').append('<link href="mobilestyle.css" rel="stylesheet">')
-      // behavior for initial scroll
-      $(document).on('touchend', function () {
-        setTimeout(function() { 
-          $('#logoimage').remove() 
-          resetdoc()
-          // $('body').css('overflow', 'hidden')
-        }, 500)
-        document.off('touchend')
-      })
-      setTimeout(function () {
-        $('#logoimage').remove() 
-        resetdoc()
-      }, 3000)
     }
     display('loaded settings');
   }
@@ -797,24 +780,16 @@ function loadPage(setload, oldselect, scrolls) {
   }
   document.documentElement.style.setProperty('--headingalign',
     data.headingalign)
+  // load pop
   $('#pop').html(data.pop)
-  // loads data
-  let oldload
-  // load lists if there is one
-  if (setload == false) {
-    // fixes weird loadlist glitch
-    oldload = Number(loadedlist)
-  } else if (data.loadedlist != undefined) {
-    oldload = Number(data.loadedlist)
-  }
-  for (i of data.flop) {
+  for (list of data.flop) {
+    // load lists
     const newthing = $('<textarea class="listtitle unselected"></textarea>')
-    newthing.attr('ondragstart', 'dragList(event)')
-    newthing.attr('ondragover', 'draggingOver(event)')
-    newthing.attr('ondrop', 'dropList(event)')
+    newthing.on('dragstart', dragList)
+    newthing.on('drop', dropList)
     newthing.on('click', loadthis)
     newthing.attr('draggable', 'true')
-    newthing.val(i.title)
+    newthing.val(list.title)
     $('#loads').append(newthing)
   }
   const children = $('#loads').children().toArray()
@@ -822,16 +797,10 @@ function loadPage(setload, oldselect, scrolls) {
     // remember folding
     const val = $(children[i]).val()
     if (val.slice(val.length - 4) == ' ...') {
-      $(children[i]).removeClass('folded')
-      loadedlist = Number(i)
-      loadList(false)
-      toggleFoldList(false)
+      toggleFoldList(false, i)
     }
-  };
-  if (oldload != undefined && oldload <= data.flop.length - 1) {
-    loadedlist = Number(oldload)
-    loadList(false)
   }
+  loadList(false) // load list from data
   dragsOn(false)
   display('loaded lists...');
   $('#searchbar').val('')
@@ -845,8 +814,6 @@ function loadPage(setload, oldselect, scrolls) {
   }
   toggleButs(false)
   $('.taskselect').removeClass('taskselect')
-  updateDeadlines(false)
-  updateSpanDrags()
   if (scrolls) {
     $('#flop').scrollTop(scrolls[0])
     $('#pop').scrollTop(scrolls[1])
@@ -858,31 +825,17 @@ function loadPage(setload, oldselect, scrolls) {
     else if (oldselect[0])
       select(oldselect[0])
   } else {
-    setTimeout(scrollToToday, 500)
-  }
-  if (loadedlist) {
-    $(loads[loadedlist]).blur()
+    setTimeout(scrollToToday, 1000)
   }
   display('loaded drags...')
-  updateSizes()
-  if (setload == false) {
+  if (starting == false) {
     // remove image after reload
-    // $('#logoimage').stop(true)
     $('#logoimage').stop(true)
     $('#logoimage').animate({opacity: 0}, 500)
     setTimeout(function() { $('#logoimage').remove() }, 500)
   }
+  updateSizes()
   resetdoc()
-  loading = false
-  $('.dropdown-item').mouseover(function () { 
-    $(this).css('color', 'var(--select)')
-  })
-  $('.dropdown-item').mouseleave(function () { 
-    $(this).css('color', '')
-  })
-  if (setload != false) {
-    clean()
-    clearEmptyDates()
-  }
-  updateBuffers()
+  clean()
+  save('X', null, true)
 }

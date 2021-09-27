@@ -169,24 +169,25 @@ function deletelist() {
 
 // # FOLDING
 
-function toggleFoldList(saving) {
+function toggleFoldList(saving, list) {
+  if (!list) list = loadedlist
   // fold/undold sublists
-  let sublist = Number(loadedlist) + 1
+  let sublist = Number(list) + 1
   const children = $('#loads').children().toArray()
   if ($(children[sublist]).hasClass('sublist')) {
     // toggle folded and "..."
-    $(children[loadedlist]).toggleClass('folded')
-    const val = $(children[loadedlist]).val()
+    $(children[list]).toggleClass('folded')
+    const val = $(children[list]).val()
     if (
-      $(children[loadedlist]).hasClass('folded') &&
+      $(children[list]).hasClass('folded') &&
       val.slice(val.length - 4, val.length) != ' ...'
     ) {
-      $(children[loadedlist]).val(val + ' ...')
+      $(children[list]).val(val + ' ...')
     } else if (
-      !$(children[loadedlist]).hasClass('folded') &&
+      !$(children[list]).hasClass('folded') &&
       val.slice(val.length - 4, val.length) == ' ...'
     ) {
-      $(children[loadedlist]).val(val.slice(0, val.length - 4))
+      $(children[list]).val(val.slice(0, val.length - 4))
     }
   }
   while ($(children[sublist]).hasClass('sublist')) {

@@ -521,7 +521,7 @@ function goToSearch(el) {
     loadList()
   }
   // find the matching element
-  focused = $(focusarea.find('span.in')[el.attr('index')])
+  const focused = $(focusarea.find('span.in')[el.attr('index')])
   select(focused, true)
   $('#searchbar').val('')
   $('#searchbar-results').hide()
@@ -596,10 +596,6 @@ function search(skiplinks, deadline) {
     // go automatically to first item if that works
   // console.log('working');
     goToSearch($($('#searchbar-results').children()[0]))
-    $('#searchbar').val('')
-    $('#searchbar-results').hide()
-    $('#searchbar').blur()
-    select(focused, true)
   }
 }
 
