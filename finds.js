@@ -76,8 +76,6 @@ function stringToDate(string, weekday, future) {
     string = string.slice(1)
   }
   let date = new Date()
-  date.setDate(activedate.getDate())
-  date.setMonth(activedate.getMonth())
   if (Object.keys(weekdaysNum).includes(string.split(/(\+|-|\s)/)[0])) {
     // analyze as a weekday string
     weekday = weekdaysNum[string.split(/(\+|-|\s)/)[0]]
@@ -101,9 +99,6 @@ function stringToDate(string, weekday, future) {
     const today = new Date()
     if (data.dateSplit == 'dd.mm.yyyy') {
       const list = datestring.split('.')
-      if (list.length == 3 && list[2] == '') { 
-        list[2] = String(today.getFullYear()) 
-      }
       date.setDate(list[0])
       if (date.getDate() < today.getDate()) {
         // goes to earliest future occurrence
@@ -121,9 +116,6 @@ function stringToDate(string, weekday, future) {
       }
     } else if (data.dateSplit == 'mm/dd/yyyy') {
       const list = datestring.split('/')
-      if (list.length == 3 && list[2] == '') { 
-        list[2] = String(today.getFullYear()) 
-      }
       if (list.length == 1) {
         date.setDate(list[0])
         if (date.getDate() < today.getDate()) {
@@ -143,9 +135,6 @@ function stringToDate(string, weekday, future) {
       }
     } else if (data.dateSplit == 'yyyy-mm-dd') {
       const list = datestring.split('-')
-      if (list.length == 3 && list[0] == '') { 
-        list[0] = String(today.getFullYear()) 
-      }
       if (list.length == 1) {
         date.setDate(list[0])
         if (date.getDate() < today.getDate()) {
@@ -211,8 +200,12 @@ function dateToHeading(date, saving) {
   if (date === undefined) return
   if (dateToString(date).includes('NaN')) return
   // find the matching date, or create if not
-  let headingslist = $('#pop').children().filter('.dateheading').toArray()
-  const now = activedate
+  // sort date headings to be correct
+  let headingslist = $('#pop').children().toArray().filter((x) => {
+    return stringToDate(stripChildren($(x)), true) != 'Invalid Date' &&
+      $(x).hasClass('dateheading')
+  })
+  const now = new Date()
   if (date.getTime() > now.getTime()) {
     // if after today, start at today for search
     headingslist = headingslist.slice(headingslist.findIndex((x) => {
@@ -224,8 +217,6 @@ function dateToHeading(date, saving) {
       stringToDate(dateToString(date)).getTime()
   })
   if (!heading1) {
-    // console.log('new element', stringToDate(dateToString(date)));
-    console.trace()
     // insert elt where it should go
     const heading2 = $('<span class="in h1 dateheading" folded="false" ' +
       'draggable="false">' + 
@@ -238,7 +229,7 @@ function dateToHeading(date, saving) {
       // insert before buffer
       $($('#pop').children()[$('#pop').children().length - 1]).before(heading2)
     } else {
-      $(headingafter).before(heading2)
+      $(headingafter).prev().before(heading2)
     }
     const today = new Date()
     today.setHours(0);
@@ -331,18 +322,14 @@ function getHeadingChildren(el) {
   const children = el.parent().children()
     .filter(':not(.buffer)')
   const start = children.toArray().indexOf(el[0]) + 1
-  // console.log('HEAINDG CHILDREN OF', el);
   for (let i = start; i < children.length; i++) {
-    // console.log(children[i]);
-    // walk down until you find a better heading
     let toggle = true
     for (fold of folds[thisclass]) {
       if ($(children[i]).hasClass(fold)) {
         toggle = false
       }
     }
-    if (!toggle) {
-      // console.log(children.toArray().slice(start, i));
+   if (!toggle) {
       return children.toArray().slice(start, i).map((x) => {
         return $(x)
       })
@@ -380,7 +367,7 @@ function getChildren(el) {
 }
 
 function stripChildren(el, mode) {
-  if ($(el).hasClass('dateheading')) {
+  if ($(el).hasClass('dateheading') || $(el).hasClass('futuredate')) {
     // dateheadings just filter our their subspans
     const newelt = $(el).clone()
     newelt.find('span').remove()
@@ -511,6 +498,9 @@ function unFilter(update) {
     filteredlist.forEach((x) => { $(x).show() })
     filtered = false
     filteredlist = []
+    if (update != false) {
+      updateDeadlines()
+    }
     $('#searchbar').val('')
   }
 }
@@ -531,7 +521,7 @@ function goToSearch(el) {
     loadList()
   }
   // find the matching element
-  const focused = $(focusarea.find('span.in')[el.attr('index')])
+  focused = $(focusarea.find('span.in')[el.attr('index')])
   select(focused, true)
   $('#searchbar').val('')
   $('#searchbar-results').hide()
@@ -553,7 +543,7 @@ function search(skiplinks, deadline) {
     .replace(/\s/g, '\\s')
     .replace(/([\*\+\?\.\|\[\]\(\)\{\}\^\$])/g, '\\$1')
   const searchexp = new RegExp(searchexptext, 'gi')
-  // // // console.log(searchexp);
+  // console.log(searchexp);
   const searches = data.flop.concat([{
     'title': 'pop',
     'text': data.pop
@@ -567,7 +557,7 @@ function search(skiplinks, deadline) {
     for (let child of children) {
       // if it's a match, add to matches
       if (searchexp.test(stripChildren($(child)))) {
-      // // // console.log(stripChildren($(child)), searchtext + ' >' + deadline)
+      // console.log(stripChildren($(child)), searchtext + ' >' + deadline)
         // add to matches
         if (skiplinks &&
           $(child).text().includes('[[' + searchtext)) {
@@ -604,7 +594,12 @@ function search(skiplinks, deadline) {
   $('#searchbar-results').show()
   if ($('#searchbar-results').children().length == 1) {
     // go automatically to first item if that works
+  // console.log('working');
     goToSearch($($('#searchbar-results').children()[0]))
+    $('#searchbar').val('')
+    $('#searchbar-results').hide()
+    $('#searchbar').blur()
+    select(focused, true)
   }
 }
 
@@ -693,6 +688,7 @@ function select(el, scroll, animate) {
           butheight += Number($('#importants').height())
           butheight += 'px'
         }
+      // console.log(butheight);
         const oldscroll = parent.scrollTop() -
           Number(butheight.slice(0, butheight.length - 2))
         let scrolltime

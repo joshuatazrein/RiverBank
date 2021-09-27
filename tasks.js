@@ -40,14 +40,14 @@ function archiveTask(play) {
   if (taskabove[0] == selected[0]) { taskabove = getFrame(selected) }
   // archives the selected Flop to the current day
   let heading
-  console.log(activedate);
   const day = $(dateToHeading(stringToDate('0d')))
-  console.log(day);
   const childText = getHeadingChildren(day).map((x) => {
     return stripChildren($(x))
   })
-  if (!(childText.includes('completed') ||
-    childText.includes('completed ...'))) {
+  if (
+    !(childText.includes('completed') ||
+      childText.includes('completed ...'))
+  ) {
     // add in an extra heading
     heading = $('<span class=\'in h2\' folded=\'false\'>' +
       'completed ...</span>')
@@ -141,7 +141,7 @@ function toggleMaybe() {
 
 function moveToList() {
   // prepare for next clicked list to suck task in
-  movetask = selected
+  movetolist = true
 }
 
 function setTask(type) {
@@ -548,8 +548,21 @@ function updateSpanDrags() {
     greedy: true,
     drop: function (event) {
       dropTask(event)
+      // select(ui.draggable[0], true)
     }
   })
+  // not working right now
+  // $('p.rendered').droppable({
+  //   accept: 'span.in',
+  //   hoverClass: 'drop-hover',
+  //   drop: function (event, ui) {
+  //     ui.draggable.css('top', '0')
+  //     ui.draggable.css('left', '0')
+  //     $($(event.target).children()[
+  //       $(event.target).children().length - 1]).before(ui.draggable[0])
+  //     select(ui.draggable[0], true)
+  //   }
+  // })
 }
 
 // # FOLDING
@@ -856,6 +869,7 @@ function saveTask() {
     parent = parent.parent()
   }
   save(true)
+  if (stripChildren(selected).includes('>')) { updateDeadlines() }
 }
 
 function editTask() {
@@ -944,7 +958,7 @@ function editTask() {
       getFrame(selected).animate({
         scrollTop: scrollto
       }, 500)
-    // // // console.log('scrolled');
+    // console.log('scrolled');
     }
   }
 }
@@ -989,6 +1003,9 @@ function newTask(subtask, prepend) {
   } else if (['SPAN'].includes(selected[0].tagName)) {
     // regular task
     selected.after(newspan)
+  }
+  if (selected.hasClass('dateheading')) {
+    updateDeadlines()
   }
   select(newspan)
   editTask()
