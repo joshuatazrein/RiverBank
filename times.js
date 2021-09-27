@@ -39,8 +39,11 @@ timer.on('end', function () {
     let minutes = Math.floor(curtime / 60000); // minutes
     let secs = Math.floor(Math.ceil(((curtime) - minutes * 60000)) / 1000)
     $('#timerent').val('-' + String(minutes) + ':' +
-      String(secs).padStart(2, 0))
+    String(secs).padStart(2, 0))
   }, 1000)
+  if (mobileTest()) {
+    setTimeout(function() { alert('timer complete') }, 1000)
+  }
 })
 
 function addTime(time) {

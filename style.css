@@ -66,13 +66,13 @@ button {
 }
 
 #collapsebut {
-  z-index: 2;
+  z-index: 3;
 }
 
 #flopbuts, #popbuts {
   background-color: var(--bgoverlay);
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   width: calc(100% - 9px);
   margin-left: 1px;
   border-radius: 3px;
@@ -98,6 +98,7 @@ button {
   max-height: 20%;
   overflow-y: scroll;
   line-height: 20px;
+  transition: margin 0.5s ease;
 }
 
 span.falselink, span.falselinkimp {

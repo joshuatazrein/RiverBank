@@ -285,25 +285,25 @@ function dropTask(ev) {
     // append each child after for headings
     selected.after(children[i])
   }
-  // if (mobiletest()) {
-  //   if (flopscrollsave) {
-  //     $('#flop').scrollTop(flopscrollsave)
-  //   }
-  //   if (popscrollsave) {
-  //     $('#pop').scrollTop(popscrollsave)
-  //   }
-  //   flopscrollsave = undefined
-  //   $('#flop').removeClass('greyedout')
-  //   popscrollsave = undefined
-  //   $('#pop').removeClass('greyedout')
-  // }
+  if (window.innerWidth < 600) {
+    if (flopscrollsave) {
+      $('#flop').scrollTop(flopscrollsave)
+    }
+    if (popscrollsave) {
+      $('#pop').scrollTop(popscrollsave)
+    }
+    flopscrollsave = undefined
+    $('#flop').removeClass('greyedout')
+    popscrollsave = undefined
+    $('#pop').removeClass('greyedout')
+  }
   save('>', selected)
   updateSpanDrags()
 }
 
 function dragTaskOver(event) {
   // dragging task over other one; for desktop
-  resetdoc()
+  resetDoc()
   const boxright = $('#listcontainer').offset().left
   if (event.pageX < boxright) {
     $('#flop').find('span.in').toArray().forEach((x) => {
@@ -498,7 +498,7 @@ function updateSpanDrags() {
         revert: true,
         appendTo: $('#listcontainer'),
         helper: 'clone',
-        cursorAt: {left: $('#flop').width() / 2, top: $(x).height() / 2},
+        cursorAt: {right: 0, top: $(x).height() / 2},
         refreshPositions: true,
         zIndex: 1,
         distance: 20,
@@ -524,7 +524,9 @@ function updateSpanDrags() {
         appendTo: $('#listcontainer'),
         distance: 20,
         helper: 'clone',
-        cursorAt: {left: 0, top: $(x).height() / 2},
+        cursorAt: {
+          left: 0, 
+          top: $(x).height() / 2},
         refreshPositions: true,
         zIndex: 1,
         addClasses: false,

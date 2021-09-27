@@ -76,7 +76,7 @@ function toggleDrags(saving) {
       $(x).attr('draggable', 'true')
     })
     dragsenabled = true
-    resetdoc(); // fixes weird shit
+    resetDoc(); // fixes weird shit
     if ($(loads[loadedlist]).val().slice(0, 2) == '- ') {
       $(loads[loadedlist]).addClass('sublist')
     } else {
@@ -232,7 +232,6 @@ function loadList(saving) {
     // collapse menu again
     toggleCollapse(true)
   }
-  $(window).trigger('clickoff')
 }
 
 function loadthis(event) {

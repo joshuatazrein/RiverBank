@@ -22,17 +22,17 @@ function mobileTest() {
 function resetDoc() {
   // reset document zoom and scroll
   if (selected && selected[0].tagName == 'TEXTAREA') return
-  $(document).animate({scrollTop: 0}, 500)
+  $(document).scrollTop(0)
   $(document.body).css('zoom', "100%")
   document.firstElementChild.style.zoom = "reset";
   if (flopscrollsave) {
     $('#flop').scrollTop(flopscrollsave)
+    flopscrollsave = undefined
   }
   if (popscrollsave) {
     $('#pop').scrollTop(popscrollsave)
+    popscrollsave = undefined
   }
-  flopscrollsave = undefined
-  popscrollsave = undefined
   $('#flop').removeClass('greyedout')
   $('#pop').removeClass('greyedout')
 }
@@ -55,7 +55,7 @@ function updateSizes() {
       [$('#searchbar')[0], 5],
       [$('#username')[0], $('#username').text().length / 2 + 2],
       [$('#lists')[0], 7]
-    ]) {
+  ]) {
     // update entries
     let fontsize = 24
     if (mobileTest()) fontsize = 16
@@ -79,7 +79,8 @@ function updateSizes() {
       $('#texttest').text($(list).val())
       $('#texttest').css('font', $(list).css('font'))
       $('#texttest').css('width', $(list).width() + 'px')
-      $(list).css('height', 'calc(' + $('#texttest').height() + 'px + 0.35em)')
+      $(list).css('height', 'calc(' + $('#texttest').height() + 
+        'px + 0.35em)')
     } else {
       $(list).css('height', '')
       $(list).css('overflow-y', 'hidden')
@@ -96,6 +97,7 @@ function updateSizes() {
   $('#loads').css('height', loadsheight + 'px')
   if (window.innerWidth < 600) mobile = true
   else if (window.innerWidth > 600) mobile = false
+  $(':root').css('--butheight', $('#flopbuts').height() + 5 + 'px')
 }
 
 // # BACKUPS
@@ -235,7 +237,6 @@ function toggleButs(saving) {
     $('#focusbut').show() // just in case it's moved in focused
     $('#typebut').show()
     data.hidebuts = 'false'
-    $(':root').css('--butheight', $('#flopbuts').height() + 5 + 'px')
     $('#collapseBut').removeAttr('style')
     $('#flopbuts').prepend($('#collapseBut'))
   } else {
@@ -310,24 +311,27 @@ function setStyle(style, alert) {
 
 function toggleCollapse(animate) {
   // collapse/uncollapse left column
-  if (animate == true) {
+  if (animate) {
     $('#leftcol').css('transition', 'margin-left 0.7s')
     $('#listcontainer').css('transition', 'width 0.7s')
   }
   if (!$('#leftcol').hasClass('collapsed')) {
+    $('#flopbuts button, #popbuts button').css('min-width', '')
     $('#leftcol').addClass('collapsed')
     $('#listcontainer').addClass('fullwidth')
   } else {
+    // collapse
     $('#listcontainer').removeClass('fullwidth')
     $('#leftcol').removeClass('collapsed')
   }
-  updateSizes()
-  if (animate == true) {
+  if (animate) {
     setTimeout(function () {
       $('#leftcol').css('transition', '')
       $('#listcontainer').css('transition', '')
-    }, 1000)
+      updateSizes()
+    }, 710)
   }
+  updateSizes()
   if (focused) toggleFocus(false) // unfocus if uncollapse
 }
 
@@ -577,6 +581,7 @@ function setOptions() {
 // # COMMANDS
 
 function clickOff(ev) {
+  console.trace()
   // mouse off
   if (draggingtask) { 
     setTimeout(function () {
@@ -588,7 +593,9 @@ function clickOff(ev) {
     }, 100)
     return 
   }
+  console.log(dblclicked);
   if (dblclicked) {
+    console.log('dblclicked');
     if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
       // prevents interfering with edits
       return
@@ -628,7 +635,10 @@ function clickOff(ev) {
     return
   }
   dblclicked = true
-  setTimeout(function () { dblclicked = false }, 300)
+  setTimeout(function () { 
+    dblclicked = false 
+    console.log('dblclicked', dblclicked);
+  }, 300)
   if (mobileTest() && $(ev.target).hasClass('mobhandle') && !draggingtask) {
     // context menu
     select($(ev.target).parent(), false)
@@ -787,7 +797,9 @@ function keyUp(ev) {
     } catch (err) {}
   } else if (ev.key == 'Alt') {
     for (let button of $('#timertimes').children()) {
-      $(button).text('+' + $(button).text().slice(1))
+      if ($(button).text().charAt(0) == '-') {
+        $(button).text($(button).text().slice(1))
+      }
     }
   }
 }
@@ -802,7 +814,7 @@ function keyDown(ev) {
   }
   if (ev.key == 'Alt') {
     for (let button of $('#timertimes').children()) {
-      $(button).text('-' + $(button).text().slice(1))
+      $(button).text('-' + $(button).text())
     }
   }
   if (['Command', 'Shift', 'Alt'].includes(ev.key)) {

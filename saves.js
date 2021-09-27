@@ -550,7 +550,7 @@ function undo() {
   }
   const floptop = $('#flop').scrollTop()
   const poptop = $('#pop').scrollTop()
-  data = JSON.parse(JSON.stringify(savedata))
+  data = JSON.parse(JSON.stringify(prevsave))
   const oldload = Number(loadedlist)
   $('#pop').html(data.pop)
   $('#loads').empty()
@@ -737,6 +737,7 @@ function loadPage(starting, oldselect, scrolls) {
       $('#listcontainer > span').hide()
     })
     $(document).on('mousedown', clickOn)
+    $(document).off('mouseup')
     $(document).on('mouseup', clickOff)
     $(document).on('touchend', resetDoc)
     $(window).resize(updateSizes)
