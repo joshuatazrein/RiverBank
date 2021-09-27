@@ -2,7 +2,7 @@
 
 function dragList(ev) {
   //start drag
-  loadedlistobj = ev.target
+  movelist = ev.target
   //set data - sets drag data
   ev.dataTransfer.setData('text/plain', ev.target.value)
   //specify allowed transfer
@@ -34,13 +34,13 @@ function dropList(ev) {
     return
   }
   data.flop.splice(loads.indexOf(ev.target) + 1, 0,
-    data.flop[loads.indexOf(loadedlistobj)])
+    data.flop[loads.indexOf(movelist)])
   // take out old item
-  if (loads.indexOf(loadedlistobj) > loads.indexOf(ev.target)) {
-    data.flop.splice(loads.indexOf(loadedlistobj) + 1, 1)
+  if (loads.indexOf(movelist) > loads.indexOf(ev.target)) {
+    data.flop.splice(loads.indexOf(movelist) + 1, 1)
     loadedlist = loads.indexOf(ev.target) + 1
   } else {
-    data.flop.splice(loads.indexOf(loadedlistobj), 1)
+    data.flop.splice(loads.indexOf(movelist), 1)
     loadedlist = loads.indexOf(ev.target)
   }
   for (let i = 0; i < loads.length; i++) {
@@ -169,24 +169,21 @@ function deletelist() {
 
 // # FOLDING
 
-function toggleFoldList(saving) {
+function toggleFoldList(saving, list) {
+  if (!list) { list = loadedlist }
   // fold/undold sublists
-  let sublist = Number(loadedlist) + 1
+  let sublist = Number(list) + 1
   const children = $('#loads').children().toArray()
   if ($(children[sublist]).hasClass('sublist')) {
     // toggle folded and "..."
-    $(children[loadedlist]).toggleClass('folded')
-    const val = $(children[loadedlist]).val()
-    if (
-      $(children[loadedlist]).hasClass('folded') &&
-      val.slice(val.length - 4, val.length) != ' ...'
-    ) {
-      $(children[loadedlist]).val(val + ' ...')
-    } else if (
-      !$(children[loadedlist]).hasClass('folded') &&
-      val.slice(val.length - 4, val.length) == ' ...'
-    ) {
-      $(children[loadedlist]).val(val.slice(0, val.length - 4))
+    $(children[list]).toggleClass('folded')
+    const val = $(children[list]).val()
+    if ($(children[list]).hasClass('folded') &&
+      val.slice(val.length - 4, val.length) != ' ...') {
+      $(children[list]).val(val + ' ...')
+    } else if (!$(children[list]).hasClass('folded') &&
+      val.slice(val.length - 4, val.length) == ' ...') {
+      $(children[list]).val(val.slice(0, val.length - 4))
     }
   }
   while ($(children[sublist]).hasClass('sublist')) {
@@ -197,7 +194,6 @@ function toggleFoldList(saving) {
       $(children[sublist]).show()
     }
     sublist += 1
-
   }
   if (saving != false) save()
 }
@@ -232,14 +228,18 @@ function loadList(saving) {
     toggleCollapse()
   }
   $(window).trigger('clickoff')
+  // adds in scroll buffers
+  $('#flop').find('.buffer').remove()
+  $('#flop').prepend('<span class="buffer"></span>')
+  $('#flop').append('<span class="buffer bottom"></span>')
+  // // console.log('loaded list');
+  console.trace()
 }
 
-function loadthis(event) {
+function loadthis(ev) {
   // load the clicked on list
-  let movetask
-  if (movetolist) {
+  if (movetask) {
     movetask = selected.detach()
-    movetolist = false
   }
   loads = Array.from($('#loads').children())
   loadedlist = loads.indexOf(this)

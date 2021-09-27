@@ -243,7 +243,7 @@ function dragTime(el) {
   })
 }
 
-function timeCheck() {
+function timeCheck(force) {
   // checks the current time and sees if any events match it for notifications
   const eventslist = getHeadingChildren(dateToHeading(stringToDate('0d')))
     .filter((x) => {
@@ -275,5 +275,101 @@ function timeCheck() {
       new Notification('RiverBank', {body: task.text()})
     }
     curhour = timelist[0]
+  }
+  // migrate tasks from the previous day
+  const curdate = new Date()
+  if (curdate.getHours() < 3) { curdate.setDate(curdate.getDate() - 1) }
+  curdate.setHours(0)
+  curdate.setMinutes(0)
+  curdate.setSeconds(0)
+  curdate.setMilliseconds(0)
+  activedate = curdate // sets window's active date
+  console.log(activedate);
+  const today = dateToHeading(activedate) // finds after 3am
+  if (!$(today).attr('migrated') || force == true) {
+    // migrate tasks if today has not yet been migrated
+    let headings = $('#pop').children().filter('.dateheading').toArray()
+    const pastheadings = headings.slice(0, headings.findIndex((x) => {
+      return $(x)[0] == today
+    })) 
+    // console.log(pastheadings);
+    // past dates
+    const appends = []
+    for (let heading of pastheadings) {
+      if (selected) {
+        // skip over dates where they are selected
+        if (selected[0] == heading || 
+          getHeadingChildren($(heading)).includes(selected)) {
+          continue
+        }
+      }
+      // find all uncomplete tasks
+      $('#test').empty()
+      for (let child of getHeadingChildren($(heading))) {
+        const el = $(child)
+        if (!el.hasClass('complete')) {
+          $('#test').append(child.clone())
+          el.remove()
+        }
+        if ((/^completed/.test($(el).text()) ||
+          /^uncompleted/.test($(el).text())) && 
+          $(el).hasClass('h2')) {
+          if (el.attr('folded') == 'true') { 
+            toggleFold($(el), false) 
+          }
+          el.remove()
+        }
+      }
+      $('#test').find('span.in.complete').remove()
+      for (let child of $('#test').children()) {
+        appends.push(child)
+      }
+      // fold and complete
+      if (!$(heading).hasClass('complete')) {
+        $(heading).addClass('complete')
+      }
+      if ($(heading).attr('folded') == 'false') {
+        toggleFold($(heading), false)
+      }
+    }
+    if (appends.length > 0) {
+      // add under uncompleted
+      let uncompleted
+      uncompleted = getHeadingChildren($(today)).find((x) => {
+        return /^uncompleted/.test($(x).text())
+      })
+      if (!uncompleted) {
+        const completed = getHeadingChildren($(today)).find((x) => {
+          return /^completed/.test($(x).text())
+        }).prev()
+        uncompleted = $('<span class="in h2">uncompleted</span>')
+        completed.after(uncompleted)
+      }
+      if (!uncompleted) {
+        uncompleted = $(today)
+      }
+      for (let child of appends) {
+        uncompleted.after(child)
+      }
+    }
+    // update all relative dates to synchronize to current day
+    $('.placeholder').remove()
+    for (heading of headings) {
+      // update headings with relative dates
+      $(heading).append($('<span class="placeholder">' + 
+        datesToRelative(activedate, 
+          stringToDate(stripChildren($(heading)))) +
+        '</span>'))
+    }
+    // update future dates up to 30 days from now
+    const todaysdate = activedate.getDate()
+    for (let i = 1; i < 30; i ++) {
+      const futuredate = new Date()
+      futuredate.setDate(todaysdate + i)
+      const newdate = dateToHeading(futuredate, false)
+    }
+    queue('migrate')
+    $(today).attr('migrated', 'true')
+    save()
   }
 }

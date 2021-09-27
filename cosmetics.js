@@ -232,7 +232,7 @@ function toggleButs(saving) {
   // toggle buttons show/hide
   if (data.hidebuts == 'true') {
     $('.butbar').show()
-    $('#focusbut').show() // just in case it's moved in focusmode
+    $('#focusbut').show() // just in case it's moved in focused
     $('#typebut').show()
     data.hidebuts = 'false'
     $(':root').css('--butheight', $('#flopbuts').height() + 5 + 'px')
@@ -328,12 +328,12 @@ function toggleCollapse(animate) {
       $('#listcontainer').css('transition', '')
     }, 1000)
   }
-  if (focusmode) toggleFocus(false) // unfocus if uncollapse
+  if (focused) toggleFocus(false) // unfocus if uncollapse
 }
 
 function toggleFocus(collapse) {
   // focus on current frame only
-  if (!focusmode) {
+  if (!focused) {
     if (!selected) select(dateToHeading(stringToDate('0d')))
     // focus
     $('#focusbar').prepend($('#focusbut'))
@@ -352,7 +352,7 @@ function toggleFocus(collapse) {
     }
     $('#focusbar').show()
     if (!collapse && !$('#leftcol').hasClass('collapsed')) { toggleCollapse() }
-    focusmode = true
+    focused = true
   } else {
     // unfocus
     $('#editbuts').after($('#searchbarframe'))
@@ -369,7 +369,7 @@ function toggleFocus(collapse) {
       $('#floplist').show()
     }
     $('#focusbar').hide()
-    focusmode = false
+    focused = false
     if (!collapse && $('#leftcol').hasClass('collapsed') && !(mobiletest())) {
       toggleCollapse()
     }
@@ -389,8 +389,9 @@ function scrollToToday() {
   // view today
   const butheight = $(':root').css('--butheight')
   $('#pop').animate({
-    scrollTop: $(dateToHeading(stringToDate('0d'))).offset().top
-      - $('#pop').offset().top - butheight.slice(0, butheight.length - 2)
+    scrollTop: $(dateToHeading(stringToDate('0d'))).offset().top - 
+      $('#pop').offset().top - butheight.slice(0, butheight.length - 2) - 
+      $('#events').height()
   }, 500)
 }
 
@@ -677,9 +678,9 @@ function clickOff(ev) {
 
 function clickOn(ev) {
   // mouse down
-  if (movetolist && !$(ev.target).hasClass('listtitle')) {
+  if (movetask && !$(ev.target).hasClass('listtitle')) {
     // cancels move to list
-    movetolist = false
+    movetask = undefined
   }
   // pre-click
   if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
@@ -723,7 +724,7 @@ function clickOn(ev) {
     } else if ($(ev.target).hasClass('unselected')) {
       dragsOn()
     }
-    if (movetolist != true) select()
+    if (!movetask) select()
   } else if ($(ev.target).hasClass('buffer')) {
     select(getFrame($(ev.target)), false)
   } else if ($(ev.target).attr('id') == 'searchbar') {
@@ -736,7 +737,7 @@ function clickOn(ev) {
   } else if ($(ev.target).hasClass('falselink')) {
     // search the task
     $('#searchbar').val($(ev.target).text())
-  // console.log($(ev.target).attr('deadline'));
+  // // // console.log($(ev.target).attr('deadline'));
     search('deadline', $(ev.target).attr('deadline'))
   } else if ($(ev.target).hasClass('falselinkimp')) {
     // search the task
@@ -911,7 +912,7 @@ function keyDown(ev) {
       select(date, true)
       $('#searchbar').val('')
       $('#searchbar').blur()
-      if (movetask != undefined) {
+      if (movetask) {
         selected.after(movetask)
         movetask = undefined
       }
