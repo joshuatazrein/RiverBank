@@ -19,6 +19,7 @@ function resetCookies() {
 // # CLEANING
 
 function clean() {
+  return
   // cleans up data
   $('#test').empty()
   $('textarea.in').remove()
@@ -382,22 +383,12 @@ function updateDeadlines(saving) {
     $(heading).append(newelt)
   }
   // update future dates up to 30 days from now
-  const futuredate = stringToDate('0d')
-  futuredate.setDate(today.getDate() + 29)
-  if (!$('#pop').children().filter('.dateheading')
-    .toArray().map((x) => { return stripChildren($(x)) })
-    .includes(dateToString(futuredate, true))) {
-      // if future not filled out
-      const curdate = today.getDate()
-      for (let i = 0; i < 30; i ++) {
-        const futuredate = new Date()
-        futuredate.setDate(curdate + i)
-        const newdate = dateToHeading(futuredate, false)
-    }
-  } else {
-    const newdate = new Date()
-    newdate.setDate(today.getDate() + 30)
-    const newheading = dateToHeading(newdate, false)
+  const curdate = today.getDate()
+  for (let i = 1; i < 30; i ++) {
+    const futuredate = new Date()
+    futuredate.setDate(curdate + i)
+    const newdate = dateToHeading(futuredate, false)
+    console.log(newdate);
   }
   // update continous dates from pop
   $('.continuous').remove()
