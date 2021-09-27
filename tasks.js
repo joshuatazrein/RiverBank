@@ -879,7 +879,7 @@ function saveTask() {
     parent.attr('draggable', 'true')
     parent = parent.parent()
   }
-  // save('+', selected, true)
+  save('+', selected)
 }
 
 function editTask() {
