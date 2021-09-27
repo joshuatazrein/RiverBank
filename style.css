@@ -92,6 +92,7 @@ span.edit {
   background-color: var(--bgoverlay);
   position: absolute;
   left: 0;
+  bottom: 0;
   width: calc(100% - 10px);
   margin: calc(var(--butheight) - 5px) 1px 0 1px;
   color: var(--select);

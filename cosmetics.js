@@ -426,8 +426,7 @@ function tutorial() {
 function scrollToToday() {
   // view today
   let butheight = $(':root').css('--butheight')
-  butheight = Number(butheight.slice(0, butheight.length - 2)) + 
-    $('#events').height() + 20
+  butheight = Number(butheight.slice(0, butheight.length - 2))
   $('#pop').animate({
     scrollTop: $(dateToHeading(stringToDate('0d'))).offset().top
       - $('#pop').offset().top - butheight
@@ -632,9 +631,9 @@ function clickOff(ev) {
     }, 100)
     return 
   }
-  console.log(dblclicked);
+  // console.log(dblclicked);
   if (dblclicked) {
-    console.log('dblclicked');
+    // console.log('dblclicked');
     if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
       // prevents interfering with edits
       return
@@ -676,7 +675,7 @@ function clickOff(ev) {
   dblclicked = true
   setTimeout(function () { 
     dblclicked = false 
-    console.log('dblclicked', dblclicked);
+    // console.log('dblclicked', dblclicked);
   }, 300)
   if (mobileTest() && $(ev.target).hasClass('mobhandle') && !draggingtask) {
     // context menu
@@ -785,7 +784,7 @@ function clickOn(ev) {
   } else if ($(ev.target).hasClass('falselink')) {
     // search the task
     $('#searchbar').val($(ev.target).text())
-  // console.log($(ev.target).attr('deadline'));
+  // // console.log($(ev.target).attr('deadline'));
     search('deadline', $(ev.target).attr('deadline'))
   } else if ($(ev.target).hasClass('falselinkimp')) {
     // search the task
@@ -957,6 +956,7 @@ function keyDown(ev) {
     // focus on searchbar and find it
     ev.preventDefault()
     if ($('#searchbar').val().slice(0, 2) == 'd:') {
+      // search that date
       const date = dateToHeading(
         stringToDate($('#searchbar').val().slice(2)), false, true)
       select(date, true)
@@ -966,6 +966,9 @@ function keyDown(ev) {
         selected.after(movetask)
         movetask = undefined
       }
+      migrate()
+      updateDeadlines()
+      updateSpanDrags()
       // already saves
     } else if ($('#searchbar').val().charAt(0) == '#') {
       // filter tags

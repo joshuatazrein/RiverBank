@@ -543,7 +543,7 @@ function search(skiplinks, deadline) {
     .replace(/\s/g, '\\s')
     .replace(/([\*\+\?\.\|\[\]\(\)\{\}\^\$])/g, '\\$1')
   const searchexp = new RegExp(searchexptext, 'gi')
-  // console.log(searchexp);
+  // // console.log(searchexp);
   const searches = data.flop.concat([{
     'title': 'pop',
     'text': data.pop
@@ -557,7 +557,7 @@ function search(skiplinks, deadline) {
     for (let child of children) {
       // if it's a match, add to matches
       if (searchexp.test(stripChildren($(child)))) {
-      // console.log(stripChildren($(child)), searchtext + ' >' + deadline)
+      // // console.log(stripChildren($(child)), searchtext + ' >' + deadline)
         // add to matches
         if (skiplinks &&
           $(child).text().includes('[[' + searchtext)) {
@@ -594,7 +594,7 @@ function search(skiplinks, deadline) {
   $('#searchbar-results').show()
   if ($('#searchbar-results').children().length == 1) {
     // go automatically to first item if that works
-  // console.log('working');
+  // // console.log('working');
     goToSearch($($('#searchbar-results').children()[0]))
   }
 }
@@ -673,18 +673,7 @@ function select(el, scroll, animate) {
         // only execute if not clicked
         parent = getFrame(selected)
         let butheight = $(':root').css('--butheight')
-        if (getFrame(selected).attr('id') == 'pop') {
-          // add in events
-          butheight = Number(butheight.slice(0, butheight.length - 2))
-          butheight += Number($('#events').height())
-          butheight += 'px'
-        } else if (getFrame(selected).attr('id') == 'flop') {
-          // add in importants
-          butheight = Number(butheight.slice(0, butheight.length - 2))
-          butheight += Number($('#importants').height())
-          butheight += 'px'
-        }
-      // console.log(butheight);
+      // // console.log(butheight);
         const oldscroll = parent.scrollTop() -
           Number(butheight.slice(0, butheight.length - 2))
         let scrolltime
