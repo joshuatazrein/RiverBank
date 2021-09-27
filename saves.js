@@ -224,6 +224,26 @@ function migrate() {
       if ($(heading).attr('folded') == 'false') {
         toggleFold($(heading), false)
       }
+      // creating relative dates
+      today = stringToDate('0d')
+      for (heading of $('#pop').children().filter('.dateheading:not(.futuredate)')) {
+        // add in relative dates underneath
+        const newelt = createBlankTask()
+        newelt.text(datesToRelative(
+          today,
+          stringToDate(stripChildren($(heading)), true)))
+        newelt.addClass('placeholder')
+        newelt.removeClass('in')
+        $(heading).append(newelt)
+      }
+      // update future dates up to 30 days from now
+      const curdate = today.getDate()
+      for (let i = 1; i < 30; i ++) {
+        const futuredate = new Date()
+        futuredate.setDate(curdate + i)
+        const newdate = dateToHeading(futuredate, false)
+        console.log(newdate);
+      }
     }
   }
 }
@@ -261,40 +281,8 @@ function updateTitles() {
   list.forEach((x) => { $('#events').append(x) })
 }
 
-function updateTimeline() {
-  // creating relative dates
-  today = stringToDate('0d')
-  for (heading of $('#pop').children().filter('.dateheading:not(.futuredate)')) {
-    // add in relative dates underneath
-    const newelt = createBlankTask()
-    newelt.text(datesToRelative(
-      today,
-      stringToDate(stripChildren($(heading)), true)))
-    newelt.addClass('placeholder')
-    newelt.removeClass('in')
-    $(heading).append(newelt)
-  }
-  // update future dates up to 30 days from now
-  const curdate = today.getDate()
-  for (let i = 1; i < 30; i ++) {
-    const futuredate = new Date()
-    futuredate.setDate(curdate + i)
-    const newdate = dateToHeading(futuredate, false)
-    console.log(newdate);
-  }
-}
-
-function updateDeadlines(saving) {
-  // update displayed deadlines to match data
-  $('.duedate').remove()
-  $('.placeholder').remove()
-  flopdeadlines = []
-  const collapselist = $('#pop').children().filter('.h1').toArray().filter(
-    (x) => { return ($(x).attr('folded') == 'true') })
-  // uncollapses then recollapses to prevent weirdness
-  for (heading of collapselist) {
-    toggleFold($(heading), false)
-  }
+function updateImportants() {
+  // add all importants to importants
   const importants = []
   let counter = 0
   for (list of data.flop.concat([{
@@ -312,6 +300,28 @@ function updateDeadlines(saving) {
           '</span></p>'))
       })
     counter ++
+  }
+  $('#importants').empty()
+  importants.forEach((x) => { $('#importants').append(x) })
+}
+
+function updateDeadlines() {
+  // update displayed deadlines to match data
+  $('.duedate').remove()
+  $('.placeholder').remove()
+  flopdeadlines = []
+  const collapselist = $('#pop').children().filter('.h1').toArray().filter(
+    (x) => { return ($(x).attr('folded') == 'true') })
+  // uncollapses then recollapses to prevent weirdness
+  for (heading of collapselist) {
+    toggleFold($(heading), false)
+  }
+  for (list of data.flop.concat([{
+    'title': 'pop',
+    'text': $('#pop').html()
+  }])) {
+    $('#test').empty()
+    $('#test').html(list.text)
     for (let deadline of $('#test').find('.deadline').filter(function () {
       return !$(this).parent().hasClass('complete')
     })) {
@@ -340,9 +350,6 @@ function updateDeadlines(saving) {
   for (heading of collapselist) {
     toggleFold($(heading), false)
   }
-  // add all importants to importants
-  $('#importants').empty()
-  importants.forEach((x) => { $('#importants').append(x) })
   // update continous dates from pop
   $('.continuous').remove()
   $('#pop').find('span.in:not(.complete) > .deadline')
@@ -386,7 +393,7 @@ function updateBuffers() {
 
 // # SAVING
 
-function save(changes, changed) {
+function save(changes, changed, force) {
   // stores data
   unFilter()
   if (['+','-','>'].includes(changes)) {
@@ -409,16 +416,14 @@ function save(changes, changed) {
   if (['>', '+'].includes(changes)) {
     updateSpanDrags() 
   }
+  if (['i'].includes(changes)) {
+    updateImportants()
+  }
   if (['-', '+'].includes(changes) &&
-    changed && 
-    stripChildren($(changed)).includes('>')) {
+    ((changed && stripChildren($(changed)).includes('>')) ||
+    force)) {
     console.log('updating deadlines');
     updateDeadlines()
-  }
-  if (['>', '-', '+'].includes(changes) && 
-    changed &&
-    stripChildren($(changed)).includes('>')) {
-    updateTimeline()
   }
   if (['-'].includes(changes)) {
     clearEmptyDates()

@@ -127,7 +127,7 @@ function toggleImportant() {
   if (selected[0].tagName == 'SPAN') {
     selected.removeClass('maybe')
     selected.toggleClass('important')
-    save('0')
+    save('i', selected)
   }
 }
 
@@ -136,7 +136,7 @@ function toggleMaybe() {
   if (selected[0].tagName == 'SPAN') {
     selected.removeClass('important')
     selected.toggleClass('maybe')
-    save('0')
+    save('i', selected)
   }
 }
 
@@ -869,7 +869,7 @@ function saveTask() {
     parent.attr('draggable', 'true')
     parent = parent.parent()
   }
-  save('+', selected)
+  save('+', selected, true)
 }
 
 function editTask() {
