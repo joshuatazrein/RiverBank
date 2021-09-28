@@ -7,8 +7,9 @@ $conn = new mysqli('server204.web-hosting.com',
 if ($conn->connect_error) {
 die('Connection failed: ' . $conn->connect_error);
 }
-$sql = 'INSERT INTO users (user, pw, dt)
-VALUES ("' . $user . '", "' . $pw . '", "' . $dt . '")';
+$sql = 'UPDATE users 
+SET dt = ' . $dt . '
+WHERE user = "' . $user . '" AND pw = "' . $pw . '";';
 $conn->query($sql);
 echo $dt;
 $conn->close();
