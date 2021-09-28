@@ -250,7 +250,6 @@ function updateTitles() {
   const bottomdate = $('#pop .dateheading').toArray().find((x) => { 
     return $(x).position().top > 0 && $(x).position().top < $('#pop').height()
   })
-  console.log(bottomdate);
   if (!bottomdate) { return }
   const curdate = stringToDate(stripChildren($(bottomdate), true)).getTime()
   const inview = $('#pop .continuous').toArray().filter((x) => { 
@@ -387,12 +386,12 @@ function updateBuffers() {
 
 // # SAVING
 
-function save(changes, changed, force) {
+function save(changes, changed, undo) {
   // stores data
   let now = new Date()
   let initial = now.getTime()
   unFilter()
-  if (['+','-','>'].includes(changes)) {
+  if (undo) {
     prevsave = JSON.parse(JSON.stringify(data))
   }
   // save data
@@ -563,7 +562,7 @@ function undo() {
   if (!prevsave) return
   // undo
   let oldselect
-  if (selected) {
+  if (selected && getFrame(selected)) {
     oldselect = [getFrame(selected), 
       getFrame(selected).find('span.in').toArray().indexOf(selected[0])]
   }
@@ -585,6 +584,7 @@ function undo() {
   if (oldselect) {
     select(oldselect[0].find('span.in')[oldselect[1]])
   }
+  updateSpanDrags()
 }
 
 function reload() {
@@ -594,6 +594,7 @@ function reload() {
     return
   }
   $('body').prepend("<div id='logoimage' class='show' style='z-index:2;opacity:0'><img src='logo.png'></div>")
+  $('#logoimage').animate({'opacity': 0.1}, 300)
   display('--- download started ---');
   if (!navigator.onLine || offlinemode) {
     const diffs = diffsLog(JSON.stringify(data), 
@@ -622,7 +623,6 @@ function reload() {
           // don't reload page at all
         } else {
           display('*** download finished, reloading ***');
-          $('#logoimage').animate({'opacity': 0.1}, 300)
           // only reload if data differs
           data = JSON.parse(xhr.responseText)
           reload2()

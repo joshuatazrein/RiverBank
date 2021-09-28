@@ -73,7 +73,7 @@ function archiveTask(play) {
   }
   const oldselect = selected.clone()
   select(taskabove)
-  save('-', oldselect)
+  save('-', oldselect, true)
 }
 
 function toggleComplete(task, saving) {
@@ -118,7 +118,7 @@ function toggleComplete(task, saving) {
   }
   completetask.toggleClass('complete')
   if (!task || saving != false) {
-    save('+', selected)
+    save('+', selected, true)
   }
 }
 
@@ -226,7 +226,7 @@ function dragTask(ev) {
 function dropTask(ev) {
   // drops selected task onto target
   // logs that drop succeeded so you can check for revert (jQuery hack)
-  if ((isHeading(selected) && isSubtask($(ev.target))) ||
+  if ((isHeading(selected) && $(ev.target).parent()[0].tagName == 'SPAN') ||
     isHeading(selected) && ev.altKey) {
     // can't drop headings as subtasks
     return
@@ -244,6 +244,7 @@ function dropTask(ev) {
     selected.hasClass('h3')) {
     // drop all the tasks
     children = getHeadingChildren(selected)
+    console.log(children);
   }
   if ($(el).attr('folded') == 'true') {
     // unfold
@@ -297,7 +298,7 @@ function dropTask(ev) {
     popscrollsave = undefined
     $('#pop').removeClass('greyedout')
   }
-  save('>', selected)
+  save('>', selected, true)
   updateSpanDrags()
 }
 
@@ -507,7 +508,6 @@ function updateSpanDrags(task) {
       revert: true,
       appendTo: $('#listcontainer'),
       helper: 'clone',
-      cursorAt: {right: 0, top: 0},
       refreshPositions: true,
       zIndex: 1,
       distance: 20,
@@ -536,7 +536,6 @@ function updateSpanDrags(task) {
       appendTo: $('#listcontainer'),
       distance: 20,
       helper: 'clone',
-      cursorAt: {left: 0, top: 0},
       refreshPositions: true,
       zIndex: 1,
       addClasses: false,
@@ -709,7 +708,7 @@ function deleteTask() {
   const oldselect = selected.clone()
   selected.remove()
   select(newselect)
-  save('-', oldselect)
+  save('-', oldselect, true)
 }
 
 function saveTask() {
@@ -883,7 +882,7 @@ function saveTask() {
     parent.attr('draggable', 'true')
     parent = parent.parent()
   }
-  save('+', selected)
+  save('+', selected, true)
 }
 
 function editTask() {
