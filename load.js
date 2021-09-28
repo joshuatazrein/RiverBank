@@ -62,7 +62,7 @@ function load() {
       6:'Sat'}
     }
     try {
-      loadPage(false)
+      loadPage()
     } catch (err) {
       setTimeout(initialize, 500)
     }
@@ -115,7 +115,7 @@ function initialize() {
   // tries to load until it's actually loaded
   console.log('initializing...');
   try {
-    loadPage(true)
+    loadPage()
   } catch (err) {
     console.log(err)
     setTimeout(initialize, 500)

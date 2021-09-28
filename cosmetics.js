@@ -232,7 +232,7 @@ function toggleButs(saving) {
   // toggle buttons show/hide
   if (data.hidebuts == 'true') {
     $('.butbar').show()
-    $('#focusbut').show() // just in case it's moved in focused
+    $('#focusbut').show() // just in case it's moved in focusmode
     $('#typebut').show()
     data.hidebuts = 'false'
     $(':root').css('--butheight', $('#flopbuts').height() + 5 + 'px')
@@ -328,12 +328,12 @@ function toggleCollapse(animate) {
       $('#listcontainer').css('transition', '')
     }, 1000)
   }
-  if (focused) toggleFocus(false) // unfocus if uncollapse
+  if (focusmode) toggleFocus(false) // unfocus if uncollapse
 }
 
 function toggleFocus(collapse) {
   // focus on current frame only
-  if (!focused) {
+  if (!focusmode) {
     if (!selected) select(dateToHeading(stringToDate('0d')))
     // focus
     $('#focusbar').prepend($('#focusbut'))
@@ -352,7 +352,7 @@ function toggleFocus(collapse) {
     }
     $('#focusbar').show()
     if (!collapse && !$('#leftcol').hasClass('collapsed')) { toggleCollapse() }
-    focused = true
+    focusmode = true
   } else {
     // unfocus
     $('#editbuts').after($('#searchbarframe'))
@@ -369,7 +369,7 @@ function toggleFocus(collapse) {
       $('#floplist').show()
     }
     $('#focusbar').hide()
-    focused = false
+    focusmode = false
     if (!collapse && $('#leftcol').hasClass('collapsed') && !(mobiletest())) {
       toggleCollapse()
     }
