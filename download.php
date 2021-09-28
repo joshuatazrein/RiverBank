@@ -7,7 +7,7 @@ if ($conn->connect_error) {
   die('FAIL');
 }
 $sql = 'SELECT dt FROM users WHERE user="' . 
-  $user . '" AND pw="' . $pw . '"';
+  $username . '" AND pw="' . $password . '"';
 $result = $conn->query($sql);
 if ($result->num_rows > 0) {
   // output data of each row
