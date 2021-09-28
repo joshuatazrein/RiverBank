@@ -1,7 +1,6 @@
 // # DRAGGING
 
 function dragList(ev) {
-  console.log('draglist');
   //start drag
   if ($(ev.target).hasClass('selected')) {
     loadedlistobj = $(ev.target)
@@ -21,18 +20,15 @@ function dragListOver(ev) {
 }
 
 function dropList(ev) {
-  console.log('droplist');
   //drop
   $('.drop-hover').removeClass('drop-hover')
   if ($(ev.target).hasClass('unselected')) {
     $(ev.target).after(loadedlistobj)
     // move new list to new position in data
-    console.log(data.flop.map((x) => { return x.title }));
     const loadsplice = JSON.parse(JSON.stringify(data.flop[loadedlist]))
     data.flop.splice(loadedlist, 1)
     const newplace = $('#loads').children().toArray().indexOf(loadedlistobj[0])
     data.flop.splice(newplace, 0, loadsplice)
-    console.log(data.flop.map((x) => { return x.title }));
     loadedlistobj = undefined
     loadedlist = newplace
     dragsOn(false)
@@ -215,6 +211,7 @@ function startImport() {
   $('#imports').show()
   $('#imports').css('top', '13vh')
   $('#imports').css('left', '13vw')
+  $('#imports textarea').focus()
 }
 
 function importTasks() {
@@ -222,7 +219,6 @@ function importTasks() {
     select('#flop')
   }
   const vals = $('#imports textarea').val().match(/^.*((\r\n|\n|\r)|$)/gm);
-  console.log(vals);
   let i = 0
   for (value of vals) {
     newTask()
@@ -236,7 +232,6 @@ function importTasks() {
         }
       }
     } catch (err) {
-      console.log(err);
     }
     i ++
   }

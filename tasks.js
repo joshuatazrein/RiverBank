@@ -117,6 +117,7 @@ function toggleComplete(task, saving) {
     }
   }
   completetask.toggleClass('complete')
+  completetask.find('.continuous').toggleClass('complete')
   if (!task || saving != false) {
     save('+', selected, true)
   }
@@ -244,7 +245,6 @@ function dropTask(ev) {
     selected.hasClass('h3')) {
     // drop all the tasks
     children = getHeadingChildren(selected)
-    console.log(children);
   }
   if ($(el).attr('folded') == 'true') {
     // unfold
@@ -488,18 +488,18 @@ function updateSpanDrags(task) {
   // add handles for drags on mobile, or enable jQuery drags on desktop
   let selector
   if (!task) {
-    selector = 'span.in:not(.dateheading)'
+    selector = 'span.in:not(.dateheading):visible'
   } else if (task == 'flop') {
-    selector = 'flop span.in:not(.dateheading)'
+    selector = 'flop span.in:not(.dateheading):visible'
   } else {
     selector = $(task)[0]
   }
   if (mobileTest()) {
     if (!task) {
       $('.mobhandle').remove()
-      $(span.in).prepend(
+      $('span.in').prepend(
         '<span class="mobhandle"></span>')
-      $(span.in).attr('draggable', 'false')
+      $('span.in').attr('draggable', 'false')
     }
     $(selector).draggable({
       handle: '.mobhandle',
@@ -529,7 +529,6 @@ function updateSpanDrags(task) {
       $(task).removeClass('ui-droppable')
     }
   } else {
-    $('.mobhandle').remove()
     $(selector).draggable({
       containment: 'window',
       revert: true,
@@ -650,6 +649,28 @@ function toggleFold(el, saving) {
   }
   if (saving === undefined) {
     setTimeout(save, 600)
+    if ($(el).hasClass('dateheading')) {
+      // add in relative date back in
+      const newelt = createBlankTask()
+      newelt.html(datesToRelative(
+        new Date(),
+        stringToDate(stripChildren($(el)), true)))
+      newelt.addClass('placeholder')
+      newelt.removeClass('in')
+      $(el).append(newelt)
+    }
+    if ($(el).attr('folded') == 'false') {
+      setTimeout(function () {
+        getHeadingChildren($(el)).forEach((x) => {
+          $(x).attr('style', '')
+          $(x).find('span.in').toArray().forEach((y) => {
+            $(y).attr('style', '')
+            updateSpanDrags(y)
+          })
+          updateSpanDrags(x)
+        })
+      }, 300)
+    }
   }
 }
 

@@ -379,6 +379,7 @@ p.dropdown-item {
   left: 0;
   width: 100%;
   border-top: 1px solid var(--bdcolor);
+  transition: opacity 1s;
 }
 
 #help button#tutorialbut {
@@ -545,6 +546,10 @@ span.eventspan, span.impspan {
   display: initial;
 }
 
+[overdue="true"] {
+  color: var(--important) !important;
+}
+
 #events > p, #importants > p {
   margin: 0;
 }
@@ -674,7 +679,7 @@ span.placeholder {
   width: fit-content;
   right: 5px;
   top: 0;
-  max-width: 35px;
+  max-width: 50px;
   word-wrap: break-word;
   line-height: 16px;
 }

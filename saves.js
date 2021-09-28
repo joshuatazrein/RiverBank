@@ -15,8 +15,8 @@ function resetCookies() {
 
 function clean() {
   // cleans data
-  $('span.in').attr('style', '')
-  for (span of $('span').toArray()) {
+  $('span.in:visible').attr('style', '')
+  for (span of $('span.in').toArray()) {
     if (['', ' ', '\n'].includes($(span).text())) {
       // remove empty ones
       $(span).remove()
@@ -84,6 +84,12 @@ function clean() {
       $(heading).after($(x))
     })
   }
+  $('.dateheading').toArray().forEach((x) => {
+    if ($(x).attr('folded') == 'true') {
+      $(x).attr('folded', 'false')
+      toggleFold($(x), false)
+    }
+  })
 }
 
 function clearEmptyHeadlines() {
@@ -138,13 +144,25 @@ function clearEmptyDates() {
 }
 
 function migrate() {
+  var now = new Date()
+  display('migrating...')
+  var initial = now.getTime()
   // move past tasks to today
   const today = stringToDate('0d').getTime()
   const todayheading = $(dateToHeading(stringToDate('0d'), false))
   const todaydate = new Date()
   const headings = $('#pop').children().filter('.dateheading').toArray()
+  function migratable(x) {
+    // checks to see if heading has incomplete tasks
+    getHeadingChildren($(x)).forEach((y) => {
+      if (!$(y).hasClass('complete')) {
+        return true
+      }
+    })
+  }
   for (heading of headings) {
-    if (stringToDate(stripChildren($(heading)), true).getTime() < today) {
+    if (stringToDate(stripChildren($(heading)), true).getTime() < today &&
+      migratable(heading)) {
       try {
         if (selected &&
           (selected[0] == heading ||
@@ -222,56 +240,63 @@ function migrate() {
       if ($(heading).attr('folded') == 'false') {
         toggleFold($(heading), false)
       }
-      // creating relative dates
-      for (heading of $('#pop').children().filter('.dateheading:not(.futuredate)')) {
-        // add in relative dates underneath
-        const newelt = createBlankTask()
-        newelt.text(datesToRelative(
-          todaydate,
-          stringToDate(stripChildren($(heading)), true)))
-        newelt.addClass('placeholder')
-        newelt.removeClass('in')
-        $(heading).append(newelt)
-      }
-      // update future dates up to 30 days from now
-      const curdate = todaydate.getDate()
-      for (let i = 1; i < 30; i ++) {
-        const futuredate = new Date()
-        futuredate.setDate(curdate + i)
-        const newdate = dateToHeading(futuredate, false)
-      }
     }
   }
+  // creating relative dates
+  $('.placeholder').remove()
+  for (heading of $('#pop').children().filter('.dateheading')) {
+    // add in relative dates underneath
+    const newelt = createBlankTask()
+    newelt.html(datesToRelative(
+      todaydate,
+      stringToDate(stripChildren($(heading)), true)))
+    newelt.addClass('placeholder')
+    newelt.removeClass('in')
+    $(heading).append(newelt)
+  }
+  // update future dates up to 30 days from now
+  const curdate = todaydate.getDate()
+  for (let i = 1; i < 30; i ++) {
+    const futuredate = new Date()
+    futuredate.setDate(curdate + i)
+    const newdate = dateToHeading(futuredate, false)
+  }
+  now = new Date()
+  display('migrated:' + (now.getTime() - initial))
+  var initial = now.getTime()
 }
 
 function updateTitles() {
   // update titles of any continuous events in view with current date
   // add in titles
+  const thisdate = dateToString(new Date())
   const bottomdate = $('#pop .dateheading').toArray().find((x) => { 
-    return $(x).position().top > 0 && $(x).position().top < $('#pop').height()
+    return $(x).position().top > 0 && 
+      $(x).position().top < $('#pop').height() &&
+      !$(x).text().includes(thisdate)
   })
   if (!bottomdate) { return }
   const curdate = stringToDate(stripChildren($(bottomdate), true)).getTime()
-  const inview = $('#pop .continuous').toArray().filter((x) => { 
-    return stringToDate($(x).attr('end')).getTime() > curdate &&
-      $(x).attr('start') < curdate
+  const inview = $('#pop .continuous:not(.complete)').toArray().filter((x) => { 
+    return $(x).attr('start') < curdate
   })
   const list = inview.map((x) => {
-    return {title: $(x).attr('title'), end: $(x).attr('end')} 
-  }).concat(window.duedates.filter((x) => { 
-    return stringToDate(x.end).getTime() > curdate 
-  })).map((x) => { 
+    return {title: $(x).attr('title'), end: $(x).attr('end'), 
+      overdue: stringToDate($(x).attr('end')).getTime() < curdate} 
+  }).concat(window.duedates.map((x) => { return {title: x.title, end: x.end, 
+    overdue: stringToDate(x.end).getTime() < curdate} }))
+  const displaylist = list.map((x) => { 
     return $('<p style="margin:0;"><span class="falselink" deadline="' +
-      x.end + '">' + x.title + '</span>' + 
+      x.end + '" overdue="' + x.overdue + '">' + x.title + '</span>' + 
       '<span class="eventspan" onclick="select(dateToHeading(' + 
-      'stringToDate($(this).text())), true)">' + x.end + 
-      '</span></p>')
+      'stringToDate($(this).text())), true)" overdue="' + 
+      x.overdue + '">' + x.end + '</span></p>')
   }).sort((a, b) => { 
     return stringToDate($($(a).children()[0]).attr('deadline')).getTime() - 
       stringToDate($($(b).children()[0]).attr('deadline')).getTime()
   })
   $('#events').empty()
-  list.forEach((x) => { $('#events').append(x) })
+  displaylist.forEach((x) => { $('#events').append(x) })
 }
 
 function updateImportants() {
@@ -301,7 +326,6 @@ function updateImportants() {
 function updateDeadlines() {
   // update displayed deadlines to match data
   $('.duedate').remove()
-  $('.placeholder').remove()
   window.duedates = []
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
     (x) => { return ($(x).attr('folded') == 'true') })
@@ -570,7 +594,7 @@ function uploadData(reloading) {
     $.post("upload.php", {
       datastr: JSON.stringify(data),
     }, function (data, status, xhr) {
-      diffsLog(prevupload, xhr.responseText)
+      // diffsLog(prevupload, xhr.responseText)
       display('*** upload finished ***')
       prevupload = xhr.responseText
       localStorage.setItem('data', JSON.stringify(data))
@@ -587,7 +611,7 @@ function uploadData(reloading) {
     }
     // offline mode
     localStorage.setItem('data', JSON.stringify(data))
-    diffsLog(prevupload, JSON.stringify(data))
+    // diffsLog(prevupload, JSON.stringify(data))
     display('*** local upload finished ***')
     prevupload = JSON.stringify(data)
     if (reloading) {
@@ -707,8 +731,10 @@ function reload2() {
 function loadPage(starting, oldselect, scrolls) {
   // load the page with current data
   loading = true
+  var now = new Date()
+  var initial = now.getTime()
   // right after signing in
-  display('loading...');
+  display('loading... ');
   if (!window.location.href.includes('welcome')) {
     $('#username').text(getCookie('user'))
   }
@@ -776,15 +802,6 @@ function loadPage(starting, oldselect, scrolls) {
       $("<link id='theme' rel='stylesheet' type='text/css' href='" +
         data.style + "' />")
     )
-    $.get(data.style, 
-      function () { 
-        $('#logoimage').animate({opacity: 0}, 500)
-        setTimeout(function() { 
-          $('#logoimage').remove() 
-          resetDoc()
-        }, 500)
-      }
-    )
     if (data.weekdays == 'M') {
       weekdaysStr = { 0: 'U', 1: 'M', 2: 'T', 3: 'W', 4: 'R', 5: 'F', 6: 'S' }
     } else if (data.weekdays == 'Mon') {
@@ -832,8 +849,11 @@ function loadPage(starting, oldselect, scrolls) {
     if (mobileTest()) {
       $('head').append('<link href="mobilestyle.css" rel="stylesheet">')
     }
-    migrate()
-    display('loaded settings');
+  }
+  if (window.innerWidth < 600) {
+    $('#desktopbuts button.mobilebut').toArray().forEach(function (x) {
+      $('#mobilebuts').append(x)
+    })
   }
   if ($('#theme').attr('href') != data.style) {
     // reloads theme if it was changed
@@ -870,7 +890,6 @@ function loadPage(starting, oldselect, scrolls) {
   }
   loadList(false) // load list from data
   dragsOn(false)
-  display('loaded lists...');
   $('#searchbar').val('')
   // show buttons and help right
   if (data.help == 'show') $('#help').show()
@@ -886,22 +905,30 @@ function loadPage(starting, oldselect, scrolls) {
     $('#flop').scrollTop(scrolls[0])
     $('#pop').scrollTop(scrolls[1])
   }
-  display('loaded drags...')
-  if (starting == false) {
-    // remove image after reload
-    $('#logoimage').stop(true)
-    $('#logoimage').animate({opacity: 0}, 500)
-    setTimeout(function() { $('#logoimage').remove() }, 500)
-  }
-  resetDoc()
-  clean()
+  var now = new Date()
+  curtime = now.getTime() - initial
+  display('loaded data: ' + curtime);
+  initial = now.getTime()
   $('#events, #importants').hide()
   save('X', null, true)
-  setTimeout(function () {
+  var now = new Date()
+  curtime = now.getTime() - initial
+  display('saved: ' + curtime)
+  initial = now.getTime()
+  if (starting) {
+    migrate()
+  }
+  now = new Date()
+  curtime = now.getTime() - initial
+  display('saved and cleaned: ' + curtime);
+  initial = now.getTime()
+  function startdoc() {
     if (data.futurepanes == 'show') {
       $('#events, #importants').show()
     }
     updateSizes()
+    clean()
+    updateBuffers()
     if (oldselect) {
       // select previous selected
       if (oldselect[1])
@@ -911,5 +938,30 @@ function loadPage(starting, oldselect, scrolls) {
     } else {
       scrollToToday()
     }
-  }, 1000)
+    // remove image after reload
+    $('#logoimage').stop(true)
+    $('#logoimage').animate({opacity: 0}, 500)
+    setTimeout(function() { 
+      $('#logoimage').remove()
+      resetDoc()
+      now = new Date()
+      curtime = now.getTime() - initial
+      display('startdoc: ' + String(curtime));
+      initial = now.getTime()
+    }, 500)
+  }
+  if (mobileTest()) {
+    $(document).on('scroll mouseup', function() {
+      $('html, body').animate({scrollTop: window.innerHeight}, 300)
+      startdoc()
+      $(document).off('scroll mouseup')
+      $(document).on('mouseup', clickOff)
+    })
+  } else {
+    now = new Date()
+    curtime = now.getTime() - initial
+    display('loaded: ' + curtime);
+    initial = now.getTime()
+    setTimeout(startdoc, 500)
+  }
 }

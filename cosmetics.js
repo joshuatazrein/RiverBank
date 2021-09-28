@@ -22,7 +22,8 @@ function mobileTest() {
 function resetDoc() {
   // reset document zoom and scroll
   if (selected && selected[0].tagName == 'TEXTAREA') return
-  $(document).scrollTop(0)
+  // $(document).scrollTop(0)
+  $('html, body').animate({scrollTop: 0}, 300)
   $(document.body).css('zoom', "100%")
   document.firstElementChild.style.zoom = "reset";
   if (flopscrollsave) {
@@ -275,10 +276,15 @@ function toggleFuturePanes(saving) {
 function toggleHelp(saving) {
   // help show/hide
   if (data.help == 'show') {
-    $("#help").hide()
+    $('#help').css('opacity', '0')
+    setTimeout(function() {
+      $("#help").hide()
+    }, 1000)
     data.help = 'hide'
   } else {
+    $('#help').css('opacity', '0')
     $("#help").show()
+    $('#help').css('opacity', '')
     data.help = 'show'
   }
   if (saving != false) {
@@ -847,7 +853,13 @@ function keyUp(ev) {
 
 function keyDown(ev) {
   // key down
-  if ($('#imports').is(':visible')) return
+  if ($('#imports').is(':visible')) {
+    if (ev.key == 'Escape') {
+      $('#imports textarea').val('')
+      $('#imports').hide()
+    }
+    return
+  }
   if (ev.key == 'Control') {
     // cancel draggables
     try {

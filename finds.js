@@ -3,40 +3,91 @@
 function datesToRelative(a, b) {
   // converts two dates into the relation between them as a string
   let returnstring = ''
-  let diff = b.getTime() - a.getTime()
-  let change = 1
-  if (diff < 0) {
-    change = -1
-    diff *= -1
-  } else if (diff == 0) return 'today'
+  if (a.getFullYear() == b.getFullYear() &&
+    a.getMonth() == b.getMonth() &&
+    a.getDate() == b.getDate()) {
+    return 'today'
+  }
   let years = 0
   let months = 0
   let weeks = 0
   let days = 0
-  while (diff >= 31556952000) {
-    // years
-    diff -= 31556952000
-    years += 1 * change
+  const target = new Date(a.getTime()) // target moves with changes
+  if (a.getTime() < b.getTime()) {
+    target.setDate(target.getDate() - 1)
+    // future test
+    const oneyear = new Date(b.getTime())
+    oneyear.setFullYear(oneyear.getFullYear() - 1)
+    while (target.getTime() < oneyear.getTime()) {
+      // more than a year off in stated direction
+      target.setFullYear(target.getFullYear() + 1)
+      years += 1
+    }
+    if (years != 0) returnstring += years + 'y'
+    const onemonth = new Date(b.getTime())
+    onemonth.setMonth(b.getMonth() - 1) // one month threshold
+    while (target.getTime() < onemonth.getTime()) {
+      // more than a year off in stated direction
+      target.setMonth(target.getMonth() + 1)
+      months += 1
+    }
+    if (months != 0) returnstring += months + 'm'
+    const oneweek = new Date(b.getTime())
+    oneweek.setDate(b.getDate() - 7) // one month threshold
+    while (target.getTime() < oneweek.getTime()) {
+      // more than a year off in stated direction
+      target.setDate(target.getDate() + 7)
+      weeks += 1
+    }
+    if (weeks != 0) returnstring += weeks + 'w'
+    while (target.getTime() < b.getTime() - 
+      (1000 * 60 * 60 * 24)) {
+      // more than a year off in stated direction
+      target.setDate(target.getDate() + 1)
+      days += 1
+    }
+    if (days != 0) returnstring += days + 'd'
+  } else if (a.getTime() > b.getTime()) {
+    // past test
+    returnstring = '-'
+    const oneyear = new Date(b.getTime())
+    oneyear.setFullYear(oneyear.getFullYear() + 1)
+    while (target.getTime() > oneyear.getTime()) {
+      // more than a year off in stated direction
+      target.setFullYear(target.getFullYear() - 1)
+      years += 1
+    }
+    if (years != 0) returnstring += years + 'y'
+    const onemonth = new Date(b.getTime())
+    onemonth.setMonth(b.getMonth() + 1) // one month threshold
+    while (target.getTime() > onemonth.getTime()) {
+      // more than a year off in stated direction
+      target.setMonth(target.getMonth() - 1)
+      months += 1
+    }
+    if (months != 0) returnstring += months + 'm'
+    const oneweek = new Date(b.getTime())
+    oneweek.setDate(b.getDate() + 7) // one month threshold
+    while (target.getTime() > oneweek.getTime()) {
+      // more than a year off in stated direction
+      target.setDate(target.getDate() - 7)
+      weeks += 1
+    }
+    if (weeks != 0) returnstring += weeks + 'w'
+    while (target.getTime() > b.getTime() + 
+      (1000 * 60 * 60 * 24)) {
+      // more than a year off in stated direction
+      target.setDate(target.getDate() - 1)
+      days += 1
+    }
+    if (days != 0) returnstring += days + 'd'
   }
-  if (years != 0) returnstring += years + 'y'
-  while (diff >= 2592000000) {
-    // months
-    diff -= 2592000000
-    months += 1 * change
+  const matches = returnstring.match(/[\d+]\D/g)
+  if (matches.length > 2) {
+    matches.splice(2, 0, '<br>')
+    if (returnstring.charAt(0) == '-') returnstring = '-' + matches.join('')
+    else returnstring = matches.join('')
   }
-  if (months != 0) returnstring += months + 'm'
-  while (diff >= 604800000) {
-    // weeks
-    diff -= 604800000
-    weeks += 1 * change
-  }
-  if (weeks != 0) returnstring += weeks + 'w'
-  while (diff >= 86400000) {
-    // days
-    diff -= 86400000
-    days += 1 * change
-  }
-  if (days != 0) returnstring += days + 'd'
   return returnstring
 }
 
@@ -71,9 +122,14 @@ function stringToDate(string, weekday, future) {
   } else {
     weekday = false
   }
-  string = string.replace('...', '')
+  let logging
+  if (string.includes('...')) logging = true
+  string = string.replace(/\s*\.\.\./, '')
   if (string.charAt(0) == ' ') {
     string = string.slice(1)
+  }
+  if (Object.keys(weekdaysNum).includes(string.split(' ')[0])) {
+    string = string.split(' ').slice(1)[0]
   }
   let date = new Date()
   if (Object.keys(weekdaysNum).includes(string.split(/(\+|-|\s)/)[0])) {
@@ -229,7 +285,7 @@ function dateToHeading(date, saving) {
       // insert before buffer
       $($('#pop').children()[$('#pop').children().length - 1]).before(heading2)
     } else {
-      $(headingafter).prev().before(heading2)
+      $(headingafter).before(heading2)
     }
     const today = new Date()
     today.setHours(0);
@@ -237,12 +293,16 @@ function dateToHeading(date, saving) {
     today.setSeconds(0);
     today.setMilliseconds(0)
     // add in relative dates underneath
+    const newdate = stringToDate(dateToString(date))
     const newelt = $('<span class="placeholder">' + datesToRelative(today,
-      stringToDate(dateToString(date))) + '</span>')
+      newdate) + '</span>')
     $(heading2).append(newelt)
     if (saving != false) {
       select(heading2)
       save('+', selected)
+    }
+    if (newdate.getTime() < today) {
+      heading2.addClass('complete')
     }
     return heading2
   } else {
