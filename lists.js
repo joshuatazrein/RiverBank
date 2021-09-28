@@ -1,55 +1,43 @@
 // # DRAGGING
 
 function dragList(ev) {
+  console.log('draglist');
   //start drag
-  loadedlistobj = ev.target
-  //set data - sets drag data
-  ev.dataTransfer.setData('text/plain', ev.target.value)
-  //specify allowed transfer
-  ev.dataTransfer.effectAllowed = 'move'
+  if ($(ev.target).hasClass('selected')) {
+    loadedlistobj = $(ev.target)
+  } else {
+    loadedlist = $('#loads').children().toArray().indexOf(ev.target)
+    loadList()
+    loadedlistobj = $(ev.target)
+  }
+}
+
+function dragListOver(ev) {
+  ev.preventDefault();
+  if (!$(ev.target).hasClass('drop-hover') && loadedlistobj) {
+    $('.drop-hover').removeClass('drop-hover')
+    $(ev.target).addClass('drop-hover')
+  }
 }
 
 function dropList(ev) {
+  console.log('droplist');
   //drop
-  ev.preventDefault()
-  ev.stopPropagation()
-  //update data
-  loads = Array.from($('#loads').children())
-  // swap positions in array
-  if (selected != undefined) {
-    // move task to new list
-    const index = $(ev.target).parent().children().toArray().indexOf(
-      $(ev.target)[0])
-    const children = getHeadingChildren(selected)
-    $('#test').html(data.flop[index].text); // update test p with html
-    $('#test').append(selected)
-    for (i = children.length - 1; i >= 0; i--) {
-      // append each child after
-      selected.after(children[i])
-    }
-    data.flop[index].text = $('#test').html()
-    save('0')
-    loadedlist = Number(index)
-    loadList()
-    return
+  $('.drop-hover').removeClass('drop-hover')
+  if ($(ev.target).hasClass('unselected')) {
+    $(ev.target).after(loadedlistobj)
+    // move new list to new position in data
+    console.log(data.flop.map((x) => { return x.title }));
+    const loadsplice = JSON.parse(JSON.stringify(data.flop[loadedlist]))
+    data.flop.splice(loadedlist, 1)
+    const newplace = $('#loads').children().toArray().indexOf(loadedlistobj[0])
+    data.flop.splice(newplace, 0, loadsplice)
+    console.log(data.flop.map((x) => { return x.title }));
+    loadedlistobj = undefined
+    loadedlist = newplace
+    dragsOn(false)
+    save()
   }
-  data.flop.splice(loads.indexOf(ev.target) + 1, 0,
-    data.flop[loads.indexOf(loadedlistobj)])
-  // take out old item
-  if (loads.indexOf(loadedlistobj) > loads.indexOf(ev.target)) {
-    data.flop.splice(loads.indexOf(loadedlistobj) + 1, 1)
-    loadedlist = loads.indexOf(ev.target) + 1
-  } else {
-    data.flop.splice(loads.indexOf(loadedlistobj), 1)
-    loadedlist = loads.indexOf(ev.target)
-  }
-  for (let i = 0; i < loads.length; i++) {
-    loads[i].value = data.flop[i].title
-    $(loads[i]).removeClass('sublist')
-    if ($(loads[i]).val().slice(0, 2) == '- ') $(loads[i]).addClass('sublist')
-  }
-  $(':focus').blur()
-  loadList()
 }
 
 // # EDITING

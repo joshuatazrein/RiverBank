@@ -267,10 +267,9 @@ function toggleFuturePanes(saving) {
     $("#events, #importants").show()
     data.futurepanes = 'show'
   }
-  if (saving) {
+  if (saving != false) {
     save('0')
   }
-  updateSizes()
 }
 
 function toggleHelp(saving) {
@@ -282,10 +281,10 @@ function toggleHelp(saving) {
     $("#help").show()
     data.help = 'show'
   }
-  if (saving) {
+  if (saving != false) {
     save('0')
-    updateSizes()
   }
+  updateSizes()
 }
 
 function togglePlay() {

@@ -1021,6 +1021,9 @@ function newTask(subtask, prepend) {
   if (selected.hasClass('dateheading')) {
     updateDeadlines()
   }
+  if (selected.hasClass('futuredate')) {
+    selected.removeClass('futuredate')
+  }
   select(newspan)
   editTask()
 }

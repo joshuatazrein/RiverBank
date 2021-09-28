@@ -246,13 +246,13 @@ function migrate() {
 
 function updateTitles() {
   // update titles of any continuous events in view with current date
-  let bh = $(':root').css('--butheight')
   // add in titles
-  bh = Number(bh.slice(0, bh.length - 2))
-  const curdate = stringToDate(stripChildren($($('#pop .dateheading')
-    .toArray().filter((x) => { 
-      return $(x).position().top > bh
-    })[0])), true).getTime()
+  const bottomdate = $('#pop .dateheading').toArray().find((x) => { 
+    return $(x).position().top > 0 && $(x).position().top < $('#pop').height()
+  })
+  console.log(bottomdate);
+  if (!bottomdate) { return }
+  const curdate = stringToDate(stripChildren($(bottomdate), true)).getTime()
   const inview = $('#pop .continuous').toArray().filter((x) => { 
     return stringToDate($(x).attr('end')).getTime() > curdate &&
       $(x).attr('start') < curdate
@@ -789,6 +789,7 @@ function loadPage(starting, oldselect, scrolls) {
     if (mobileTest()) {
       $('head').append('<link href="mobilestyle.css" rel="stylesheet">')
     }
+    migrate()
     display('loaded settings');
   }
   if ($('#theme').attr('href') != data.style) {
@@ -810,6 +811,7 @@ function loadPage(starting, oldselect, scrolls) {
     const newthing = $('<textarea class="listtitle unselected"></textarea>')
     newthing.on('dragstart', dragList)
     newthing.on('drop', dropList)
+    newthing.on('dragover', dragListOver)
     newthing.on('click', loadThis)
     newthing.attr('draggable', 'true')
     newthing.val(list.title)
