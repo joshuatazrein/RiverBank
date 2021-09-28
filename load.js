@@ -73,8 +73,8 @@ function load() {
     return
   }
   // try the current cookie (synchronous request)
-  const user = getCookie('user')
-  if (user == '') {
+  const fname = getCookie('fname')
+  if (fname == '') {
     console.log('no user loaded');
     if (window.location != 'https://riverbank.app/welcome.html') {
       // no user loaded
@@ -90,9 +90,10 @@ function load() {
     }
     return
   }
-  $.get('download.php',
+  console.log('getting file', '/users/' + getCookie('fname') + '.json');
+  $.get('users/' + getCookie('fname') + '.json',
     function (datastr, status, xhr) {
-      if (['FAIL', ''].includes(xhr.responseText)) { 
+      if (xhr.responseText == '') { 
         console.log('get failed');
         // no file found
         if (offlinemode) {

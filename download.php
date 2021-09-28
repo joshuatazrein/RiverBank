@@ -4,7 +4,7 @@ $pw = $_COOKIE['pw'];
 $conn = new mysqli('server204.web-hosting.com', 
   'joshgncd_joshua', 'hn%X=FbWIU]J', 'joshgncd_riverbank', 3306);
 if ($conn->connect_error) {
-  die('FAIL');
+  die('Connection failed: ' . $conn->connect_error);
 }
 $sql = 'SELECT dt FROM users WHERE user="' . 
   $username . '" AND pw="' . $password . '"';
