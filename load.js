@@ -105,6 +105,7 @@ function load() {
         return
       } else {
         console.log('get succeeded');
+        console.log(xhr.responseText);
         data = JSON.parse(xhr.responseText)
         clearInterval(getting)
         initialize()
