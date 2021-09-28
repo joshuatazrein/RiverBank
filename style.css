@@ -155,7 +155,7 @@ span.eventspan, span.impspan {
 }
 
 .buffer {
-  height: calc(var(--butheight) + 20%);
+  height: calc(var(--butheight));
 }
 
 .buffer.bottom {
