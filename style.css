@@ -154,6 +154,19 @@ span.eventspan, span.impspan {
   overflow: hidden;
 }
 
+#imports {
+  position: absolute;
+  height: 75vh;
+  width: 75vw;
+  background: var(--background);
+}
+
+#imports textarea {
+  width: 100%;
+  height: 100%;
+  overflow-x: scroll;
+}
+
 .buffer {
   height: calc(var(--butheight));
 }
@@ -470,7 +483,7 @@ textarea.listtitle, p.listtitle {
 
 /* EDITING */
 
-textarea.in, p.incopy {
+textarea.in, p.incopy, #imports textarea {
   font: inherit;
   width: 100%;
   color: var(--textcolor);

@@ -251,7 +251,9 @@
       <p function='dragsOff()' class='dropdown-item' id='context-toggledrags'>edit</p>
       <p function='deleteList()' class='dropdown-item' id='context-deletelist'>delete</p>
       <p function='toggleFoldList()' class='dropdown-item' id='context-toggleFoldList'>toggle fold</p>
-  
+      <p function='shareList()' class='dropdown-item' id='context-shareList'>share</p>
+      <p function='startImport()' class='dropdown-item' id='context-importTasks'>import</p>
+
       <p function='toggleHelp()' class='dropdown-item' id='context-toggleHelp'>toggle help</p>
       <p function='toggleButs()' class='dropdown-item' id='context-toggleButs'>toggle buttons</p>
       <p function='toggleFuturePanes()' class='dropdown-item' id='context-toggleFuturePanes'>toggle future panes</p>
@@ -288,6 +290,10 @@
       <p class='dropdown-item' title='toggle maybe' function='toggleMaybe()'>? maybe</p>
       <p class='dropdown-item' title='set blank' function='setTask("")'>_ blank</p>
     </nav>
+    <div id='imports' style='display:none'>
+      <button id='importsBut' onclick="importTasks()">import</button>
+      <textarea></textarea>
+    </div>
     <div id='tutorial' style='display:none'>
       <span class='banner'>tutorial <button style='top:-1.5em;position:relative;' onclick='$("#tutorial").hide()'>done</button></span>
       <br><br><br>

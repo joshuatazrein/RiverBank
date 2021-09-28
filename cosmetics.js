@@ -468,6 +468,9 @@ function context(ev, mobile) {
     '#context-toggleFoldList': [
       ['TEXTAREA'], ['selected', 'unselected']
     ],
+    '#context-shareList': [
+      ['TEXTAREA', 'DIV'],['selected']
+    ],
     '#context-reset': [
       ['BUTTON', 'DIV'], ['opts']
     ],
@@ -494,6 +497,9 @@ function context(ev, mobile) {
     ],
     '#context-toggleimportant': [
       ['SPAN'], ['in']
+    ],
+    '#context-importTasks': [
+      ['SPAN', 'BUTTON'], ['in', 'opts']
     ],
     '#context-weekdaysToggle': [
       ['BUTTON'], ['opts']
@@ -727,6 +733,8 @@ function clickOn(ev) {
   // pre-click
   if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
     return 
+  } else if ($(ev.target).parent().attr('id') == 'imports') {
+    return
   } else if ($(ev.target).hasClass('slider')) {
     return
   } else if ($(ev.target).hasClass('dropdown-item')) { 
@@ -751,7 +759,8 @@ function clickOn(ev) {
     startTimer()
   } else if ($(ev.target).attr('id') == 'timerStopBut') {
     stopTimer()
-  } else if (['newSubtaskBut', 'scheduleBut', 'collapseBut', 'editTaskBut']
+  } else if (['newSubtaskBut', 'scheduleBut', 'collapseBut', 'editTaskBut',
+    'importsBut']
     .includes($(ev.target).attr('id'))) {
     // buttons evaluated with clickoff() (for selection purposes)
     return
@@ -838,6 +847,7 @@ function keyUp(ev) {
 
 function keyDown(ev) {
   // key down
+  if ($('#imports').is(':visible')) return
   if (ev.key == 'Control') {
     // cancel draggables
     try {
@@ -933,6 +943,11 @@ function keyDown(ev) {
       saveTask()
     }
     frame.scrollTop(scrollsave)
+  } else if (ev.key == 'Escape') {
+    if ($('#imports').is(':visible')) {
+      $('#imports textarea').val('')
+      $('#imports').hide()
+    }
   } else if (ev.key == 't' && ev.ctrlKey) {
     // go to today
     select(dateToHeading(stringToDate('0d')), true)

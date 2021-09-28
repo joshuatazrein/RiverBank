@@ -193,6 +193,57 @@ function toggleFoldList(saving, list) {
 
 // # LOADING
 
+function shareList() {
+  let string = ''
+  $('#flop').find('span.in').toArray().forEach((x) => {
+    select($(x), false)
+    if (selected.is(':visible') && selected.text().length > 0) {
+      editTask()
+      string += selected.val() + '\n'
+      saveTask()
+    }
+  })
+  var blob = new Blob([string], {
+    type: 'text/plain;charset=utf-8'
+  })
+  const date = new Date()
+  saveAs(blob, 
+      data.flop[loadedlist].title + '-' + dateToString(date) + '.txt')
+}
+
+function startImport() {
+  $('#imports').show()
+  $('#imports').css('top', '13vh')
+  $('#imports').css('left', '13vw')
+}
+
+function importTasks() {
+  if (!selected) {
+    select('#flop')
+  }
+  const vals = $('#imports textarea').val().match(/^.*((\r\n|\n|\r)|$)/gm);
+  console.log(vals);
+  let i = 0
+  for (value of vals) {
+    newTask()
+    selected.val(value.replace(/\n/g, ''))
+    saveTask()
+    try {
+      if (vals[i - 1].slice(0, 2) == '  ') {
+        indentTask(false)
+        if (vals[i - 1].slice(0, 2) != '  ') {
+          indentTask(false)
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    i ++
+  }
+  $('#imports textarea').val('')
+  $('#imports').hide()
+}
+
 function loadList(saving) { 
   // load the current loadedlist into Flop
   if (loadedlist === undefined) {
