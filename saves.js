@@ -146,6 +146,7 @@ function migrate() {
   // move past tasks to today
   const today = stringToDate('0d').getTime()
   const todayheading = $(dateToHeading(stringToDate('0d'), false))
+  const todaydate = new Date()
   const headings = $('#pop').children().filter('.dateheading').toArray()
   for (heading of headings) {
     if (stringToDate(stripChildren($(heading)), true).getTime() < today) {
@@ -227,19 +228,18 @@ function migrate() {
         toggleFold($(heading), false)
       }
       // creating relative dates
-      today = stringToDate('0d')
       for (heading of $('#pop').children().filter('.dateheading:not(.futuredate)')) {
         // add in relative dates underneath
         const newelt = createBlankTask()
         newelt.text(datesToRelative(
-          today,
+          todaydate,
           stringToDate(stripChildren($(heading)), true)))
         newelt.addClass('placeholder')
         newelt.removeClass('in')
         $(heading).append(newelt)
       }
       // update future dates up to 30 days from now
-      const curdate = today.getDate()
+      const curdate = todaydate.getDate()
       for (let i = 1; i < 30; i ++) {
         const futuredate = new Date()
         futuredate.setDate(curdate + i)
@@ -254,8 +254,7 @@ function updateTitles() {
   // update titles of any continuous events in view with current date
   let bh = $(':root').css('--butheight')
   // add in titles
-  bh = Number(bh.slice(0, bh.length - 2)) + 
-    Number($('#events').height())
+  bh = Number(bh.slice(0, bh.length - 2))
   const curdate = stringToDate(stripChildren($($('#pop .dateheading')
     .toArray().filter((x) => { 
       return $(x).position().top > bh
@@ -397,6 +396,8 @@ function updateBuffers() {
 
 function save(changes, changed, force) {
   // stores data
+  let now = new Date()
+  let initial = now.getTime()
   unFilter()
   if (['+','-','>'].includes(changes)) {
     prevsave = JSON.parse(JSON.stringify(data))
@@ -414,85 +415,114 @@ function save(changes, changed, force) {
   }
   // X updates everything without uploading data
   data.loadedlist = loadedlist
+  // save data
+  now = new Date()
+  console.log('saved', now.getTime() - initial)
+  initial = now.getTime()
   if (changes != 'X') { uploadData() }
-  console.log(changes, changed);
-  if (['>', '+', 'X'].includes(changes)) {
+  now = new Date()
+  console.log('uploadData', now.getTime() - initial)
+  initial = now.getTime()
+  // X updates everything without uploading data
+  // P is for date creation
+  if (changes == 'X') {
     updateSpanDrags()
+  } else if (changes == 'P') {
+    updateSpanDrags('pop')
+  } else if (changes == 'L') {
+    updateSpanDrags('flop')
+  } else if (changes == '+' && changed) {
+    console.log('single update', changed);
+    updateSpanDrags(changed)
   }
+  now = new Date()
+  console.log('updateSpanDrags', now.getTime() - initial)
+  initial = now.getTime()
   if (['i', 'X'].includes(changes)) {
     updateImportants()
   }
-  if (['-', '+', 'X'].includes(changes) &&
-    ((force || changed && stripChildren($(changed)).includes('>')))) {
-    console.log('updating deadlines');
+  now = new Date()
+  console.log('updateImportants', now.getTime() - initial)
+  initial = now.getTime()
+  if (['-', '+', 'X'].includes(changes)) {
     updateDeadlines()
   }
+  now = new Date()
+  console.log('updateDeadlines', now.getTime() - initial)
+  initial = now.getTime()
   if (['-', 'X'].includes(changes)) {
     clearEmptyDates()
   }
+  now = new Date()
+  console.log('clearEmptyDates', now.getTime() - initial)
+  initial = now.getTime()
   if (['L', 'X'].includes(changes)) {
     updateBuffers()
   }
+  now = new Date()
+  console.log('updateBuffers', now.getTime() - initial)
+  initial = now.getTime()
 }
 
+
 function diffsLog(oldString, newString) {
-  if (!oldString || !newString) return
-  // log diffs between previous data and new data
-  let diffs = 'Diffs:'
-  if (!oldString) oldString = JSON.stringify({ flop: [], pop: '' })
-  const initialjson = JSON.parse(oldString)
-  const olddata = initialjson.flop.concat(
-    [{ 'title': 'pop', 'text': initialjson.pop }])
-  const olddatadict = {}
-  for (list of olddata) {
-    $('#test').html(list.text)
-    olddatadict[list.title] = $('#test').find('span.in').toArray().map(
-      (x) => { return stripChildren($(x)) })
-  }
-  const responsejson = JSON.parse(newString)
-  const newdata = responsejson.flop.concat(
-    [{ 'title': 'pop', 'text': responsejson.pop }])
-  const newdatadict = {}
-  for (list of newdata) {
-    $('#test').html(list.text)
-    newdatadict[list.title] = $('#test').find('span.in').toArray().map(
-      (x) => { return stripChildren($(x)) })
-  }
-  for (list of Object.keys(olddatadict)) {
-    if (!Object.keys(newdatadict).includes(list)) {
-      diffs += '\n- list: ' + list
-    } else {
-      for (task of olddatadict[list]) {
-        if (!newdatadict[list].includes(task)) {
-          diffs += '\n- task in ' + list + ': ' + task
-        }
-      }
-    }
-  }
-  for (list of Object.keys(newdatadict)) {
-    if (!Object.keys(olddatadict).includes(list)) {
-      diffs += '\n+ list: ' + list
-    } else {
-      let i = 0
-      for (task of newdatadict[list]) {
-        if (!olddatadict[list].includes(task)) {
-          diffs += '\n+ task in ' + list + ': ' + task
-        } else if (
-          olddatadict[list][i] != task &&
-          olddatadict[list][olddatadict[list].indexOf(task) - 1] !=
-          newdatadict[list][i - 1] &&
-          olddatadict[list][olddatadict[list].indexOf(task) + 1] !=
-          newdatadict[list][i + 1]) {
-          // moved tasks have different befores and afters; hack
-          // to make so that it doesn't screw up on duplicate text
-          diffs += '\nmoved task in ' + list + ': ' + task
-        }
-        i++
-      }
-    }
-  }
-  display(diffs)
-  return diffs
+  // if (!oldString || !newString) return
+  // // log diffs between previous data and new data
+  // let diffs = 'Diffs:'
+  // if (!oldString) oldString = JSON.stringify({ flop: [], pop: '' })
+  // const initialjson = JSON.parse(oldString)
+  // const olddata = initialjson.flop.concat(
+  //   [{ 'title': 'pop', 'text': initialjson.pop }])
+  // const olddatadict = {}
+  // for (list of olddata) {
+  //   $('#test').html(list.text)
+  //   olddatadict[list.title] = $('#test').find('span.in').toArray().map(
+  //     (x) => { return stripChildren($(x)) })
+  // }
+  // const responsejson = JSON.parse(newString)
+  // const newdata = responsejson.flop.concat(
+  //   [{ 'title': 'pop', 'text': responsejson.pop }])
+  // const newdatadict = {}
+  // for (list of newdata) {
+  //   $('#test').html(list.text)
+  //   newdatadict[list.title] = $('#test').find('span.in').toArray().map(
+  //     (x) => { return stripChildren($(x)) })
+  // }
+  // for (list of Object.keys(olddatadict)) {
+  //   if (!Object.keys(newdatadict).includes(list)) {
+  //     diffs += '\n- list: ' + list
+  //   } else {
+  //     for (task of olddatadict[list]) {
+  //       if (!newdatadict[list].includes(task)) {
+  //         diffs += '\n- task in ' + list + ': ' + task
+  //       }
+  //     }
+  //   }
+  // }
+  // for (list of Object.keys(newdatadict)) {
+  //   if (!Object.keys(olddatadict).includes(list)) {
+  //     diffs += '\n+ list: ' + list
+  //   } else {
+  //     let i = 0
+  //     for (task of newdatadict[list]) {
+  //       if (!olddatadict[list].includes(task)) {
+  //         diffs += '\n+ task in ' + list + ': ' + task
+  //       } else if (
+  //         olddatadict[list][i] != task &&
+  //         olddatadict[list][olddatadict[list].indexOf(task) - 1] !=
+  //         newdatadict[list][i - 1] &&
+  //         olddatadict[list][olddatadict[list].indexOf(task) + 1] !=
+  //         newdatadict[list][i + 1]) {
+  //         // moved tasks have different befores and afters; hack
+  //         // to make so that it doesn't screw up on duplicate text
+  //         diffs += '\nmoved task in ' + list + ': ' + task
+  //       }
+  //       i++
+  //     }
+  //   }
+  // }
+  // display(diffs)
+  // return diffs
 }
 
 function uploadData(reloading) {
@@ -793,7 +823,7 @@ function loadPage(starting, oldselect, scrolls) {
     const newthing = $('<textarea class="listtitle unselected"></textarea>')
     newthing.on('dragstart', dragList)
     newthing.on('drop', dropList)
-    newthing.on('click', loadthis)
+    newthing.on('click', loadThis)
     newthing.attr('draggable', 'true')
     newthing.val(list.title)
     $('#loads').append(newthing)
@@ -849,8 +879,6 @@ function loadPage(starting, oldselect, scrolls) {
       select(oldselect[0], true)
     } else {
       scrollToToday()
-      $('#events, #importants').css('margin-top', 
-        'calc(var(--butheight) - 5px)')
     }
   }, 1000)
 }

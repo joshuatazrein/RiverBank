@@ -129,7 +129,7 @@ function newlist(title, text, saving) {
   const newthing = $('<textarea></textarea>')
   newthing.val(newobj.title)
   newthing.addClass('unselected listtitle')
-  newthing.on('click', loadthis)
+  newthing.on('click', loadThis)
   if (dragsenabled == 'true') {
     newthing.attr('draggable', 'true')
   }
@@ -220,7 +220,6 @@ function loadList(saving) {
   $(loads[loadedlist]).removeClass('unselected')
   $(loads[loadedlist]).addClass('selected')
   $('#flop').html(data.flop[loadedlist].text)
-  updateSpanDrags()
   $('.taskselect').removeClass('taskselect')
   if (saving != false) {
     save('L')
@@ -234,7 +233,9 @@ function loadList(saving) {
   }
 }
 
-function loadthis(event) {
+function loadThis(ev) {
+  const now = new Date().getTime()
+  console.trace()
   // load the clicked on list
   let movetask
   if (movetolist) {

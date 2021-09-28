@@ -426,8 +426,7 @@ function tutorial() {
 function scrollToToday() {
   // view today
   let butheight = $(':root').css('--butheight')
-  butheight = Number(butheight.slice(0, butheight.length - 2)) + 
-    $('#events').height() + 20
+  butheight = Number(butheight.slice(0, butheight.length - 2)) + 10
   $('#pop').animate({
     scrollTop: $(dateToHeading(stringToDate('0d'))).offset().top
       - $('#pop').offset().top - butheight
@@ -620,7 +619,6 @@ function setOptions() {
 // # COMMANDS
 
 function clickOff(ev) {
-  console.trace()
   // mouse off
   if (draggingtask) { 
     setTimeout(function () {
@@ -632,7 +630,6 @@ function clickOff(ev) {
     }, 100)
     return 
   }
-  console.log(dblclicked);
   if (dblclicked) {
     console.log('dblclicked');
     if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
