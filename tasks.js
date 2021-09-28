@@ -490,7 +490,7 @@ function updateSpanDrags(task) {
   if (!task) {
     selector = 'span.in:not(.dateheading):visible'
   } else if (task == 'flop') {
-    selector = 'flop span.in:not(.dateheading):visible'
+    selector = '#flop span.in:not(.dateheading):visible'
   } else {
     selector = $(task)[0]
   }
@@ -529,6 +529,7 @@ function updateSpanDrags(task) {
       $(task).removeClass('ui-droppable')
     }
   } else {
+    console.log($(selector));
     $(selector).draggable({
       containment: 'window',
       revert: true,
@@ -546,7 +547,7 @@ function updateSpanDrags(task) {
         $('#listcontainer > span').removeClass('in')
       },
     })
-    $('span.in').attr('draggable', 'true')
+    $(selector).attr('draggable', 'true')
   }
   // reset drops
   if (!task) {
@@ -559,7 +560,7 @@ function updateSpanDrags(task) {
       }
     })
   } else {
-    $(task).droppable({
+    $(selector).droppable({
       accept: 'span.in',
       hoverClass: 'drop-hover',
       greedy: true,
