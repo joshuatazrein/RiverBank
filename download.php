@@ -1,4 +1,5 @@
 <?php
+header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Cache-Control");
 // $user = $_COOKIE['user'];
 // $pw = $_COOKIE['pw'];
 // $conn = new mysqli('server204.web-hosting.com', 
@@ -18,7 +19,6 @@
 //   // echo "FAIL";
 // }
 // original
-header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Cache-Control");
 $cookie = $_COOKIE['fname'];
 echo file_get_contents('users/' . $cookie . '.json');
 $conn->close();
