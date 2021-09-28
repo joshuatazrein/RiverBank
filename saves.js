@@ -515,6 +515,47 @@ function diffsLog(oldString, newString) {
   return diffs
 }
 
+// function uploadData(reloading) {
+//   // upload data to the server
+//   if (window.parent.location.href.includes('welcome')) {
+//     return // for demo
+//   }
+//   display('--- upload started ---') 
+//   if (JSON.stringify(data) == prevupload) {
+//     display('identical');
+//     return
+//   }
+//   if (navigator.onLine && !offlinemode) {
+//     $.post("upload.php", {
+//       datastr: JSON.stringify(data),
+//     }, function (data, status, xhr) {
+//       display('*** upload finished ***')
+//       diffsLog(JSON.stringify(data), xhr.responseText)
+//       prevupload = xhr.responseText
+//       localStorage.setItem('data', JSON.stringify(data))
+//       if (reloading) reload() // reloads page
+//     });
+//   } else {
+//     if (!navigator.onLine && !offline) {
+//       // if it's offline save that
+//       alert('Connection lost; saving locally')
+//       offline = true
+//     } else if (navigator.onLine && offline) {
+//       reload()
+//       return
+//     }
+//     // offline mode
+//     localStorage.setItem('data', JSON.stringify(data))
+//     display('*** local upload finished ***')
+//     prevupload = JSON.stringify(data)
+//     if (reloading) {
+//       display('reloading from upload (offline)');
+//       reload() // reloads page
+//       return
+//     }
+//   }
+// }
+
 function uploadData(reloading) {
   // upload data to the server
   if (window.parent.location.href.includes('welcome')) {
@@ -529,8 +570,8 @@ function uploadData(reloading) {
     $.post("upload.php", {
       datastr: JSON.stringify(data),
     }, function (data, status, xhr) {
+      diffsLog(prevupload, xhr.responseText)
       display('*** upload finished ***')
-      diffsLog(JSON.stringify(data), xhr.responseText)
       prevupload = xhr.responseText
       localStorage.setItem('data', JSON.stringify(data))
       if (reloading) reload() // reloads page
@@ -546,6 +587,7 @@ function uploadData(reloading) {
     }
     // offline mode
     localStorage.setItem('data', JSON.stringify(data))
+    diffsLog(prevupload, JSON.stringify(data))
     display('*** local upload finished ***')
     prevupload = JSON.stringify(data)
     if (reloading) {
