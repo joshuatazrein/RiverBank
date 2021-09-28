@@ -503,27 +503,32 @@ function updateSpanDrags(task) {
       $(span.in).attr('draggable', 'false')
     }
     $(selector).toArray().forEach((x) => {
-      $(x).draggable({
-        handle: '.mobhandle',
-        containment: 'window',
-        axis: 'y',
-        revert: true,
-        appendTo: $('#listcontainer'),
-        helper: 'clone',
-        cursorAt: {right: 0, top: $(x).height() / 2},
-        refreshPositions: true,
-        zIndex: 1,
-        distance: 20,
-        addClasses: false,
-        start: function (event) {
-          // $(this).hide()
-          dragTask(event, $(this))
-        },
-        drag: function (event) {
-          mobileDragOver(event)
-          $('#listcontainer > span').removeClass('in')
-        },
-      })
+      try {
+        const widget = $(x).draggable('widget')
+      } catch (err) {
+        // not draggable
+        $(x).draggable({
+          handle: '.mobhandle',
+          containment: 'window',
+          axis: 'y',
+          revert: true,
+          appendTo: $('#listcontainer'),
+          helper: 'clone',
+          cursorAt: {right: 0, top: $(x).height() / 2},
+          refreshPositions: true,
+          zIndex: 1,
+          distance: 20,
+          addClasses: false,
+          start: function (event) {
+            // $(this).hide()
+            dragTask(event, $(this))
+          },
+          drag: function (event) {
+            mobileDragOver(event)
+            $('#listcontainer > span').removeClass('in')
+          },
+        })
+      }
     })
     if (!task) {
       $('.ui-draggable-handle').removeClass('ui-draggable-handle')
@@ -535,55 +540,62 @@ function updateSpanDrags(task) {
   } else {
     $('.mobhandle').remove()
     $(selector).toArray().forEach((x) => {
-      $(x).draggable({
-        containment: 'window',
-        revert: true,
-        appendTo: $('#listcontainer'),
-        distance: 20,
-        helper: 'clone',
-        cursorAt: {
-          left: 0, 
-          top: $(x).height() / 2},
-        refreshPositions: true,
-        zIndex: 1,
-        addClasses: false,
-        start: function (event) {
-          dragTask(event, $(this))
-        },
-        drag: function (event) {
-          dragTaskOver(event)
-          $('#listcontainer > span').removeClass('in')
-        },
-      })
+      try {
+        const widget = $(x).draggable('widget')
+      } catch (err) {
+        $(x).draggable({
+          containment: 'window',
+          revert: true,
+          appendTo: $('#listcontainer'),
+          distance: 20,
+          helper: 'clone',
+          cursorAt: {
+            left: 0, 
+            top: $(x).height() / 2},
+          refreshPositions: true,
+          zIndex: 1,
+          addClasses: false,
+          start: function (event) {
+            dragTask(event, $(this))
+          },
+          drag: function (event) {
+            dragTaskOver(event)
+            $('#listcontainer > span').removeClass('in')
+          },
+        })
+      }
     })
     $('span.in').attr('draggable', 'true')
   }
   // reset drops
   if (!task) {
-    try { $('span.in').droppable('destroy') }
-    catch (err) {}
-    $('span.in').droppable({
-      accept: 'span.in',
-      hoverClass: 'drop-hover',
-      greedy: true,
-      drop: function (event) {
-        dropTask(event)
-        // select(ui.draggable[0], true)
+    $('span.in').toArray().forEach((x) => {
+      try { 
+        const widget = $(x).droppable('widget') 
+      } catch (err) {
+        $(x).droppable({
+          accept: 'span.in',
+          hoverClass: 'drop-hover',
+          greedy: true,
+          drop: function (event) {
+            dropTask(event)
+          }
+        })
       }
     })
-  }
-  else {
-    try { $(task).droppable('destroy') }
-    catch (err) {}
-    $(task).droppable({
-      accept: 'span.in',
-      hoverClass: 'drop-hover',
-      greedy: true,
-      drop: function (event) {
-        dropTask(event)
-        // select(ui.draggable[0], true)
-      }
-    })
+  } else {
+    try { 
+      const widget = $(task).droppable('widget') 
+    } catch (err) {
+      $(task).droppable({
+        accept: 'span.in',
+        hoverClass: 'drop-hover',
+        greedy: true,
+        drop: function (event) {
+          dropTask(event)
+        }
+      })
+    }
   }
 }
 
