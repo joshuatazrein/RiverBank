@@ -18,6 +18,7 @@
 // } else {
 //   // echo "FAIL";
 // }
+<<<<<<< HEAD
 // $conn->close();
 =======
 $user = $_COOKIE['user'];
@@ -39,8 +40,11 @@ if ($result->num_rows > 0) {
   // echo "FAIL";
 }
 >>>>>>> parent of 33f3d69 (orig download)
+=======
+>>>>>>> parent of 9fdff3b (orig files)
 // original
 header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Cache-Control");
 $cookie = $_COOKIE['fname'];
 echo file_get_contents('users/' . $cookie . '.json');
+$conn->close();
 ?>
