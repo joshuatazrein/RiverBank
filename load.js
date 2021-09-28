@@ -104,7 +104,7 @@ function load() {
         clearInterval(getting)
         return
       } else {
-        console.log('get succeeded', xhr.responseText);
+        console.log('get succeeded');
         if (!xhr.responseText.includes('flop')) {
           alert('please upload a copy of your new data:')
           // upload backup
