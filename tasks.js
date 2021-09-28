@@ -997,11 +997,6 @@ function editTask() {
         selected.offset().top - getFrame(selected).offset().top -
         Number($(':root').css('--butheight')
         .slice(0, $(':root').css('--butheight').length - 2))
-      if (getFrame(selected).attr('id') == 'flop') {
-        scrollto -= $('#importants').height()
-      } else if (getFrame(selected).attr('id') == 'pop') {
-        scrollto -= $('#events').height()
-      }
       getFrame(selected).animate({
         scrollTop: scrollto
       }, 500)

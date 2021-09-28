@@ -673,18 +673,6 @@ function select(el, scroll, animate) {
         // only execute if not clicked
         parent = getFrame(selected)
         let butheight = $(':root').css('--butheight')
-        if (getFrame(selected).attr('id') == 'pop') {
-          // add in events
-          butheight = Number(butheight.slice(0, butheight.length - 2))
-          butheight += Number($('#events').height())
-          butheight += 'px'
-        } else if (getFrame(selected).attr('id') == 'flop') {
-          // add in importants
-          butheight = Number(butheight.slice(0, butheight.length - 2))
-          butheight += Number($('#importants').height())
-          butheight += 'px'
-        }
-      // console.log(butheight);
         const oldscroll = parent.scrollTop() -
           Number(butheight.slice(0, butheight.length - 2))
         let scrolltime

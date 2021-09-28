@@ -866,7 +866,6 @@ function loadPage(starting, oldselect, scrolls) {
   $('#events, #importants').hide()
   save('X', null, true)
   setTimeout(function () {
-    $('#events, #importants').css('margin-top', '0')
     if (data.futurepanes == 'show') {
       $('#events, #importants').show()
     }
