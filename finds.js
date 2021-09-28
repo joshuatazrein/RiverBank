@@ -543,7 +543,6 @@ function search(skiplinks, deadline) {
     .replace(/\s/g, '\\s')
     .replace(/([\*\+\?\.\|\[\]\(\)\{\}\^\$])/g, '\\$1')
   const searchexp = new RegExp(searchexptext, 'gi')
-  // console.log(searchexp);
   const searches = data.flop.concat([{
     'title': 'pop',
     'text': data.pop
@@ -557,7 +556,6 @@ function search(skiplinks, deadline) {
     for (let child of children) {
       // if it's a match, add to matches
       if (searchexp.test(stripChildren($(child)))) {
-      // console.log(stripChildren($(child)), searchtext + ' >' + deadline)
         // add to matches
         if (skiplinks &&
           $(child).text().includes('[[' + searchtext)) {
@@ -594,7 +592,6 @@ function search(skiplinks, deadline) {
   $('#searchbar-results').show()
   if ($('#searchbar-results').children().length == 1) {
     // go automatically to first item if that works
-  // console.log('working');
     goToSearch($($('#searchbar-results').children()[0]))
   }
 }

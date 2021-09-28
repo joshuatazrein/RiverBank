@@ -36,7 +36,6 @@ function signIn() {
       $.get(
         'users/' + xhr.responseText + '.json', 
         function (dataval, status, xhr2) {
-          console.log(xhr2.responseText)
           data = JSON.parse(xhr2.responseText)
           window.location='https://riverbank.app'
         }

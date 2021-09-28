@@ -1,10 +1,5 @@
 // # BROWSER 
 
-function display(x) {
-  // for permanent console logs
-  console.log(x)
-}
-
 function resetCookies() {
   // delete cookies
   let past = new Date()
@@ -244,7 +239,6 @@ function migrate() {
         const futuredate = new Date()
         futuredate.setDate(curdate + i)
         const newdate = dateToHeading(futuredate, false)
-        console.log(newdate);
       }
     }
   }
@@ -277,7 +271,6 @@ function updateTitles() {
     return stringToDate($($(a).children()[0]).attr('deadline')).getTime() - 
       stringToDate($($(b).children()[0]).attr('deadline')).getTime()
   })
-// console.log(list);
   $('#events').empty()
   list.forEach((x) => { $('#events').append(x) })
 }
@@ -417,112 +410,110 @@ function save(changes, changed, force) {
   data.loadedlist = loadedlist
   // save data
   now = new Date()
-  console.log('saved', now.getTime() - initial)
+  display('saved: ' + String(now.getTime() - initial))
   initial = now.getTime()
   if (changes != 'X') { uploadData() }
   now = new Date()
-  console.log('uploadData', now.getTime() - initial)
+  display('uploadData: ' + String(now.getTime() - initial))
   initial = now.getTime()
   // X updates everything without uploading data
   // P is for date creation
-  if (changes == 'X') {
-    updateSpanDrags()
-  } else if (changes == 'P') {
-    updateSpanDrags('pop')
-  } else if (changes == 'L') {
-    updateSpanDrags('flop')
-  } else if (changes == '+' && changed) {
-    console.log('single update', changed);
-    updateSpanDrags(changed)
-  }
-  now = new Date()
-  console.log('updateSpanDrags', now.getTime() - initial)
-  initial = now.getTime()
   if (['i', 'X'].includes(changes)) {
     updateImportants()
   }
   now = new Date()
-  console.log('updateImportants', now.getTime() - initial)
+  display('updateImportants: ' + String(now.getTime() - initial))
   initial = now.getTime()
   if (['-', '+', 'X'].includes(changes)) {
     updateDeadlines()
   }
   now = new Date()
-  console.log('updateDeadlines', now.getTime() - initial)
+  display('updateDeadlines: ' + String(now.getTime() - initial))
   initial = now.getTime()
   if (['-', 'X'].includes(changes)) {
     clearEmptyDates()
   }
   now = new Date()
-  console.log('clearEmptyDates', now.getTime() - initial)
+  display('clearEmptyDates: ' + String(now.getTime() - initial))
   initial = now.getTime()
   if (['L', 'X'].includes(changes)) {
     updateBuffers()
   }
   now = new Date()
-  console.log('updateBuffers', now.getTime() - initial)
+  display('updateBuffers: ' + String(now.getTime() - initial))
+  initial = now.getTime()
+  if (changes == 'X') {
+    updateSpanDrags()
+  } else if (changes == 'L') {
+    updateSpanDrags('flop')
+  } else if (changes == '+' && changed) {
+    updateSpanDrags(changed)
+  }
+  now = new Date()
+  display('updateSpanDrags: ' + String(now.getTime() - initial))
   initial = now.getTime()
 }
 
 
 function diffsLog(oldString, newString) {
-  // if (!oldString || !newString) return
-  // // log diffs between previous data and new data
-  // let diffs = 'Diffs:'
-  // if (!oldString) oldString = JSON.stringify({ flop: [], pop: '' })
-  // const initialjson = JSON.parse(oldString)
-  // const olddata = initialjson.flop.concat(
-  //   [{ 'title': 'pop', 'text': initialjson.pop }])
-  // const olddatadict = {}
-  // for (list of olddata) {
-  //   $('#test').html(list.text)
-  //   olddatadict[list.title] = $('#test').find('span.in').toArray().map(
-  //     (x) => { return stripChildren($(x)) })
-  // }
-  // const responsejson = JSON.parse(newString)
-  // const newdata = responsejson.flop.concat(
-  //   [{ 'title': 'pop', 'text': responsejson.pop }])
-  // const newdatadict = {}
-  // for (list of newdata) {
-  //   $('#test').html(list.text)
-  //   newdatadict[list.title] = $('#test').find('span.in').toArray().map(
-  //     (x) => { return stripChildren($(x)) })
-  // }
-  // for (list of Object.keys(olddatadict)) {
-  //   if (!Object.keys(newdatadict).includes(list)) {
-  //     diffs += '\n- list: ' + list
-  //   } else {
-  //     for (task of olddatadict[list]) {
-  //       if (!newdatadict[list].includes(task)) {
-  //         diffs += '\n- task in ' + list + ': ' + task
-  //       }
-  //     }
-  //   }
-  // }
-  // for (list of Object.keys(newdatadict)) {
-  //   if (!Object.keys(olddatadict).includes(list)) {
-  //     diffs += '\n+ list: ' + list
-  //   } else {
-  //     let i = 0
-  //     for (task of newdatadict[list]) {
-  //       if (!olddatadict[list].includes(task)) {
-  //         diffs += '\n+ task in ' + list + ': ' + task
-  //       } else if (
-  //         olddatadict[list][i] != task &&
-  //         olddatadict[list][olddatadict[list].indexOf(task) - 1] !=
-  //         newdatadict[list][i - 1] &&
-  //         olddatadict[list][olddatadict[list].indexOf(task) + 1] !=
-  //         newdatadict[list][i + 1]) {
-  //         // moved tasks have different befores and afters; hack
-  //         // to make so that it doesn't screw up on duplicate text
-  //         diffs += '\nmoved task in ' + list + ': ' + task
-  //       }
-  //       i++
-  //     }
-  //   }
-  // }
-  // display(diffs)
-  // return diffs
+  if (!oldString || !newString) return
+  // log diffs between previous data and new data
+  let diffs = 'Diffs:'
+  if (!oldString) oldString = JSON.stringify({ flop: [], pop: '' })
+  const initialjson = JSON.parse(oldString)
+  const olddata = initialjson.flop.concat(
+    [{ 'title': 'pop', 'text': initialjson.pop }])
+  const olddatadict = {}
+  for (list of olddata) {
+    $('#test').html(list.text)
+    olddatadict[list.title] = $('#test').find('span.in').toArray().map(
+      (x) => { return stripChildren($(x)) })
+  }
+  const responsejson = JSON.parse(newString)
+  const newdata = responsejson.flop.concat(
+    [{ 'title': 'pop', 'text': responsejson.pop }])
+  const newdatadict = {}
+  for (list of newdata) {
+    $('#test').html(list.text)
+    newdatadict[list.title] = $('#test').find('span.in').toArray().map(
+      (x) => { return stripChildren($(x)) })
+  }
+  for (list of Object.keys(olddatadict)) {
+    if (!Object.keys(newdatadict).includes(list)) {
+      diffs += '\n- list: ' + list
+    } else {
+      for (task of olddatadict[list]) {
+        if (!newdatadict[list].includes(task)) {
+          diffs += '\n- task in ' + list + ': ' + task
+        }
+      }
+    }
+  }
+  for (list of Object.keys(newdatadict)) {
+    if (!Object.keys(olddatadict).includes(list)) {
+      diffs += '\n+ list: ' + list
+    } else {
+      let i = 0
+      for (task of newdatadict[list]) {
+        if (!olddatadict[list].includes(task)) {
+          diffs += '\n+ task in ' + list + ': ' + task
+        } else if (
+          olddatadict[list][i] != task &&
+          olddatadict[list][olddatadict[list].indexOf(task) - 1] !=
+          newdatadict[list][i - 1] &&
+          olddatadict[list][olddatadict[list].indexOf(task) + 1] !=
+          newdatadict[list][i + 1]) {
+          // moved tasks have different befores and afters; hack
+          // to make so that it doesn't screw up on duplicate text
+          diffs += '\nmoved task in ' + list + ': ' + task
+        }
+        i++
+      }
+    }
+  }
+  if (diffs == 'Diffs:') { display('** identical **') }
+  else { display(diffs) }
+  return diffs
 }
 
 function uploadData(reloading) {
@@ -539,7 +530,6 @@ function uploadData(reloading) {
     $.post("upload.php", {
       datastr: JSON.stringify(data),
     }, function (data, status, xhr) {
-      diffsLog(prevupload, xhr.responseText)
       display('*** upload finished ***')
       prevupload = xhr.responseText
       localStorage.setItem('data', JSON.stringify(data))
@@ -556,7 +546,6 @@ function uploadData(reloading) {
     }
     // offline mode
     localStorage.setItem('data', JSON.stringify(data))
-    diffsLog(prevupload, JSON.stringify(data))
     display('*** local upload finished ***')
     prevupload = JSON.stringify(data)
     if (reloading) {
@@ -607,11 +596,11 @@ function reload() {
   $('body').prepend("<div id='logoimage' class='show' style='z-index:2;opacity:0'><img src='logo.png'></div>")
   display('--- download started ---');
   if (!navigator.onLine || offlinemode) {
-    // skip upload
-    diffsLog(JSON.stringify(data), localStorage.getItem('data'))
-    data = JSON.parse(localStorage.getItem('data'))
-    display('*** local download finished ***')
-    $('#logoimage').remove()
+    const diffs = diffsLog(JSON.stringify(data), 
+      localStorage.getItem('data'))
+    if (diffs == 'Diffs:') {
+      $('#logoimage').remove()
+    }
   } else {
     if (navigator.onLine && offline) {
       // upload data once navigator comes online
@@ -629,8 +618,8 @@ function reload() {
       function (datastr, status, xhr) {
         const diffs = diffsLog(JSON.stringify(data), xhr.responseText)
         if (diffs == 'Diffs:') {
-          display('*** identical ***')
           $('#logoimage').remove()
+          // don't reload page at all
         } else {
           display('*** download finished, reloading ***');
           $('#logoimage').animate({'opacity': 0.1}, 300)
@@ -774,7 +763,6 @@ function loadPage(starting, oldselect, scrolls) {
     $(document).on('touchend', resetDoc)
     $(window).resize(updateSizes)
     $(window).focus(function () {
-      // // console.log('reloading');
       reload()
     })
     $('#container').on('mouseleave', function () {
@@ -796,7 +784,6 @@ function loadPage(starting, oldselect, scrolls) {
         Notification.requestPermission()
       }
     } catch (err) {
-      // // console.log('window notifications disabled');
     }
     setInterval(timeCheck, 60000) // checks every minute for reminders
     if (mobileTest()) {

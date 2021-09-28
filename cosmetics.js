@@ -631,7 +631,6 @@ function clickOff(ev) {
     return 
   }
   if (dblclicked) {
-    console.log('dblclicked');
     if (ev.target.tagName == 'TEXTAREA' && $(ev.target).hasClass('in')) {
       // prevents interfering with edits
       return
@@ -673,7 +672,6 @@ function clickOff(ev) {
   dblclicked = true
   setTimeout(function () { 
     dblclicked = false 
-    console.log('dblclicked', dblclicked);
   }, 300)
   if (mobileTest() && $(ev.target).hasClass('mobhandle') && !draggingtask) {
     // context menu
@@ -782,7 +780,6 @@ function clickOn(ev) {
   } else if ($(ev.target).hasClass('falselink')) {
     // search the task
     $('#searchbar').val($(ev.target).text())
-  // console.log($(ev.target).attr('deadline'));
     search('deadline', $(ev.target).attr('deadline'))
   } else if ($(ev.target).hasClass('falselinkimp')) {
     // search the task
