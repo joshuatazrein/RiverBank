@@ -7,7 +7,6 @@ function resetCookies() {
     past.getTime() - 10000000)
   past = past.toUTCString()
   document.cookie = 'user=;expires=' + past + ';'
-  document.cookie = 'fname=;expires=' + past + ';'
   document.cookie = 'pw=;expires=' + past + ';'
 }
 
@@ -527,7 +526,7 @@ function uploadData(reloading) {
   }
   if (navigator.onLine && !offlinemode) {
     $.post("upload.php", {
-      datastr: JSON.stringify(data),
+      dt: JSON.stringify(data),
     }, function (data, status, xhr) {
       display('*** upload finished ***')
       prevupload = xhr.responseText
