@@ -18,8 +18,8 @@ header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Ac
 // } else {
 //   // echo "FAIL";
 // }
+// $conn->close();
 // original
 $cookie = $_COOKIE['fname'];
 echo file_get_contents('users/' . $cookie . '.json');
-$conn->close();
 ?>
