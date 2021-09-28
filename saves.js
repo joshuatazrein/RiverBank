@@ -15,7 +15,7 @@ function resetCookies() {
 
 function clean() {
   // cleans data
-  $('span.in:visible').attr('style', '')
+  $('span.in').attr('style', '')
   for (span of $('span').toArray()) {
     if (['', ' ', '\n'].includes($(span).text())) {
       // remove empty ones
@@ -530,6 +530,7 @@ function uploadData(reloading) {
       datastr: JSON.stringify(data),
     }, function (data, status, xhr) {
       display('*** upload finished ***')
+      diffsLog(JSON.stringify(data), xhr.responseText)
       prevupload = xhr.responseText
       localStorage.setItem('data', JSON.stringify(data))
       if (reloading) reload() // reloads page
