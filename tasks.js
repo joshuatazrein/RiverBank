@@ -612,6 +612,7 @@ function toggleFold(el, saving) {
   for (child of getHeadingChildren(el)) {
     // fold everything
     if (el.attr('folded') == 'false') {
+      child.stop(true)
       if (saving === undefined) child.hide(300)
       else child.hide()
     } else {
@@ -619,18 +620,19 @@ function toggleFold(el, saving) {
       if (child.attr('folded') == 'true') {
         keepfolded.push(child)
       }
+      child.stop(true)
       if (saving === undefined) {
         child.show(300)
-      } else if (saving == false) child.show()
+      } else if (saving == false) {
+        child.show()
+      }
     }
   }
   if (el.attr('folded') == 'true') {
     for (heading of keepfolded) {
       // keep folded headings folded
-      getHeadingChildren($(heading)).forEach((x) => {
-        $(x).stop(true)
-        $(x).hide()
-      })
+      heading.attr('folded', 'false')
+      toggleFold($(heading), saving)
     }
   }
   // update folded attr
@@ -648,7 +650,7 @@ function toggleFold(el, saving) {
     }
   }
   if (saving === undefined) {
-    setTimeout(save, 600)
+    setTimeout(save, 1000)
     if ($(el).hasClass('dateheading')) {
       // add in relative date back in
       const newelt = createBlankTask()
