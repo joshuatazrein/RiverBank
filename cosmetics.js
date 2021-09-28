@@ -955,11 +955,6 @@ function keyDown(ev) {
       saveTask()
     }
     frame.scrollTop(scrollsave)
-  } else if (ev.key == 'Escape') {
-    if ($('#imports').is(':visible')) {
-      $('#imports textarea').val('')
-      $('#imports').hide()
-    }
   } else if (ev.key == 't' && ev.ctrlKey) {
     // go to today
     select(dateToHeading(stringToDate('0d')), true)
