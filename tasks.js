@@ -662,11 +662,13 @@ function toggleFold(el, saving) {
     if ($(el).attr('folded') == 'false') {
       setTimeout(function () {
         getHeadingChildren($(el)).forEach((x) => {
-          $(x).attr('style', '')
-          $(x).find('span.in').toArray().forEach((y) => {
-            $(y).attr('style', '')
-            updateSpanDrags(y)
-          })
+          if ($(x).is(':visible')) {
+            $(x).attr('style', '')
+            $(x).find('span.in').toArray().forEach((y) => {
+              if ($(x).is(':visible')) $(y).attr('style', '')
+              updateSpanDrags(y)
+            })
+          }
           updateSpanDrags(x)
         })
       }, 300)
