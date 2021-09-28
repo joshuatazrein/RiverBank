@@ -27,6 +27,8 @@ function signIn() {
       // success
       const inaweek = new Date();
       inaweek.setTime(inaweek.getTime() + 604800000);
+      document.cookie = 'fname=' + xhr.responseText + '; expires=' + 
+        inaweek.toUTCString() + ';path=/;';
       document.cookie = 'user=' + username + '; expires=' + 
         inaweek.toUTCString() + ';path=/;';
       document.cookie = 'pw=' + password + '; expires=' + 
@@ -88,6 +90,8 @@ function newUser() {
       data = JSON.parse(JSON.stringify(resetstring))
       const inaweek = new Date();
       inaweek.setTime(inaweek.getTime() + 604800000);
+      document.cookie = 'fname=' + xhr.responseText + '; expires=' + 
+        inaweek.toUTCString() + ';path=/;';
       document.cookie = 'user=' + username + '; expires=' + 
         inaweek.toUTCString() + ';path=/;';
       document.cookie = 'pw=' + password + '; expires=' + 

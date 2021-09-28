@@ -5,7 +5,7 @@ $conn = new mysqli('server204.web-hosting.com',
 if ($conn->connect_error) {
   die('Connection failed: ' . $conn->connect_error);
 }
-$sql = 'SELECT dt FROM users WHERE user="' . 
+$sql = 'SELECT fname FROM users WHERE user="' . 
   $username . '"';
 $result = $conn->query($sql);
 if ($result->num_rows == 0) {

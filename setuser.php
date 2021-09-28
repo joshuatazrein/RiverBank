@@ -8,8 +8,15 @@ $conn = new mysqli('server204.web-hosting.com',
 if ($conn->connect_error) {
   die('Connection failed: ' . $conn->connect_error);
 }
-$sql = 'INSERT INTO users (user, pw, dt)
-VALUES ("' . $username . '", "' . $password . '", "' . $data . '")';
-$conn->query($sql);
+$sql1 = 'INSERT INTO users (user, pw)
+VALUES ("' . $username . '", "' . $password . '")';
+$conn->query($sql1);
+$sql2 = 'SELECT * FROM users WHERE user="' . 
+$username . '"';
+$result = $conn->query($sql2);
+while ($row = $result->fetch_assoc()) {
+  file_put_contents('users/' . $row["fname"] . '.json', $data);
+  echo $row["fname"];
+}
 $conn->close();
 ?>

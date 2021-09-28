@@ -146,6 +146,7 @@ function switchUser() {
     past.getTime() - 10000000)
   past = past.toUTCString()
   document.cookie = 'user=;expires=' + past + ';' + ';path=/;'
+  document.cookie = 'fname=;expires=' + past + ';' + ';path=/;'
   document.cookie = 'pw=;expires=' + past + ';' + ';path=/;'
   location.reload()
 }
