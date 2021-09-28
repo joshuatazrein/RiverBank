@@ -105,28 +105,10 @@ function load() {
         return
       } else {
         console.log('get succeeded');
-        if (!xhr.responseText.includes('flop')) {
-          alert('please upload a copy of your new data:')
-          // upload backup
-          var fileinput = $('<input type="file" id="fileinput" />')
-          fileinput.on('change', function () {
-            const fileReader = new FileReader()
-            fileReader.addEventListener('loadend', function () {
-              // rewrite existing data with this
-              data = JSON.parse(this.result)
-              dataString = JSON.stringify(data)
-              $.get('upload.php', {
-                dt: dataString
-              })
-            })
-            fileReader.readAsText(this.files[0])
-          })
-          fileinput.click()
-        } else {
-          data = JSON.parse(xhr.responseText)
-          clearInterval(getting)
-          initialize()
-        }
+        console.log(xhr.responseText);
+        data = JSON.parse(xhr.responseText)
+        clearInterval(getting)
+        initialize()
       }
     }
   )
