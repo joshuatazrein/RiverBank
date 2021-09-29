@@ -668,8 +668,8 @@ function reload() {
       localStorage.getItem('data'))
     if (diffs == 'Diffs:') {
       $('#logoimage').stop(true)
-      $('#logoimage').animate({opacity: 0}, 300)
-      setTimeout(function () { $('#logoimage').remove() }, 310)
+      $('#logoimage').animate({opacity: 0}, 250)
+      setTimeout(function () { $('#logoimage').remove() }, 260)
     }
   } else {
     if (navigator.onLine && offline) {
@@ -689,8 +689,8 @@ function reload() {
         const diffs = diffsLog(JSON.stringify(data), xhr.responseText)
         if (diffs == 'Diffs:') {
           $('#logoimage').stop(true)
-          $('#logoimage').animate({opacity: 0}, 500)
-          setTimeout(function () { $('#logoimage').remove() }, 510)
+          $('#logoimage').animate({opacity: 0}, 250)
+          setTimeout(function () { $('#logoimage').remove() }, 260)
           // don't reload page at all
         } else {
           display('*** download finished, reloading ***');
