@@ -661,16 +661,11 @@ function reload() {
     return
   }
   $('body').prepend("<div id='logoimage' class='show' style='z-index:2;opacity:0'><img src='logo.png'></div>")
-  $('#logoimage').animate({'opacity': 0.1}, 250)
   display('--- download started ---');
   if (!navigator.onLine || offlinemode) {
     const diffs = diffsLog(JSON.stringify(data), 
       localStorage.getItem('data'))
-    if (diffs == 'Diffs:') {
-      $('#logoimage').stop(true)
-      $('#logoimage').animate({opacity: 0}, 250)
-      setTimeout(function () { $('#logoimage').remove() }, 260)
-    }
+    if (diffs == 'Diffs:') { return }
   } else {
     if (navigator.onLine && offline) {
       // upload data once navigator comes online
@@ -688,14 +683,13 @@ function reload() {
       function (datastr, status, xhr) {
         const diffs = diffsLog(JSON.stringify(data), xhr.responseText)
         if (diffs == 'Diffs:') {
-          $('#logoimage').stop(true)
-          $('#logoimage').animate({opacity: 0}, 250)
-          setTimeout(function () { $('#logoimage').remove() }, 260)
+          $('#logoimage').remove()
           // don't reload page at all
         } else {
           display('*** download finished, reloading ***');
           // only reload if data differs
           data = JSON.parse(xhr.responseText)
+          $('#logoimage').animate({'opacity': 0.1}, 250)
           reload2()
         }
       }
