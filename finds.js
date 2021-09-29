@@ -427,7 +427,8 @@ function getChildren(el) {
 }
 
 function stripChildren(el, mode) {
-  if ($(el).hasClass('dateheading') || $(el).hasClass('futuredate')) {
+  if ($(el).hasClass('dateheading') || $(el).hasClass('futuredate') ||
+    $(el).hasClass('duedate')) {
     // dateheadings just filter our their subspans
     const newelt = $(el).clone()
     newelt.find('span').remove()
@@ -589,6 +590,7 @@ function goToSearch(el) {
 }
 
 function search(skiplinks, deadline) {
+  console.log(skiplinks, deadline);
   // find all matches with the searchtext
   while (/\s/.test($('#searchbar').val()
     .charAt($('#searchbar').val().length - 1))) {
@@ -612,12 +614,13 @@ function search(skiplinks, deadline) {
   for (let search of searches) {
     // search all lists for matches
     $('#test').html(search.text)
-    children = $('#test').find('span.in')
+    children = $('#test').find('span.in').toArray()
     for (let child of children) {
       // if it's a match, add to matches
       if (searchexp.test(stripChildren($(child)))) {
+        console.log('match', stripChildren($(child)));
         // add to matches
-        if (skiplinks &&
+        if (skiplinks == true &&
           $(child).text().includes('[[' + searchtext)) {
           // test for links
           continue
@@ -633,7 +636,7 @@ function search(skiplinks, deadline) {
             matches.push({
               'title': search.title,
               'text': stripChildren($(child)),
-              'index': children.toArray().indexOf(child)
+              'index': children.indexOf(child)
             })
           }
         }

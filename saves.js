@@ -13,6 +13,10 @@ function resetCookies() {
 
 // # CLEANING
 
+function castrate(phallus) {
+  return String(phallus).slice(0, String(phallus).indexOf('.'))
+}
+
 function clean() {
   // cleans data
   $('span.in:visible').attr('style', '')
@@ -188,9 +192,7 @@ function migrate() {
         ch.children().filter('span.in:not(.complete)').toArray().forEach(
           (x) => { appends.push(x) })
         if (ch.hasClass('event') && !ch.hasClass('complete')) {
-          if (!loading) {
-            toggleComplete(ch, false)
-          }
+          toggleComplete(ch, false)
         } else if (!ch.hasClass('complete') && !isHeading(ch)) {
           appends.push(ch)
         }
@@ -343,7 +345,7 @@ function updateDeadlines() {
       return !$(this).parent().hasClass('complete')
     })) {
       // append under heading
-      const text = stripChildren($($(deadline).parent()))
+      const text = stripChildren($(deadline).parent())
       const index = text.search('>')
       const endindex = index + text.slice(index).search(' ')
       const date = $(deadline).text().slice(1)
@@ -353,6 +355,12 @@ function updateDeadlines() {
       duedate.text('> ' +
         text.slice(0, index).replace(/^•\s/, '').replace(/^\-\s/, '') +
         text.slice(endindex))
+      if (getHeading($(deadline).parent())) {
+        console.log($(deadline).parent().text(), getHeading($(deadline).parent()));
+        // add span underneath with its heading
+        duedate.append($('<span class="deadlineBacklink">' + 
+          stripChildren(getHeading($(deadline).parent())) + '</span>'))
+      }
       duedate.addClass('duedate')
       duedate.removeClass('in')
       $(heading).after(duedate)
@@ -371,10 +379,8 @@ function updateDeadlines() {
   $('.continuous').remove()
   $('#pop').find('span.in:not(.complete) > .deadline')
     .toArray().forEach((x) => {
-    function castrate(phallus) {
-      return String(phallus).slice(0, String(phallus).indexOf('.'))
-    }
-    const targetdate = $(dateToHeading(stringToDate($(x).text().slice(1))))
+    const targetdate = $(dateToHeading(stringToDate(
+      stripChildren($(x)).slice(1))))
     const newelt = $('<div class="continuous"></div>')
     const scrolltop = $('#pop').scrollTop()
     const xpos = $(x).offset().top - $('#pop').offset().top
@@ -382,15 +388,16 @@ function updateDeadlines() {
     const target = $(getHeadingChildren(targetdate).filter((y) => { 
       // finds target deadline
       return $(y).hasClass('duedate') && 
-        $(x).parent().text().includes(
-        $(y).text().slice(2, $(y).text().length - 1))
+        stripChildren($(x).parent()).includes(
+          stripChildren($(y)).slice(2, stripChildren($(y)).length - 1))
     }))[0]
     newelt.css('height', castrate(
       target.position().top + target.height() - xpos) + 'px')
-    newelt.attr('title', ($(x).parent().text().slice(0, $(x).parent().text().indexOf(' >'))))
+    newelt.attr('title', (stripChildren($(x).parent()).slice(0, 
+      stripChildren($(x).parent()).indexOf(' >'))))
     newelt.attr('start', 
       stringToDate(stripChildren($(getHeading($(x))))).getTime())
-    newelt.attr('end', $(x).text().slice(1)) // as text for searching
+    newelt.attr('end', stripChildren($(x)).slice(1)) // as text for searching
     $(x).append(newelt)
   })
 }
@@ -594,7 +601,7 @@ function uploadData(reloading) {
     $.post("upload.php", {
       datastr: JSON.stringify(data),
     }, function (data, status, xhr) {
-      // diffsLog(prevupload, xhr.responseText)
+      diffsLog(prevupload, xhr.responseText) // for debugging saving
       display('*** upload finished ***')
       prevupload = xhr.responseText
       localStorage.setItem('data', JSON.stringify(data))
@@ -611,7 +618,7 @@ function uploadData(reloading) {
     }
     // offline mode
     localStorage.setItem('data', JSON.stringify(data))
-    // diffsLog(prevupload, JSON.stringify(data))
+    diffsLog(prevupload, JSON.stringify(data))
     display('*** local upload finished ***')
     prevupload = JSON.stringify(data)
     if (reloading) {
@@ -655,6 +662,11 @@ function undo() {
 }
 
 function reload() {
+  function cancel() {
+    $('#logoimage').remove() 
+    loading = false
+  }
+  loading = true
   // begin reload by downloading server data
   if (window.parent.location.href.includes('welcome')) {
     reload2()
@@ -665,7 +677,9 @@ function reload() {
   if (!navigator.onLine || offlinemode) {
     const diffs = diffsLog(JSON.stringify(data), 
       localStorage.getItem('data'))
-    if (diffs == 'Diffs:') { $('#logoimage').remove() }
+    if (diffs == 'Diffs:') { 
+      cancel()
+    }
   } else {
     if (navigator.onLine && offline) {
       // upload data once navigator comes online
@@ -683,7 +697,7 @@ function reload() {
       function (datastr, status, xhr) {
         const diffs = diffsLog(JSON.stringify(data), xhr.responseText)
         if (diffs == 'Diffs:') {
-          $('#logoimage').remove()
+          cancel()
           // don't reload page at all
         } else {
           display('*** download finished, reloading ***');
@@ -946,6 +960,7 @@ function loadPage(starting, oldselect, scrolls) {
       curtime = now.getTime() - initial
       display('startdoc: ' + String(curtime));
       initial = now.getTime()
+      loading = false
     }, 500)
   }
   now = new Date()

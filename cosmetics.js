@@ -3,6 +3,7 @@
 function playPop() {
   // plays completion sound
   const pop = document.getElementById('popsnd')
+  pop.pause()
   pop.src = pop.src
   pop.play()
 }
@@ -405,6 +406,8 @@ function toggleFocus(collapse) {
       thing.parent().removeClass('fullwidth')
       thing.parent().css('height', '')
       thing.parent().css('width', '')
+      thing.parent().css('border-right', '')
+      thing.parent().css('border-left', '')
     }
     if (!$('#poplist').is(':visible')) {
       $('#poplist').show()
@@ -630,6 +633,7 @@ function setOptions() {
 // # COMMANDS
 
 function clickOff(ev) {
+  if (loading == true) { return } // disable while reloading
   // mouse off
   if (draggingtask) { 
     setTimeout(function () {
@@ -731,6 +735,7 @@ function clickOff(ev) {
 }
 
 function clickOn(ev) {
+  if (loading == true) { return } // disable while reloading
   // mouse down
   if (movetolist && !$(ev.target).hasClass('listtitle')) {
     // cancels move to list
@@ -852,6 +857,8 @@ function keyUp(ev) {
 }
 
 function keyDown(ev) {
+  if (loading) display('loading in progress...');
+  if (loading == true) { return } // disable while reloading
   // key down
   if ($('#imports').is(':visible')) {
     if (ev.key == 'Escape') {

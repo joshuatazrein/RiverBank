@@ -19,6 +19,10 @@ body {
   box-sizing: border-box;
 }
 
+:root {
+  --cursorat: 10px;
+}
+
 /* TITLES AND BUTTONS */
 
 button {
@@ -42,7 +46,6 @@ button {
 }
 
 #timertimes button {
-  font-size: 0.65em;
   padding: 5px 0;
 }
 
@@ -323,6 +326,19 @@ p.dropdown-item {
   width: 50%;
 }
 
+span.duedate > span.deadlineBacklink {
+  font-size: 0.5em;
+  color: var(--textcolor);
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50px;
+  text-align: right;
+  line-height: 0.5em;
+  height: 0.5em;
+  margin: 0;
+}
+
 .drop-hover {
   background-color: var(--event) !important;
   border: 1px solid var(--select) !important;
@@ -591,10 +607,12 @@ span.note {
 
 span.duedate {
   color: var(--select);
-  /* font-style: italic; */
+  font-style: italic;
   border-radius: 5px;
-  padding-right: 15px;
+  padding-right: 50px;
   padding-left: 5px;
+  margin-top: 0.25em;
+  position: relative;
 }
 
 span.horizline {

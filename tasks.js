@@ -227,6 +227,7 @@ function dragTask(ev) {
 function dropTask(ev) {
   // drops selected task onto target
   // logs that drop succeeded so you can check for revert (jQuery hack)
+  // ev: event, obj: selected
   if ((isHeading(selected) && $(ev.target).parent()[0].tagName == 'SPAN') ||
     isHeading(selected) && ev.altKey) {
     // can't drop headings as subtasks
@@ -234,11 +235,11 @@ function dropTask(ev) {
   }
   justdropped = true
   setTimeout(function () { justdropped = false }, 300)
-  // ev: event, obj: selected
   if (!draggingtask) return
+  draggingtask = false
   // drops selected task
   $('#listcontainer > span').hide()
-  draggingtask = false
+  // add children
   let children = []
   const el = $(ev.target)
   if (selected.hasClass('h1') || selected.hasClass('h2') ||
@@ -246,40 +247,50 @@ function dropTask(ev) {
     // drop all the tasks
     children = getHeadingChildren(selected)
   }
-  if ($(el).attr('folded') == 'true') {
-    // unfold
-    toggleFold($(el))
-    if (getHeadingChildren($(el)).length == 0) {
-      // no children
-      $(el).after(selected)
+  if ($(ev.target).hasClass('buffer')) {
+    // accomodates buffers
+    if ($(ev.target).hasClass('bottom')) {
+      $(ev.target).before(selected)
     } else {
-      // add after last child
-      getHeadingChildren($(el))[
-        getHeadingChildren($(el)).length - 1].after(selected)
-    }
-  } 
-  // dropping task (according to key commands)
-  if (ev.altKey && $(ev.target).parent()[0].tagName != 'SPAN' &&
-    !isHeading($(ev.target))) {
-    if (ev.metaKey) {
-      const subtasks = $(el).children().toArray().filter(
-        (x) => {
-          if (isSubtask($(x))) return true
-        }
-      )
-      if (subtasks.length == 0) {
-        $(el).append(selected)
-      } else {
-        $(subtasks[0]).before(selected)
-      }
-    } else {
-      $(el).append(selected)
+      $(ev.target).after(selected)
     }
   } else {
-    if (ev.metaKey) {
-      $(el).before(selected)
+    // normal target
+    if ($(el).attr('folded') == 'true') {
+      // unfold
+      toggleFold($(el))
+      if (getHeadingChildren($(el)).length == 0) {
+        // no children
+        $(el).after(selected)
+      } else {
+        // add after last child
+        getHeadingChildren($(el))[
+          getHeadingChildren($(el)).length - 1].after(selected)
+      }
+    } 
+    // dropping task (according to key commands)
+    if (ev.altKey && $(ev.target).parent()[0].tagName != 'SPAN' &&
+      !isHeading($(ev.target))) {
+      if (ev.metaKey) {
+        const subtasks = $(el).children().toArray().filter(
+          (x) => {
+            if (isSubtask($(x))) return true
+          }
+        )
+        if (subtasks.length == 0) {
+          $(el).append(selected)
+        } else {
+          $(subtasks[0]).before(selected)
+        }
+      } else {
+        $(el).append(selected)
+      }
     } else {
-      $(el).after(selected)
+      if (ev.metaKey) {
+        $(el).before(selected)
+      } else {
+        $(el).after(selected)
+      }
     }
   }
   for (i = children.length - 1; i >= 0; i--) {
@@ -499,54 +510,58 @@ function updateSpanDrags(task) {
     selector = 'span.in:not(.dateheading):visible'
   } else if (task == 'flop') {
     selector = '#flop span.in:not(.dateheading):visible'
+    console.log($(selector));
   } else {
     selector = $(task)[0]
   }
   if (mobileTest()) {
-    if (!task) {
-      $('.mobhandle').remove()
-      $('span.in').prepend(
-        '<span class="mobhandle"></span>')
-      $('span.in').attr('draggable', 'false')
-    }
-    $(selector).draggable({
-      handle: '.mobhandle',
-      containment: 'window',
-      axis: 'y',
-      revert: true,
-      appendTo: $('#listcontainer'),
-      helper: 'clone',
-      refreshPositions: true,
-      zIndex: 1,
-      distance: 20,
-      addClasses: false,
-      start: function (event) {
-        // $(this).hide()
-        dragTask(event, $(this))
-      },
-      drag: function (event) {
-        mobileDragOver(event)
-        $('#listcontainer > span').removeClass('in')
-      },
+    $(selector).find('.mobhandle').remove()
+    $(selector).prepend(
+      '<span class="mobhandle"></span>')
+    $(selector).attr('draggable', 'false')
+    $(selector).toArray().forEach((x) => {
+      $(x).draggable({
+        handle: '.mobhandle',
+        containment: 'window',
+        axis: 'y',
+        revert: true,
+        appendTo: $('#listcontainer'),
+        cursorAt: {top: $(x).height() / 2},
+        helper: 'clone',
+        refreshPositions: true,
+        zIndex: 1,
+        distance: 20,
+        addClasses: false,
+        start: function (event) {
+          // $(this).hide()
+          dragTask(event, $(this))
+        },
+        drag: function (event) {
+          mobileDragOver(event)
+          $('#listcontainer > span').removeClass('in')
+        },
+      })
     })
   } else {
-    console.log($(selector));
-    $(selector).draggable({
-      containment: 'window',
-      revert: true,
-      appendTo: $('#listcontainer'),
-      distance: 20,
-      helper: 'clone',
-      refreshPositions: true,
-      zIndex: 1,
-      addClasses: false,
-      start: function (event) {
-        dragTask(event, $(this))
-      },
-      drag: function (event) {
-        dragTaskOver(event)
-        $('#listcontainer > span').removeClass('in')
-      },
+    $(selector).toArray().forEach((x) => {
+      $(x).draggable({
+        containment: 'window',
+        revert: true,
+        appendTo: $('#listcontainer'),
+        distance: 20,
+        cursorAt: {top: $(x).height() / 2},
+        helper: 'clone',
+        refreshPositions: true,
+        zIndex: 1,
+        addClasses: false,
+        start: function (event) {
+          dragTask(event, $(this))
+        },
+        drag: function (event) {
+          dragTaskOver(event)
+          $('#listcontainer > span').removeClass('in')
+        },
+      })
     })
     $(selector).attr('draggable', 'true')
   }
@@ -570,8 +585,19 @@ function updateSpanDrags(task) {
       }
     })
   }
-  $('.ui-draggable-handle').removeClass('ui-draggable-handle')
-  $('.ui-droppable').removeClass('ui-droppable')
+  $('.buffer').droppable({
+    accept: 'span.in',
+    hoverClass: 'drop-hover',
+    greedy: true,
+    drop: function (event) {
+      dropTask(event)
+    }
+  })
+  if (mobileTest()) {
+    // circumvents jQuery to enable scrolling X-P
+    $('.ui-draggable-handle').removeClass('ui-draggable-handle')
+    $('.ui-droppable').removeClass('ui-droppable')
+  }
 }
 
 // # FOLDING
@@ -610,14 +636,15 @@ function collapseAll() {
   setTimeout(function () { select(selected, true) }, 350)
 }
 
-function toggleFold(el, saving) {
+function toggleFold(el, saving, time) {
+  if (!time) time = 300
   // hide or show everything underneath
   const keepfolded = []
   for (child of getHeadingChildren(el)) {
     // fold everything
     if (el.attr('folded') == 'false') {
       child.stop(true)
-      if (saving === undefined) child.hide(300)
+      if (saving === undefined) child.hide(time)
       else child.hide()
     } else {
       // if unfolding, keep folded headings folded
@@ -626,7 +653,7 @@ function toggleFold(el, saving) {
       }
       child.stop(true)
       if (saving === undefined) {
-        child.show(300)
+        child.show(time)
       } else if (saving == false) {
         child.show()
       }
@@ -636,7 +663,7 @@ function toggleFold(el, saving) {
     for (heading of keepfolded) {
       // keep folded headings folded
       heading.attr('folded', 'false')
-      toggleFold($(heading), saving)
+      toggleFold($(heading), saving, 10)
     }
   }
   // update folded attr
@@ -1046,11 +1073,16 @@ function newTask(subtask, prepend) {
     // regular task
     selected.after(newspan)
   }
-  if (selected.hasClass('dateheading')) {
-    updateDeadlines()
-  }
   if (selected.hasClass('futuredate')) {
     selected.removeClass('futuredate')
+  }
+  if (selected.hasClass('dateheading')) {
+    // move deadlines underneath
+    getHeadingChildren(selected).filter((x) => {
+      return $(x).hasClass('duedate')
+    }).forEach((x) => {
+      selected.after($(x))
+    })
   }
   select(newspan)
   editTask()

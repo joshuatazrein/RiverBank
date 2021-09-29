@@ -255,15 +255,15 @@ function loadList(saving) {
   $(loads[loadedlist]).addClass('selected')
   $('#flop').html(data.flop[loadedlist].text)
   $('.taskselect').removeClass('taskselect')
-  if (saving != false) {
-    save('L')
-  } else {
-    $(loads[loadedlist]).blur()
-  }
   $('#flop').scrollTop(0)
   if (mobileTest() && !$('#leftcol').hasClass('collapsed') && saving) {
     // collapse menu again
     toggleCollapse(true)
+  }
+  if (saving != false) {
+    save('L')
+  } else {
+    $(loads[loadedlist]).blur()
   }
 }
 
