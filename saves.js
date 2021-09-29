@@ -314,10 +314,17 @@ function updateImportants() {
     $('#test').find('span.important:not(.complete)').toArray()
       .forEach((x) => {
         // add all important tasks to a list
-        importants.push($('<p><span class="impspan" list="' + 
-          counter + '">' + list.title + '</span>' + 
-          '<span class="falselinkimp">' + stripChildren($(x)) + 
-          '</span></p>'))
+        if (getHeading($(x))) {
+          importants.push($('<p><span class="impspan" list="' + 
+            counter + '">' + stripChildren(getHeading($(x))) + '</span>' + 
+            '<span class="falselinkimp">' + stripChildren($(x)) + 
+            '</span></p>'))
+        } else {
+          importants.push($('<p><span class="impspan-list" list="' + 
+            counter + '">' + list.title + '</span>' + 
+            '<span class="falselinkimp">' + stripChildren($(x)) + 
+            '</span></p>'))
+        }
       })
     counter ++
   }
@@ -366,7 +373,7 @@ function updateDeadlines() {
       $(heading).after(duedate)
       if (list.title != 'pop') {
         window.duedates.push({
-          'title': duedate.text().slice(2),
+          'title': stripChildren(duedate).slice(2),
           'end': date
         })
       }
@@ -482,6 +489,7 @@ function save(changes, changed, undo) {
   now = new Date()
   display('updateSpanDrags: ' + String(now.getTime() - initial))
   initial = now.getTime()
+  if (draggingtask) { undo() }
 }
 
 

@@ -117,7 +117,7 @@ span.falselink, span.falselinkimp {
   /* display: inline-block; */
 }
 
-span.eventspan, span.impspan {
+span.eventspan, span.impspan, span.impspan-list {
   position: absolute;
   right: 5px;
 }
@@ -556,7 +556,7 @@ span {
   font-family: inherit;
 }
 
-span.eventspan, span.impspan {
+span.eventspan, span.impspan, span.impspan-list {
   width: initial;
   display: initial;
 }
@@ -587,8 +587,8 @@ span.in {
   border-radius: 5px;
 }
 
-span.link, span.falselink, span.deadline, span.duedate,
-span.impspan, span.falselinkimp {
+span.link, span.deadline, span.duedate,
+#events span, #importants span, span.weblink {
   cursor: pointer;
 }
 

@@ -735,7 +735,9 @@ function clickOff(ev) {
 }
 
 function clickOn(ev) {
-  if (loading == true) { return } // disable while reloading
+  if (loading == true || draggingtask || justdropped) { 
+    return 
+  } // disable while reloading
   // mouse down
   if (movetolist && !$(ev.target).hasClass('listtitle')) {
     // cancels move to list
@@ -800,11 +802,12 @@ function clickOn(ev) {
     // search the task
     $('#searchbar').val($(ev.target).text())
     search('deadline', $(ev.target).attr('deadline'))
-  } else if ($(ev.target).hasClass('falselinkimp')) {
+  } else if ($(ev.target).hasClass('falselinkimp') || 
+    $(ev.target).hasClass('impspan')) {
     // search the task
     $('#searchbar').val($(ev.target).text())
     search()
-  } else if ($(ev.target).hasClass('impspan')) {
+  } else if ($(ev.target).hasClass('impspan-list')) {
     // search the task
     const list = Number($(ev.target).attr('list'))
     if (list < data.flop.length) {
