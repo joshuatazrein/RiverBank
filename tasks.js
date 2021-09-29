@@ -299,6 +299,14 @@ function dropTask(ev) {
     $('#pop').removeClass('greyedout')
   }
   save('>', selected, true)
+  if ($(ev.target).hasClass('dateheading')) {
+    // move deadlines underneath
+    getHeadingChildren($(ev.target)).filter((x) => {
+      return $(x).hasClass('duedate')
+    }).forEach((x) => {
+      $(ev.target).after($(x))
+    })
+  }
   updateSpanDrags()
 }
 

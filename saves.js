@@ -665,7 +665,7 @@ function reload() {
   if (!navigator.onLine || offlinemode) {
     const diffs = diffsLog(JSON.stringify(data), 
       localStorage.getItem('data'))
-    if (diffs == 'Diffs:') { return }
+    if (diffs == 'Diffs:') { $('#logoimage').remove() }
   } else {
     if (navigator.onLine && offline) {
       // upload data once navigator comes online
