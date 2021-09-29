@@ -489,7 +489,7 @@ function save(changes, changed, undo) {
   now = new Date()
   display('updateSpanDrags: ' + String(now.getTime() - initial))
   initial = now.getTime()
-  if (draggingtask) { undo() }
+  // if (draggingtask) { undo() }
 }
 
 
