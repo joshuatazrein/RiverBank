@@ -78,9 +78,9 @@ span.edit {
   background-color: var(--bgoverlay);
   position: absolute;
   z-index: 3;
-  width: calc(100% - 9px);
+  width: calc(100% - 10px);
   margin-left: 1px;
-  border-radius: 3px;
+  border-radius: 5px;
   margin-top: 1px;
 }
 
@@ -91,12 +91,13 @@ span.edit {
 #events, #importants {
   background-color: var(--bgoverlay);
   position: absolute;
-  left: 0;
-  bottom: 0;
-  width: calc(100% - 10px);
-  margin: 0 1px 0 1px;
+  left: 2px;
+  bottom: 2px;
+  border-radius: 10px;
+  width: calc(100% - 12px);
   color: var(--select);
   z-index: 2;
+  margin: 0;
   padding-left: 5px;
   padding-bottom: 3px;
   font-size: 16px;
@@ -187,15 +188,14 @@ audio {
 
 ::-webkit-scrollbar {
   background: var(--background);
-  width: 5px;
-  margin-right: 2px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
   background-color: var(--bdcolor);
   border-radius: 10px;
   opacity: 0.5;
-  transition: background-color 3s;
+  transition: background-color 0.5s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
