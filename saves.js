@@ -661,13 +661,15 @@ function reload() {
     return
   }
   $('body').prepend("<div id='logoimage' class='show' style='z-index:2;opacity:0'><img src='logo.png'></div>")
-  $('#logoimage').animate({'opacity': 0.1}, 300)
+  $('#logoimage').animate({'opacity': 0.1}, 100)
   display('--- download started ---');
   if (!navigator.onLine || offlinemode) {
     const diffs = diffsLog(JSON.stringify(data), 
       localStorage.getItem('data'))
     if (diffs == 'Diffs:') {
-      $('#logoimage').remove()
+      $('#logoimage').stop(true)
+      $('#logoimage').animate({opacity: 0}, 300)
+      setTimeout(function () { $('#logoimage').remove() }, 310)
     }
   } else {
     if (navigator.onLine && offline) {
@@ -686,7 +688,9 @@ function reload() {
       function (datastr, status, xhr) {
         const diffs = diffsLog(JSON.stringify(data), xhr.responseText)
         if (diffs == 'Diffs:') {
-          $('#logoimage').remove()
+          $('#logoimage').stop(true)
+          $('#logoimage').animate({opacity: 0}, 500)
+          setTimeout(function () { $('#logoimage').remove() }, 510)
           // don't reload page at all
         } else {
           display('*** download finished, reloading ***');
@@ -941,7 +945,7 @@ function loadPage(starting, oldselect, scrolls) {
     // remove image after reload
     $('#logoimage').stop(true)
     $('#logoimage').animate({opacity: 0}, 500)
-    setTimeout(function() { 
+    setTimeout(function () { 
       $('#logoimage').remove()
       resetDoc()
       now = new Date()
@@ -950,18 +954,9 @@ function loadPage(starting, oldselect, scrolls) {
       initial = now.getTime()
     }, 500)
   }
-  if (mobileTest()) {
-    $(document).on('scroll mouseup', function() {
-      $('html, body').animate({scrollTop: window.innerHeight}, 300)
-      startdoc()
-      $(document).off('scroll mouseup')
-      $(document).on('mouseup', clickOff)
-    })
-  } else {
-    now = new Date()
-    curtime = now.getTime() - initial
-    display('loaded: ' + curtime);
-    initial = now.getTime()
-    setTimeout(startdoc, 500)
-  }
+  now = new Date()
+  curtime = now.getTime() - initial
+  display('loaded: ' + curtime);
+  initial = now.getTime()
+  setTimeout(startdoc, 500)
 }

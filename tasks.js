@@ -521,13 +521,6 @@ function updateSpanDrags(task) {
         $('#listcontainer > span').removeClass('in')
       },
     })
-    if (!task) {
-      $('.ui-draggable-handle').removeClass('ui-draggable-handle')
-      $('.ui-droppable').removeClass('ui-droppable')
-    } else {
-      $(task).removeClass('ui-draggable-handle')
-      $(task).removeClass('ui-droppable')
-    }
   } else {
     console.log($(selector));
     $(selector).draggable({
@@ -569,6 +562,8 @@ function updateSpanDrags(task) {
       }
     })
   }
+  $('.ui-draggable-handle').removeClass('ui-draggable-handle')
+  $('.ui-droppable').removeClass('ui-droppable')
 }
 
 // # FOLDING

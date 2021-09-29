@@ -1,14 +1,11 @@
 /* add the padding-right to subspan widths */
 body {
   /* overflow-y: visible !important; */
-  height: calc(100vh);
+  height: calc(100vh - 30px);
   overflow-y: visible;
 }
 :root {
   --butwidth: 45px !important;
-}
-#logoimage {
-  position: static !important;
 }
 span.placeholder {
   right: 35px;
