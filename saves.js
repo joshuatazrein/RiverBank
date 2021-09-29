@@ -661,7 +661,7 @@ function reload() {
     return
   }
   $('body').prepend("<div id='logoimage' class='show' style='z-index:2;opacity:0'><img src='logo.png'></div>")
-  $('#logoimage').animate({'opacity': 0.1}, 100)
+  $('#logoimage').animate({'opacity': 0.1}, 250)
   display('--- download started ---');
   if (!navigator.onLine || offlinemode) {
     const diffs = diffsLog(JSON.stringify(data), 
