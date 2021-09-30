@@ -252,16 +252,12 @@ function stringToDate(string, weekday, future) {
 }
 
 function dateToHeading(date, saving) {
-  console.log('here');
   // find or create the dateheading corresponding to the given date
   if (date === undefined) return
   if (dateToString(date).includes('NaN')) return
   // find the matching date, or create if not
   // sort date headings to be correct
-  console.log('here');
   let headingslist = $('#pop .dateheading').toArray()
-  console.log('here');
-  console.log(headingslist);
   const now = new Date()
   if (date.getTime() > now.getTime()) {
     // if after today, start at today for search
@@ -273,7 +269,6 @@ function dateToHeading(date, saving) {
     return stringToDate(stripChildren($(x)), true).getTime() ==
       stringToDate(dateToString(date)).getTime()
   })
-  console.log('here');
   if (!heading1) {
     // insert elt where it should go
     const heading2 = $('<span class="in h1 dateheading" folded="false" ' +
@@ -283,7 +278,6 @@ function dateToHeading(date, saving) {
       return stringToDate(stripChildren($(x)), true).getTime() >
         stringToDate(stripChildren($(heading2)), true).getTime()
     })
-    console.log('here');
     if (!headingafter) {
       // insert before buffer
       $($('#pop').children()[$('#pop').children().length - 1]).before(heading2)
@@ -295,13 +289,11 @@ function dateToHeading(date, saving) {
     today.setMinutes(0);
     today.setSeconds(0);
     today.setMilliseconds(0)
-    console.log('here');
     // add in relative dates underneath
     const newdate = stringToDate(dateToString(date))
     const newelt = $('<span class="placeholder">' + datesToRelative(today,
       newdate) + '</span>')
     $(heading2).append(newelt)
-    console.log('here');
     if (saving != false) {
       select(heading2)
       save('+', selected)
@@ -309,10 +301,8 @@ function dateToHeading(date, saving) {
     if (newdate.getTime() < today) {
       heading2.addClass('complete')
     }
-    console.log('here');
     return heading2
   } else {
-    console.log('here');
     return heading1
   }
 }
