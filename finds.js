@@ -260,6 +260,10 @@ function dateToHeading(date, saving) {
   // sort date headings to be correct
   console.log('here');
   let headingslist = $('#pop').children().toArray().filter((x) => {
+    console.log(x);
+    console.log(stripChildren($(x)));
+    console.log(stringToDate(stripChildren($(x)), true));
+    console.log($(x).hasClass('dateheading'));
     return stringToDate(stripChildren($(x)), true) != 'Invalid Date' &&
       $(x).hasClass('dateheading')
   })
