@@ -265,13 +265,16 @@ function migrate() {
   now = new Date()
   display('updated relatives:' + (now.getTime() - initial))
   var initial = now.getTime()
+  debugger
   // update future dates up to 30 days from now
   const curdate = todaydate.getDate()
   for (let i = 1; i < 30; i ++) {
     const futuredate = new Date()
     futuredate.setDate(curdate + i)
     const newdate = dateToHeading(futuredate, false)
+    console.log(newdate);
   }
+  debugger
   now = new Date()
   display('updated futures:' + (now.getTime() - initial))
   var initial = now.getTime()
