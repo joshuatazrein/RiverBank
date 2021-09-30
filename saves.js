@@ -763,7 +763,9 @@ function loadPage(starting, oldselect, scrolls) {
     $('#username').text(getCookie('user'))
   }
   if (starting) {
+
     // start window for first load
+    window.stylegot = false // getting style
     window.loadedlist = data.loadedlist // loaded list
     window.selected = undefined // selected task
     window.dragsenabled = true // editing lists
@@ -826,6 +828,11 @@ function loadPage(starting, oldselect, scrolls) {
       $("<link id='theme' rel='stylesheet' type='text/css' href='" +
         data.style + "' />")
     )
+    stylegot = false
+    $('#theme').on('load', function () { 
+      display('loaded theme')
+      stylegot = true 
+    })
     if (data.weekdays == 'M') {
       weekdaysStr = { 0: 'U', 1: 'M', 2: 'T', 3: 'W', 4: 'R', 5: 'F', 6: 'S' }
     } else if (data.weekdays == 'Mon') {
@@ -961,11 +968,15 @@ function loadPage(starting, oldselect, scrolls) {
     resetDoc()
     now = new Date()
     curtime = now.getTime() - initial
-    display('startdoc: ' + String(curtime));
     initial = now.getTime()
+    display('startdoc: ' + String(curtime));
     function checkStyle() {
-      console.log($('#theme'));
-      if ($('#theme').length > 0) {
+      console.log(stylegot);
+      if (stylegot) {
+        now = new Date()
+        curtime = now.getTime() - initial
+        initial = now.getTime()
+        display('checkStyle: ' + String(curtime));
         $('#logoimage').animate({opacity: 0}, 500)
         $('#logoimage').remove()
         loading = false

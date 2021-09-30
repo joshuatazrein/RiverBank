@@ -320,11 +320,10 @@ function setStyle(style, alert) {
           $("<link id='theme' rel='stylesheet' type='text/css' href='" +
             style + "' />")
         );
-        uploadData()
-        setTimeout(function () {
-          select(dateToHeading(stringToDate('0d')), true, false)
-          select()
-        }, 500)
+        stylegot = false
+        $('#theme').on('load', function () { 
+          stylegot = true 
+        })
       }
     )
   } else if (alert != false) {
