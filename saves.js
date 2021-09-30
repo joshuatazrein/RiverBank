@@ -268,8 +268,11 @@ function migrate() {
   // update future dates up to 30 days from now
   const curdate = todaydate.getDate()
   for (let i = 1; i < 30; i ++) {
+    console.log('here');
     const futuredate = new Date()
+    console.log('here');
     futuredate.setDate(curdate + i)
+    console.log('here');
     const newdate = dateToHeading(futuredate, false)
     console.log(newdate);
   }
