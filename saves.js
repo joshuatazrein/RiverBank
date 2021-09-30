@@ -674,8 +674,8 @@ function undo() {
 function reload() {
   function cancel() {
     $('#logoimage').stop(true)
-    $('#logoimage').animate({'opacity': 0}, 250)
-    setTimeout(function () {$('#logoimage').remove()}, 250)
+    $('#logoimage').animate({'opacity': 0}, 500)
+    setTimeout(function () {$('#logoimage').remove()}, 510)
     display('cancelling load')
     loading = false
   }
