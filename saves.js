@@ -676,6 +676,7 @@ function reload() {
     $('#logoimage').stop(true)
     $('#logoimage').animate({'opacity': 0}, 250)
     setTimeout(function () {$('#logoimage').remove()}, 250)
+    display('cancelling load')
     loading = false
   }
   $('#logoimage').animate({'opacity': 0.1}, 500)
