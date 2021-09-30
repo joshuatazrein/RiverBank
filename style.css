@@ -125,22 +125,28 @@ span.eventspan, span.impspan, span.impspan-list {
 #focusbar {
   display: flex;
   justify-content: left;
-  width: 100vw;
+  width: 100%;
   margin-top: 3px;
 }
 
 #focusbar button {
-  margin: 0px 5px;
+  margin: 0px 2px;
+  width: 33px !important;
+  height: 33px !important;
 }
-/* 
-#focusbar div {
-  width: 250px;
-  max-width: calc(50vw - 20px);
-} */
 
-#focusbar div div {
-  width: fit-content;
-  max-width: 100%;
+#focusbar div:not(.dropdown) {
+  width: calc(50% - 35px);
+  height: 1em;
+  /* max-width: calc(50vw - 20px); */
+}
+
+#focusbar input, #focusbar div div {
+  width: 100% !important;
+}
+
+#focusbar input {
+  height: 1.15em !important;
 }
 
 .flopbut {
@@ -283,6 +289,10 @@ p.dropdown-item {
   background-color: var(--background);
   color: var(--textcolor);
   z-index: inherit;
+}
+
+.dropdown-item:hover {
+  color: var(--select) !important;
 }
 
 .dropdown {
@@ -588,7 +598,7 @@ span.in {
 }
 
 span.link, span.deadline, span.duedate,
-#events span, #importants span, span.weblink {
+#events span, #importants span, span.weblink, .dropdown-item {
   cursor: pointer;
 }
 

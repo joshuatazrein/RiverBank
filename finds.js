@@ -643,7 +643,7 @@ function search(skiplinks, deadline) {
     // create search results
     $('#searchbar-results').append(
       '<p class=\'dropdown-item\' onclick=' +
-      '\'gotosearch($(this))\' title=\'' + match.title + '\' index=\'' +
+      '\'goToSearch($(this))\' title=\'' + match.title + '\' index=\'' +
       match.index + '\'>' + match.text + '</p>'
     )
   }

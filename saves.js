@@ -682,12 +682,12 @@ function undo() {
 function reload() {
   function cancel() {
     $('#logoimage').stop(true)
-    $('#logoimage').animate({'opacity': 0}, 500)
-    setTimeout(function () {$('#logoimage').remove()}, 510)
+    $('#logoimage').animate({'opacity': 0}, 300)
+    setTimeout(function () {$('#logoimage').remove()}, 310)
     display('cancelling load')
     loading = false
   }
-  $('#logoimage').animate({'opacity': 0.1}, 500)
+  $('#logoimage').animate({'opacity': 0.1}, 250)
   loading = true
   // begin reload by downloading server data
   if (window.parent.location.href.includes('welcome')) {
@@ -869,7 +869,7 @@ function loadPage(starting, oldselect, scrolls) {
       save()
     })
     $('.dropdown-item').mouseover(function () { 
-      $(this).css('color', 'var(--select)')
+      $(this).css('color', 'var(--select) !important')
     })
     $('.dropdown-item').mouseleave(function () { 
       $(this).css('color', '')
@@ -959,6 +959,7 @@ function loadPage(starting, oldselect, scrolls) {
     if (data.futurepanes == 'show') {
       $('#events, #importants').show()
     }
+    if (!focused) { $('#focusbar').hide() }
     updateSizes()
     clean()
     updateBuffers()

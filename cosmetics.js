@@ -356,7 +356,6 @@ function toggleCollapse(animate) {
       updateSizes()
     }, 710)
   }
-  if (focused) toggleFocus(false) // unfocus if uncollapse
 }
 
 function toggleFocus(collapse) {
@@ -365,24 +364,12 @@ function toggleFocus(collapse) {
     if (!selected) select(dateToHeading(stringToDate('0d')))
     // focus
     $('#focusbar').prepend($('#focusbut'))
+    $('#focusbut').after($('#collapseBut'))
     $('#searchbarcont').append($('#searchbarframe'))
     $('#timerentcont').append($('#timerent'))
-    if (mobileTest()) {
-      $('#timerent').css('height', '2em')
-      $('#focusbut').css('height', '2em')
-      $('#searchbar').css('height', '2em')
-      $('#focusbut').css('width', '45px')
-      $('#focusbut').css('margin-left', '0')
-      $('#focusbar').css('border-left', '1px solid var(--bdcolor)')
-    } else {
-      $('#timerent').css('height', '1em')
-      $('#searchbar').css('height', '1em')
-    }
-    getFrame(selected).parent().parent().addClass('fullwidth')
+    // getFrame(selected).parent().addClass('fullwidth')
     getFrame(selected).parent().css('width', '100%')
     getFrame(selected).parent().css('height', '100%')
-    getFrame(selected).parent().css('border-right', 'none')
-    getFrame(selected).parent().css('border-left', 'none')
     if (getFrame(selected).attr('id') == 'flop') {
       // hide other thing and this' buttons
       $('#poplist').hide()
@@ -390,23 +377,17 @@ function toggleFocus(collapse) {
       $('#floplist').hide()
     }
     $('#focusbar').show()
-    if (!collapse && !$('#leftcol').hasClass('collapsed')) { toggleCollapse() }
     focused = true
   } else {
     // unfocus
     $('#editbuts').after($('#searchbarframe'))
     $('#movebuts').after($('#timerent'))
+    $('#flopbuts').prepend($('#collapseBut'))
     $('#collapseBut').after($('#focusbut'))
-    $('#timerent').css('height', '')
-    $('#searchbar').css('height', '')
-    $('#focusbut').css('height', '')
-      $('#focusbut').css('width', '')
     for (thing of [$('#flop'), $('#pop')]) {
-      thing.parent().removeClass('fullwidth')
+      // thing.parent().removeClass('fullwidth')
       thing.parent().css('height', '')
       thing.parent().css('width', '')
-      thing.parent().css('border-right', '')
-      thing.parent().css('border-left', '')
     }
     if (!$('#poplist').is(':visible')) {
       $('#poplist').show()
@@ -415,10 +396,10 @@ function toggleFocus(collapse) {
     }
     $('#focusbar').hide()
     focused = false
-    if (!collapse && $('#leftcol').hasClass('collapsed') && !(mobileTest())) {
-      toggleCollapse()
-    }
   }
+  justcollapsed = true
+  setTimeout(function () { justcollapsed = false }, 500)
+  updateSizes()
 }
 
 function tutorial() {
@@ -658,14 +639,24 @@ function clickOff(ev) {
       }
     } else if ($(ev.target)[0].tagName == 'TEXTAREA') {
       return
-    } else if (selected && 
-      selected.hasClass('in') && 
-      selected[0].tagName == 'P') {
-      newTask()
-      selected.click(function (e) { $(this).focus() })
-      setTimeout(function () { 
-        selected.trigger('click')
-      }, 200)
+    } else if ($(ev.target).hasClass('buffer')) {
+      const placeholder = createBlankTask()
+      if ($(ev.target).hasClass('bottom')) { 
+        $(ev.target).before(placeholder)
+      } else {
+        $(ev.target).after(placeholder)
+      }
+      if (getHeading(placeholder) && 
+        getHeading(placeholder).attr('folded') == 'true') {
+        toggleFold(getHeading(placeholder))
+        setTimeout(function () {
+          select(placeholder)
+          editTask()
+        }, 310)
+      } else {
+        select(placeholder)
+        editTask()
+      }
     } else if ($(ev.target).hasClass('in') &&
       ev.target.tagName != 'TEXTAREA' &&
       !$(ev.target).hasClass('dateheading')) {
@@ -720,7 +711,7 @@ function clickOff(ev) {
     }
     selected.val('# ')
   } else if (['editTaskBut', 'newSubtaskBut', 'scheduleBut', 'collapseBut']
-    .includes($(ev.target).attr('id'))) {
+    .includes($(ev.target).attr('id')) && !justcollapsed) {
     eval($(ev.target).attr('function'))
   } else if ($(ev.target).hasClass('dropdown-item') && !justclicked) {
     eval($(ev.target).attr('function'))
@@ -877,7 +868,9 @@ function keyDown(ev) {
   }
   if (ev.key == 'Alt') {
     for (let button of $('#timertimes').children()) {
-      $(button).text('-' + $(button).text())
+      if ($(button).text().charAt(0) != '-') {
+        $(button).text('-' + $(button).text())
+      }
     }
   }
   if (['Command', 'Shift', 'Alt'].includes(ev.key)) {
