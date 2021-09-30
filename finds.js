@@ -258,6 +258,7 @@ function dateToHeading(date, saving) {
   if (dateToString(date).includes('NaN')) return
   // find the matching date, or create if not
   // sort date headings to be correct
+  console.log('here');
   let headingslist = $('#pop').children().toArray().filter((x) => {
     return stringToDate(stripChildren($(x)), true) != 'Invalid Date' &&
       $(x).hasClass('dateheading')
