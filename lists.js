@@ -228,7 +228,9 @@ function loadList(saving) {
     display('no loaded list')
     return
   }
-  unFilter()
+  if (saving != false) {
+    unFilter()
+  }
   const loads = $('#loads').children().toArray()
   loads.forEach(function (i) {
     $(i).removeClass('selected')
