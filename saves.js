@@ -958,31 +958,23 @@ function loadPage(starting, oldselect, scrolls) {
     // remove image after reload
     $('#logoimage').stop(true)
     var curdate = new Date()
-    $('#logoimage').animate({opacity: 0}, 500)
-    $.get(data.style, 
-      function () {
-        var now = new Date()
-        if (now.getTime() > curdate.getTime() + 500) {
-          $('#logoimage').remove()
-          resetDoc()
-          now = new Date()
-          curtime = now.getTime() - initial
-          display('startdoc: ' + String(curtime));
-          initial = now.getTime()
-          loading = false
-        } else {
-          setTimeout(function () {
-            $('#logoimage').remove()
-            resetDoc()
-            now = new Date()
-            curtime = now.getTime() - initial
-            display('startdoc: ' + String(curtime));
-            initial = now.getTime()
-            loading = false
-          }, 500 - (now.getTime() - curdate.getTime()))
-        }
+    resetDoc()
+    now = new Date()
+    curtime = now.getTime() - initial
+    display('startdoc: ' + String(curtime));
+    initial = now.getTime()
+    function checkStyle() {
+      console.log($('#theme'));
+      if ($('#theme').length > 0) {
+        $('#logoimage').animate({opacity: 0}, 500)
+        $('#logoimage').remove()
+        loading = false
+      } else {
+        display('no style loaded yet...')
+        setInterval(checkStyle, 500)
       }
-    )
+    }
+    checkStyle()
   }
   now = new Date()
   curtime = now.getTime() - initial
