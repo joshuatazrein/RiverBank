@@ -263,6 +263,7 @@ function dateToHeading(date, saving) {
     return stringToDate(stripChildren($(x)), true) != 'Invalid Date' &&
       $(x).hasClass('dateheading')
   })
+  console.log(headingslist);
   console.log('here');
   const now = new Date()
   if (date.getTime() > now.getTime()) {
