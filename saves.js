@@ -165,7 +165,6 @@ function migrate() {
     }
   }
   for (heading of headings) {
-    console.log(migratable(heading));
     if (stringToDate(stripChildren($(heading)), true).getTime() < today &&
       migratable(heading)) {
       try {
@@ -367,7 +366,6 @@ function updateDeadlines() {
         text.slice(0, index).replace(/^•\s/, '').replace(/^\-\s/, '') +
         text.slice(endindex))
       if (getHeading($(deadline).parent())) {
-        console.log($(deadline).parent().text(), getHeading($(deadline).parent()));
         // add span underneath with its heading
         duedate.append($('<span class="deadlineBacklink">' + 
           stripChildren(getHeading($(deadline).parent())) + '</span>'))

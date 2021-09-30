@@ -519,7 +519,6 @@ function updateSpanDrags(task) {
     selector = 'span.in:not(.dateheading):visible'
   } else if (task == 'flop') {
     selector = '#flop span.in:not(.dateheading):visible'
-    console.log($(selector));
   } else {
     selector = $(task)[0]
   }

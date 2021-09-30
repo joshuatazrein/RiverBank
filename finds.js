@@ -590,7 +590,6 @@ function goToSearch(el) {
 }
 
 function search(skiplinks, deadline) {
-  console.log(skiplinks, deadline);
   // find all matches with the searchtext
   while (/\s/.test($('#searchbar').val()
     .charAt($('#searchbar').val().length - 1))) {
@@ -618,7 +617,6 @@ function search(skiplinks, deadline) {
     for (let child of children) {
       // if it's a match, add to matches
       if (searchexp.test(stripChildren($(child)))) {
-        console.log('match', stripChildren($(child)));
         // add to matches
         if (skiplinks == true &&
           $(child).text().includes('[[' + searchtext)) {
