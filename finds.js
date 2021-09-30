@@ -263,7 +263,7 @@ function dateToHeading(date, saving) {
   console.log(headingslist);
   headingslist = headingslist.toArray()
   console.log(headingslist);
-  let headingslist = headingslist.filter((x) => {
+  headingslist = headingslist.filter((x) => {
     console.log(x);
     console.log(stripChildren($(x)));
     console.log(stringToDate(stripChildren($(x)), true));
