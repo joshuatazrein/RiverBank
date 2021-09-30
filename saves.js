@@ -184,7 +184,9 @@ function migrate() {
           /^completed/.test(ch.text())) && 
           heading != todayheading[0]) {
           // takes out the uncompleted heading
-          if (ch.hasClass('folded')) { toggleFold($(heading), false) }
+          if (ch.hasClass('folded')) { 
+            toggleFold($(heading), false) 
+          }
           ch.remove()
           continue
         }
@@ -244,6 +246,9 @@ function migrate() {
       }
     }
   }
+  now = new Date()
+  display('migrated:' + (now.getTime() - initial))
+  var initial = now.getTime()
   // creating relative dates
   $('.placeholder').remove()
   for (heading of $('#pop').children().filter('.dateheading')) {
@@ -264,7 +269,7 @@ function migrate() {
     const newdate = dateToHeading(futuredate, false)
   }
   now = new Date()
-  display('migrated:' + (now.getTime() - initial))
+  display('updated futures:' + (now.getTime() - initial))
   var initial = now.getTime()
 }
 
