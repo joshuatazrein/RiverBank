@@ -252,6 +252,7 @@ function migrate() {
   // creating relative dates
   $('.placeholder').remove()
   for (heading of $('#pop').children().filter('.dateheading')) {
+    console.log(heading);
     // add in relative dates underneath
     const newelt = createBlankTask()
     newelt.html(datesToRelative(
@@ -261,6 +262,9 @@ function migrate() {
     newelt.removeClass('in')
     $(heading).append(newelt)
   }
+  now = new Date()
+  display('updated relatives:' + (now.getTime() - initial))
+  var initial = now.getTime()
   // update future dates up to 30 days from now
   const curdate = todaydate.getDate()
   for (let i = 1; i < 30; i ++) {
