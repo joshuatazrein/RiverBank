@@ -259,7 +259,11 @@ function dateToHeading(date, saving) {
   // find the matching date, or create if not
   // sort date headings to be correct
   console.log('here');
-  let headingslist = $('#pop').children().toArray().filter((x) => {
+  let headingslist = $('#pop').children()
+  console.log(headingslist);
+  headingslist = headingslist.toArray()
+  console.log(headingslist);
+  let headingslist = headingslist.filter((x) => {
     console.log(x);
     console.log(stripChildren($(x)));
     console.log(stringToDate(stripChildren($(x)), true));
