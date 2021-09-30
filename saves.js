@@ -983,7 +983,7 @@ function loadPage(starting, oldselect, scrolls) {
         loading = false
       } else {
         display('no style loaded yet...')
-        setInterval(checkStyle, 500)
+        setTimeout(checkStyle, 500)
       }
     }
     checkStyle()
