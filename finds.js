@@ -260,8 +260,8 @@ function dateToHeading(date, saving) {
   // sort date headings to be correct
   console.log('here');
   let headingslist = $('#pop .dateheading')
-  console.log(headingslist);
   console.log('here');
+  console.log(headingslist);
   const now = new Date()
   if (date.getTime() > now.getTime()) {
     // if after today, start at today for search
