@@ -264,10 +264,6 @@ function dateToHeading(date, saving) {
   headingslist = headingslist.toArray()
   console.log(headingslist);
   headingslist = headingslist.filter((x) => {
-    console.log(x);
-    console.log(stripChildren($(x)));
-    console.log(stringToDate(stripChildren($(x)), true));
-    console.log($(x).hasClass('dateheading'));
     return stringToDate(stripChildren($(x)), true) != 'Invalid Date' &&
       $(x).hasClass('dateheading')
   })
