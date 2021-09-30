@@ -89,53 +89,36 @@ function dragsOn(saving) {
 
 // # CREATION/DELETION
 
-function newlist(title, text, saving) {
+function newList(list) {
+  let listthing = list
   // create a new list
-  let savetitle
-  if (!title) {
-    savetitle = ''
-  } else {
-    savetitle = title
+  if (!list) {
+    data.flop.push({title: '', text: ''})
+    listthing = data.flop.length - 1
   }
-  let savetext
-  if (!text) {
-    savetext = ''
-  } else {
-    savetext = text
-  }
-  const newobj = {
-    'title': savetitle,
-    'text': savetext
-  }
-  if (!title) {
-    data.flop.push(newobj) //add to main list of lists only if it's new
-  }
-  const newthing = $('<textarea></textarea>')
-  newthing.val(newobj.title)
-  newthing.addClass('unselected listtitle')
-  newthing.on('click', loadThis)
-  if (dragsenabled == 'true') {
+  const newthing = $('<textarea class="listtitle unselected"></textarea>')
+    newthing.on('dragstart', dragList)
+    newthing.on('drop', dropList)
+    newthing.on('dragover', dragListOver)
+    newthing.on('click', loadThis)
     newthing.attr('draggable', 'true')
-  }
-  newthing.attr('ondragstart', 'dragList(event)')
-  newthing.attr('ondragover', 'draggingOver(event)')
-  newthing.attr('ondrop', 'dropList(event)')
-  $('#loads').append(newthing)
-  loadedlist = $('#loads').children().length - 1
-  loadList(saving); // load last element in list
-  if (saving != false) {
+    newthing.val(data.flop[list].title)
+    $('#loads').append(newthing)
+  if (!list) {
+    loadedlist = $('#loads').children().length - 1
+    loadList(); // load last element in list
     try { $('#loads').children()[loadedlist].focus() }
     catch (err) { display([err, 'loadedlist is ' + loadedlist]) }
+    if ($($('#loads').children()[loadedlist]).val().slice(0, 2) == '- ') {
+      $($('#loads').children()[loadedlist]).addClass('sublist')
+    } else {
+      $($('#loads').children()[loadedlist]).removeClass('sublist')
+    }
+    dragsOff(saving)
   }
-  if ($($('#loads').children()[loadedlist]).val().slice(0, 2) == '- ') {
-    $($('#loads').children()[loadedlist]).addClass('sublist')
-  } else {
-    $($('#loads').children()[loadedlist]).removeClass('sublist')
-  }
-  dragsOff(saving)
 }
 
-function deletelist() {
+function deleteList() {
   // delete selected list
   yes = confirm('are you sure you want to delete this list?')
   if (yes) {

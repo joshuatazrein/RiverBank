@@ -66,7 +66,12 @@ function archiveTask(play) {
       }
     })
   }
-  heading.after(selected)
+  const headingchildren = getHeadingChildren(heading)
+  if (headingchildren.length == 0) {
+    heading.after(selected)
+  } else {
+    $(headingchildren[headingchildren.length - 1]).after(selected)
+  }
   // formatting
   if (heading.attr('folded') == 'true') {
     selected.hide()
@@ -308,6 +313,10 @@ function dropTask(ev) {
     $('#flop').removeClass('greyedout')
     popscrollsave = undefined
     $('#pop').removeClass('greyedout')
+  }
+  if (getHeading(selected) && 
+    getHeading(selected).attr('folded') == 'true') {
+    toggleFold(getHeading(selected))
   }
   save('>', selected, true)
   if ($(ev.target).hasClass('dateheading')) {
@@ -842,11 +851,11 @@ function saveTask() {
       }
     }
   }
-  const length = selected.val().length - 1
-  if (selected.val().charAt(length) == '!') {
+  const length = selected.val().length - 2
+  if (selected.val().slice(length) == ' !') {
     savetask.addClass('important')
     selected.val(selected.val().slice(0, length))
-  } else if (selected.val().charAt(length) == '?') {
+  } else if (selected.val().slice(length) == ' ?') {
     savetask.addClass('maybe')
     selected.val(selected.val().slice(0, length))
   }

@@ -158,13 +158,14 @@ function migrate() {
   const headings = $('#pop').children().filter('.dateheading').toArray()
   function migratable(x) {
     // checks to see if heading has incomplete tasks
-    getHeadingChildren($(x)).forEach((y) => {
-      if (!$(y).hasClass('complete')) {
+    for (child of getHeadingChildren($(x))) {
+      if (!$(child).hasClass('complete')) {
         return true
       }
-    })
+    }
   }
   for (heading of headings) {
+    console.log(migratable(heading));
     if (stringToDate(stripChildren($(heading)), true).getTime() < today &&
       migratable(heading)) {
       try {
@@ -289,7 +290,8 @@ function updateTitles() {
     overdue: stringToDate(x.end).getTime() < curdate} }))
   const displaylist = list.map((x) => { 
     return $('<p style="margin:0;"><span class="falselink" deadline="' +
-      x.end + '" overdue="' + x.overdue + '">' + x.title + '</span>' + 
+      x.end + '" overdue="' + x.overdue + '">' + 
+      x.title.replace(/•\s/, '').replace(/\-\s/, '') + '</span>' + 
       '<span class="eventspan" onclick="select(dateToHeading(' + 
       'stringToDate($(this).text())), true)" overdue="' + 
       x.overdue + '">' + x.end + '</span></p>')
@@ -317,11 +319,13 @@ function updateImportants() {
         if (getHeading($(x))) {
           importants.push($('<p><span class="impspan" list="' + 
             counter + '">' + stripChildren(getHeading($(x))) + '</span>' + 
-            '<span class="falselinkimp">' + stripChildren($(x)) + 
+            '<span class="falselinkimp">' + 
+            stripChildren($(x)).replace(/•\s/, '').replace(/\-\s/, '') + 
             '</span></p>'))
         } else {
           importants.push($('<p><span class="impspan-list" list="' + 
-            counter + '">' + list.title + '</span>' + 
+            counter + '">' + 
+            list.title.replace(/•\s/, '').replace(/\-\s/, '')  + '</span>' + 
             '<span class="falselinkimp">' + stripChildren($(x)) + 
             '</span></p>'))
         }
@@ -655,7 +659,7 @@ function undo() {
   $('#pop').html(data.pop)
   $('#loads').empty()
   for (list of data.flop) {
-    newlist(list.title, list.text, false)
+    newList(list.title, list.text, false)
     $('.taskselect').removeClass('taskselect')
   }
   loadedlist = oldload
@@ -671,9 +675,12 @@ function undo() {
 
 function reload() {
   function cancel() {
-    $('#logoimage').remove() 
+    $('#logoimage').stop(true)
+    $('#logoimage').animate({'opacity': 0}, 250)
+    setTimeout(function () {$('#logoimage').remove()}, 250)
     loading = false
   }
+  $('#logoimage').animate({'opacity': 0.1}, 500)
   loading = true
   // begin reload by downloading server data
   if (window.parent.location.href.includes('welcome')) {
@@ -711,7 +718,6 @@ function reload() {
           display('*** download finished, reloading ***');
           // only reload if data differs
           data = JSON.parse(xhr.responseText)
-          $('#logoimage').animate({'opacity': 0.1}, 250)
           reload2()
         }
       }
@@ -889,16 +895,9 @@ function loadPage(starting, oldselect, scrolls) {
     data.headingalign)
   // load pop
   $('#pop').html(data.pop)
-  for (list of data.flop) {
+  for (list in data.flop) {
     // load lists
-    const newthing = $('<textarea class="listtitle unselected"></textarea>')
-    newthing.on('dragstart', dragList)
-    newthing.on('drop', dropList)
-    newthing.on('dragover', dragListOver)
-    newthing.on('click', loadThis)
-    newthing.attr('draggable', 'true')
-    newthing.val(list.title)
-    $('#loads').append(newthing)
+    newList(list)
   }
   const children = $('#loads').children().toArray()
   for (i in children) {
@@ -960,16 +959,32 @@ function loadPage(starting, oldselect, scrolls) {
     }
     // remove image after reload
     $('#logoimage').stop(true)
+    var curdate = new Date()
     $('#logoimage').animate({opacity: 0}, 500)
-    setTimeout(function () { 
-      $('#logoimage').remove()
-      resetDoc()
-      now = new Date()
-      curtime = now.getTime() - initial
-      display('startdoc: ' + String(curtime));
-      initial = now.getTime()
-      loading = false
-    }, 500)
+    $.get(data.style, 
+      function () {
+        var now = new Date()
+        if (now.getTime() > curdate.getTime() + 500) {
+          $('#logoimage').remove()
+          resetDoc()
+          now = new Date()
+          curtime = now.getTime() - initial
+          display('startdoc: ' + String(curtime));
+          initial = now.getTime()
+          loading = false
+        } else {
+          setTimeout(function () {
+            $('#logoimage').remove()
+            resetDoc()
+            now = new Date()
+            curtime = now.getTime() - initial
+            display('startdoc: ' + String(curtime));
+            initial = now.getTime()
+            loading = false
+          }, 500 - (now.getTime() - curdate.getTime()))
+        }
+      }
+    )
   }
   now = new Date()
   curtime = now.getTime() - initial
