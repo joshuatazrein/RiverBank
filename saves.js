@@ -830,7 +830,7 @@ function loadPage(starting, oldselect, scrolls) {
         data.style + "' />")
     )
     stylegot = false
-    $('#theme').on('load', function () { 
+    $.get(data.style, function() {
       display('loaded theme')
       stylegot = true 
     })
