@@ -259,7 +259,7 @@ function dateToHeading(date, saving) {
   // find the matching date, or create if not
   // sort date headings to be correct
   console.log('here');
-  let headingslist = $('#pop .dateheading')
+  let headingslist = $('#pop .dateheading').toArray()
   console.log('here');
   console.log(headingslist);
   const now = new Date()
