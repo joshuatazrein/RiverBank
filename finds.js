@@ -83,7 +83,7 @@ function datesToRelative(a, b) {
     if (days != 0) returnstring += days + 'd'
   }
   const matches = returnstring.match(/[\d+]\D/g)
-  if (matches.length > 2) {
+  if (matches && matches.length > 2) {
     matches.splice(2, 0, '<br>')
     if (returnstring.charAt(0) == '-') returnstring = '-' + matches.join('')
     else returnstring = matches.join('')
@@ -116,6 +116,14 @@ function dateToString(date, weekday) {
 
 function stringToDate(string, weekday, future) {
   // maps a date-search string to a specific date heading
+  if (string == 'today' || string == '0d') {
+    const date = new Date()
+    date.setHours(0)
+    date.setMinutes(0)
+    date.setSeconds(0)
+    date.setMilliseconds(0)
+    return date
+  }
   if (weekday) {
     // chop off weekday
     string = string.split(' ').slice(1).join(' ')
@@ -271,7 +279,7 @@ function dateToHeading(date, saving) {
   })
   if (!heading1) {
     // insert elt where it should go
-    const heading2 = $('<span class="in h1 dateheading" folded="false" ' +
+    const heading2 = $('<span class="in h1 dateheading" title="date" folded="false" ' +
       'draggable="false">' + 
       dateToString(date, true) + '</span>')
     let headingafter = headingslist.find((x) => {
@@ -433,7 +441,12 @@ function stripChildren(el, mode) {
   }
   // retrieve text from only the parent span and any of its formatting
   const testelt = el.clone()
-  testelt.html(testelt.html().replace(/<br>/g, '\n'))
+  try {
+    testelt.html(testelt.html().replace(/<br>/g, '\n'))
+  } catch (err) {
+    console.log(err, el)
+    return ''
+  }
   for (child of testelt.children()) {
     // strip the subtasks
     if (isSubtask($(child))) {

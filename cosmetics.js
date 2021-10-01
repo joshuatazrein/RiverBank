@@ -368,15 +368,20 @@ function toggleFocus(collapse) {
     $('#searchbarcont').append($('#searchbarframe'))
     $('#timerentcont').append($('#timerent'))
     // getFrame(selected).parent().addClass('fullwidth')
-    getFrame(selected).parent().css('width', '100%')
-    getFrame(selected).parent().css('height', '100%')
+    $('#floplist, #poplist').css('width', '100%')
+    $('#floplist, #poplist').css('height', '100%')
     if (getFrame(selected).attr('id') == 'flop') {
       // hide other thing and this' buttons
       $('#poplist').hide()
+      $('#switch').text('>')
     } else if (getFrame(selected).attr('id') == 'pop') {
       $('#floplist').hide()
+      $('#switch').text('<')
     }
     $('#focusbar').show()
+    if (window.innerWidth < 600) {
+      $('#timerbuts, #timertimes').hide()
+    }
     focused = true
   } else {
     // unfocus
@@ -386,8 +391,8 @@ function toggleFocus(collapse) {
     $('#collapseBut').after($('#focusbut'))
     for (thing of [$('#flop'), $('#pop')]) {
       // thing.parent().removeClass('fullwidth')
-      thing.parent().css('height', '')
-      thing.parent().css('width', '')
+      $('#floplist, #poplist').css('height', '')
+      $('#floplist, #poplist').css('width', '')
     }
     if (!$('#poplist').is(':visible')) {
       $('#poplist').show()
@@ -395,6 +400,7 @@ function toggleFocus(collapse) {
       $('#floplist').show()
     }
     $('#focusbar').hide()
+    $('#timerbuts, #timertimes').show()
     focused = false
   }
   justcollapsed = true
@@ -1034,6 +1040,24 @@ function keyDown(ev) {
     // new list
     ev.preventDefault()
     newlist()
+  } else if (selected && ['flop', 'pop'].includes(selected.attr('id')) &&
+    ev.key == 'Enter') {
+    ev.preventDefault()
+    const placeholder = createBlankTask()
+    // add before buffer span
+    $(selected.children()[selected.children().length - 1])
+      .before(placeholder)
+    if (getHeading(placeholder) && 
+      getHeading(placeholder).attr('folded') == 'true') {
+      toggleFold(getHeading(placeholder))
+      setTimeout(function () {
+        select(placeholder)
+        editTask()
+      }, 310)
+    } else {
+      select(placeholder)
+      editTask()
+    } 
   } else if (selected && ev.key == 'Enter' &&
     ev.shiftKey) {
     ev.preventDefault()

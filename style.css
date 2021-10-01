@@ -111,10 +111,15 @@ span.edit {
   transition: margin 0.5s ease;
 }
 
-span.falselink, span.falselinkimp {
+span.falselink {
   display: inline-block;
   max-width: calc(100% - 60px);
   /* display: inline-block; */
+}
+
+span.falselinkimp {
+  max-width: calc(100% - 75px);
+  display: inline-block;
 }
 
 span.eventspan, span.impspan, span.impspan-list {
@@ -127,6 +132,7 @@ span.eventspan, span.impspan, span.impspan-list {
   justify-content: left;
   width: 100%;
   margin-top: 3px;
+  border-right: 1px solid var(--bdcolor);
 }
 
 #focusbar button {
@@ -136,13 +142,14 @@ span.eventspan, span.impspan, span.impspan-list {
 }
 
 #focusbar div:not(.dropdown) {
-  width: calc(50% - 35px);
+  width: calc(50% - 58px);
   height: 1em;
   /* max-width: calc(50vw - 20px); */
 }
 
 #focusbar input, #focusbar div div {
-  width: 100% !important;
+  width: calc(100% - 4px) !important;
+  margin: 2px;
 }
 
 #focusbar input {
@@ -318,6 +325,7 @@ p.dropdown-item {
   position: relative;
   float:left;
   overflow: hidden;
+  border-right: 1px solid var(--bdcolor);
 }
 
 .greyedout {
@@ -336,13 +344,13 @@ p.dropdown-item {
   width: 50%;
 }
 
-span.duedate > span.deadlineBacklink {
+span.duedate > span.duedateBacklink {
   font-size: 0.5em;
   color: var(--textcolor);
   position: absolute;
   top: 0;
-  right: 0;
-  width: 50px;
+  right: 5px;
+  width: 60px;
   text-align: right;
   line-height: 1em;
   margin: 0;
@@ -375,7 +383,6 @@ span.duedate > span.deadlineBacklink {
   float: left;
   background-color: inherit;
   border-right: 1px solid var(--bdcolor);
-  border-left: 1px solid var(--bdcolor);
   position: relative;
 }
 
@@ -385,6 +392,7 @@ span.duedate > span.deadlineBacklink {
   padding: 1px;
   float: left;
   background-color: inherit;
+  border-right: 1px solid var(--bdcolor);
   position: relative;
 }
 
@@ -428,14 +436,13 @@ span.duedate > span.deadlineBacklink {
   left: 0;
   color: white;
   overflow: auto;
-  z-index: 2;
+  z-index: 4;
 }
 
 #tutorial .h1 {
   padding: 10px 0;
   margin-top: 0;
   font-size: 200%;
-  border-top: 1px solid var(--bdcolor);
   color: var(--select)
 }
 
@@ -446,12 +453,16 @@ span.duedate > span.deadlineBacklink {
   font-family: monospace;
   font-size: 300%;
   color: white;
-  top: -20px; 
-  margin-top: 20px;
   left: 0;
+  padding-top: 20px;
   max-width: 500px;
   background: #000;
   padding-bottom: 15px;
+}
+
+#tutorial .banner > button {
+  top: -0.7em;
+  position: relative;
 }
 
 .tutorial-vid {
@@ -566,9 +577,16 @@ span {
   font-family: inherit;
 }
 
-span.eventspan, span.impspan, span.impspan-list {
+span.impspan, span.impspan-list {
   width: initial;
   display: initial;
+  max-width: 75px;
+}
+
+span.eventspan {
+  width: initial;
+  display: initial;
+  max-width: 60px;
 }
 
 [overdue="true"] {
@@ -602,7 +620,7 @@ span.link, span.deadline, span.duedate,
   cursor: pointer;
 }
 
-span.in, span.duedate > span.deadlineBacklink {
+span.in, span.duedate > span.duedateBacklink {
   cursor: default;
 }
 
@@ -622,7 +640,7 @@ span.duedate {
   color: var(--select);
   font-style: italic;
   border-radius: 5px;
-  padding-right: 50px;
+  padding-right: 65px;
   padding-left: 5px;
   margin-top: 0.25em;
   position: relative;
@@ -778,7 +796,6 @@ span span.list {
 }
 
 span span.note {
-  font-size: 0.64em !important;
   opacity: 0.85;
   text-indent: -1em;
   padding-left: 1em + 5px;
@@ -854,17 +871,18 @@ span.weblink, span.deadline {
     height: calc(var(--butwidth) - 5px);
     min-width: calc(var(--butwidth) - 5px);
   }
+  #focusbar input {
+    margin-top: 3px;
+    height: 1.5em !important;
+  }
   #floplist, #poplist {
     width: 100%;
     height: 50%;
     float: none;
     clear: left;
-    border-left: 1px solid var(--bdcolor);
   }
   #floplist {
     border-bottom: 1px solid var(--bdcolor);
-    border-left: 1px solid var(--bdcolor);
-    border-right: none;
   }
   #listcontainer > span {
     width: calc(100% - 30px);

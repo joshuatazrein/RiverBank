@@ -40,10 +40,7 @@ timer.on('end', function () {
     if (stopwatch) clearInterval(stopwatch)
     stopwatch = setInterval(function () {
       const curtime = new Date().getTime() - timertime
-      let minutes = Math.floor(curtime / 60000); // minutes
-      let secs = Math.floor(Math.ceil(((curtime) - minutes * 60000)) / 1000)
-      $('#timerent').val('-' + String(minutes) + ':' +
-      String(secs).padStart(2, 0))
+      stopwatchTime(curtime, '-')
     }, 1000)
   }
 })
@@ -66,17 +63,31 @@ function addTime(time) {
   startTimer()
 }
 
+function stopwatchTime(curtime, negative) {
+  if (!negative) negative = ''
+  let hours = Math.floor(curtime / (60000 * 60))
+  let minutes = Math.floor((curtime - hours) / 60000); // minutes
+  let secs = Math.floor(Math.ceil(((curtime) - minutes * 60000)) / 1000)
+  if (hours > 0) {
+    $('#timerent').val(negative + String(hours) + ':' + 
+      String(minutes).padStart(2, 0) + ':' + String(secs).padStart(2, 0))
+  } else {
+    $('#timerent').val(negative + String(minutes) + ':' + 
+      String(secs).padStart(2, 0))
+  }
+}
+
 function startTimer() {
-  if ($('#timerent').val() == '') {
+  const s = $('#startsnd')[0]
+  s.src = s.src
+  s.play()
+  if ($('#timerent').val() == ':00') {
     var timertime = new Date().getTime()
     $('#timerent').val('0:00')
     if (stopwatch) clearInterval(stopwatch)
     stopwatch = setInterval(function () {
       const curtime = new Date().getTime() - timertime
-      let minutes = Math.floor(curtime / 60000); // minutes
-      let secs = Math.floor(Math.ceil(((curtime) - minutes * 60000)) / 1000)
-      $('#timerent').val(String(minutes) + ':' +
-        String(secs).padStart(2, 0))
+      stopwatchTime(curtime)
     }, 1000)
   } else {
     timertext = $('#timerent').val()
@@ -252,10 +263,13 @@ function timeCheck() {
   // checks the current time and sees if any events match it for notifications
   const eventslist = getHeadingChildren(dateToHeading(stringToDate('0d')))
     .filter((x) => {
+    const t = $(x).text().split(' ')[0]
     return $(x).hasClass('event') && 
-      /^\d/.test($(x).text().split(' ')[0])
+      /^\d/.test(t) && /[\dapm]+/.test(t)
   })
+  console.log(eventslist);
   const now = new Date()
+  now.setMinutes(now.getMinutes() + 15) // reminds in 15 minutes
   const testtime = [now.getHours(), now.getMinutes()]
   let pm = false // for am/pm
   let curhour = 0 // tracks current hour
@@ -270,12 +284,14 @@ function timeCheck() {
     else timelist[1] = 0
     // process hours
     if (eventtime.includes('a')) timelist[0] = Number(hours)
-    else if (eventtime.includes('p') || pm) {
+    else if ((eventtime.includes('p') && eventtime[0].includes('12')) 
+      || pm) {
       timelist[0] = Number(hours) + 12
       pm = true
     }
     else timelist[0] = Number(hours)
     // test for match
+    console.log(task.text(), testtime, timelist);
     if (JSON.stringify(testtime) == JSON.stringify(timelist)) {
       new Notification('RiverBank', {body: task.text()})
     }

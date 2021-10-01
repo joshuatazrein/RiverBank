@@ -52,6 +52,7 @@ function archiveTask(play) {
     heading = $('<span class=\'in h2\' folded=\'false\'>' +
       'completed ...</span>')
     heading.attr('folded', 'true')
+    heading.addClass('complete')
     if (getHeadingChildren(day).length >= 1) {
       getHeadingChildren(day)[
         getHeadingChildren(day).length - 1].after(heading)
@@ -126,6 +127,7 @@ function toggleComplete(task, saving) {
   if (!task || saving != false) {
     save('+', selected, true)
   }
+  updateImportants()
 }
 
 function toggleImportant() {
@@ -1042,7 +1044,7 @@ function editTask() {
 
 function createBlankTask() {
   // create new blank task
-  const savetask = $('<span class="in"></span>')
+  const savetask = $('<span class="in" title=\'task (see help: \"syntax\")\'></span>')
   return savetask
 }
 

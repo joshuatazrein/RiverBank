@@ -63,7 +63,7 @@
             <button title='set task type' class='mobilebut opts' id='typebut' function='setOptions()'>*</button>
           </div>
           <div id='searchbarframe'>
-            <input id='searchbar' placeholder="search (d: date)">
+            <input id='searchbar' placeholder="search (d: date)" title='search (see help: "dates")'>
             <div id='searchbar-results' class='dropdown' style='position:absolute;'></div>
           </div>
           <div class='butbar' id='movebuts' style='margin:2px 0;'>
@@ -86,7 +86,7 @@
               <button class='mobilebut' title='subtask' id='newSubtaskBut' function='newTask(true)'>↳</button>
             </div>
           </div>
-          <input id='timerent' placeholder="timer" />
+          <input id='timerent' placeholder="timer" title='enter timecode or use buttons (blank = stopwatch)' />
           <div class='butbar' style='margin:2px 0;'>
             <div class='butbar' id='timertimes'>
               <button function='if (event.altKey) { addTime(-25) } else { addTime(25) }' title='+25 minutes'>25</button>
@@ -112,7 +112,9 @@
         </div>
         <p id='help' class='help'>
           <span class='h1' style='border-bottom:none;color:var(--textcolor);font-size:125%;'>help</span>
+          <span id='quickhelp' style='text-align: center'></span>
           <span class='h1' style='border-bottom:none;'><button onclick='tutorial()' id='tutorialbut' style='font-size:20px;font:inherit;'>tutorial</button></span>
+          <span class='h3'><a href='mailto:jreinier@oberlin.edu' style='color: var(--select)'>give feedback</a></span>
           <span class='h1'>controls</span>
           <span class='command'><span class='left'>click</span><span class='right'>select task</span></span>
           <span class='command'><span class='left'>right-click</span><span class='right'>options</span></span>
@@ -178,13 +180,26 @@
     </div>
     <div id='listcontainer'>
       <div id='focusbar'>
+        <button 
+          id='switch' 
+          onclick='
+            if ($(this).text() == "<") {
+              $("#poplist").hide()
+              $("#floplist").show() 
+              $(this).text(">")
+            } else {
+              $("#floplist").hide()
+              $("#poplist").show() 
+              $(this).text("<")
+            }'
+          title='switch bank/river'>
+        </button>
         <div id='searchbarcont'>
         </div>
         <div id='timerentcont'>
         </div>
       </div>
       <div id='floplist'>
-        <p id='importants'></p>
         <div class='butbar' id='flopbuts'>
           <button id='collapseBut' title='collapse menu' function='toggleCollapse(true)' style='font-family: monospace !important'>≡</button>
           <button id='focusbut' title='focus on view' function='toggleFocus()'>&lt;></button>
@@ -193,6 +208,7 @@
           <button function="selectRandom()" title='select random flop'>?</button>
           <button id='scheduleBut' function="moveTask('pop');$('#searchbar').focus()" title='move task to river'>→</button>
         </div>
+        <p id='importants' title='important incomplete tasks'></p>
         <p id='flop' class='rendered in'></p>
       </div>
       <div id='poplist'>
@@ -203,7 +219,7 @@
           <button class='flopbut' id='popBut' title='new task in river'>+ RIVER</button>
           <button function="archiveTask()" title='complete'>!</button>
         </div>
-        <p id='events'></p>
+        <p id='events' title='overdue & upcoming deadlines'></p>
         <p id='pop' class='rendered in'></p>        
       </div>
     </div>
@@ -281,7 +297,7 @@
       <textarea></textarea>
     </div>
     <div id='tutorial' style='display:none'>
-      <span class='banner'>tutorial <button style='top:-1.5em;position:relative;' onclick='$("#tutorial").hide()'>done</button></span>
+      <span class='banner'>tutorial <button onclick='$("#tutorial").hide()'>done</button></span>
       <br><br><br>
       <span class='h1'>lists</span>
       <video controls class='tutorial-vid'><source  src="tutorial/new-list.m4v" type="video/mp4"></video>
@@ -309,6 +325,7 @@
   </div>
   <!-- sounds -->
   <audio src='snd/pop.mp3' type='audio/mp3' id='popsnd'></audio>
+  <audio src='snd/start.mp3' type='audio/mp3' id='startsnd'></audio>
   <audio src='snd/timer.mp3' type='audio/mp3' id='timersnd'></audio>
   <!-- scripts -->
   <script type='text/javascript' src='cosmetics.js'></script>
