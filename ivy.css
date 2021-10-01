@@ -1,0 +1,24 @@
+:root {
+  --fontsize: 24px;
+  --fontweight: 100;
+  --boldweight: 300;
+  --background: rgb(187, 215, 178);
+  --lineheight: 1.5em;
+  --bgoverlay: rgba(187, 215, 178, 0.8);
+  /* --select: rgb(135, 206, 235); */
+  /* --select: rgb(74, 100, 108); */
+  --select: rgb(246, 240, 172);
+  --font: 'Trattatello', serif;
+  --butfont: 'Trattatello';
+  /* --textcolor: rgb(245, 245, 245); */
+  /* --textcolor: rgb(131, 137, 150); */
+  --textcolor: rgb(245, 245, 220);
+  --menufont: 'Trattatello';
+  --bdcolor: rgb(170, 170, 141);
+  --important: rgb(255, 226, 209);
+  --maybe: rgba(255, 226, 209, 0.5);
+  --event: rgba(246, 240, 172, 0.3);
+  --butbackground: rgba(128, 128, 128, 0.3);
+  --flopbutbackground: rgba(222, 224, 227, 0.3);
+  --indent: 0.5em;
+}

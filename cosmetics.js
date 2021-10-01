@@ -556,6 +556,9 @@ function context(ev, mobile) {
     '#context-styleJason': [
       ['BUTTON'], ['opts']
     ],
+    '#context-styleIvy': [
+      ['BUTTON'], ['opts']
+    ],
     '#context-styleLight': [
       ['BUTTON'], ['opts']
     ],
