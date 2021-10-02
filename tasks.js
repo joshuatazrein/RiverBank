@@ -449,6 +449,10 @@ function mobileDragOver(event) {
       i++
     }
   } else {
+    if (focused) {
+      // skip this
+      return
+    }
     const timertime = 3
     const offsetwidth = 30
     const scrollChange = 1
