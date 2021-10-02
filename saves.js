@@ -675,6 +675,7 @@ function undo() {
     select(oldselect[0].find('span.in')[oldselect[1]])
   }
   updateSpanDrags()
+  updateSizes()
 }
 
 function cancel() {

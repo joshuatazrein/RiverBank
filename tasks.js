@@ -265,7 +265,7 @@ function dropTask(ev) {
     // normal target
     if ($(el).attr('folded') == 'true') {
       // unfold
-      toggleFold($(el))
+      toggleFold($(el), false)
       if (getHeadingChildren($(el)).length == 0) {
         // no children
         $(el).after(selected)
@@ -300,8 +300,10 @@ function dropTask(ev) {
       }
     }
   }
+  console.log('dropping task children:', children);
   for (i = children.length - 1; i >= 0; i--) {
     // append each child after for headings
+    $(children[i]).attr('style', '')
     selected.after(children[i])
   }
   if (window.innerWidth < 600) {
