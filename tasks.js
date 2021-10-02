@@ -241,6 +241,7 @@ function dropTask(ev) {
   // drops selected task
   $('#listcontainer > span').hide()
   const el = $(ev.target)
+  console.log('dropping task', droplist);
   if (el.hasClass('buffer')) {
     // accomodates buffers
     if (el.hasClass('bottom')) {
@@ -292,6 +293,7 @@ function dropTask(ev) {
     }
   }
   select(droplist[0])
+  console.log('dropping now:', droplist);
   for (i = droplist.length - 1; i > 1; i--) {
     // append each child after for headings
     $(droplist[i]).attr('style', '')
