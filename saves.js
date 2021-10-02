@@ -605,7 +605,11 @@ function uploadData(reloading) {
       display('*** upload finished ***')
       prevupload = xhr.responseText
       localStorage.setItem('data', JSON.stringify(data))
-      if (reloading) reload(true) // reloads page
+      if (reloading == 'reload') {
+        location.reload()
+      } else if (reloading) {
+        reload(true) // reloads page
+      }
     });
   } else {
     if (!navigator.onLine && !offline) {

@@ -115,7 +115,7 @@ function upload() {
       // rewrite existing data with this
       data = JSON.parse(this.result)
       dataString = JSON.stringify(data)
-      uploadData(true)
+      uploadData('reload')
     })
     fileReader.readAsText(this.files[0])
   })
