@@ -653,6 +653,7 @@ function uploadData(reloading) {
       // if it's offline save that
       alert('Connection lost; saving locally')
       offline = true
+      cancel()
     } else if (navigator.onLine && offline) {
       reload()
       return
@@ -702,16 +703,17 @@ function undo() {
   updateSpanDrags()
 }
 
+function cancel() {
+  $('#logoimage').stop(true)
+  $('#logoimage').animate({'opacity': 0}, 500)
+  setTimeout(function () {
+    $('#logoimage').remove()
+  }, 510)
+  display('cancelling load')
+  loading = false
+}
+
 function reload() {
-  function cancel() {
-    $('#logoimage').stop(true)
-    $('#logoimage').animate({'opacity': 0}, 500)
-    setTimeout(function () {
-      $('#logoimage').remove()
-    }, 510)
-    display('cancelling load')
-    loading = false
-  }
   setTimeout(cancel, 5000)
   $('#logoimage').animate({'opacity': 0.1}, 250)
   loading = true
