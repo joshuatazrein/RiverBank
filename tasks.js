@@ -294,7 +294,7 @@ function dropTask(ev) {
   }
   select(droplist[0])
   console.log('dropping now:', droplist);
-  for (i = droplist.length - 1; i > 1; i--) {
+  for (i = droplist.length - 1; i >= 1; i--) {
     // append each child after for headings
     $(droplist[i]).attr('style', '')
     selected.after(droplist[i])
