@@ -738,6 +738,7 @@ function reload() {
       offline = false
       if (doupload) {
         uploadData(true)
+        cancel()
         return
       } else {
         alert('downloading from cloud...')
