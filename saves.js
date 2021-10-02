@@ -587,47 +587,6 @@ function diffsLog(oldString, newString) {
   return diffs
 }
 
-// function uploadData(reloading) {
-//   // upload data to the server
-//   if (window.parent.location.href.includes('welcome')) {
-//     return // for demo
-//   }
-//   display('--- upload started ---') 
-//   if (JSON.stringify(data) == prevupload) {
-//     display('identical');
-//     return
-//   }
-//   if (navigator.onLine && !offlinemode) {
-//     $.post("upload.php", {
-//       datastr: JSON.stringify(data),
-//     }, function (data, status, xhr) {
-//       display('*** upload finished ***')
-//       diffsLog(JSON.stringify(data), xhr.responseText)
-//       prevupload = xhr.responseText
-//       localStorage.setItem('data', JSON.stringify(data))
-//       if (reloading) reload() // reloads page
-//     });
-//   } else {
-//     if (!navigator.onLine && !offline) {
-//       // if it's offline save that
-//       alert('Connection lost; saving locally')
-//       offline = true
-//     } else if (navigator.onLine && offline) {
-//       reload()
-//       return
-//     }
-//     // offline mode
-//     localStorage.setItem('data', JSON.stringify(data))
-//     display('*** local upload finished ***')
-//     prevupload = JSON.stringify(data)
-//     if (reloading) {
-//       display('reloading from upload (offline)');
-//       reload() // reloads page
-//       return
-//     }
-//   }
-// }
-
 function uploadData(reloading) {
   // upload data to the server
   if (window.parent.location.href.includes('welcome')) {
@@ -646,7 +605,7 @@ function uploadData(reloading) {
       display('*** upload finished ***')
       prevupload = xhr.responseText
       localStorage.setItem('data', JSON.stringify(data))
-      if (reloading) reload() // reloads page
+      if (reloading) reload(true) // reloads page
     });
   } else {
     if (!navigator.onLine && !offline) {
@@ -655,7 +614,7 @@ function uploadData(reloading) {
       offline = true
       cancel()
     } else if (navigator.onLine && offline) {
-      reload()
+      reload(true)
       return
     }
     // offline mode
@@ -665,7 +624,7 @@ function uploadData(reloading) {
     prevupload = JSON.stringify(data)
     if (reloading) {
       display('reloading from upload (offline)');
-      reload() // reloads page
+      reload(true) // reloads page
       return
     }
   }
@@ -713,7 +672,7 @@ function cancel() {
   loading = false
 }
 
-function reload() {
+function reload(force) {
   setTimeout(cancel, 5000)
   $('#logoimage').animate({'opacity': 0.1}, 250)
   loading = true
@@ -725,9 +684,9 @@ function reload() {
   $('body').prepend("<div id='logoimage' class='show' style='z-index:2;opacity:0'><img src='logo.png'></div>")
   display('--- download started ---');
   if (!navigator.onLine || offlinemode) {
-    const diffs = diffsLog(JSON.stringify(data), 
-      localStorage.getItem('data'))
-    if (diffs == 'Diffs:') { 
+    if (force) {
+      reload2()
+    } else {
       cancel()
     }
   } else {
@@ -743,6 +702,10 @@ function reload() {
       } else {
         alert('downloading from cloud...')
       }
+    }
+    if (force) { 
+      reload2() 
+      return 
     }
     $.post('download.php',
       function (datastr, status, xhr) {
@@ -1021,9 +984,10 @@ function loadPage(starting, oldselect, scrolls) {
     initial = now.getTime()
     display('startdoc: ' + String(curtime));
     now = new Date()
-    curtime = now.getTime() - initial
-    initial = now.getTime()
-    display('checkStyle: ' + String(curtime));
+    // curtime = now.getTime() - initial
+    // initial = now.getTime()
+    // display('checkStyle: ' + String(curtime));
+      // check style is skipped (takes too long)
     $('#logoimage').animate({opacity: 0}, 500)
     $('#logoimage').remove()
     loading = false
