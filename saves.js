@@ -648,6 +648,9 @@ function undo() {
   const floptop = $('#flop').scrollTop()
   const poptop = $('#pop').scrollTop()
   data = JSON.parse(JSON.stringify(prevsave))
+  $('#pop').empty()
+  $('#flop').empty()
+  $('#loads').empty()
   // load pop
   $('#pop').html(data.pop)
   for (list in data.flop) {
