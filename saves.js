@@ -179,7 +179,7 @@ function migrate() {
   function migratable(x) {
     // checks to see if heading has incomplete tasks
     for (child of getHeadingChildren($(x))) {
-      if (!$(child).hasClass('complete')) {
+      if (!$(child).hasClass('complete') && !$(child).hasClass('duedate')) {
         return true
       }
     }
@@ -211,8 +211,8 @@ function migrate() {
           ch.remove()
           continue
         }
-        ch.children().filter('span.in:not(.complete)').toArray().forEach(
-          (x) => { appends.push(x) })
+        ch.children().filter('span.in:not(.complete):not(.duedate)')
+          .toArray().forEach((x) => { appends.push(x) })
         if (ch.hasClass('event') && !ch.hasClass('complete')) {
           toggleComplete(ch, false)
         } else if (!ch.hasClass('complete') && !isHeading(ch)) {
@@ -648,16 +648,24 @@ function undo() {
   const floptop = $('#flop').scrollTop()
   const poptop = $('#pop').scrollTop()
   data = JSON.parse(JSON.stringify(prevsave))
-  const oldload = Number(loadedlist)
+  // load pop
   $('#pop').html(data.pop)
-  $('#loads').empty()
-  for (list of data.flop) {
-    newList(list.title, list.text, false)
-    $('.taskselect').removeClass('taskselect')
+  for (list in data.flop) {
+    // load lists
+    newList(list)
   }
-  loadedlist = oldload
-  loadList(false)
+  const children = $('#loads').children().toArray()
+  for (i in children) {
+    // remember folding
+    const val = $(children[i]).val()
+    if (val.slice(val.length - 4) == ' ...') {
+      toggleFoldList(false, i)
+    }
+  }
+  loadedlist = data.loadedlist
+  loadList(false) // load list from data
   dragsOn(false)
+  $('#searchbar').val('')
   $('#flop').scrollTop(floptop)
   $('#pop').scrollTop(poptop)
   if (oldselect) {

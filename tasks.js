@@ -875,10 +875,10 @@ function saveTask() {
     selected.val(selected.val() + ' ')
   }
   newstr = selected.val()
-    .replace(/\*(.*)\*/g, ' <span class="bold">$1</span> ')
-    .replace(/_(.*)_/g, ' <span class="italic">$1</span> ')
+    .replace(/\*(.*)\*/g, '<span class="bold">$1</span>')
+    .replace(/_(.*)_/g, '<span class="italic">$1</span>')
     .replace(/_\*(.*)\*_/g, 
-    ' <span class="bold-italic">$1</span> ')
+    '<span class="bold-italic">$1</span>')
     .replace(/\s\>(.*)\s/g, ' <span class="deadline">>$1</span> ')
     .replace(/\s\[\[(.*)\]\]\s/g, 
     ' <span class="link">[[$1]]</span> ')
