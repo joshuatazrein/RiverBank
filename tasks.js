@@ -222,6 +222,7 @@ function dragTask(ev) {
   selected = $($('#test').find('span.in').toArray()[selectindex])
   // clear current select
   if (isHeading(oldselect)) {
+    console.log('heading children: ', getHeadingChildren(oldselect));
     for (child of getHeadingChildren(oldselect)) {
       $(child).remove()
     }
@@ -252,6 +253,7 @@ function dropTask(ev) {
   if (selected.hasClass('h1') || selected.hasClass('h2') ||
     selected.hasClass('h3')) {
     // drop all the tasks
+    console.log('is heading', getHeadingChildren(selected));
     children = getHeadingChildren(selected)
   }
   if ($(ev.target).hasClass('buffer')) {
@@ -263,23 +265,23 @@ function dropTask(ev) {
     }
   } else {
     // normal target
-    if ($(el).attr('folded') == 'true') {
+    if (el.attr('folded') == 'true') {
       // unfold
-      toggleFold($(el), false)
+      toggleFold(el, false)
       if (getHeadingChildren($(el)).length == 0) {
         // no children
-        $(el).after(selected)
+        el.after(selected)
       } else {
         // add after last child
-        getHeadingChildren($(el))[
-          getHeadingChildren($(el)).length - 1].after(selected)
+        getHeadingChildren(el)[
+          getHeadingChildren(el).length - 1].after(selected)
       }
     } 
     // dropping task (according to key commands)
     if (ev.altKey && $(ev.target).parent()[0].tagName != 'SPAN' &&
       !isHeading($(ev.target))) {
       if (ev.metaKey) {
-        const subtasks = $(el).children().toArray().filter(
+        const subtasks = el.children().toArray().filter(
           (x) => {
             if (isSubtask($(x))) return true
           }
