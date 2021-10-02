@@ -213,24 +213,16 @@ function dragTask(ev) {
   } else if (selected.hasClass('dateheading')) {
     return; // stops from reordering dates
   }
-  const oldselect = selected
-  // copy into test if first list
-  const selectindex = getFrame(selected).find('span.in').toArray()
-    .indexOf(selected[0])
-  $('#test').empty()
-  $('#test').html(getFrame(selected).html())
-  selected = $($('#test').find('span.in').toArray()[selectindex])
+  droplist = [selected.clone()[0]]
   // clear current select
-  if (isHeading(oldselect)) {
-    console.log('heading children: ', getHeadingChildren(oldselect));
-    console.log('copied children: ', getHeadingChildren(selected));
-    for (child of getHeadingChildren(oldselect)) {
+  if (isHeading(selected)) {
+    for (child of getHeadingChildren(selected)) {
+      droplist.push($(child).clone()[0])
       $(child).remove()
     }
   }
-  $('.taskselect').removeClass('taskselect')
-  selected.addClass('taskselect')
-  oldselect.remove()
+  selected.remove()
+  console.log('droplist:', droplist);
 }
 
 function dropTask(ev) {
@@ -248,21 +240,17 @@ function dropTask(ev) {
   draggingtask = false
   // drops selected task
   $('#listcontainer > span').hide()
-  // add children
-  let children = []
   const el = $(ev.target)
-  if (selected.hasClass('h1') || selected.hasClass('h2') ||
-    selected.hasClass('h3')) {
-    // drop all the tasks
-    console.log('is heading', getHeadingChildren(selected));
-    children = getHeadingChildren(selected)
-  }
-  if ($(ev.target).hasClass('buffer')) {
+  if (el.hasClass('buffer')) {
     // accomodates buffers
-    if ($(ev.target).hasClass('bottom')) {
-      $(ev.target).before(selected)
+    if (el.hasClass('bottom')) {
+      for (task of droplist.reverse()) {
+        el.before(task)
+      }
     } else {
-      $(ev.target).after(selected)
+      for (task of droplist) {
+        el.after(task)
+      }
     }
   } else {
     // normal target
@@ -271,11 +259,11 @@ function dropTask(ev) {
       toggleFold(el, false)
       if (getHeadingChildren($(el)).length == 0) {
         // no children
-        el.after(selected)
+        el.after(droplist[0])
       } else {
         // add after last child
         getHeadingChildren(el)[
-          getHeadingChildren(el).length - 1].after(selected)
+          getHeadingChildren(el).length - 1].after(droplist[0])
       }
     } 
     // dropping task (according to key commands)
@@ -288,26 +276,26 @@ function dropTask(ev) {
           }
         )
         if (subtasks.length == 0) {
-          $(el).append(selected)
+          $(el).append(droplist[0])
         } else {
-          $(subtasks[0]).before(selected)
+          $(subtasks[0]).before(droplist[0])
         }
       } else {
-        $(el).append(selected)
+        $(el).append(droplist[0])
       }
     } else {
       if (ev.metaKey) {
-        $(el).before(selected)
+        $(el).before(droplist[0])
       } else {
-        $(el).after(selected)
+        $(el).after(droplist[0])
       }
     }
   }
-  console.log('dropping task children:', children);
-  for (i = children.length - 1; i >= 0; i--) {
+  select(droplist[0])
+  for (i = droplist.length - 1; i > 1; i--) {
     // append each child after for headings
-    $(children[i]).attr('style', '')
-    selected.after(children[i])
+    $(droplist[i]).attr('style', '')
+    selected.after(droplist[i])
   }
   if (window.innerWidth < 600) {
     if (flopscrollsave) {
