@@ -610,7 +610,6 @@ function updateSpanDrags(task) {
       $('.ui-droppable').removeClass('ui-droppable')
     }
   } catch (err) {
-    console.log(err)
   }
 }
 

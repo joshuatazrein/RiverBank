@@ -1001,7 +1001,6 @@ function keyDown(ev) {
     // focus on searchbar and find it
     ev.preventDefault()
     if ($('#searchbar').val().slice(0, 2) == 'd:') {
-      console.log($('#searchbar').val().slice(2));
       const date = dateToHeading(
         stringToDate($('#searchbar').val().slice(2), false))
       select(date, true)

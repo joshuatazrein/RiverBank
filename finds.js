@@ -137,7 +137,6 @@ function stringToDate(string, weekday, future) {
   if (string.charAt(0) == ' ') {
     string = string.slice(1)
   }
-  console.log(string);
   let date = new Date()
   if (Object.keys(weekdaysNum).includes(string.split(/(\+|-|\s)/)[0])) {
     // analyze as a weekday string
@@ -443,7 +442,6 @@ function stripChildren(el, mode) {
   try {
     testelt.html(testelt.html().replace(/<br>/g, '\n'))
   } catch (err) {
-    console.log(err, el)
     return ''
   }
   for (child of testelt.children()) {

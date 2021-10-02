@@ -92,7 +92,6 @@ function clean() {
       continue
     }
     if ($($(heading).children()[0]).text().includes('-')) {
-      console.log('thing');
       $(heading).addClass('complete')
       if ($(heading).attr('folded') == 'false') {
         toggleFold($(heading), false)
@@ -174,7 +173,6 @@ function migrate() {
   var initial = now.getTime()
   // move past tasks to today
   const todaydate = stringToDate('0d')
-  console.log(todaydate);
   const today = todaydate.getTime()
   const todayheading = $(dateToHeading(stringToDate('0d'), false))
   const headings = $('#pop').children().filter('.dateheading').toArray()
@@ -190,7 +188,6 @@ function migrate() {
   for (heading of headings) {
     if (stringToDate(stripChildren($(heading)), true).getTime() < today &&
       migratable(heading)) {
-      console.log($(heading).text(), stringToDate(stripChildren($(heading)), true).getTime(), today);
       try {
         if (selected &&
           (selected[0] == heading ||
@@ -239,19 +236,15 @@ function migrate() {
       return /^uncompleted/.test($(x).text()) && $(x).hasClass('h2')
     })
     if (!uncompletespan) {
-      console.log('no complete');
       // insert after completed tasks heading
       let completed = headingchildren.find((x) => {
         return /^completed/.test($(x).text()) && $(x).hasClass('h2')
       })
       if (completed) {
-        console.log('complete');
         completed = $(completed).prev()
       } else if (!completed && headingchildren.length > 0) {
-        console.log('lastchild');
         completed = headingchildren[headingchildren.length - 1]
       } else {
-        console.log('today');
         completed = todayheading
       }
       uncompletespan = createBlankTask()

@@ -267,7 +267,6 @@ function timeCheck() {
     return $(x).hasClass('event') && 
       /^\d/.test(t) && /[\dapm]+/.test(t)
   })
-  console.log(eventslist);
   const now = new Date()
   now.setMinutes(now.getMinutes() + 15) // reminds in 15 minutes
   const testtime = [now.getHours(), now.getMinutes()]
@@ -291,7 +290,6 @@ function timeCheck() {
     }
     else timelist[0] = Number(hours)
     // test for match
-    console.log(task.text(), testtime, timelist);
     if (JSON.stringify(testtime) == JSON.stringify(timelist)) {
       new Notification('RiverBank', {body: task.text()})
     }
