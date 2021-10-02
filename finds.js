@@ -48,6 +48,7 @@ function datesToRelative(a, b) {
     }
     if (days != 0) returnstring += days + 'd'
   } else if (a.getTime() > b.getTime()) {
+    target.setDate(target.getDate() + 1)
     // past test
     returnstring = '-'
     const oneyear = new Date(b.getTime())
@@ -136,9 +137,7 @@ function stringToDate(string, weekday, future) {
   if (string.charAt(0) == ' ') {
     string = string.slice(1)
   }
-  if (Object.keys(weekdaysNum).includes(string.split(' ')[0])) {
-    string = string.split(' ').slice(1)[0]
-  }
+  console.log(string);
   let date = new Date()
   if (Object.keys(weekdaysNum).includes(string.split(/(\+|-|\s)/)[0])) {
     // analyze as a weekday string
@@ -582,6 +581,11 @@ function goToSearch(el) {
   if (el.attr('title') == 'pop') {
     // load pop
     focusarea = $('#pop')
+    if (window.focused) {
+      $('#floplist').hide()
+      $('#poplist').show()
+      $('#switch').text("<")
+    }
   } else {
     // load flop and switch lists
     focusarea = $('#flop')
@@ -590,6 +594,10 @@ function goToSearch(el) {
     }).indexOf(
       el.attr('title')))
     loadList()
+    if (window.focused) {
+      $('#poplist').hide()
+      $('#floplist').show()
+    }
   }
   // find the matching element
   const focused = $(focusarea.find('span.in')[el.attr('index')])

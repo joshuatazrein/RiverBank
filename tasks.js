@@ -515,98 +515,102 @@ function mobileDragOver(event) {
 }
 
 function updateSpanDrags(task) {
-  // add handles for drags on mobile, or enable jQuery drags on desktop
-  let selector
-  if (!task) {
-    selector = 'span.in:not(.dateheading):visible'
-  } else if (task == 'flop') {
-    selector = '#flop span.in:not(.dateheading):visible'
-  } else {
-    selector = $(task)[0]
-  }
-  if (mobileTest()) {
-    $(selector).find('.mobhandle').remove()
-    $(selector).prepend(
-      '<span class="mobhandle"></span>')
-    $(selector).attr('draggable', 'false')
-    $(selector).toArray().forEach((x) => {
-      $(x).draggable({
-        handle: '.mobhandle',
-        containment: 'window',
-        axis: 'y',
-        revert: true,
-        appendTo: $('#listcontainer'),
-        cursorAt: {top: $(x).height() / 2},
-        helper: 'clone',
-        refreshPositions: true,
-        zIndex: 1,
-        distance: 20,
-        addClasses: false,
-        start: function (event) {
-          // $(this).hide()
-          dragTask(event, $(this))
-        },
-        drag: function (event) {
-          mobileDragOver(event)
-          $('#listcontainer > span').removeClass('in')
-        },
-      })
-    })
-  } else {
-    $(selector).toArray().forEach((x) => {
-      $(x).draggable({
-        containment: 'window',
-        revert: true,
-        appendTo: $('#listcontainer'),
-        distance: 20,
-        cursorAt: {top: $(x).height() / 2},
-        helper: 'clone',
-        refreshPositions: true,
-        zIndex: 1,
-        addClasses: false,
-        start: function (event) {
-          dragTask(event, $(this))
-        },
-        drag: function (event) {
-          dragTaskOver(event)
-          $('#listcontainer > span').removeClass('in')
-        },
-      })
-    })
-    $(selector).attr('draggable', 'true')
-  }
-  // reset drops
-  if (!task) {
-    $('span.in').droppable({
-      accept: 'span.in',
-      hoverClass: 'drop-hover',
-      greedy: true,
-      drop: function (event) {
-        dropTask(event)
-      }
-    })
-  } else {
-    $(selector).droppable({
-      accept: 'span.in',
-      hoverClass: 'drop-hover',
-      greedy: true,
-      drop: function (event) {
-        dropTask(event)
-      }
-    })
-  }
-  $('.buffer').droppable({
-    accept: 'span.in',
-    hoverClass: 'drop-hover',
-    greedy: true,
-    drop: function (event) {
-      dropTask(event)
+  try {
+    // add handles for drags on mobile, or enable jQuery drags on desktop
+    let selector
+    if (!task) {
+      selector = 'span.in:not(.dateheading):visible'
+    } else if (task == 'flop') {
+      selector = '#flop span.in:not(.dateheading):visible'
+    } else {
+      selector = $(task)[0]
     }
-  })
-  if (mobileTest()) {
-    // circumvents jQuery to enable scrolling X-P
-    $('.ui-draggable-handle').removeClass('ui-draggable-handle')
-    $('.ui-droppable').removeClass('ui-droppable')
+    if (mobileTest()) {
+      $(selector).find('.mobhandle').remove()
+      $(selector).prepend(
+        '<span class="mobhandle"></span>')
+      $(selector).attr('draggable', 'false')
+      $(selector).toArray().forEach((x) => {
+        $(x).draggable({
+          handle: '.mobhandle',
+          containment: 'window',
+          axis: 'y',
+          revert: true,
+          appendTo: $('#listcontainer'),
+          cursorAt: {top: $(x).height() / 2},
+          helper: 'clone',
+          refreshPositions: true,
+          zIndex: 1,
+          distance: 20,
+          addClasses: false,
+          start: function (event) {
+            // $(this).hide()
+            dragTask(event, $(this))
+          },
+          drag: function (event) {
+            mobileDragOver(event)
+            $('#listcontainer > span').removeClass('in')
+          },
+        })
+      })
+    } else {
+      $(selector).toArray().forEach((x) => {
+        $(x).draggable({
+          containment: 'window',
+          revert: true,
+          appendTo: $('#listcontainer'),
+          distance: 20,
+          cursorAt: {top: $(x).height() / 2},
+          helper: 'clone',
+          refreshPositions: true,
+          zIndex: 1,
+          addClasses: false,
+          start: function (event) {
+            dragTask(event, $(this))
+          },
+          drag: function (event) {
+            dragTaskOver(event)
+            $('#listcontainer > span').removeClass('in')
+          },
+        })
+      })
+      $(selector).attr('draggable', 'true')
+    }
+    // reset drops
+    if (!task) {
+      $('span.in').droppable({
+        accept: 'span.in',
+        hoverClass: 'drop-hover',
+        greedy: true,
+        drop: function (event) {
+          dropTask(event)
+        }
+      })
+    } else {
+      $(selector).droppable({
+        accept: 'span.in',
+        hoverClass: 'drop-hover',
+        greedy: true,
+        drop: function (event) {
+          dropTask(event)
+        }
+      })
+    }
+    $('.buffer').droppable({
+      accept: 'span.in',
+      hoverClass: 'drop-hover',
+      greedy: true,
+      drop: function (event) {
+        dropTask(event)
+      }
+    })
+    if (mobileTest()) {
+      // circumvents jQuery to enable scrolling X-P
+      $('.ui-draggable-handle').removeClass('ui-draggable-handle')
+      $('.ui-droppable').removeClass('ui-droppable')
+    }
+  } catch (err) {
+    console.log(err)
   }
 }
 
@@ -1044,7 +1048,7 @@ function editTask() {
 
 function createBlankTask() {
   // create new blank task
-  const savetask = $('<span class="in" title=\'task (see help: \"syntax\")\'></span>')
+  const savetask = $('<span class="in" title=\'task (see help: syntax)\'></span>')
   return savetask
 }
 

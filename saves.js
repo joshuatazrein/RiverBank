@@ -20,6 +20,15 @@ function castrate(phallus) {
 function clean() {
   // cleans data
   $('span.in:visible').attr('style', '')
+  $('span.in').attr('title', 'task (see help: syntax)')
+  $('span.dateheading').attr('title', 'date (see help: dates)')
+  $('textarea.listtitle').attr('title', 'list (click or drag)')
+  $('#flop').attr('title', 'Bank (unscheduled tasks)')
+  $('#pop').attr('title', 'River (scheduled tasks)')
+  $('span.deadline').attr('title', 'deadline (see help: dates)')
+  $('span.duedate').attr('title', 'duedate (click to see task)')
+  $('span.timing').attr('title', 'time (click to adjust)')
+  $('span.event').attr('title', 'event (see help: syntax)')
   for (span of $('span.in').toArray()) {
     if (['', ' ', '\n'].includes($(span).text())) {
       // remove empty ones
@@ -704,10 +713,13 @@ function reload() {
   function cancel() {
     $('#logoimage').stop(true)
     $('#logoimage').animate({'opacity': 0}, 500)
-    setTimeout(function () {$('#logoimage').remove()}, 510)
+    setTimeout(function () {
+      $('#logoimage').remove()
+    }, 510)
     display('cancelling load')
     loading = false
   }
+  setTimeout(cancel, 5000)
   $('#logoimage').animate({'opacity': 0.1}, 250)
   loading = true
   // begin reload by downloading server data

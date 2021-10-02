@@ -228,6 +228,11 @@ function loadList(saving) {
     display('no loaded list')
     return
   }
+  if (window.focused) {
+    $('#poplist').hide()
+    $('#floplist').show()
+    $('#switch').text(">")
+  }
   unFilter()
   const loads = $('#loads').children().toArray()
   loads.forEach(function (i) {

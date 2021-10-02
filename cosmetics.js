@@ -294,6 +294,12 @@ function toggleHelp(saving) {
   updateSizes()
 }
 
+function showHelpSection(section) {
+  $('#helpControls, #helpSyntax, #helpDates, #helpCommands').hide()
+  $(section).show()
+  $(section)[0].scrollIntoView()
+}
+
 function togglePlay() {
   // play on/off
   if (data.play == 'true') {
@@ -355,6 +361,18 @@ function toggleCollapse(animate) {
       $('#listcontainer').css('transition', '')
       updateSizes()
     }, 710)
+  }
+}
+
+function toggleFocusFrame() {
+  if ($('#switch').text() == "<") {
+    $("#poplist").hide()
+    $("#floplist").show() 
+    $('#switch').text(">")
+  } else {
+    $("#floplist").hide()
+    $("#poplist").show() 
+    $('#switch').text("<")
   }
 }
 
@@ -983,9 +1001,15 @@ function keyDown(ev) {
     // focus on searchbar and find it
     ev.preventDefault()
     if ($('#searchbar').val().slice(0, 2) == 'd:') {
+      console.log($('#searchbar').val().slice(2));
       const date = dateToHeading(
-        stringToDate($('#searchbar').val().slice(2)), false, true)
+        stringToDate($('#searchbar').val().slice(2), false))
       select(date, true)
+      if (window.focused) {
+        $('#floplist').hide()
+        $('#poplist').show()
+        $('#switch').text("<")
+      }
       $('#searchbar').val('')
       $('#searchbar').blur()
       if (movetask != undefined) {

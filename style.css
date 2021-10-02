@@ -152,6 +152,10 @@ span.eventspan, span.impspan, span.impspan-list {
   margin: 2px;
 }
 
+#focusbar #searchbar-results {
+  width: calc(100% - 116px) !important;
+}
+
 #focusbar input {
   height: 1.15em !important;
 }
@@ -413,6 +417,7 @@ span.duedate > span.duedateBacklink {
   width: 100%;
   border-top: 1px solid var(--bdcolor);
   transition: opacity 1s;
+  max-height: 245px;
 }
 
 #help button#tutorialbut {
@@ -424,6 +429,15 @@ span.duedate > span.duedateBacklink {
 
 #help span.h1 {
   font-size: 115%;
+}
+
+#help p {
+  display: none;
+}
+
+#help .h1 button {
+  width: initial !important;
+  max-width: initial !important;
 }
 
 #tutorial {
@@ -850,6 +864,7 @@ span.weblink, span.deadline {
   #help {
     height: 30%;
     overflow-wrap: break-word;
+    max-height: 215px;
   }
   #help span {
     font-size: 12px;
