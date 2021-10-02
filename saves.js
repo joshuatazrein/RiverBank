@@ -786,6 +786,7 @@ function loadPage(starting, oldselect, scrolls) {
     window.loadedlist = data.loadedlist // loaded list
     window.selected = undefined // selected task
     window.dragsenabled = true // editing lists
+    window.droplist = []
     window.focused = false // focus mode
     window.movelist = false // moving lists
     window.movetask = undefined // moving task
