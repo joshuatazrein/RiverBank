@@ -1020,21 +1020,14 @@ function loadPage(starting, oldselect, scrolls) {
     curtime = now.getTime() - initial
     initial = now.getTime()
     display('startdoc: ' + String(curtime));
-    function checkStyle() {
-      if (stylegot) {
-        now = new Date()
-        curtime = now.getTime() - initial
-        initial = now.getTime()
-        display('checkStyle: ' + String(curtime));
-        $('#logoimage').animate({opacity: 0}, 500)
-        $('#logoimage').remove()
-        loading = false
-      } else {
-        display('no style loaded yet...')
-        setTimeout(checkStyle, 500)
-      }
-    }
-    checkStyle()
+    now = new Date()
+    curtime = now.getTime() - initial
+    initial = now.getTime()
+    display('checkStyle: ' + String(curtime));
+    $('#logoimage').animate({opacity: 0}, 500)
+    $('#logoimage').remove()
+    loading = false
+    // doesn't check for style anymore
   }
   now = new Date()
   curtime = now.getTime() - initial
