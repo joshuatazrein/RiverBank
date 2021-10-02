@@ -223,6 +223,7 @@ function dragTask(ev) {
   // clear current select
   if (isHeading(oldselect)) {
     console.log('heading children: ', getHeadingChildren(oldselect));
+    console.log('copied children: ', getHeadingChildren(selected));
     for (child of getHeadingChildren(oldselect)) {
       $(child).remove()
     }
