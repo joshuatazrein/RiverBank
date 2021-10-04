@@ -113,6 +113,12 @@ function load() {
     }
   )
   getting = setInterval(function () {console.log('getting...')}, 1000)
+  setTimeout(function() {
+    display('get timed out, downloading from local')
+    data = JSON.parse(localStorage.getItem('data'))
+    clearInterval(getting)
+    initialize()
+  }, 7000)
 }
 
 function initialize() {
