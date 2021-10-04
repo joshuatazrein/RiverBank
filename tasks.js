@@ -32,8 +32,10 @@ function archiveTask(play) {
     alert("can't archive dates")
     return 
   }
-  if (!selected.hasClass('complete') && play != false) {
-    toggleComplete(selected)
+  if (!selected.hasClass('complete')) {
+    toggleComplete(selected, false)
+  }
+  if (play != false) {
     playPop()
   }
   let taskabove = taskBelow()
@@ -106,6 +108,9 @@ function toggleComplete(task, saving) {
         getChildren(completetask))
     } else {
       const date = stringToDate(text[text.length - 2].slice(1), false, true)
+      date.setTime(date.getTime() + 
+        (stringToDate(stripChildren($(getHeading($(completetask)))))
+        .getTime() - stringToDate('today').getTime()))
       if (task) {
         date.setDate(date.getDate() - 1)
       }
@@ -118,7 +123,9 @@ function toggleComplete(task, saving) {
           return $(x).text()
         }).includes(completetask.text())) {
         $(heading).after(newtask)
-        save('+', newtask)
+        if (!task || saving != false) {
+          save('+', newtask)
+        }
       }
     }
   }
@@ -666,7 +673,8 @@ function toggleFold(el, saving, time) {
     if ($(el).attr('folded') == 'false') {
       setTimeout(function () {
         getHeadingChildren($(el)).forEach((x) => {
-          if ($(x).is(':visible')) {
+          if ($(x).is(':visible:not(.event)')) {
+            console.log(x);
             $(x).attr('style', '')
             $(x).find('span.in').toArray().forEach((y) => {
               if ($(x).is(':visible')) $(y).attr('style', '')

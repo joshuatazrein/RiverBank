@@ -8,18 +8,18 @@
   --lineheight: 1.15em;
   --background: rgb(218, 221, 216);
   --bgoverlay: rgba(218, 221, 216, 0.8);
-  --select: rgb(10, 1, 15);
+  --select: rgb(85, 107, 47);
   --font: 'Caveat', cursive;
   --butfont: 'Amatic SC', cursive;
-  --textcolor: rgb(26, 29, 33);
+  --textcolor: rgb(59, 60, 54);
   /* --textcolor: rgb(120, 133, 133); */
   --menufont: 'Amatic SC', cursive;
-  --bdcolor: rgba(31, 27, 35);
+  --bdcolor: rgba(60, 52, 31);
   --important: rgb(14, 41, 48);
   --maybe: rgba(14, 41, 48, 0.5);
-  --event: rgba(10, 1, 15, 0.3);
-  --flopbutbackground: rgba(26, 29, 33, 0.3);
-  --butbackground: rgba(31, 27, 35, 0.3);
+  --event: rgba(85, 107, 47, 0.3);
+  --flopbutbackground: rgba(59, 60, 54, 0.3);
+  --butbackground: rgba(60, 52, 31, 0.3);
   --indent: 0.45em;
 }
 

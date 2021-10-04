@@ -343,6 +343,14 @@ function setStyle(style, alert) {
         })
       }
     )
+    if (alert != false) {
+      setTimeout(function() {
+        select()
+        select(dateToHeading(stringToDate('0d')), true)
+        select()
+      }, 500)
+      save()
+    }
   } else if (alert != false) {
     alert('Connect to the Internet to load styles')
   }

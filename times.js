@@ -163,6 +163,49 @@ function compareTimes(a, b) {
   }
 }
 
+function eventTimeFormat(el) {
+  function process(x) {
+    // convert to number
+    let pm = false
+    if (x.includes('p')) { pm = true }
+    if (x.includes(':')) {
+      // round times
+      x = x.split(':')
+      x[1] = Number(x[1].replace(/\D/g, ''))
+      if (x[1] > 15 && x[1] < 31) { x[0] += '.5' }
+      else if (x[1] > 31) { x[0] = Number(x[0]) + 1 }
+      x = Number(x[0])
+    } else {
+      x = Number(x.replace(/\D/g, ''))
+    }
+    console.log(x);
+    if (pm) x += 12
+    return x
+  }
+  function mod12sub(x, y) {
+    // subtracts mod 12
+    if (x - y < 0) {x += 12}
+    return x - y
+  }
+  if ($($(el).children().filter('.timing')).length == 0) return
+  let timing = $($(el).children().filter('.timing')[0]).text().split('-')
+  console.log(timing);
+  timing = timing.map(x => { return process(x) })
+  console.log(timing);
+  if (timing.length == 2 && mod12sub(timing[1], timing[0]) > 1) {
+    $(el).css('padding-bottom', mod12sub(timing[1], timing[0]) + 'em')
+  } else if (timing.length == 1 &&
+    $(el).next().find('.timing')[0]) {
+    // treat start of next event as next time
+    $(el).css('padding-bottom', 
+      mod12sub(
+      process($($(el).next().find('.timing')[0]).text().split('-')[0]), 
+      timing[0]) + 'em')
+  } else {
+    $(el).css('padding-bottom', '')
+  }
+}
+
 function dragTime(el) {
   // enable event timings to be dragged after clicking on them
   let pretext = el.text().split('-')
@@ -259,11 +302,14 @@ function dragTime(el) {
   durslider.on('mouseup touchend', function () {
     slider.remove()
     durslider.remove()
+    eventTimeFormat(selected)
     save('+', selected)
   })
   slider.on('mouseup touchend', function () {
     slider.remove()
     durslider.remove()
+    eventTimeFormat(selected)
+    eventTimeFormat(selected.prev())
     save('+', selected)
   })
 }

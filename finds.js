@@ -746,6 +746,11 @@ function select(el, scroll, animate) {
         }
         toggleFold(heading)
       }
+      let scrollheading = $(getHeading(selected))
+      while (!scrollheading.hasClass('h1') && getHeading(scrollheading)) {
+        // finds currently folded heading to unfold
+        scrollheading = $(getHeading(scrollheading))
+      }
       if (getFrame(selected)) {
         // only execute if not clicked
         parent = getFrame(selected)
@@ -760,13 +765,13 @@ function select(el, scroll, animate) {
         }
         parent.stop(true) // clear queue
         if (!selected.hasClass('dateheading') && !isHeading(selected)) {
-          if (getHeading(selected) &&
-            Number(getHeading(selected).offset().top) + parent.height() / 2 >
+          if (scrollheading &&
+            Number(scrollheading.offset().top) + parent.height() / 2 >
             Number(selected.offset().top)) {
             // scroll to heading
             const scrolllocation = Number(
               oldscroll +
-              getHeading(selected).offset().top) -
+              scrollheading.offset().top) -
               Number(getFrame(selected).offset().top)
             parent.animate({
               scrollTop: scrolllocation
@@ -782,7 +787,7 @@ function select(el, scroll, animate) {
               scrollTop: scrolllocation
             }, scrolltime)
           }
-        } else if (isHeading(selected)) {
+        } else if (selected.hasClass('h1') || !getHeading(selected)) {
           const scrolllocation = Number(
             oldscroll +
             selected.offset().top) -

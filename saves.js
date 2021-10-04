@@ -19,7 +19,10 @@ function castrate(phallus) {
 
 function clean() {
   // cleans data
-  $('span.in:visible').attr('style', '')
+  $('span.in:visible:not(.event)').attr('style', '')
+  $('span.in.event').toArray().forEach(x => {
+    eventTimeFormat($(x))
+  })
   $('span.in').attr('quickhelp', 'task (see help: syntax)')
   $('span.dateheading').attr('quickhelp', 'date (see help: dates)')
   $('textarea.listtitle').attr('quickhelp', 'list (click or drag)')
@@ -29,6 +32,9 @@ function clean() {
   $('span.duedate').attr('quickhelp', 'duedate (click to see task)')
   $('span.timing').attr('quickhelp', 'time (click to adjust)')
   $('span.event').attr('quickhelp', 'event (see help: syntax)')
+  $('span').attr('title', '')
+  $('textarea').attr('title', '')
+  $('button').attr('title', '')
   for (span of $('span.in').toArray()) {
     if (['', ' ', '\n'].includes($(span).text())) {
       // remove empty ones
@@ -844,7 +850,7 @@ function loadPage(starting, oldselect, scrolls) {
     if (data.headingalign === undefined) data.headingalign = 'center'
     // load style
     if (!data.brightness) data.brightness = 'dark'
-    setStyle(data.style)
+    setStyle(data.style, false)
     if (data.weekdays == 'M') {
       weekdaysStr = { 0: 'U', 1: 'M', 2: 'T', 3: 'W', 4: 'R', 5: 'F', 6: 'S' }
     } else if (data.weekdays == 'Mon') {
