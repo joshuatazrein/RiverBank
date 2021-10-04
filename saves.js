@@ -92,7 +92,7 @@ function clean() {
       heading.remove()
       continue
     }
-    if (stringToDate(stripChildren($(heading))).getTime() < now) {
+    if (stringToDate(stripChildren($(heading)), true).getTime() < now) {
       $(heading).addClass('complete')
       if ($(heading).attr('folded') == 'false') {
         toggleFold($(heading), false)
@@ -1017,5 +1017,5 @@ function loadPage(starting, oldselect, scrolls) {
   display('loaded: ' + curtime);
   initial = now.getTime()
   clean()
-    setTimeout(startdoc, 500)
+  setTimeout(startdoc, 500)
 }
