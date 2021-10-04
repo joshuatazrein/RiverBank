@@ -307,7 +307,6 @@ function updateTitles() {
       !$(x).text().includes(thisdate)
   })
   if (!bottomdate) { return }
-  console.log(stripChildren($(bottomdate)));
   const curdate = stringToDate(stripChildren($(bottomdate)), true).getTime()
   const inview = $('#pop .continuous:not(.complete)').toArray().filter((x) => { 
     return $(x).attr('start') < curdate
