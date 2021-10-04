@@ -116,7 +116,7 @@ function load() {
   setTimeout(function() {
     display('get timed out, downloading from local')
     console.log(localStorage.getItem('data'))
-    data = JSON.parse(localStorage.getItem('data'))
+    data = JSON.parse(JSON.parse(localStorage.getItem('data')))
     console.log(data);
     clearInterval(getting)
     initialize()
