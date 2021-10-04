@@ -935,7 +935,7 @@ function editTask() {
     if (isHeading(selected)) { select(newelt) }
     else { select(newelt, true) }
     let parent = selected.parent()
-    while (parent && parent[0].tagName == 'SPAN') {
+    while (parent[0] && parent[0].tagName == 'SPAN') {
       // disable drags
       parent.attr('draggable', 'false')
       parent = parent.parent()
