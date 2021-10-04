@@ -1,0 +1,22 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;0,400;0,600;1,100;1,400;1,600&display=swap");
+
+:root {
+  --fontsize: 19px;
+  --fontweight: 100;
+  --boldweight: 400;
+  --lineheight: 1.5em;
+  --background: rgb(107, 138, 179);
+  --bgoverlay: rgba(107, 138, 179, 0.8);
+  --select: rgb(65, 73, 79);
+  --font: 'Roboto Mono', monospace;
+  --butfont: 'Roboto Mono', monospace;
+  --textcolor: rgb(10, 10, 10);
+  --menufont: 'Roboto Mono', monospace;
+  --bdcolor: rgba(36, 40, 43, 0.5);
+  --important: rgb(41, 74, 112);
+  --maybe: rgba(41, 74, 112, 0.5);
+  --event: rgba(65, 73, 79, 0.3);
+  --butbackground: rgba(128, 128, 128, 0.3);
+  --flopbutbackground: rgba(10, 10, 10, 0.3);
+  --indent: 1.2em;
+}

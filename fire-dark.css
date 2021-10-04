@@ -2,25 +2,25 @@
 
 :root {
   /* --background: rgb(171, 176, 208); */
-  --background: rgb(230, 230, 250);
+  --background: rgb(5, 5, 26);
   --fontweight: 300;
   --boldweight: 500;
   --lineheight: 1.15em;
-  --bgoverlay: /* rgb(199, 203, 229); rgba(171, 176, 208, 0.8); */ rgba(230, 230, 250, 0.8);
+  --bgoverlay: rgba(5, 5, 26, 0.8);
   --fontsize: 21px;
   /* --select: rgb(251, 217, 253); */
   /* --select: #D8B2D1; */
-  --select:rgb(242, 172, 229);
+  --select:rgb(183, 104, 162);
   --font: 'Josefin Sans', sans-serif;
   --butfont: 'Josefin Sans', sans-serif;
-  --textcolor: rgb(53, 3, 58);
+  --textcolor: rgb(248, 197, 252);
   --menufont: 'Josefin Sans', sans-serif;
-  --bdcolor: rgba(53, 3, 58, 0.3);
+  --bdcolor: rgba(212, 112, 162);
   --important: rgb(226, 156, 210);
   --maybe: rgba(212, 93, 194, 0.5);
-  --event: rgba(251, 217, 253, 0.3);
-  --butbackground: rgba(200, 200, 230, 0.3);
-  --flopbutbackground: rgba(200, 200, 230, 0.3);
+  --event: rgba(40, 6, 34, 0.3);
+  --butbackground: rgba(40, 6, 34);
+  --flopbutbackground: rgba(248, 197, 252, 0.3);
   --indent: 0.8em;
 }
 

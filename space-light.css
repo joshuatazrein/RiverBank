@@ -1,0 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300;1,600;1,700&display=swap");
+
+:root {
+  --fontsize: 24px;
+  --fontweight: 300;
+  --boldweight: 600;
+  /* --background:rgb(222, 224, 227); */
+  --background:rgb(131, 137, 150);
+  /* --background:rgb(191, 193, 194); */
+  --lineheight: 1.15em;
+  --bgoverlay: rgba(131, 137, 150, 0.8);
+  /* --select: rgb(135, 206, 235); */
+  /* --select: rgb(74, 100, 108); */
+  --select: rgb(81, 110, 118);
+  --font: 'Cormorant Garamond', serif;
+  --butfont: Andale Mono;
+  /* --textcolor: rgb(245, 245, 245); */
+  /* --textcolor: rgb(131, 137, 150); */
+  --textcolor: rgb(0, 0, 0);
+  --menufont: Courier New;
+  --bdcolor: rgb(191, 193, 194, 0.5);
+  --important: rgb(20, 90, 118);
+  --maybe: rgba(20, 90, 118, 0.5);
+  --event: rgba(81, 110, 118, 0.3);
+  --butbackground: rgba(191, 193, 194, 0.3);
+  --flopbutbackground: rgba(128, 128, 128, 0.3);
+  --indent: 0.5em;
+}
+
+span.h1, span.h2, span.h3 {
+  padding: 0.1em 0 0.3em 0 !important;
+}

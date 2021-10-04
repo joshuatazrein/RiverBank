@@ -1,0 +1,29 @@
+@font-face {
+  src: url('lane.ttf');
+  font-family: 'Lane';
+}
+
+:root {
+  --fontsize: 22px;
+  --fontweight: 100;
+  --boldweight: 300;
+  --lineheight: 1.25em;
+  --background: rgb(1, 9, 13);
+  --bgoverlay: rgba(1, 9, 13, 0.8);
+  --select: rgb(59, 75, 84);
+  --font: 'Helvetica Neue', sans-serif;
+  --butfont: 'Lane', sans-serif;
+  --textcolor: rgb(103, 127, 168);
+  --menufont: 'Lane', sans-serif;
+  --bdcolor: rgb(42, 71, 82);
+  --important: rgb(61, 86, 168);
+  --maybe: rgba(61, 86, 168, 0.5);
+  --event: rgba(59, 75, 84, 0.3);
+  --butbackground: rgba(21, 35, 40, 0.3);
+  --flopbutbackground: rgba(103, 127, 168, 0.3);
+  --indent: 0.85em;
+}
+
+body {
+  letter-spacing: 1px;
+}

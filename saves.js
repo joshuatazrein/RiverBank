@@ -840,18 +840,11 @@ function loadPage(starting, oldselect, scrolls) {
     } // weekdays conversion
     if (data.play === undefined) { data.play = 'true' } // set play
     if (data.futurepanes === undefined) { data.futurepanes = 'show' } 
-      // set futurepanes
+    // set futurepanes
     if (data.headingalign === undefined) data.headingalign = 'center'
     // load style
-    $('head').append(
-      $("<link id='theme' rel='stylesheet' type='text/css' href='" +
-        data.style + "' />")
-    )
-    stylegot = false
-    $.get(data.style, function() {
-      display('loaded theme')
-      stylegot = true 
-    })
+    if (!data.brightness) data.brightness = 'dark'
+    setStyle(data.style)
     if (data.weekdays == 'M') {
       weekdaysStr = { 0: 'U', 1: 'M', 2: 'T', 3: 'W', 4: 'R', 5: 'F', 6: 'S' }
     } else if (data.weekdays == 'Mon') {
@@ -913,7 +906,7 @@ function loadPage(starting, oldselect, scrolls) {
       $('#mobilebuts').append(x)
     })
   }
-  if ($('#theme').attr('href') != data.style) {
+  if (!starting && !$('#theme').attr('href').includes(data.style)) {
     // reloads theme if it was changed
     setStyle(data.style)
   }

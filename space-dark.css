@@ -4,7 +4,7 @@
   --fontsize: 24px;
   --fontweight: 300;
   --boldweight: 600;
-  --background: black;
+  --background:rgb(0, 0, 0);
   --lineheight: 1.15em;
   --bgoverlay: rgba(0, 0, 0, 0.8);
   /* --select: rgb(135, 206, 235); */

@@ -315,18 +315,27 @@ function togglePlay() {
   }
 }
 
+function toggleBrightness() {
+  if (data.brightness == 'light') {
+    data.brightness = 'dark'
+  } else {
+    data.brightness = 'light'
+  }
+  setStyle(data.style)
+}
+
 function setStyle(style, alert) {
   // sets the current style
   const floptop = $('#flop').scrollTop()
   if (navigator.onLine || offlinemode) {
     data.style = style
     $.get(
-      style,
+      style + '-' + data.brightness + '.css',
       function () {
         $('#theme').remove()
         $('head').append(
-          $("<link id='theme' rel='stylesheet' type='text/css' href='" +
-            style + "' />")
+          $('<link id="theme" rel="stylesheet" type="text/css" href="' +
+            style + '-' + data.brightness + '.css" />')
         );
         stylegot = false
         $('#theme').on('load', function () { 
@@ -509,6 +518,9 @@ function context(ev, mobile) {
     ],
     '#context-toggleMaybe': [
       ['SPAN'], ['in']
+    ],
+    '#context-toggleBrightness': [
+      ['BUTTON'], ['opts']
     ],
     '#context-toggleimportant': [
       ['SPAN'], ['in']
