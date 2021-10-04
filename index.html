@@ -39,15 +39,7 @@
     }
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com"> 
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;0,400;0,600;1,100;1,400;1,600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,500;0,700;1,300;1,700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,300;0,500;0,700;1,300;1,700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100;0,500;0,700;1,100;1,700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300;1,600;1,700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@200;400;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
   <div id='logoimage' class='show'>
@@ -59,53 +51,53 @@
         <div id='desktopbutstop' style='height:fit-content;'>
           <p id='username'></p>
           <div id='editbuts' class='butbar' style='margin:2px 0;'>
-            <button title='options' class='mobilebut opts' id='optionsbut' function='context(ev)' style='font-size:12px;'>...</button>
-            <button title='set task type' class='mobilebut opts' id='typebut' function='setOptions()'>*</button>
+            <button quickhelp='options' class='mobilebut opts' id='optionsbut' function='context(ev)' style='font-size:12px;'>...</button>
+            <button quickhelp='set task type' class='mobilebut opts' id='typebut' function='setOptions()'>*</button>
           </div>
           <div id='searchbarframe'>
-            <input id='searchbar' placeholder="search (d: date)" title='search (see help: "dates")'>
+            <input id='searchbar' placeholder="search (d: date)" quickhelp='search (see help: "dates")'>
             <div id='searchbar-results' class='dropdown' style='position:absolute;'></div>
           </div>
           <div class='butbar' id='movebuts' style='margin:2px 0;'>
             <div class='butbar' id='movebuts1'>
-              <button class='mobilebut' function="moveTask('up')" title='move up'>↑</button>
-              <button class='mobilebut' function="moveTask('down')" title='move down'>↓</button>
-              <button class='mobilebut' id='editTaskBut' function="editTask()" title='edit'>o</button>
-              <button class='mobilebut' function="deleteTask()" title='delete'>x</button>
+              <button class='mobilebut' function="moveTask('up')" quickhelp='move up'>↑</button>
+              <button class='mobilebut' function="moveTask('down')" quickhelp='move down'>↓</button>
+              <button class='mobilebut' id='editTaskBut' function="editTask()" quickhelp='edit'>o</button>
+              <button class='mobilebut' function="deleteTask()" quickhelp='delete'>x</button>
             </div>
             <div class='butbar' id='movebuts2'>
-              <button class='mobilebut' title='fold' function='toggleSubtasks()'>]</button>
-              <button class='mobilebut' title='unfold' function='toggleSubtasks()'>[</button>
-              <button class='mobilebut' title='indent' function='indentTask(true)'>}</button>
-              <button class='mobilebut' title='unindent' function='indentTask(false)'>{</button>
+              <button class='mobilebut' quickhelp='fold' function='toggleSubtasks()'>]</button>
+              <button class='mobilebut' quickhelp='unfold' function='toggleSubtasks()'>[</button>
+              <button class='mobilebut' quickhelp='indent' function='indentTask(true)'>}</button>
+              <button class='mobilebut' quickhelp='unindent' function='indentTask(false)'>{</button>
             </div>
             <div class='butbar'>
-              <button class='mobilebut' title='complete' function='toggleComplete()'>√</button>
-              <button class='mobilebut' title='important' function='toggleImportant()'>i</button>
-              <button class='mobilebut' title='maybe' function='toggleMaybe()'>m</button>
-              <button class='mobilebut' title='subtask' id='newSubtaskBut' function='newTask(true)'>↳</button>
+              <button class='mobilebut' quickhelp='complete' function='toggleComplete()'>√</button>
+              <button class='mobilebut' quickhelp='important' function='toggleImportant()'>i</button>
+              <button class='mobilebut' quickhelp='maybe' function='toggleMaybe()'>m</button>
+              <button class='mobilebut' quickhelp='subtask' id='newSubtaskBut' function='newTask(true)'>↳</button>
             </div>
           </div>
-          <input id='timerent' placeholder="timer" title='enter timecode or use buttons (blank = stopwatch)' />
+          <input id='timerent' placeholder="timer" quickhelp='enter timecode or use buttons (blank = stopwatch)' />
           <div class='butbar' style='margin:2px 0;'>
             <div class='butbar' id='timertimes'>
-              <button function='if (event.altKey) { addTime(-25) } else { addTime(25) }' title='+25 minutes'>25</button>
-              <button function='if (event.altKey) { addTime(-15) } else { addTime(15) }' title='+15 minutes'>15</button>
-              <button function='if (event.altKey) { addTime(-10) } else { addTime(10) }' title='+10 minutes'>10</button>
-              <button function='if (event.altKey) { addTime(-5) } else { addTime(5) }' title='+5 minutes'>5</button>
+              <button function='if (event.altKey) { addTime(-25) } else { addTime(25) }' quickhelp='+25 minutes'>25</button>
+              <button function='if (event.altKey) { addTime(-15) } else { addTime(15) }' quickhelp='+15 minutes'>15</button>
+              <button function='if (event.altKey) { addTime(-10) } else { addTime(10) }' quickhelp='+10 minutes'>10</button>
+              <button function='if (event.altKey) { addTime(-5) } else { addTime(5) }' quickhelp='+5 minutes'>5</button>
             </div>
             <div class='butbar' id='timerbuts'>
-              <button function='addTime(2)' title='+2 minutes'>2</button>
-              <button function='addTime(-2)' title='-2 minutes'>-2</button>
-              <button id='timerStartBut' title='start timer' style='font-family: monospace !important'>&#9654;</button>
-              <button id='timerStopBut' title='stop timer' style='font-family: monospace !important'>■</button>
+              <button function='addTime(2)' quickhelp='+2 minutes'>2</button>
+              <button function='addTime(-2)' quickhelp='-2 minutes'>-2</button>
+              <button id='timerStartBut' quickhelp='start timer' style='font-family: monospace !important'>&#9654;</button>
+              <button id='timerStopBut' quickhelp='stop timer' style='font-family: monospace !important'>■</button>
             </div>
           </div>
           <p class='title' id='lists'>LISTS</p>
           <div class='butbar' id='listbuts'>
-            <button function="newList()" title='new list'>+</button>
-            <button function="deleteList()" title='delete list'>x</button>
-            <button function="dragsOff()" title='edit list'>o</button>
+            <button function="newList()" quickhelp='new list'>+</button>
+            <button function="deleteList()" quickhelp='delete list'>x</button>
+            <button function="dragsOff()" quickhelp='edit list'>o</button>
           </div>
         </div>
         <div id='loads' class='loads'> <!-- this is used to store list names -->
@@ -200,7 +192,7 @@
         <button 
           id='switch' 
           onclick='toggleFocusFrame()'
-          title='switch bank/river'>
+          quickhelp='switch bank/river'>
         </button>
         <div id='searchbarcont'>
         </div>
@@ -209,25 +201,25 @@
       </div>
       <div id='floplist'>
         <div class='butbar' id='flopbuts'>
-          <button id='collapseBut' title='collapse menu' function='toggleCollapse(true)' style='font-family: monospace !important'>≡</button>
-          <button id='focusbut' title='focus on view' function='toggleFocus()'>&lt;></button>
-          <button class='flopbut' id='flopBut' title='new task in bank'>+ BANK</button>
-          <button id='newHeadingFlopBut' title='new heading in bank'>+#</button>
-          <button function="selectRandom()" title='select random flop'>?</button>
-          <button id='scheduleBut' function="moveTask('pop');$('#searchbar').focus()" title='move task to river'>→</button>
+          <button id='collapseBut' quickhelp='collapse menu' function='toggleCollapse(true)' style='font-family: monospace !important'>≡</button>
+          <button id='focusbut' quickhelp='focus on view' function='toggleFocus()'>&lt;></button>
+          <button class='flopbut' id='flopBut' quickhelp='new task in bank'>+ BANK</button>
+          <button id='newHeadingFlopBut' quickhelp='new heading in bank'>+#</button>
+          <button function="selectRandom()" quickhelp='select random flop'>?</button>
+          <button id='scheduleBut' function="moveTask('pop');$('#searchbar').focus()" quickhelp='move task to river'>→</button>
         </div>
-        <p id='importants' title='important incomplete tasks'></p>
+        <p id='importants' quickhelp='important incomplete tasks'></p>
         <p id='flop' class='rendered in'></p>
       </div>
       <div id='poplist'>
         <div class='butbar' id='popbuts'>
-          <button function="moveTask('flop')" title='move task to bank'>←</button>
-          <button id='todayBut' title='jump to today'>today</button>
-          <button id='addDateBut' title='add date'>+#</button>
-          <button class='flopbut' id='popBut' title='new task in river'>+ RIVER</button>
-          <button function="archiveTask()" title='complete'>!</button>
+          <button function="moveTask('flop')" quickhelp='move task to bank'>←</button>
+          <button id='todayBut' quickhelp='jump to today'>today</button>
+          <button id='addDateBut' quickhelp='add date'>+#</button>
+          <button class='flopbut' id='popBut' quickhelp='new task in river'>+ RIVER</button>
+          <button function="archiveTask()" quickhelp='complete'>!</button>
         </div>
-        <p id='events' title='overdue & upcoming deadlines'></p>
+        <p id='events' quickhelp='overdue & upcoming deadlines'></p>
         <p id='pop' class='rendered in'></p>        
       </div>
     </div>
@@ -289,17 +281,17 @@
   
     </nav>
     <nav id='settype-menu'>
-      <p class='dropdown-item' title='set h1' function='setTask("h1")'># h1</p>
-      <p class='dropdown-item'  title='set h2' function='setTask("h2")'>## h2</p>
-      <p class='dropdown-item'  title='set h3' function='setTask("h3")'>### h3</p>
-      <p class='dropdown-item'  title='set event' function='setTask("event")'>@ event</p>
-      <p class='dropdown-item' title='set list' function='setTask("list")'>• list</p>
-      <p class='dropdown-item' title='set note' function='setTask("note")'>- note</p>
-      <p class='dropdown-item' title='set repeat' function='setTask("repeat")'>~ repeat</p>
-      <p class='dropdown-item' title='set deadline' function='setTask("deadline")'>> deadline</p>
-      <p class='dropdown-item' title='toggle important' function='toggleImportant()'>! important</p>
-      <p class='dropdown-item' title='toggle maybe' function='toggleMaybe()'>? maybe</p>
-      <p class='dropdown-item' title='set blank' function='setTask("")'>_ blank</p>
+      <p class='dropdown-item' quickhelp='set h1' function='setTask("h1")'># h1</p>
+      <p class='dropdown-item'  quickhelp='set h2' function='setTask("h2")'>## h2</p>
+      <p class='dropdown-item'  quickhelp='set h3' function='setTask("h3")'>### h3</p>
+      <p class='dropdown-item'  quickhelp='set event' function='setTask("event")'>@ event</p>
+      <p class='dropdown-item' quickhelp='set list' function='setTask("list")'>• list</p>
+      <p class='dropdown-item' quickhelp='set note' function='setTask("note")'>- note</p>
+      <p class='dropdown-item' quickhelp='set repeat' function='setTask("repeat")'>~ repeat</p>
+      <p class='dropdown-item' quickhelp='set deadline' function='setTask("deadline")'>> deadline</p>
+      <p class='dropdown-item' quickhelp='toggle important' function='toggleImportant()'>! important</p>
+      <p class='dropdown-item' quickhelp='toggle maybe' function='toggleMaybe()'>? maybe</p>
+      <p class='dropdown-item' quickhelp='set blank' function='setTask("")'>_ blank</p>
     </nav>
     <div id='imports' style='display:none'>
       <button id='importsBut' onclick="importTasks()">import</button>

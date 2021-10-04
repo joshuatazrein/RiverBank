@@ -205,7 +205,6 @@ function dragTask(ev) {
   save('-', selected)
   if (mobileTest()) {
     $('.nav').hide()
-    return
   }
   //start drag
   if (selected[0].tagName == 'TEXTAREA') {
@@ -324,14 +323,25 @@ function dropTask(ev) {
       $(ev.target).after($(x))
     })
   }
-  updateSpanDrags()
+  updateSpanDrags() 
 }
 
 function dragTaskOver(event) {
   // dragging task over other one; for desktop
   resetDoc()
   const boxright = $('#listcontainer').offset().left
-  if (event.pageX < boxright) {
+  if (focused && event.pageX < 50 && $('#poplist').is(':visible')) {
+    // switch to other thing
+    $('#poplist').hide()
+    $('#floplist').show()
+    $('#switch').text('>')
+  } else if (focused && event.pageX > window.innerWidth - 20 && 
+    $('#floplist').is(':visible')) {
+    // switch to other thing
+    $('#floplist').hide()
+    $('#poplist').show()
+    $('#switch').text('>')
+  } else if (event.pageX < boxright) {
     $('#flop').find('span.in').toArray().forEach((x) => {
       $(x).removeClass('drop-hover')
       $(x).removeClass('taskselect')
@@ -367,148 +377,100 @@ function dragTaskOver(event) {
       i++
     }
   } else {
-    $('#listcontainer > span').removeClass('small')
-    const timertime = 3
-    const offsetwidth = 50
-    const scrollChange = 2
-    const flopoffset = $('#flop').offset().top
-    const flopheight = $('#flop').height()
-    const popoffset = $('#pop').offset().top
-    const popheight = $('#pop').height()
-    const popleft = $('#pop').offset().left
-    clearTimeout(dragtimer)
-    dragtimer = setTimeout(dragTaskOver, timertime, event)
-    if (flopoffset + flopheight - offsetwidth < event.pageY &&
-      event.pageY < flopoffset + flopheight &&
-      event.pageX < popleft) {
-      // scroll down
-      $('#flop').scrollTop($('#flop').scrollTop() + scrollChange)
-    } else if (flopoffset < event.pageY &&
-      event.pageY < flopoffset + offsetwidth &&
-      event.pageX < popleft) {
-      // scroll up
-      $('#flop').scrollTop($('#flop').scrollTop() - scrollChange)
-    } else if (popoffset + popheight - offsetwidth < event.pageY &&
-      event.pageY < popoffset + popheight &&
-      event.pageX > popleft) {
-      // scroll down
-      $('#pop').scrollTop($('#pop').scrollTop() + scrollChange)
-    } else if (popoffset < event.pageY &&
-      event.pageY < popoffset + offsetwidth &&
-      event.pageX > popleft) {
-      // scroll up
-      $('#pop').scrollTop($('#pop').scrollTop() - scrollChange)
-    } else {
+    if (window.innerWidth < 600 && !focused) {
+      // scrolls/blurs flop/pop
+      const timertime = 3
+      const offsetwidth = 30
+      const scrollChange = 1
+      const flopoffset = $('#flop').offset().top
+      const flopheight = $('#flop').height()
+      const popoffset = $('#pop').offset().top
+      const popheight = $('#pop').height()
       clearTimeout(dragtimer)
-    }
-  }
-}
-
-function mobileDragOver(event) {
-  // dragging selected task; for mobile
-  const boxright = $('#listcontainer').offset().left
-  if (event.pageX < boxright) {
-    // load the dragged-over list
-    let i = 0
-    const loads = $('#loads').children().toArray()
-    for (list of loads) {
-      const boxtop = $(list).offset().top
-      if (event.pageY > boxtop && event.pageY < boxtop + $(list).height() &&
-        $(list).hasClass('unselected')) {
-        $(loads[loadedlist]).removeClass('selected')
-        $(loads[loadedlist]).addClass('unselected')
-        selected.detach()
-        data.flop[loadedlist].text = $('#flop').html()
-        if (flopscrollsave) {
-          $('#flop').scrollTop(flopscrollsave)
-        }
+      dragtimer = setTimeout(dragTaskOver, timertime, event)
+      if (flopoffset + flopheight - offsetwidth < event.pageY &&
+        event.pageY < flopoffset + flopheight) {
+        // scroll down
+        $('#flop').scrollTop($('#flop').scrollTop() + scrollChange)
+      } else if (flopoffset < event.pageY &&
+        event.pageY < flopoffset + offsetwidth) {
+        // scroll up
+        $('#flop').scrollTop($('#flop').scrollTop() - scrollChange)
+      } else if (popoffset + popheight - offsetwidth < event.pageY &&
+        event.pageY < popoffset + popheight) {
+        // scroll down
+        $('#pop').scrollTop($('#pop').scrollTop() + scrollChange)
+      } else if (popoffset < event.pageY &&
+        event.pageY < popoffset + offsetwidth) {
+        // scroll up
+        $('#pop').scrollTop($('#pop').scrollTop() - scrollChange)
+      } else {
+        clearTimeout(dragtimer)
+      }
+      if (event.pageY > popoffset && !flopscrollsave) {
+        // scroll flop to end
         if (popscrollsave) {
           $('#pop').scrollTop(popscrollsave)
         }
-        flopscrollsave = undefined
+        $('#pop').removeClass('greyedout')
         popscrollsave = undefined
-        $('#flop, #pop').removeClass('greyedout')
-        $('.drop-hover').removeClass('.drop-hover')
-        loadedlist = i
-        $('#flop').empty()
-        $('#flop').html(data.flop[loadedlist].text)
-        $(list).removeClass('unselected')
-        $(list).addClass('selected')
-        updateSpanDrags()
-        return
+        flopscrollsave = $('#flop').scrollTop()
+        $('#flop').addClass('greyedout')
+        if ($('#flop').children().length < 2) {
+          $('#flop').scrollTop($('#flop').height())
+        } else {
+          const flopchild = $($('#flop').children()[
+            $('#flop').children().length - 1])
+          $('#flop').scrollTop($('#flop').scrollTop() + 
+            flopchild.position().top + flopheight)
+        }
+      } else if (event.pageY < popoffset && !popscrollsave) {
+        // scroll pop to beginning
+        if (flopscrollsave) {
+          $('#flop').scrollTop(flopscrollsave)
+        }
+        $('#flop').removeClass('greyedout')
+        flopscrollsave = undefined
+        popscrollsave = $('#pop').scrollTop()
+        $('#pop').scrollTop(0)
+        $('#pop').addClass('greyedout')
       }
-      i++
-    }
-  } else {
-    if (focused) {
-      // skip this
-      return
-    }
-    const timertime = 3
-    const offsetwidth = 30
-    const scrollChange = 1
-    const flopoffset = $('#flop').offset().top
-    const flopheight = $('#flop').height()
-    const popoffset = $('#pop').offset().top
-    const popheight = $('#pop').height()
-    clearTimeout(dragtimer)
-    dragtimer = setTimeout(mobileDragOver, timertime, event)
-    if (
-      flopoffset + flopheight - offsetwidth < event.pageY &&
-      event.pageY < flopoffset + flopheight
-    ) {
-      // scroll down
-      $('#flop').scrollTop($('#flop').scrollTop() + scrollChange)
-    } else if (
-      flopoffset < event.pageY &&
-      event.pageY < flopoffset + offsetwidth
-    ) {
-      // scroll up
-      $('#flop').scrollTop($('#flop').scrollTop() - scrollChange)
-    } else if (
-      popoffset + popheight - offsetwidth < event.pageY &&
-      event.pageY < popoffset + popheight
-    ) {
-      // scroll down
-      $('#pop').scrollTop($('#pop').scrollTop() + scrollChange)
-    } else if (
-      popoffset < event.pageY &&
-      event.pageY < popoffset + offsetwidth
-    ) {
-      // scroll up
-      $('#pop').scrollTop($('#pop').scrollTop() - scrollChange)
     } else {
+      // normal drag/scroll
+      $('#listcontainer > span').removeClass('small')
+      const timertime = 3
+      const offsetwidth = 50
+      const scrollChange = 2
+      const flopoffset = $('#flop').offset().top
+      const flopheight = $('#flop').height()
+      const popoffset = $('#pop').offset().top
+      const popheight = $('#pop').height()
+      const popleft = $('#pop').offset().left
       clearTimeout(dragtimer)
-    }
-    if (mobileTest() &&
-      event.pageY > popoffset && !flopscrollsave) {
-      // scroll flop to end
-      if (popscrollsave) {
-        $('#pop').scrollTop(popscrollsave)
-      }
-      $('#pop').removeClass('greyedout')
-      popscrollsave = undefined
-      flopscrollsave = $('#flop').scrollTop()
-      $('#flop').addClass('greyedout')
-      if ($('#flop').children().length < 2) {
-        $('#flop').scrollTop($('#flop').height())
+      dragtimer = setTimeout(dragTaskOver, timertime, event)
+      if (flopoffset + flopheight - offsetwidth < event.pageY &&
+        event.pageY < flopoffset + flopheight &&
+        event.pageX < popleft) {
+        // scroll down
+        $('#flop').scrollTop($('#flop').scrollTop() + scrollChange)
+      } else if (flopoffset < event.pageY &&
+        event.pageY < flopoffset + offsetwidth &&
+        event.pageX < popleft) {
+        // scroll up
+        $('#flop').scrollTop($('#flop').scrollTop() - scrollChange)
+      } else if (popoffset + popheight - offsetwidth < event.pageY &&
+        event.pageY < popoffset + popheight &&
+        event.pageX > popleft) {
+        // scroll down
+        $('#pop').scrollTop($('#pop').scrollTop() + scrollChange)
+      } else if (popoffset < event.pageY &&
+        event.pageY < popoffset + offsetwidth &&
+        event.pageX > popleft) {
+        // scroll up
+        $('#pop').scrollTop($('#pop').scrollTop() - scrollChange)
       } else {
-        const flopchild = $($('#flop').children()[
-          $('#flop').children().length - 1])
-        $('#flop').scrollTop($('#flop').scrollTop() + flopchild.position().top +
-          flopheight)
+        clearTimeout(dragtimer)
       }
-    } else if (mobileTest() &&
-      event.pageY < popoffset && !popscrollsave) {
-      // scroll pop to beginning
-      if (flopscrollsave) {
-        $('#flop').scrollTop(flopscrollsave)
-      }
-      $('#flop').removeClass('greyedout')
-      flopscrollsave = undefined
-      popscrollsave = $('#pop').scrollTop()
-      $('#pop').scrollTop(0)
-      $('#pop').addClass('greyedout')
     }
   }
 }
@@ -547,7 +509,7 @@ function updateSpanDrags(task) {
             dragTask(event, $(this))
           },
           drag: function (event) {
-            mobileDragOver(event)
+            dragTaskOver(event)
             $('#listcontainer > span').removeClass('in')
           },
         })

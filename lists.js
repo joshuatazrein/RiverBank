@@ -102,7 +102,7 @@ function newList(list) {
     newthing.on('dragover', dragListOver)
     newthing.on('click', loadThis)
     newthing.attr('draggable', 'true')
-    newthing.val(data.flop[list].title)
+    newthing.val(data.flop[listthing].title)
     $('#loads').append(newthing)
   if (!list) {
     loadedlist = $('#loads').children().length - 1
@@ -114,7 +114,7 @@ function newList(list) {
     } else {
       $($('#loads').children()[loadedlist]).removeClass('sublist')
     }
-    dragsOff(saving)
+    dragsOff()
   }
 }
 

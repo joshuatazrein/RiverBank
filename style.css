@@ -78,7 +78,7 @@ span.edit {
 }
 
 #flopbuts, #popbuts {
-  background-color: var(--bgoverlay);
+  background-color: transparent;
   position: absolute;
   z-index: 3;
   width: calc(100% - 10px);

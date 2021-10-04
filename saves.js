@@ -20,15 +20,15 @@ function castrate(phallus) {
 function clean() {
   // cleans data
   $('span.in:visible').attr('style', '')
-  $('span.in').attr('title', 'task (see help: syntax)')
-  $('span.dateheading').attr('title', 'date (see help: dates)')
-  $('textarea.listtitle').attr('title', 'list (click or drag)')
-  $('#flop').attr('title', 'Bank (unscheduled tasks)')
-  $('#pop').attr('title', 'River (scheduled tasks)')
-  $('span.deadline').attr('title', 'deadline (see help: dates)')
-  $('span.duedate').attr('title', 'duedate (click to see task)')
-  $('span.timing').attr('title', 'time (click to adjust)')
-  $('span.event').attr('title', 'event (see help: syntax)')
+  $('span.in').attr('quickhelp', 'task (see help: syntax)')
+  $('span.dateheading').attr('quickhelp', 'date (see help: dates)')
+  $('textarea.listtitle').attr('quickhelp', 'list (click or drag)')
+  $('#flop').attr('quickhelp', 'Bank (unscheduled tasks)')
+  $('#pop').attr('quickhelp', 'River (scheduled tasks)')
+  $('span.deadline').attr('quickhelp', 'deadline (see help: dates)')
+  $('span.duedate').attr('quickhelp', 'duedate (click to see task)')
+  $('span.timing').attr('quickhelp', 'time (click to adjust)')
+  $('span.event').attr('quickhelp', 'event (see help: syntax)')
   for (span of $('span.in').toArray()) {
     if (['', ' ', '\n'].includes($(span).text())) {
       // remove empty ones
@@ -83,6 +83,7 @@ function clean() {
   }
   // sort headings
   const headingslist = $('#pop').children().filter('.dateheading').toArray()
+  const now = stringToDate('today').getTime()
   for (heading of headingslist.sort((a, b) => {
     return stringToDate(stripChildren($(a)), true).getTime() -
       stringToDate(stripChildren($(b)), true).getTime()
@@ -91,7 +92,7 @@ function clean() {
       heading.remove()
       continue
     }
-    if ($($(heading).children()[0]).text().includes('-')) {
+    if (stringToDate(stripChildren($(heading))).getTime() < now) {
       $(heading).addClass('complete')
       if ($(heading).attr('folded') == 'false') {
         toggleFold($(heading), false)
@@ -306,7 +307,8 @@ function updateTitles() {
       !$(x).text().includes(thisdate)
   })
   if (!bottomdate) { return }
-  const curdate = stringToDate(stripChildren($(bottomdate), true)).getTime()
+  console.log(stripChildren($(bottomdate)));
+  const curdate = stringToDate(stripChildren($(bottomdate)), true).getTime()
   const inview = $('#pop .continuous:not(.complete)').toArray().filter((x) => { 
     return $(x).attr('start') < curdate
   })
@@ -317,10 +319,10 @@ function updateTitles() {
   }).concat(window.duedates.map((x) => { return {title: x.title, end: x.end, 
     overdue: stringToDate(x.end).getTime() < curdate} }))
   const displaylist = list.map((x) => { 
-    return $('<p style="margin:0;"><span class="falselink" title="deadline" deadline="' +
+    return $('<p style="margin:0;"><span class="falselink" quickhelp="deadline" deadline="' +
       x.end + '" overdue="' + x.overdue + '">' + 
       x.title.replace(/•\s/, '').replace(/\-\s/, '') + '</span>' + 
-      '<span class="eventspan" title="due date" onclick="select(dateToHeading(' + 
+      '<span class="eventspan" quickhelp="due date" onclick="select(dateToHeading(' + 
       'stringToDate($(this).text())), true)" overdue="' + 
       x.overdue + '"">' + datesToRelative(today, stringToDate(x.end)) + 
       '</span></p>')
@@ -346,16 +348,16 @@ function updateImportants() {
       .forEach((x) => {
         // add all important tasks to a list
         if (getHeading($(x))) {
-          importants.push($('<p><span class="impspan" title="parent heading" list="' + 
+          importants.push($('<p><span class="impspan" quickhelp="parent heading" list="' + 
             counter + '">' + stripChildren(getHeading($(x))) + '</span>' + 
-            '<span class="falselinkimp" title="important & uncomplete">' + 
+            '<span class="falselinkimp" quickhelp="important & uncomplete">' + 
             stripChildren($(x)).replace(/•\s/, '').replace(/\-\s/, '') + 
             '</span></p>'))
         } else {
-          importants.push($('<p><span class="impspan-list" title="parent list" list="' + 
+          importants.push($('<p><span class="impspan-list" quickhelp="parent list" list="' + 
             counter + '">' + 
             list.title.replace(/•\s/, '').replace(/\-\s/, '')  + '</span>' + 
-            '<span class="falselinkimp" title="important & uncomplete">' + stripChildren($(x)) + 
+            '<span class="falselinkimp" quickhelp="important & uncomplete">' + stripChildren($(x)) + 
             '</span></p>'))
         }
       })
@@ -490,6 +492,11 @@ function save(changes, changed, undo) {
   // P is for date creation
   if (['i', 'X'].includes(changes)) {
     updateImportants()
+  }
+  if (['>', '+'].includes(changes) && getHeading(changed) &&
+    getHeading(changed).hasClass('futuredate')) {
+    // update heading formats
+    getHeading(changed).removeClass('futuredate')
   }
   now = new Date()
   display('updateImportants: ' + String(now.getTime() - initial))
@@ -626,10 +633,11 @@ function uploadData(reloading) {
     diffsLog(prevupload, JSON.stringify(data))
     display('*** local upload finished ***')
     prevupload = JSON.stringify(data)
-    if (reloading) {
-      display('reloading from upload (offline)');
+    display('reloading from upload (offline)');
+    if (reloading == 'reload') {
+      location.reload()
+    } else if (reloading) {
       reload(true) // reloads page
-      return
     }
   }
 }
@@ -679,25 +687,15 @@ function undo() {
 }
 
 function cancel() {
-  $('#logoimage').stop(true)
-  $('#logoimage').animate({'opacity': 0}, 500)
-  setTimeout(function () {
-    $('#logoimage').remove()
-  }, 510)
   display('cancelling load')
-  loading = false
 }
 
 function reload(force) {
-  setTimeout(cancel, 5000)
-  $('#logoimage').animate({'opacity': 0.1}, 250)
-  loading = true
   // begin reload by downloading server data
   if (window.parent.location.href.includes('welcome')) {
     reload2()
     return
   }
-  $('body').prepend("<div id='logoimage' class='show' style='z-index:2;opacity:0'><img src='logo.png'></div>")
   display('--- download started ---');
   if (!navigator.onLine || offlinemode) {
     if (force) {
@@ -723,9 +721,11 @@ function reload(force) {
       reload2() 
       return 
     }
+    var curdata = JSON.stringify(data) 
+      // prevents changes from triggering reload
     $.post('download.php',
       function (datastr, status, xhr) {
-        const diffs = diffsLog(JSON.stringify(data), xhr.responseText)
+        const diffs = diffsLog(curdata, xhr.responseText)
         if (diffs == 'Diffs:') {
           cancel()
           // don't reload page at all
@@ -742,6 +742,8 @@ function reload(force) {
 
 function reload2() {
   // data is downloaded, prepare page for reload
+  $('body').prepend("<div id='logoimage' class='show' style='z-index:2;opacity:0'><img src='logo.png'></div>")
+  $('#logoimage').animate({'opacity': 0.1}, 250)
   let selectframe, selectindex
   try {
     if (selected && selected[0].tagName == 'SPAN') {
@@ -861,7 +863,7 @@ function loadPage(starting, oldselect, scrolls) {
     }
     // event bindings
     $(document).on('mousemove', function(ev) {
-      const t = ev.target.getAttribute('title')
+      const t = ev.target.getAttribute('quickhelp')
       if (t && $('#quickhelp').text() != t) { 
         $('#quickhelp').text(t)
       } else if (!t && $('#quickhelp').text() != '') {

@@ -4,16 +4,9 @@ var timer = new Timer({
   // using timer.js, start the window's timer
   tick: 1,
   ontick: function (sec) {
-    let minutes = Math.floor((sec) / 60000); // minutes
-    let secs = Math.ceil((sec - (minutes * 60000)) / 1000)
-    if (secs == 60) {
-      minutes += 1
-      secs = 0
-    }
-    $('#timerent').val(String(minutes) + ':' +
-      String(secs).padStart(2, 0))
+    stopwatchTime(sec)
   },
-  onstart: function () { }
+  onstart: function (sec) { stopwatchTime(sec) }
 })
 
 timer.on('end', function () {
@@ -52,7 +45,13 @@ function addTime(time) {
   } else {
     timer.stop()
   }
-  if ($('#timerent').val().split(':').length > 1) {
+  if ($('#timerent').val().split(':').length == 3) {
+    $('#timerent').val(
+      String(Number($('#timerent').val().split(':')[0]) * 60 + 
+      Number($('#timerent').val().split(':')[1]) + time) +
+      ':' + $('#timerent').val().split(':')[1]
+    )
+  } else if ($('#timerent').val().split(':').length == 2) {
     $('#timerent').val(
       String(Number($('#timerent').val().split(':')[0]) + time) +
       ':' + $('#timerent').val().split(':')[1]
@@ -66,8 +65,10 @@ function addTime(time) {
 function stopwatchTime(curtime, negative) {
   if (!negative) negative = ''
   let hours = Math.floor(curtime / (60000 * 60))
-  let minutes = Math.floor((curtime - hours) / 60000); // minutes
-  let secs = Math.floor(Math.ceil(((curtime) - minutes * 60000)) / 1000)
+  let minutes = Math.floor((curtime - (hours * (60000 * 60))) / 60000); 
+    // minutes
+  let secs = Math.floor(
+    Math.ceil((curtime - (hours * (60000 * 60))) - minutes * 60000) / 1000)
   if (hours > 0) {
     $('#timerent').val(negative + String(hours) + ':' + 
       String(minutes).padStart(2, 0) + ':' + String(secs).padStart(2, 0))
@@ -81,6 +82,7 @@ function startTimer() {
   const s = $('#startsnd')[0]
   s.src = s.src
   s.play()
+  let startitme
   if ($('#timerent').val() == ':00') {
     var timertime = new Date().getTime()
     $('#timerent').val('0:00')
@@ -92,15 +94,22 @@ function startTimer() {
   } else {
     timertext = $('#timerent').val()
     if (!timertext.includes(':')) {
-      timer.start(timertext * 60)
-      time = timertext * 60000
+      starttime = timertext * 60
+    } else if (timertext.split(':').length == 3) {
+      split = timertext.split(':').map((x) => {
+        return Number(x)
+      })
+      starttime = split[0] * 60 * 60 + split[1] * 60 + split[2]
     } else if (timertext.includes(':')) {
       split = timertext.split(':').map((x) => {
         return Number(x)
       })
-      timer.start(split[0] * 60 + split[1])
+      starttime = split[0] * 60 + split[1]
     }
   }
+  time = starttime
+  timer.start(starttime)
+  // setTimeout(function() { stopwatchTime(starttime) }, 10)
   $('#timerent').blur()
 }
 

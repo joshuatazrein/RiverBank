@@ -277,7 +277,7 @@ function dateToHeading(date, saving) {
   })
   if (!heading1) {
     // insert elt where it should go
-    const heading2 = $('<span class="in h1 dateheading" title="date" folded="false" ' +
+    const heading2 = $('<span class="in h1 dateheading" quickhelp="date" folded="false" ' +
       'draggable="false">' + 
       dateToString(date, true) + '</span>')
     let headingafter = headingslist.find((x) => {
@@ -579,11 +579,6 @@ function goToSearch(el) {
   if (el.attr('title') == 'pop') {
     // load pop
     focusarea = $('#pop')
-    if (window.focused) {
-      $('#floplist').hide()
-      $('#poplist').show()
-      $('#switch').text("<")
-    }
   } else {
     // load flop and switch lists
     focusarea = $('#flop')
@@ -592,10 +587,6 @@ function goToSearch(el) {
     }).indexOf(
       el.attr('title')))
     loadList()
-    if (window.focused) {
-      $('#poplist').hide()
-      $('#floplist').show()
-    }
   }
   // find the matching element
   const focused = $(focusarea.find('span.in')[el.attr('index')])
@@ -730,6 +721,18 @@ function select(el, scroll, animate) {
             return this.nodeType == 3;
           }).remove();
       } catch (err) { }
+    }
+    if (window.focused) {
+      // shows right frames on focus
+      if (getFrame(selected).attr('id') == 'pop') {
+        $('#floplist').hide()
+        $('#poplist').show()
+        $('#switch').text('<')
+      } else if (getFrame(selected).attr('id') == 'flop') {
+        $('#poplist').hide()
+        $('#floplist').show()
+        $('#switch').text('>')
+      }
     }
     if (scroll) {
       if (!selected.is(':visible') && getHeading(selected)) {

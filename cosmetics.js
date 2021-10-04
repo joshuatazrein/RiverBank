@@ -100,7 +100,8 @@ function updateSizes() {
   if (window.innerWidth < 600) mobile = true
   else if (window.innerWidth > 600) mobile = false
   if (data.hidebuts == 'false') {
-    $(':root').css('--butheight', $('#flopbuts').height() + 5 + 'px')
+    $(':root').css('--butheight', 
+    Math.max($('#flopbuts').height(), $('#popbuts').height()) + 5 + 'px')
   }
 }
 
@@ -243,7 +244,8 @@ function toggleButs(saving) {
     data.hidebuts = 'false'
     $('#collapseBut').removeAttr('style')
     $('#flopbuts').prepend($('#collapseBut'))
-    $(':root').css('--butheight', $('#flopbuts').height() + 'px')
+    $(':root').css('--butheight', 
+      Math.max($('#flopbuts').height(), $('#popbuts').height()) + 'px')
   } else {
     $('.butbar:not(#editbuts)').hide()
     $('#typebut').hide()
@@ -1004,11 +1006,6 @@ function keyDown(ev) {
       const date = dateToHeading(
         stringToDate($('#searchbar').val().slice(2), false))
       select(date, true)
-      if (window.focused) {
-        $('#floplist').hide()
-        $('#poplist').show()
-        $('#switch').text("<")
-      }
       $('#searchbar').val('')
       $('#searchbar').blur()
       if (movetask != undefined) {
