@@ -337,10 +337,6 @@ function setStyle(style, alert) {
           $('<link id="theme" rel="stylesheet" type="text/css" href="' +
             style + '-' + data.brightness + '.css" />')
         );
-        stylegot = false
-        $('#theme').on('load', function () { 
-          stylegot = true 
-        })
       }
     )
     if (alert != false) {
