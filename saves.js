@@ -701,6 +701,7 @@ function clearLogo() {
   // finishload
   $('#logoimage').animate({opacity: 0}, 500)
   $('#logoimage').remove()
+  loading = false
 }
 
 function reload(force) {
