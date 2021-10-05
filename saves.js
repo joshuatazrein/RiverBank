@@ -222,7 +222,9 @@ function migrate() {
           .toArray().forEach((x) => { appends.push(x) })
         if (ch.hasClass('event') && !ch.hasClass('complete')) {
           toggleComplete(ch, false)
-        } else if (!ch.hasClass('complete') && !isHeading(ch)) {
+        } else if (!ch.hasClass('complete') && !isHeading(ch) &&
+          !ch.hasClass('duedate')) {
+          // push all uncompleted tasks
           appends.push(ch)
         }
       }

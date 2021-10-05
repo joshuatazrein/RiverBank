@@ -167,7 +167,6 @@ function eventTimeFormat(el) {
   function process(x) {
     // convert to number
     let pm = false
-    if (x.includes('p')) { pm = true }
     if (x.includes(':')) {
       // round times
       x = x.split(':')
@@ -178,8 +177,6 @@ function eventTimeFormat(el) {
     } else {
       x = Number(x.replace(/\D/g, ''))
     }
-    console.log(x);
-    if (pm) x += 12
     return x
   }
   function mod12sub(x, y) {

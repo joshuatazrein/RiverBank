@@ -135,6 +135,7 @@ function toggleComplete(task, saving) {
     save('+', selected, true)
   }
   updateImportants()
+  updateTitles()
 }
 
 function toggleImportant() {
@@ -918,6 +919,9 @@ function saveTask() {
     parent = parent.parent()
   }
   save('+', selected, true)
+  if (selected.hasClass('event')) {
+    eventTimeFormat(selected)
+  }
 }
 
 function editTask() {

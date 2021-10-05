@@ -1200,7 +1200,7 @@ function keyDown(ev) {
       copieditem = selected.clone()
     } else if (ev.key == 'x' && ev.metaKey) {
       // cut
-      copieditem = selected.clone
+      copieditem = selected.clone()
       selected.remove()
       save('-', copieditem)
     } else if (ev.key == 'v' && ev.metaKey) {
@@ -1208,7 +1208,7 @@ function keyDown(ev) {
       if (copieditem) {
         selected.after(copieditem)
         select(selected.next(), true)
-        copieditem = undefined
+        copieditem = selected.clone()
         save('+', selected)
       }
     } else if (ev.key == 'ArrowUp' && ev.altKey) {
