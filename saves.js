@@ -1008,9 +1008,6 @@ function loadPage(starting, oldselect, scrolls) {
     // initial = now.getTime()
     // display('checkStyle: ' + String(curtime));
       // check style is skipped (takes too long)
-    $('#logoimage').animate({opacity: 0}, 500)
-    $('#logoimage').remove()
-    loading = false
     // doesn't check for style anymore
   }
   now = new Date()
@@ -1019,4 +1016,11 @@ function loadPage(starting, oldselect, scrolls) {
   initial = now.getTime()
   clean()
   setTimeout(startdoc, 500)
+  $.get(data.style + '-' + data.brightness + '.css',
+    function () {
+      $('#logoimage').animate({opacity: 0}, 500)
+      $('#logoimage').remove()
+      loading = false
+    }
+  )
 }
