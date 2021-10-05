@@ -103,11 +103,13 @@ function load() {
           window.location = 'https://riverbank.app/welcome.html'
         }
         clearInterval(getting)
+        getting = undefined
         return
       } else {
         console.log('get succeeded');
         data = JSON.parse(xhr.responseText)
         clearInterval(getting)
+        getting = undefined
         initialize()
       }
     }
@@ -122,6 +124,7 @@ function load() {
       }
       display('new data:', data)
       clearInterval(getting)
+      getting = undefined
       initialize()
     }
   }, 7000)

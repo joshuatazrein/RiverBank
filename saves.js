@@ -868,6 +868,7 @@ function loadPage(starting, oldselect, scrolls) {
         $('#quickhelp').text('')
       }
     })
+    $(document).off('keydown keyup contextmenu mousedown mouseup touchend')
     $(document).on('keydown', keyDown)
     $(document).on('keyup', keyUp)
     $(document).on('contextmenu', function(event) {
