@@ -795,7 +795,6 @@ function loadPage(starting, oldselect, scrolls) {
     $('#username').text(getCookie('user'))
   }
   if (starting) {
-
     // start window for first load
     window.stylegot = false // getting style
     window.loadedlist = data.loadedlist // loaded list
@@ -876,6 +875,12 @@ function loadPage(starting, oldselect, scrolls) {
         $('#quickhelp').text('')
       }
     })
+    $.get(data.style + '-' + data.brightness + '.css',
+      function () {
+        display('got style: ' + data.style + '-' + data.brightness + '.css')
+        clearLogo()
+      }
+    )
     $(document).off('keydown keyup contextmenu mousedown mouseup touchend')
     $(document).on('keydown', keyDown)
     $(document).on('keyup', keyUp)
