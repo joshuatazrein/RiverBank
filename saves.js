@@ -697,6 +697,12 @@ function cancel() {
   display('cancelling load')
 }
 
+function clearLogo() {
+  // finishload
+  $('#logoimage').animate({opacity: 0}, 500)
+  $('#logoimage').remove()
+}
+
 function reload(force) {
   // begin reload by downloading server data
   if (window.parent.location.href.includes('welcome')) {
@@ -1016,11 +1022,4 @@ function loadPage(starting, oldselect, scrolls) {
   initial = now.getTime()
   clean()
   setTimeout(startdoc, 500)
-  $.get(data.style + '-' + data.brightness + '.css',
-    function () {
-      $('#logoimage').animate({opacity: 0}, 500)
-      $('#logoimage').remove()
-      loading = false
-    }
-  )
 }
