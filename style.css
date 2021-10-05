@@ -595,6 +595,9 @@ span.impspan, span.impspan-list {
   width: initial;
   display: initial;
   max-width: 75px;
+  max-height: 1em;
+  overflow: hidden;
+  font-size: 18px;
 }
 
 ::-webkit-input-placeholder {
