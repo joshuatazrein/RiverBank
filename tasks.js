@@ -1026,7 +1026,6 @@ function createBlankTask() {
 
 function newTask(subtask, prepend) {
   // create new task
-  console.trace()
   if (loadedlist == undefined || loadedlist > data.flop.length - 1) {
     alert('no list selected; create or select a list first')
     return

@@ -257,7 +257,6 @@ function loadList(saving) {
 
 function loadThis(ev) {
   const now = new Date().getTime()
-  console.trace()
   // load the clicked on list
   let movetask
   if (movetolist) {
