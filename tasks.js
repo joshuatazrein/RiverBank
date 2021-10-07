@@ -102,20 +102,26 @@ function toggleComplete(task, saving) {
   const text = stripChildren(completetask).split(' ')
   if (!completetask.hasClass('complete') &&
     /^~/.test(text[text.length - 2])) {
+    console.log(completetask.text(), 'repeating');
     if (stringToDate(text[text.length - 2].slice(1)) == 'Invalid Date') {
-      alert('invalid repeat date')
+      display('invalid repeat date')
       completetask.text(text.slice(0, text.length - 2) +
         getChildren(completetask))
     } else {
       const date = stringToDate(text[text.length - 2].slice(1), false, true)
-      date.setTime(date.getTime() + 
-        (stringToDate(stripChildren($(getHeading($(completetask)))))
-        .getTime() - stringToDate('today').getTime()))
-      if (task) {
-        date.setDate(date.getDate() - 1)
+      const difference = date.getTime() - stringToDate('0d').getTime()
+      // get date
+      let datetask = completetask.prev()
+      while (datetask.prev() && 
+        !datetask.hasClass('dateheading')) {
+        datetask = datetask.prev()
+        console.log(datetask);
       }
+      const headingdate = stringToDate(stripChildren(datetask), true)
+      console.log(headingdate);
+      headingdate.setTime(headingdate.getTime() + difference)
       // save so it doesn't immediately delete
-      const heading = dateToHeading(date, false)
+      const heading = dateToHeading(headingdate, false)
       const newtask = completetask.clone()
       newtask.removeClass('complete')
       newtask.removeClass('taskselect')
@@ -332,6 +338,7 @@ function dropTask(ev) {
 }
 
 function dragTaskOver(event) {
+  return
   // dragging task over other one; for desktop
   resetDoc()
   const boxright = $('#listcontainer').offset().left
@@ -1020,7 +1027,7 @@ function editTask() {
 
 function createBlankTask() {
   // create new blank task
-  const savetask = $('<span class="in" title=\'task (see help: syntax)\'></span>')
+  const savetask = $('<span class="in"></span>')
   return savetask
 }
 

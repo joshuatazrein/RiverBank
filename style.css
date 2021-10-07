@@ -150,6 +150,7 @@ span.eventspan, span.impspan, span.impspan-list {
 #focusbar input, #focusbar div div {
   width: calc(100% - 4px) !important;
   margin: 2px;
+  font-size: 18px;
 }
 
 #focusbar #searchbar-results {

@@ -485,6 +485,7 @@ function save(changes, changed, undo) {
   initial = now.getTime()
   if (['-', '+', 'X'].includes(changes)) {
     updateDeadlines()
+    updateTitles()
   }
   now = new Date()
   display('updateDeadlines: ' + String(now.getTime() - initial))
@@ -883,7 +884,6 @@ function loadPage(starting, oldselect, scrolls) {
     $('.dropdown-item').mouseleave(function () { 
       $(this).css('color', '')
     })
-    $('#pop').on('scroll', updateTitles)
     if (window.innerWidth < 600) { 
       // collapse menu
       toggleCollapse()

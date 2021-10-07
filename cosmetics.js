@@ -393,6 +393,7 @@ function toggleFocus(collapse) {
       // hide other thing and this' buttons
       $('#poplist').hide()
       $('#switch').text('>')
+      toggleFocusFrame(); toggleFocusFrame()
     } else if (getFrame(selected).attr('id') == 'pop') {
       $('#floplist').hide()
       $('#switch').text('<')
