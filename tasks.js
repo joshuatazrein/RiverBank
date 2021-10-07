@@ -216,7 +216,7 @@ function dragTask(ev) {
   // begin the drag
   select(ev.target)
   draggingtask = true
-  // save('-', selected)
+  save('-', selected)
   if (mobileTest()) {
     $('.nav').hide()
   }
@@ -234,7 +234,7 @@ function dragTask(ev) {
       $(child).remove()
     }
   }
-  selected.remove()
+  // selected.remove()
 }
 
 function dropTask(ev) {
