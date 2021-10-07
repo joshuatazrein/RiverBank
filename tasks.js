@@ -216,7 +216,7 @@ function dragTask(ev) {
   // begin the drag
   select(ev.target)
   draggingtask = true
-  save('-', selected)
+  // save('-', selected)
   if (mobileTest()) {
     $('.nav').hide()
   }
@@ -517,7 +517,7 @@ function updateSpanDrags(task) {
           addClasses: false,
           start: function (event) {
             // $(this).hide()
-            // dragTask(event, $(this))
+            dragTask(event, $(this))
           },
           drag: function (event) {
             dragTaskOver(event)
