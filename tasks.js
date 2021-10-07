@@ -234,7 +234,7 @@ function dragTask(ev) {
       $(child).remove()
     }
   }
-  // selected.remove()
+  selected.hide()
 }
 
 function dropTask(ev) {
@@ -250,6 +250,7 @@ function dropTask(ev) {
   setTimeout(function () { justdropped = false }, 300)
   if (!draggingtask) return
   draggingtask = false
+  selected.remove()
   // drops selected task
   $('#listcontainer > span').hide()
   const el = $(ev.target)
