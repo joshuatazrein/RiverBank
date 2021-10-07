@@ -338,7 +338,6 @@ function dropTask(ev) {
 }
 
 function dragTaskOver(event) {
-  return
   // dragging task over other one; for desktop
   resetDoc()
   const boxright = $('#listcontainer').offset().left
@@ -518,11 +517,11 @@ function updateSpanDrags(task) {
           addClasses: false,
           start: function (event) {
             // $(this).hide()
-            dragTask(event, $(this))
+            // dragTask(event, $(this))
+            // $('#listcontainer > span').removeClass('in')
           },
           drag: function (event) {
-            dragTaskOver(event)
-            $('#listcontainer > span').removeClass('in')
+            // dragTaskOver(event)
           },
         })
       })
@@ -540,10 +539,10 @@ function updateSpanDrags(task) {
           addClasses: false,
           start: function (event) {
             dragTask(event, $(this))
+            $('#listcontainer > span').removeClass('in')
           },
           drag: function (event) {
             dragTaskOver(event)
-            $('#listcontainer > span').removeClass('in')
           },
         })
       })
