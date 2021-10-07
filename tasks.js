@@ -518,10 +518,9 @@ function updateSpanDrags(task) {
           start: function (event) {
             // $(this).hide()
             // dragTask(event, $(this))
-            // $('#listcontainer > span').removeClass('in')
           },
           drag: function (event) {
-            // dragTaskOver(event)
+            dragTaskOver(event)
           },
         })
       })
