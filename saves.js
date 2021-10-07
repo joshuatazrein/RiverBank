@@ -599,6 +599,8 @@ function uploadData(reloading) {
       } else if (reloading) {
         reload(true) // reloads page
       }
+    }).fail(function () {
+      alert('upload failed');
     });
   } else {
     if (!navigator.onLine && !offline) {
