@@ -962,9 +962,7 @@ function loadPage(starting, oldselect, scrolls) {
   }
   if (mobileTest() && window.innerWidth < 600) {
     select($('#pop'))
-    console.log('pop selected');
     toggleFocus()
-    console.log('focus toggled');
   }
   now = new Date()
   curtime = now.getTime() - initial

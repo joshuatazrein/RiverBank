@@ -675,7 +675,6 @@ function toggleFold(el, saving, time) {
       setTimeout(function () {
         getHeadingChildren($(el)).forEach((x) => {
           if ($(x).is(':visible:not(.event)')) {
-            console.log(x);
             $(x).attr('style', '')
             $(x).find('span.in').toArray().forEach((y) => {
               if ($(x).is(':visible')) $(y).attr('style', '')

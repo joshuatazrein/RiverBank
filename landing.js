@@ -115,4 +115,3 @@ $('video').toArray().forEach((x) => {
   x.currentTime = 0;
 })
 setTimeout(function () {$('#createaccountbut').trigger('click')}, 250)
-console.log('loaded');

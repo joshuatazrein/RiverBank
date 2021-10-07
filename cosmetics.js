@@ -53,7 +53,6 @@ function updateHeight() {
 
 function updateSizes() {
   // update sizes of left column objects
-  console.log('updating sizes');
   // fix context menu for mobile
   if (mobileTest()) {
     $('.dropdown-item').toArray().forEach((x) => {

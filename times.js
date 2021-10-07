@@ -186,9 +186,7 @@ function eventTimeFormat(el) {
   }
   if ($($(el).children().filter('.timing')).length == 0) return
   let timing = $($(el).children().filter('.timing')[0]).text().split('-')
-  console.log(timing);
   timing = timing.map(x => { return process(x) })
-  console.log(timing);
   if (timing.length == 2 && mod12sub(timing[1], timing[0]) > 1) {
     $(el).css('padding-bottom', mod12sub(timing[1], timing[0]) + 'em')
   } else if (timing.length == 1 &&
