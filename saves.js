@@ -35,7 +35,7 @@ function clean() {
   $('span').attr('title', '')
   $('textarea').attr('title', '')
   $('button').attr('title', '')
-  for (span of $('span.in').toArray()) {
+  for (span of $('span:not(.mobhandle)').toArray()) {
     if (['', ' ', '\n'].includes($(span).text())) {
       // remove empty ones
       $(span).remove()
