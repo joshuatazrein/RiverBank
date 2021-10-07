@@ -21,6 +21,7 @@ function mobileTest() {
 }
 
 function resetDoc() {
+  console.trace()
   // reset document zoom and scroll
   if (selected && selected[0].tagName == 'TEXTAREA') return
   // $(document).scrollTop(0)
@@ -52,20 +53,7 @@ function updateHeight() {
 
 function updateSizes() {
   // update sizes of left column objects
-  for (list of [
-      [$('#timerent')[0], 6],
-      [$('#searchbar')[0], 5],
-      [$('#username')[0], $('#username').text().length / 2 + 2],
-      [$('#lists')[0], 7]
-  ]) {
-    // update entries
-    let fontsize = 24
-    if (mobileTest()) fontsize = 16
-    while ($(list[0]).width() / (fontsize / 2) < list[1]) {
-      fontsize -= 1
-    }
-    $(list).css('font-size', fontsize + 'px')
-  }
+  console.log('updating sizes');
   // fix context menu for mobile
   if (mobileTest()) {
     $('.dropdown-item').toArray().forEach((x) => {
@@ -402,7 +390,7 @@ function toggleFocus(collapse) {
     $('#timerentcont').append($('#timerent'))
     // getFrame(selected).parent().addClass('fullwidth')
     $('#floplist, #poplist').css('width', '100%')
-    $('#floplist, #poplist').css('height', '100%')
+    $('#floplist, #poplist').css('height', 'calc(100% - 37px)')
     if (getFrame(selected).attr('id') == 'flop') {
       // hide other thing and this' buttons
       $('#poplist').hide()
@@ -438,7 +426,9 @@ function toggleFocus(collapse) {
   }
   justcollapsed = true
   setTimeout(function () { justcollapsed = false }, 500)
+  display('focus toggled')
   updateSizes()
+  display('sizes updated')
 }
 
 function tutorial() {
@@ -764,9 +754,6 @@ function clickOff(ev) {
   // on revert drags on mobile
   $('.drop-hover').removeClass('drop-hover')
   if (!justclicked) { $('nav').hide() }
-  if (ev.target.tagName != 'TEXTAREA') {
-    resetDoc()
-  }
 }
 
 function clickOn(ev) {
@@ -876,6 +863,7 @@ function clickOn(ev) {
   } else {
     select()
   }
+  resetDoc()
 }
 
 function keyUp(ev) {
@@ -1118,22 +1106,12 @@ function keyDown(ev) {
       saveTask()
     }
     const oldselect = selected
-    if ($(taskAbove())[0] == selected.parent()[0]) {
-      // first subtask
-      select(taskAbove())
-      newTask(true, true)
-    } else if ($(taskAbove())[0] != selected[0]) {
-      // normal
-      select(taskAbove())
-      newTask()
-    } else {
-      // first task
-      const newspan = $('<span class="in">try task</span>')
-      selected.before(newspan)
-      select(newspan)
-      newTask()
-      newspan.remove()
-    }
+    // first task
+    const newspan = $('<span class="in"></span>')
+    selected.before(newspan)
+    select(newspan, false)
+    newTask()
+    newspan.remove()
     if (oldselect.hasClass('list')) { 
       selected.val('• ')
     }

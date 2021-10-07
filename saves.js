@@ -237,43 +237,16 @@ function migrate() {
   }
   const headingchildren = getHeadingChildren(todayheading)
   if (appends.length > 0) {
-    // show all
-    appends.forEach((x) => { $(x).show() })
-    // find the place and add the heading
-    let uncompletespan
-    uncompletespan = headingchildren.find((x) => {
-      return /^uncompleted/.test($(x).text()) && $(x).hasClass('h2')
-    })
-    if (!uncompletespan) {
-      // insert after completed tasks heading
-      let completed = headingchildren.find((x) => {
-        return /^completed/.test($(x).text()) && $(x).hasClass('h2')
-      })
-      if (completed) {
-        completed = $(completed).prev()
-      } else if (!completed && headingchildren.length > 0) {
-        completed = headingchildren[headingchildren.length - 1]
-      } else {
-        completed = todayheading
-      }
-      uncompletespan = createBlankTask()
-      uncompletespan.addClass('h2')
-      uncompletespan.text('uncompleted')
-      completed.after(uncompletespan)
-    }
     // append tasks after it
+    todayheading.after('<span class="in h2">present</span>')
     appends.forEach((x) => {
-      uncompletespan.after($(x))
+      $(x).show()
+      todayheading.after($(x))
     })
-  } else {
-    for (let child of headingchildren) {
-      if (/^uncompleted/.test($(child).text()) && 
-      isHeading($(child)) &&
-      getHeadingChildren($(child)).length > 0) { 
-        $(child).remove()
-        break
-      }
-    }
+    if (getHeadingChildren(todayheading).filter(x => {
+      return $(x).text() == 'uncompleted'
+    }).length == 0)
+    todayheading.after('<span class="in h2 uncompleted">past</span>')
   }
   now = new Date()
   display('migrated:' + (now.getTime() - initial))
@@ -324,15 +297,17 @@ function updateTitles() {
     return {title: $(x).attr('title'), end: $(x).attr('end'), 
       overdue: stringToDate($(x).attr('end')).getTime() < curdate} 
   }).concat(window.duedates.map((x) => { return {title: x.title, end: x.end, 
-    overdue: stringToDate(x.end).getTime() < curdate} }))
+    overdue: datesToRelative(stringToDate('0d'),
+      stringToDate(x.end)).includes('-')} }))
   const displaylist = list.map((x) => { 
     return $('<p style="margin:0;"><span class="falselink" quickhelp="deadline" deadline="' +
       x.end + '" overdue="' + x.overdue + '">' + 
       x.title.replace(/•\s/, '').replace(/\-\s/, '') + '</span>' + 
       '<span class="eventspan" quickhelp="due date" onclick="select(dateToHeading(' + 
       'stringToDate($(this).text())), true)" overdue="' + 
-      x.overdue + '"">' + datesToRelative(today, stringToDate(x.end)) + 
-      '</span></p>')
+      x.overdue + '"">' + datesToRelative(stringToDate('0d'),
+        stringToDate(x.end)) + 
+        '</span></p>')
   }).sort((a, b) => { 
     return stringToDate($($(a).children()[0]).attr('deadline')).getTime() - 
       stringToDate($($(b).children()[0]).attr('deadline')).getTime()
@@ -980,12 +955,14 @@ function loadPage(starting, oldselect, scrolls) {
   curtime = now.getTime() - initial
   display('saved: ' + curtime)
   initial = now.getTime()
-    if (starting) {
+  if (starting) {
     migrate()
   }
-    if (mobileTest() && window.innerWidth < 600) {
+  if (mobileTest() && window.innerWidth < 600) {
     select($('#pop'))
+    console.log('pop selected');
     toggleFocus()
+    console.log('focus toggled');
   }
   now = new Date()
   curtime = now.getTime() - initial
@@ -1008,7 +985,6 @@ function loadPage(starting, oldselect, scrolls) {
       scrollToToday()
     }
     // remove image after reload
-    $('#logoimage').stop(true)
     var curdate = new Date()
     resetDoc()
     now = new Date()
@@ -1016,6 +992,8 @@ function loadPage(starting, oldselect, scrolls) {
     initial = now.getTime()
     display('startdoc: ' + String(curtime));
     now = new Date()
+    $('#logoimage').stop(true)
+    if (!starting) { clearLogo() }
     // curtime = now.getTime() - initial
     // initial = now.getTime()
     // display('checkStyle: ' + String(curtime));

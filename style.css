@@ -903,6 +903,9 @@ span.weblink, span.deadline {
     float: none;
     clear: left;
   }
+  input, #lists, #username {
+    font-size: 18px;
+  }
   #floplist {
     border-bottom: 1px solid var(--bdcolor);
   }

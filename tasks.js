@@ -750,6 +750,10 @@ function deleteTask() {
 function saveTask() {
   // save currently open task
   const savetask = selected.prev() // looks at item before it
+  if (getHeading(savetask) && 
+    getHeading(savetask).attr('folded') == 'true') {
+    toggleFold(getHeading(savetask))
+  }
   savetask.attr('class', 'in')
   selected.next().remove() // removes appended children
   if (['', '• ', '- ', '# ', '## ', '### ', '@', '@ '
@@ -1032,10 +1036,11 @@ function newTask(subtask, prepend) {
   const newspan = createBlankTask()
   if (selected == undefined) return; // prevents glitches
   if (selected.attr('folded') == 'true') {
-    toggleFold(selected)
     setTimeout(function() {
+      select(getHeadingChildren(selected)
+        [getHeadingChildren(selected).length - 1])
       newTask(subtask, prepend)
-    }, 610)
+    }, 300)
     return
   }
   if (selected[0].tagName == 'P' && selected.hasClass('in')) {

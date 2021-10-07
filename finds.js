@@ -764,8 +764,16 @@ function select(el, scroll, animate) {
           scrolltime = 0
         }
         parent.stop(true) // clear queue
-        if (!selected.hasClass('dateheading') && !isHeading(selected)) {
-          if (scrollheading &&
+        if (selected.hasClass('h1') || !getHeading(selected)) {
+          const scrolllocation = Number(
+            oldscroll +
+            selected.offset().top) -
+            Number(getFrame(selected).offset().top)
+          parent.animate({
+            scrollTop: scrolllocation
+          }, scrolltime)
+        } else {
+          if (scrollheading.offset() &&
             Number(scrollheading.offset().top) + parent.height() / 2 >
             Number(selected.offset().top)) {
             // scroll to heading
@@ -787,14 +795,6 @@ function select(el, scroll, animate) {
               scrollTop: scrolllocation
             }, scrolltime)
           }
-        } else if (selected.hasClass('h1') || !getHeading(selected)) {
-          const scrolllocation = Number(
-            oldscroll +
-            selected.offset().top) -
-            Number(getFrame(selected).offset().top)
-          parent.animate({
-            scrollTop: scrolllocation
-          }, scrolltime)
         }
       }
     }
