@@ -82,7 +82,10 @@ function clean() {
   })
   for (blinded of blindeds) {
    if (!foldedlist.includes(blinded) &&
-      $(blinded) != selected) {
+      $(blinded) != selected && 
+      !($(blinded).hasClass('dateheading') ||
+      (getHeading($(blinded)) && 
+      getHeading($(blinded)).hasClass('dateheading')))) {
       // filter out subtasks
       if ($(blinded).parent()[0].tagName != 'SPAN') $(blinded).remove()
     }
@@ -193,39 +196,40 @@ function migrate() {
   }
   const appends = []
   for (heading of headings) {
-    if (stringToDate(stripChildren($(heading)), true).getTime() < today &&
-      migratable(heading)) {
-      try {
-        if (selected &&
-          (selected[0] == heading ||
-          (getHeading(selected) && getHeading(selected)[0] == heading))) {
-          continue
-        }
-      } catch (err) {
-        display(err)
-        continue
-      }
-      // migrate all uncompleted tasks
-      for (child of getHeadingChildren($(heading))) {
-        const ch = $(child)
-        if ((/^uncompleted/.test(ch.text()) ||
-          /^completed/.test(ch.text())) && 
-          heading != todayheading[0]) {
-          // takes out the uncompleted heading
-          if (ch.hasClass('folded')) { 
-            toggleFold($(heading), false) 
+    if (stringToDate(stripChildren($(heading)), true).getTime() < today) {
+      if (migratable(heading)) {
+        try {
+          if (selected &&
+            (selected[0] == heading ||
+            (getHeading(selected) && getHeading(selected)[0] == heading))) {
+            continue
           }
-          ch.remove()
+        } catch (err) {
+          display(err)
           continue
         }
-        ch.children().filter('span.in:not(.complete):not(.duedate)')
-          .toArray().forEach((x) => { appends.push(x) })
-        if (ch.hasClass('event') && !ch.hasClass('complete')) {
-          toggleComplete(ch, false)
-        } else if (!ch.hasClass('complete') && !isHeading(ch) &&
-          !ch.hasClass('duedate')) {
-          // push all uncompleted tasks
-          appends.push(ch)
+        // migrate all uncompleted tasks
+        for (child of getHeadingChildren($(heading))) {
+          const ch = $(child)
+          if ((/^uncompleted/.test(ch.text()) ||
+            /^completed/.test(ch.text())) && 
+            heading != todayheading[0]) {
+            // takes out the uncompleted heading
+            if (ch.hasClass('folded')) { 
+              toggleFold($(heading), false) 
+            }
+            ch.remove()
+            continue
+          }
+          ch.children().filter('span.in:not(.complete):not(.duedate)')
+            .toArray().forEach((x) => { appends.push(x) })
+          if (ch.hasClass('event') && !ch.hasClass('complete')) {
+            toggleComplete(ch, false)
+          } else if (!ch.hasClass('complete') && !isHeading(ch) &&
+            !ch.hasClass('duedate')) {
+            // push all uncompleted tasks
+            appends.push(ch)
+          }
         }
       }
       // fold and complete
@@ -781,6 +785,7 @@ function loadPage(starting, oldselect, scrolls) {
   if (starting) {
     // start window for first load
     window.stylegot = false // getting style
+    window.pastdates = false
     window.loadedlist = data.loadedlist // loaded list
     window.selected = undefined // selected task
     window.dragsenabled = true // editing lists

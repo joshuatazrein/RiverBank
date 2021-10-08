@@ -741,6 +741,7 @@ span.dateheading.complete.folded {
   font-size: 0.5em;
   line-height: 20px;
   height: 20px;
+  display: none;
 }
 
 span.futuredate > span.placeholder {
