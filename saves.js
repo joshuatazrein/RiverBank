@@ -371,15 +371,13 @@ function updateDeadlines() {
       // append under heading
       const text = stripChildren($(deadline).parent())
       const index = text.search('>')
-      const endindex = index + text.slice(index).search(' ')
       const date = $(deadline).text().slice(1)
       const heading = dateToHeading(stringToDate(date), false)
       const duedate = createBlankTask()
       duedate.attr('title', 'duedate')
       // take out deadline
       duedate.text('> ' +
-        text.slice(0, index).replace(/^•\s/, '').replace(/^\-\s/, '') +
-        text.slice(endindex))
+        text.slice(0, index).replace(/^•\s/, '').replace(/^\-\s/, ''))
       if (getHeading($(deadline).parent())) {
         // add span underneath with its heading
         duedate.append($('<span class="duedateBacklink">' + 
@@ -403,8 +401,11 @@ function updateDeadlines() {
   $('.continuous').remove()
   $('#pop').find('span.in:not(.complete) > .deadline')
     .toArray().forEach((x) => {
+    const deadfind = $(x).text().slice(1)
+    console.log(deadfind);
     const targetdate = $(dateToHeading(stringToDate(
-      stripChildren($(x)).slice(1))))
+      deadfind, false)))
+    console.log(targetdate);
     const newelt = $('<div class="continuous"></div>')
     const scrolltop = $('#pop').scrollTop()
     const xpos = $(x).offset().top - $('#pop').offset().top
@@ -415,14 +416,16 @@ function updateDeadlines() {
         stripChildren($(x).parent()).includes(
           stripChildren($(y)).slice(2, stripChildren($(y)).length - 1))
     }))[0]
-    newelt.css('height', castrate(
-      target.position().top + target.height() - xpos) + 'px')
-    newelt.attr('title', (stripChildren($(x).parent()).slice(0, 
-      stripChildren($(x).parent()).indexOf(' >'))))
-    newelt.attr('start', 
-      stringToDate(stripChildren($(getHeading($(x))))).getTime())
-    newelt.attr('end', stripChildren($(x)).slice(1)) // as text for searching
-    $(x).append(newelt)
+    if (target) {
+      newelt.css('height', castrate(
+        target.position().top + target.height() - xpos) + 'px')
+      newelt.attr('title', (stripChildren($(x).parent()).slice(0, 
+        stripChildren($(x).parent()).indexOf(' >'))))
+      newelt.attr('start', 
+        stringToDate(stripChildren($(getHeading($(x))))).getTime())
+      newelt.attr('end', stripChildren($(x)).slice(1)) // as text for searching
+      $(x).append(newelt)
+    }
   })
 }
 
@@ -475,6 +478,9 @@ function save(changes, changed, undo) {
   if (['i', 'X'].includes(changes)) {
     updateImportants()
   }
+  if (['X', '+', '-', '>'].includes(changes)) {
+    updateTitles()
+  }
   if (['>', '+'].includes(changes) && getHeading(changed) &&
     getHeading(changed).hasClass('futuredate')) {
     // update heading formats
@@ -483,9 +489,8 @@ function save(changes, changed, undo) {
   now = new Date()
   display('updateImportants: ' + String(now.getTime() - initial))
   initial = now.getTime()
-  if (['-', '+', 'X'].includes(changes)) {
+  if (['-', '+', 'X', '>'].includes(changes)) {
     updateDeadlines()
-    updateTitles()
   }
   now = new Date()
   display('updateDeadlines: ' + String(now.getTime() - initial))

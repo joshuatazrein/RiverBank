@@ -855,7 +855,7 @@ function saveTask() {
     .replace(/_(.*)_/g, '<span class="italic">$1</span>')
     .replace(/_\*(.*)\*_/g, 
     '<span class="bold-italic">$1</span>')
-    .replace(/\s\>(.*)\s/g, ' <span class="deadline">>$1</span> ')
+    .replace(/\s\>([^\s]*)\s/g, ' <span class="deadline">>$1</span> ')
     .replace(/\s\[\[(.*)\]\]\s/g, 
     ' <span class="link">[[$1]]</span> ')
     .replace(/\n/g, '<br>').replace(/\s/g, ' ')

@@ -454,6 +454,11 @@ span.duedate > span.duedateBacklink {
   z-index: 4;
 }
 
+.banner button {
+  background-color: var(--background) !important;
+  color: var(--select) !important;
+}
+
 #tutorial .h1 {
   padding: 10px 0;
   margin-top: 0;
