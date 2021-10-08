@@ -1026,7 +1026,7 @@ function editTask() {
 
 function createBlankTask() {
   // create new blank task
-  const savetask = $('<span class="in"></span>')
+  const savetask = $('<span class="in" quickhelp="task (see help: syntax)"></span>')
   return savetask
 }
 
