@@ -859,7 +859,11 @@ function loadPage(starting, oldselect, scrolls) {
         display('got style: ' + data.style + '-' + data.brightness + '.css')
         clearLogo()
       }
-    )
+    ).fail(function () {
+      data.style = 'space'
+      data.brightness = 'dark'
+      clearLogo()
+    })
     $(document).off('keydown keyup contextmenu mousedown mouseup touchend')
     $(document).on('keydown', keyDown)
     $(document).on('keyup', keyUp)
