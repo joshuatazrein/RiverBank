@@ -848,6 +848,7 @@ function loadPage(starting, oldselect, scrolls) {
     // event bindings
     $(document).on('mousemove', function(ev) {
       const t = ev.target.getAttribute('quickhelp')
+      console.log(t);
       if (t && $('#quickhelp').text() != t) { 
         $('#quickhelp').text(t)
       } else if (!t && $('#quickhelp').text() != '') {
@@ -862,6 +863,7 @@ function loadPage(starting, oldselect, scrolls) {
     ).fail(function () {
       data.style = 'space'
       data.brightness = 'dark'
+      setStyle(data.style)
       clearLogo()
     })
     $(document).off('keydown keyup contextmenu mousedown mouseup touchend')
