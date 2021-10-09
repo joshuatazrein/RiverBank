@@ -288,10 +288,9 @@ function updateTitles() {
   const thisdate = dateToString(new Date())
   const bottomdate = $('#pop .dateheading').toArray().find((x) => { 
     return $(x).position().top > 0 && 
-      $(x).position().top < $('#pop').height() &&
-      !$(x).text().includes(thisdate)
+      $(x).position().top < $('#pop').height()
   })
-  if (!bottomdate) { return }
+  if (bottomdate == undefined) { return }
   const curdate = stringToDate(stripChildren($(bottomdate)), true).getTime()
   const inview = $('#pop .continuous:not(.complete)').toArray().filter((x) => { 
     return $(x).attr('start') < curdate
@@ -490,9 +489,6 @@ function save(changes, changed, undo) {
   if (['i', 'X'].includes(changes)) {
     updateImportants()
   }
-  if (['X', '+', '-', '>'].includes(changes)) {
-    updateTitles()
-  }
   if (['>', '+'].includes(changes) && getHeading(changed) &&
     getHeading(changed).hasClass('futuredate')) {
     // update heading formats
@@ -503,6 +499,7 @@ function save(changes, changed, undo) {
   initial = now.getTime()
   if (['-', '+', 'X', '>'].includes(changes)) {
     updateDeadlines()
+    updateTitles()
   }
   now = new Date()
   display('updateDeadlines: ' + String(now.getTime() - initial))
