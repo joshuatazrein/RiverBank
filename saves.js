@@ -472,8 +472,8 @@ function save(changes, changed, undo) {
   display('saved: ' + String(now.getTime() - initial))
   initial = now.getTime()
   if (changes != 'X') { 
-    if (changed) {
-      if (getFrame($(changed)).attr('id') == 'pop') {
+    if (changed && selected) {
+      if (getFrame(selected).attr('id') == 'pop') {
         uploadData(false, 'pop')
       } else {
         uploadData(false, loadedlist)
