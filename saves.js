@@ -535,7 +535,6 @@ function save(changes, changed, undo) {
   // if (draggingtask) { undo() }
 }
 
-
 function diffsLog(oldString, newString) {
   if (!oldString || !newString) return
   // log diffs between previous data and new data
