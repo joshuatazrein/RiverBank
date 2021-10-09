@@ -613,7 +613,7 @@ function uploadData(reloading, list) {
       } else {
         text = data.flop[list].text
       }
-      console.log('partial upload', text, title);
+      console.log('partial upload', text, list);
       $.post("uploadPartial.php", {
         datastr: text,
         datalist: list,
