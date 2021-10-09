@@ -613,11 +613,12 @@ function uploadData(reloading, list) {
       } else {
         text = data.flop[list].text
       }
+      console.log('partial upload', text, title);
       $.post("uploadPartial.php", {
         datastr: text,
         datalist: title,
       }, function (data, status, xhr) {
-        console.log('partial upload', xhr.responseText, text, title);
+        console.log('UPLOADED', xhr.responseText, text, title);
         diffsLog(prevupload, xhr.responseText) // for debugging saving
         display('*** upload finished ***')
         prevupload = JSON.stringify(data)
