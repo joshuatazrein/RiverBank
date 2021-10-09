@@ -618,7 +618,7 @@ function uploadData(reloading, list) {
         datastr: text,
         datalist: list,
       }, function (data, status, xhr) {
-        console.log('UPLOADED', xhr.responseText, text, title);
+        console.log('UPLOADED', xhr.responseText, text, list);
         display('*** upload finished ***')
         prevupload = JSON.stringify(data)
         localStorage.setItem('data', JSON.stringify(data))
