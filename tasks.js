@@ -102,7 +102,6 @@ function toggleComplete(task, saving) {
   const text = stripChildren(completetask).split(' ')
   if (!completetask.hasClass('complete') &&
     /^~/.test(text[text.length - 2])) {
-    console.log(completetask.text(), 'repeating');
     if (stringToDate(text[text.length - 2].slice(1)) == 'Invalid Date') {
       display('invalid repeat date')
       completetask.text(text.slice(0, text.length - 2) +
@@ -115,10 +114,8 @@ function toggleComplete(task, saving) {
       while (datetask.prev() && 
         !datetask.hasClass('dateheading')) {
         datetask = datetask.prev()
-        console.log(datetask);
       }
       const headingdate = stringToDate(stripChildren(datetask), true)
-      console.log(headingdate);
       headingdate.setTime(headingdate.getTime() + difference)
       // save so it doesn't immediately delete
       const heading = dateToHeading(headingdate, false)

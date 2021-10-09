@@ -368,13 +368,10 @@ function toggleCollapse(animate) {
 function togglePast() {
   if (!pastdates) {
     pastdates = true
-    console.log($('#pop .dateheading.complete'));
     $('#pop .dateheading.complete').show()
-    console.log('showing');
   } else {
     pastdates = false
     $('#pop .dateheading.complete').hide()
-    console.log('hiding');
   }
 }
 

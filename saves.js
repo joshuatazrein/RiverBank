@@ -406,10 +406,8 @@ function updateDeadlines() {
   $('#pop').find('span.in:not(.complete) > .deadline')
     .toArray().forEach((x) => {
     const deadfind = $(x).text().slice(1)
-    console.log(deadfind);
     const targetdate = $(dateToHeading(stringToDate(
       deadfind, false)))
-    console.log(targetdate);
     const newelt = $('<div class="continuous"></div>')
     const scrolltop = $('#pop').scrollTop()
     const xpos = $(x).offset().top - $('#pop').offset().top
@@ -475,7 +473,6 @@ function save(changes, changed, undo) {
   initial = now.getTime()
   if (changes != 'X') { 
     if (changed) {
-      console.log('partial upload');
       if (getFrame($(changed)).attr('id') == 'pop') {
         uploadData(false, 'pop')
       } else {
@@ -620,10 +617,10 @@ function uploadData(reloading, list) {
         datastr: text,
         datalist: title,
       }, function (data, status, xhr) {
-        console.log(xhr.responseText);
+        console.log('partial upload', xhr.responseText, text, title);
         diffsLog(prevupload, xhr.responseText) // for debugging saving
         display('*** upload finished ***')
-        prevupload = xhr.responseText
+        prevupload = JSON.stringify(data)
         localStorage.setItem('data', JSON.stringify(data))
         if (reloading == 'reload') {
           location.reload()
@@ -896,7 +893,6 @@ function loadPage(starting, oldselect, scrolls) {
     // event bindings
     $(document).on('mousemove', function(ev) {
       const t = ev.target.getAttribute('quickhelp')
-      console.log(t);
       if (t && $('#quickhelp').text() != t) { 
         $('#quickhelp').text(t)
       } else if (!t && $('#quickhelp').text() != '') {
