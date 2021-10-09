@@ -475,8 +475,8 @@ function save(changes, changed, undo) {
   initial = now.getTime()
   if (changes != 'X') { 
     if (changed) {
+      console.log('partial upload');
       if (getFrame($(changed)).attr('id') == 'pop') {
-        console.log('partial upload');
         uploadData(false, 'pop')
       } else {
         uploadData(false, loadedlist)
@@ -632,22 +632,23 @@ function uploadData(reloading, list) {
       }).fail(function () {
         alert('upload failed');
       });
+    } else {
+      $.post("upload.php", {
+        datastr: JSON.stringify(data),
+      }, function (data, status, xhr) {
+        diffsLog(prevupload, xhr.responseText) // for debugging saving
+        display('*** upload finished ***')
+        prevupload = xhr.responseText
+        localStorage.setItem('data', JSON.stringify(data))
+        if (reloading == 'reload') {
+          location.reload()
+        } else if (reloading) {
+          reload(true) // reloads page
+        }
+      }).fail(function () {
+        alert('upload failed');
+      });
     }
-    $.post("upload.php", {
-      datastr: JSON.stringify(data),
-    }, function (data, status, xhr) {
-      diffsLog(prevupload, xhr.responseText) // for debugging saving
-      display('*** upload finished ***')
-      prevupload = xhr.responseText
-      localStorage.setItem('data', JSON.stringify(data))
-      if (reloading == 'reload') {
-        location.reload()
-      } else if (reloading) {
-        reload(true) // reloads page
-      }
-    }).fail(function () {
-      alert('upload failed');
-    });
   } else {
     if (!navigator.onLine && !offline) {
       // if it's offline save that
