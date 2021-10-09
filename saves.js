@@ -618,10 +618,11 @@ function uploadData(reloading, list) {
         datastr: text,
         datalist: list,
       }, function (data, status, xhr) {
-        console.log('UPLOADED', xhr.responseText, text, list);
+        console.log('UPLOADED', text, list);
         display('*** upload finished ***')
-        prevupload = JSON.stringify(data)
         localStorage.setItem('data', JSON.stringify(data))
+        prevupload = JSON.stringify(data)
+        console.log(data);
         if (reloading == 'reload') {
           location.reload()
         } else if (reloading) {
