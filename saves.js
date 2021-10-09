@@ -473,7 +473,18 @@ function save(changes, changed, undo) {
   now = new Date()
   display('saved: ' + String(now.getTime() - initial))
   initial = now.getTime()
-  if (changes != 'X') { uploadData() }
+  if (changes != 'X') { 
+    if (changed) {
+      if (getFrame($(changed)).attr('id') == 'pop') {
+        console.log('partial upload');
+        uploadData(false, 'pop')
+      } else {
+        uploadData(false, loadedlist)
+      }
+    } else {
+      uploadData() 
+    }
+  }
   now = new Date()
   display('uploadData: ' + String(now.getTime() - initial))
   initial = now.getTime()
@@ -586,7 +597,7 @@ function diffsLog(oldString, newString) {
   return diffs
 }
 
-function uploadData(reloading) {
+function uploadData(reloading, list) {
   // upload data to the server
   if (window.parent.location.href.includes('welcome')) {
     return // for demo
@@ -597,6 +608,32 @@ function uploadData(reloading) {
     return
   }
   if (navigator.onLine && !offlinemode) {
+    if (list) {
+      let text
+      let title
+      if (list == 'pop') {
+        text = data.pop
+        title = 'pop'
+      } else {
+        text = data.flop[list].text
+      }
+      $.post("uploadPartial.php", {
+        datastr: text,
+        datalist: title,
+      }, function (data, status, xhr) {
+        diffsLog(prevupload, xhr.responseText) // for debugging saving
+        display('*** upload finished ***')
+        prevupload = xhr.responseText
+        localStorage.setItem('data', JSON.stringify(data))
+        if (reloading == 'reload') {
+          location.reload()
+        } else if (reloading) {
+          reload(true) // reloads page
+        }
+      }).fail(function () {
+        alert('upload failed');
+      });
+    }
     $.post("upload.php", {
       datastr: JSON.stringify(data),
     }, function (data, status, xhr) {
