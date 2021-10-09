@@ -607,20 +607,18 @@ function uploadData(reloading, list) {
     console.log('uploading', list);
     if (list != undefined) {
       let text
-      let title
       if (list == 'pop') {
         text = data.pop
-        title = 'pop'
+        list = 'pop'
       } else {
         text = data.flop[list].text
       }
       console.log('partial upload', text, title);
       $.post("uploadPartial.php", {
         datastr: text,
-        datalist: title,
+        datalist: list,
       }, function (data, status, xhr) {
         console.log('UPLOADED', xhr.responseText, text, title);
-        diffsLog(prevupload, xhr.responseText) // for debugging saving
         display('*** upload finished ***')
         prevupload = JSON.stringify(data)
         localStorage.setItem('data', JSON.stringify(data))
