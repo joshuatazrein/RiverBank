@@ -620,6 +620,7 @@ function uploadData(reloading, list) {
         datastr: text,
         datalist: title,
       }, function (data, status, xhr) {
+        console.log(xhr.responseText);
         diffsLog(prevupload, xhr.responseText) // for debugging saving
         display('*** upload finished ***')
         prevupload = xhr.responseText
