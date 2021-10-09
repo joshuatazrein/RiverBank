@@ -604,7 +604,6 @@ function uploadData(reloading, list) {
     return
   }
   if (navigator.onLine && !offlinemode) {
-    console.log('uploading', list);
     if (list != undefined) {
       let text
       if (list == 'pop') {
@@ -617,7 +616,7 @@ function uploadData(reloading, list) {
       $.post("uploadPartial.php", {
         datastr: text,
         datalist: list,
-      }, function (data, status, xhr) {
+      }, function (d, s, xhr) {
         console.log('UPLOADED', text, list);
         display('*** upload finished ***')
         localStorage.setItem('data', JSON.stringify(data))
@@ -632,6 +631,7 @@ function uploadData(reloading, list) {
         alert('upload failed');
       });
     } else {
+      console.log('full uploading');
       $.post("upload.php", {
         datastr: JSON.stringify(data),
       }, function (data, status, xhr) {

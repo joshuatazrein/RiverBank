@@ -10,5 +10,5 @@ if ($list == 'pop') {
   $dataobj->flop[$list]->text = $data;
 }
 file_put_contents('users/' . $cookie . '.json', json_encode($dataobj));
-echo $dataobj->flop[$list]->text;
+echo $dataobj;
 ?>
