@@ -605,7 +605,7 @@ function uploadData(reloading, list) {
   }
   if (navigator.onLine && !offlinemode) {
     console.log('uploading', list);
-    if (list) {
+    if (list != undefined) {
       let text
       let title
       if (list == 'pop') {
