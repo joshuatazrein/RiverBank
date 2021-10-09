@@ -604,6 +604,7 @@ function uploadData(reloading, list) {
     return
   }
   if (navigator.onLine && !offlinemode) {
+    console.log('uploading', list);
     if (list) {
       let text
       let title
