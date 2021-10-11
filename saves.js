@@ -211,7 +211,7 @@ function migrate() {
         // migrate all uncompleted tasks
         for (child of getHeadingChildren($(heading))) {
           const ch = $(child)
-          if ((/^uncompleted/.test(ch.text()) ||
+          if ((/^do/.test(ch.text()) ||
             /^completed/.test(ch.text())) && 
             heading != todayheading[0]) {
             // takes out the uncompleted heading
@@ -242,15 +242,15 @@ function migrate() {
   const headingchildren = getHeadingChildren(todayheading)
   if (appends.length > 0) {
     // append tasks after it
-    todayheading.after('<span class="in h2">present</span>')
+    todayheading.after('<span class="in h2">day</span>')
     appends.forEach((x) => {
       $(x).show()
       todayheading.after($(x))
     })
     if (getHeadingChildren(todayheading).filter(x => {
-      return $(x).text() == 'uncompleted'
+      return $(x).text() == 'do'
     }).length == 0)
-    todayheading.after('<span class="in h2 uncompleted">past</span>')
+    todayheading.after('<span class="in h2">do</span>')
   }
   now = new Date()
   display('migrated:' + (now.getTime() - initial))
@@ -332,9 +332,9 @@ function updateImportants() {
     $('#test').find('span.important:not(.complete)').toArray()
       .forEach((x) => {
         // add all important tasks to a list
-        if (getHeading($(x))) {
+        if (getMainHeading($(x))) {
           importants.push($('<p><span class="impspan" quickhelp="parent heading" list="' + 
-            counter + '">' + stripChildren(getHeading($(x))) + '</span>' + 
+            counter + '">' + stripChildren(getMainHeading($(x))) + '</span>' + 
             '<span class="falselinkimp" quickhelp="important & uncomplete">' + 
             stripChildren($(x)).replace(/•\s/, '').replace(/\-\s/, '') + 
             '</span></p>'))
@@ -486,7 +486,7 @@ function save(changes, changed, undo) {
   initial = now.getTime()
   // X updates everything without uploading data
   // P is for date creation
-  if (['i', 'X'].includes(changes)) {
+  if (['i', 'X', '+', '-'].includes(changes)) {
     updateImportants()
   }
   if (['>', '+'].includes(changes) && getHeading(changed) &&
@@ -527,6 +527,9 @@ function save(changes, changed, undo) {
   display('updateSpanDrags: ' + String(now.getTime() - initial))
   initial = now.getTime()
   // if (draggingtask) { undo() }
+  if (data.pastdates == false) {
+    $('#pop .dateheading.complete').hide()
+  }
 }
 
 function diffsLog(oldString, newString) {

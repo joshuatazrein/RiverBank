@@ -52,7 +52,6 @@
           <p id='username'></p>
           <div id='editbuts' class='butbar' style='margin:2px 0;'>
             <button quickhelp='options' class='mobilebut opts' id='optionsbut' function='context(ev)' style='font-size:12px;'>...</button>
-            <button quickhelp='set task type' class='mobilebut opts' id='typebut' function='setOptions()'>*</button>
           </div>
           <div id='searchbarframe'>
             <input id='searchbar' placeholder="search (d: date)" quickhelp='search (see help: "dates")'>
@@ -238,6 +237,8 @@
       <p function='archiveTask()' class='dropdown-item' id='context-archiveTask'>archive (shift space)</p>
       <p function='' class='dropdown-item' id='context-divider'>————————————</p>
 
+      <button quickhelp='set task type' class='mobilebut opts' id='typebut' function='setOptions()'>type</button>
+
       <p function='moveToList()' class='dropdown-item' id='context-moveToList'>move to list</p>
       <p function='toggleComplete()' class='dropdown-item' id='context-toggleComplete'>toggle complete (space)</p>
       <p function='toggleImportant()' class='dropdown-item' id='context-toggleimportant'>toggle important (option i)</p>
@@ -283,17 +284,17 @@
 
     </nav>
     <nav id='settype-menu'>
-      <p class='dropdown-item' quickhelp='set h1' function='setTask("h1")'># h1</p>
-      <p class='dropdown-item'  quickhelp='set h2' function='setTask("h2")'>## h2</p>
-      <p class='dropdown-item'  quickhelp='set h3' function='setTask("h3")'>### h3</p>
-      <p class='dropdown-item'  quickhelp='set event' function='setTask("event")'>@ event</p>
-      <p class='dropdown-item' quickhelp='set list' function='setTask("list")'>• list</p>
-      <p class='dropdown-item' quickhelp='set note' function='setTask("note")'>- note</p>
-      <p class='dropdown-item' quickhelp='set repeat' function='setTask("repeat")'>~ repeat</p>
-      <p class='dropdown-item' quickhelp='set deadline' function='setTask("deadline")'>> deadline</p>
-      <p class='dropdown-item' quickhelp='toggle important' function='toggleImportant()'>! important</p>
-      <p class='dropdown-item' quickhelp='toggle maybe' function='toggleMaybe()'>? maybe</p>
-      <p class='dropdown-item' quickhelp='set blank' function='setTask("")'>_ blank</p>
+      <p class='dropdown-item type-dropdown' quickhelp='set h1' function='setTask("h1")'># h1</p>
+      <p class='dropdown-item type-dropdown'  quickhelp='set h2' function='setTask("h2")'>## h2</p>
+      <p class='dropdown-item type-dropdown'  quickhelp='set h3' function='setTask("h3")'>### h3</p>
+      <p class='dropdown-item type-dropdown'  quickhelp='set event' function='setTask("event")'>@ event</p>
+      <p class='dropdown-item type-dropdown' quickhelp='set list' function='setTask("list")'>• list</p>
+      <p class='dropdown-item type-dropdown' quickhelp='set note' function='setTask("note")'>- note</p>
+      <p class='dropdown-item type-dropdown' quickhelp='set repeat' function='setTask("repeat")'>~ repeat</p>
+      <p class='dropdown-item type-dropdown' quickhelp='set deadline' function='setTask("deadline")'>> deadline</p>
+      <p class='dropdown-item type-dropdown' quickhelp='toggle important' function='toggleImportant()'>! important</p>
+      <p class='dropdown-item type-dropdown' quickhelp='toggle maybe' function='toggleMaybe()'>? maybe</p>
+      <p class='dropdown-item type-dropdown' quickhelp='set blank' function='setTask("")'>_ blank</p>
     </nav>
     <div id='imports' style='display:none'>
       <button id='importsBut' onclick="importTasks()">import</button>

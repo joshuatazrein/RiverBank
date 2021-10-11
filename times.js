@@ -64,10 +64,11 @@ function addTime(time) {
 
 function stopwatchTime(curtime, negative) {
   if (!negative) negative = ''
+  console.log(curtime / 1000)
   let hours = Math.floor(curtime / (60000 * 60))
   let minutes = Math.floor((curtime - (hours * (60000 * 60))) / 60000); 
     // minutes
-  let secs = Math.floor(
+  let secs = Math.ceil(
     Math.ceil((curtime - (hours * (60000 * 60))) - minutes * 60000) / 1000)
   if (hours > 0) {
     $('#timerent').val(negative + String(hours) + ':' + 

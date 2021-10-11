@@ -6,8 +6,8 @@
   --boldweight: 300;
   /* --background: rgb(240, 240, 220); */
   --background: rgb(240, 240, 220);
-  --lineheight: 1.5em;
-  --bgoverlay: rgba(240, 240, 220, 0.8);
+  --lineheight: 1.5em
+  --bgoverlay: rgba(240, 240, 220, 0.9);
   --select: rgb(147, 98, 39);
   --font: 'Trattatello', 'Are You Serious', serif;
   --butfont: 'Trattatello', 'Are You Serious', serif;
@@ -26,7 +26,7 @@
   --boldweight: 300;
   --background: rgb(187, 215, 178);
   --lineheight: 1.5em;
-  --bgoverlay: rgba(187, 215, 178, 0.8);
+  --bgoverlay: rgba(187, 215, 178, 0.9);
    --select: rgb(135, 206, 235);
    --select: rgb(74, 100, 108);
   --select: rgb(246, 240, 172);

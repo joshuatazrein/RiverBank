@@ -369,12 +369,17 @@ function toggleCollapse(animate) {
 function togglePast() {
   if (!pastdates) {
     pastdates = true
-    $('#pop .dateheading.complete').show()
+    $('#pop .dateheading.complete').show(500)
+    setTimeout(function () {
+      select(dateToHeading(stringToDate('0d')), true)
+    }, 600)
   } else {
     pastdates = false
-    $('#pop .dateheading.complete').hide()
+    $('#pop').animate({scrollTop: 0}, 500);
+    setTimeout(function () {
+      $('#pop .dateheading.complete').hide(500)
+    }, 600)
   }
-  select(dateToHeading(stringToDate('0d')), true, false)
 }
 
 function toggleFocusFrame() {
@@ -505,6 +510,9 @@ function context(ev, mobile) {
     ],
     '#context-switchUser': [
       ['BUTTON', 'DIV'], ['opts']
+    ],
+    '#typebut': [
+      ['SPAN'], ['in']
     ],
     '#context-upload': [
       ['BUTTON', 'DIV'], ['opts']
@@ -792,7 +800,9 @@ function clickOn(ev) {
     ev.target.tagName != 'TEXTAREA') {
     saveTask()
   }
-  $('nav').hide() 
+  if ($(ev.target).attr('id') != 'typebut') {
+    $('nav').hide() 
+  }
   $('.slider').remove() // remove sliders
   // click events
   if ($(ev.target).attr('id') == 'todayBut') {

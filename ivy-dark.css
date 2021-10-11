@@ -6,14 +6,15 @@
   --boldweight: 300;
   /* --background: rgb(240, 240, 220); */
   /* --background: rgb(41, 41, 10); */
-  --background: rgb(59, 60, 54);
+  /* --background: rgb(59, 60, 54); */
+  --background: rgb(36, 36, 10);
   --lineheight: 1.5em;
-  --bgoverlay: rgba(59, 60, 54, 0.8);
-  --select: rgb(200, 173, 127);
+  --bgoverlay: rgba(36, 36, 10, 0.9);
+  --select: rgb(245, 245, 220);
   --font: 'Trattatello', 'Are You Serious', serif;
   --butfont: 'Trattatello', 'Are You Serious', serif;
   /* --textcolor: rgb(59, 60, 54); */
-  --textcolor: rgb(245, 245, 220);
+  --textcolor: rgb(200, 173, 127);
   --menufont: 'Trattatello', 'Are You Serious', serif;
   --bdcolor: rgb(136, 122, 95);
   --important: rgb(208, 147, 48);
@@ -27,7 +28,7 @@
   --boldweight: 300;
   --background: rgb(187, 215, 178);
   --lineheight: 1.5em;
-  --bgoverlay: rgba(187, 215, 178, 0.8);
+  --bgoverlay: rgba(187, 215, 178, 0.9);
    --select: rgb(135, 206, 235);
    --select: rgb(74, 100, 108);
   --select: rgb(246, 240, 172);

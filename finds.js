@@ -348,6 +348,14 @@ function getFrame(task) {
   else if (parents.includes($('#pop')[0])) return $('#pop')
 }
 
+function getMainHeading(el) {
+  heading = el.prev()
+  while (heading[0] && !heading.hasClass('h1')) {
+    heading = heading.prev()
+  }
+  return heading
+}
+
 function  getHeading(el) {
   // gets the heading
   if (!el) return
@@ -805,6 +813,7 @@ function select(el, scroll, animate) {
   } else if ($(el).parent().attr('id') == 'context-menu') {
     // do nothing (context)
   } else {
+    console.log('seelcelckjernte');
     selected = undefined
   }
 }
