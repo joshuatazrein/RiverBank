@@ -5,9 +5,9 @@
   --fontweight: 100;
   --boldweight: 400;
   --lineheight: 1.5em;
-  --background: rgb(107, 138, 179);
-  --bgoverlay: rgba(107, 138, 179, 0.9);
-  --select: rgb(65, 73, 79);
+  --background: rgb(122, 158, 204);
+  --bgoverlay: rgba(122, 158, 204, 0.9);
+  --select: rgb(64, 71, 77);
   --font: 'Roboto Mono', monospace;
   --butfont: 'Roboto Mono', monospace;
   --textcolor: rgb(10, 10, 10);
@@ -15,7 +15,7 @@
   --bdcolor: rgba(36, 40, 43, 0.5);
   --important: rgb(41, 74, 112);
   --maybe: rgba(41, 74, 112, 0.5);
-  --event: rgba(65, 73, 79, 0.3);
+  --event: rgba(64, 71, 77, 0.3);
   --butbackground: rgba(128, 128, 128, 0.3);
   --flopbutbackground: rgba(10, 10, 10, 0.3);
   --indent: 1.2em;

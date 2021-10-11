@@ -8,18 +8,18 @@
   --fontweight: 100;
   --boldweight: 300;
   --lineheight: 1.25em;
-  --background: rgb(1, 9, 13);
-  --bgoverlay: rgba(1, 9, 13, 0.9);
-  --select: rgb(59, 75, 84);
+  --background: rgb(14, 23, 27);
+  --bgoverlay: rgba(14, 23, 27, 0.9);
+  --select: rgb(83, 117, 136);
   --font: 'Helvetica Neue', sans-serif;
   --butfont: 'Lane', sans-serif;
-  --textcolor: rgb(103, 127, 168);
+  --textcolor: rgb(170, 182, 203);
   --menufont: 'Lane', sans-serif;
-  --bdcolor: rgb(42, 71, 82);
-  --important: rgb(61, 86, 168);
-  --maybe: rgba(61, 86, 168, 0.5);
+  --bdcolor: rgb(215, 229, 234);
+  --important: rgb(173, 185, 225);
+  --maybe: rgba(173, 185, 225, 0.5);
   --event: rgba(59, 75, 84, 0.3);
-  --butbackground: rgba(21, 35, 40, 0.3);
+  --butbackground: rgba(128, 128, 128, 0.3);
   --flopbutbackground: rgba(103, 127, 168, 0.3);
   --indent: 0.85em;
 }

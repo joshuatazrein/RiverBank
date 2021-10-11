@@ -6,19 +6,20 @@
   --fontweight: 400;
   --boldweight: 600;
   --lineheight: 1.15em;
-  --background: rgb(27, 30, 33);
-  --bgoverlay: rgba(27, 30, 33, 0.9);
-  --select: rgb(236, 229, 240);
+  /* --background: rgb(27, 30, 33); */
+  --background: rgb(35, 38, 33);
+  --bgoverlay: rgba(35, 38, 33, 0.9);
+  --select: rgb(186, 208, 149);
   --font: 'Caveat', cursive;
   --butfont: 'Amatic SC', cursive;
-  --textcolor: rgb(165, 188, 213);
+  --textcolor: rgb(218, 222, 200);
   /* --textcolor: rgb(120, 133, 133); */
   --menufont: 'Amatic SC', cursive;
   --bdcolor: rgba(224, 223, 225, 0.5);
-  --important: rgb(210, 239, 247);
-  --maybe: rgba(210, 239, 247, 0.5);
-  --event: rgba(236, 229, 240, 0.3);
-  --flopbutbackground: rgba(165, 188, 213, 0.3);
+  --important: rgb(85, 107, 47);
+  --maybe: rgba(85, 107, 47, 0.5);
+  --event: rgba(186, 208, 149, 0.3);
+  --flopbutbackground: rgba(218, 222, 200, 0.3);
   --butbackground: rgba(224, 223, 225, 0.3);
   --indent: 0.45em;
 }
