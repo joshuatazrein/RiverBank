@@ -211,8 +211,7 @@ function migrate() {
         // migrate all uncompleted tasks
         for (child of getHeadingChildren($(heading))) {
           const ch = $(child)
-          if ((/^do/.test(ch.text()) ||
-            /^completed/.test(ch.text())) && 
+          if (/^completed/.test(ch.text()) && 
             heading != todayheading[0]) {
             // takes out the uncompleted heading
             if (ch.hasClass('folded')) { 
@@ -242,15 +241,10 @@ function migrate() {
   const headingchildren = getHeadingChildren(todayheading)
   if (appends.length > 0) {
     // append tasks after it
-    todayheading.after('<span class="in h2">day</span>')
     appends.forEach((x) => {
       $(x).show()
       todayheading.after($(x))
     })
-    if (getHeadingChildren(todayheading).filter(x => {
-      return $(x).text() == 'do'
-    }).length == 0)
-    todayheading.after('<span class="in h2">do</span>')
   }
   now = new Date()
   display('migrated:' + (now.getTime() - initial))

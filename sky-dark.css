@@ -15,7 +15,7 @@
   --butfont: 'Lane', sans-serif;
   --textcolor: rgb(170, 182, 203);
   --menufont: 'Lane', sans-serif;
-  --bdcolor: rgb(215, 229, 234);
+  --bdcolor: rgba(215, 229, 234, 0.5);
   --important: rgb(173, 185, 225);
   --maybe: rgba(173, 185, 225, 0.5);
   --event: rgba(59, 75, 84, 0.3);

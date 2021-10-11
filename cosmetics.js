@@ -367,9 +367,12 @@ function toggleCollapse(animate) {
 }
 
 function togglePast() {
+  var today = dateToHeading(stringToDate('0d'))
+  var headings = $('#pop').children().filter('.dateheading').toArray()
+  headings = headings.slice(0, headings.indexOf(today))
   if (!pastdates) {
     pastdates = true
-    $('#pop .dateheading.complete').show(500)
+    headings.forEach(x => { $(x).show(500) })
     setTimeout(function () {
       select(dateToHeading(stringToDate('0d')), true)
     }, 600)
@@ -377,7 +380,7 @@ function togglePast() {
     pastdates = false
     $('#pop').animate({scrollTop: 0}, 500);
     setTimeout(function () {
-      $('#pop .dateheading.complete').hide(500)
+      headings.forEach(x => { $(x).hide(500) })
     }, 600)
   }
 }
