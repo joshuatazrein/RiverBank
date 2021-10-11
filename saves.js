@@ -616,9 +616,9 @@ function uploadData(reloading, list) {
       }, function (d, s, xhr) {
         console.log('UPLOADED', text, list);
         display('*** upload finished ***')
-        localStorage.setItem('data', JSON.stringify(data))
-        prevupload = JSON.stringify(data)
-        console.log(data);
+        const datasave = JSON.stringify(data)
+        localStorage.setItem('data', datasave)
+        prevupload = datasave
         if (reloading == 'reload') {
           location.reload()
         } else if (reloading) {
@@ -634,8 +634,9 @@ function uploadData(reloading, list) {
       }, function (data, status, xhr) {
         diffsLog(prevupload, xhr.responseText) // for debugging saving
         display('*** upload finished ***')
-        prevupload = xhr.responseText
-        localStorage.setItem('data', JSON.stringify(data))
+        const datasave = JSON.stringify(data)
+        localStorage.setItem('data', datasave)
+        prevupload = datasave
         if (reloading == 'reload') {
           location.reload()
         } else if (reloading) {
@@ -754,23 +755,26 @@ function reload(force) {
     if (force) { 
       reload2() 
       return 
-    }
-    var curdata = JSON.stringify(data) 
+    } else {
       // prevents changes from triggering reload
-    $.post('download.php',
+      var curdata = JSON.stringify(data)
+      $.post('download.php',
       function (datastr, status, xhr) {
-        const diffs = diffsLog(curdata, xhr.responseText)
-        if (diffs == 'Diffs:') {
-          cancel()
-          // don't reload page at all
-        } else {
-          display('*** download finished, reloading ***');
-          // only reload if data differs
-          data = JSON.parse(xhr.responseText)
-          reload2()
+          const diffs = diffsLog(curdata, xhr.responseText)
+          if (diffs == 'Diffs:') {
+            console.log('cancelling');
+            cancel()
+            // don't reload page at all
+          } else {
+            console.log('reloading', diffs);
+            display('*** download finished, reloading ***');
+            // only reload if data differs
+            data = JSON.parse(xhr.responseText)
+            reload2()
+          }
         }
-      }
-    )
+      )
+    }
   }
 }
 
@@ -845,6 +849,7 @@ function loadPage(starting, oldselect, scrolls) {
     window.importants = [] // importants update
     window.filtered = undefined // filtering
     window.filteredlist = undefined // filtered tasks
+    window.editing = false
     window.activedate = new Date()
     if (activedate.getHours() < 3) {
       activedate.setDate(activedate.getDate() - 1) // active date
@@ -1034,7 +1039,6 @@ function loadPage(starting, oldselect, scrolls) {
     }
     // remove image after reload
     var curdate = new Date()
-    resetDoc()
     now = new Date()
     curtime = now.getTime() - initial
     initial = now.getTime()

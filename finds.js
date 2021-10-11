@@ -138,12 +138,13 @@ function stringToDate(string, weekday, future) {
     string = string.slice(1)
   }
   let date = new Date()
+  if (future) {
+    date.setDate(date.getDate() + 1)
+    console.log(future, date);
+  }
   if (Object.keys(weekdaysNum).includes(string.split(/(\+|-|\s)/)[0])) {
     // analyze as a weekday string
     weekday = weekdaysNum[string.split(/(\+|-|\s)/)[0]]
-    if (future) {
-      date.setDate(date.getDate() + 1)
-    }
     while (date.getDay() != weekday) {
       date.setDate(date.getDate() + 1)
     }
@@ -158,7 +159,7 @@ function stringToDate(string, weekday, future) {
     } else {
       datestring = string
     }
-    const today = new Date()
+    const today = new Date(date.getTime())
     if (data.dateSplit == 'dd.mm.yyyy') {
       const list = datestring.split('.')
       date.setDate(list[0])
@@ -309,6 +310,7 @@ function dateToHeading(date, saving) {
     }
     return heading2
   } else {
+    $(heading1).show()
     return heading1
   }
 }
@@ -318,7 +320,8 @@ function dateToHeading(date, saving) {
 function isSubtask(el) {
   // tests inline spans until it gets one, otherwise returns true
   for (lineinner of ['link', 'italic', 'bold', 'bold-italic', 'deadline', 
-    'weblink', 'timing', 'mobhandle', 'faketiming', 'placeholder']) {
+    'weblink', 'timing', 'mobhandle', 'faketiming', 'placeholder',
+    'repeat']) {
     if (el.hasClass(lineinner)) {
       return false
     }
@@ -345,7 +348,7 @@ function getFrame(task) {
   else if (parents.includes($('#pop')[0])) return $('#pop')
 }
 
-function getHeading(el) {
+function  getHeading(el) {
   // gets the heading
   if (!el) return
   el = $(el)
@@ -473,9 +476,10 @@ function taskAbove() {
   } else if (selected.prev()[0] != undefined) {
     returntask = selected.prev()
   } // nonedisplays are not selected
- while (returntask[0] && !returntask.hasClass('in')) {
+  while (returntask[0] && !returntask.hasClass('in')) {
     returntask = returntask.prev()
   }
+  console.log(returntask);
   if (returntask[0] && !returntask.is(':visible')) {
     // while invisible
     select(returntask, false)

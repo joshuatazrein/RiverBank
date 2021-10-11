@@ -22,7 +22,8 @@ function mobileTest() {
 
 function resetDoc() {
   // reset document zoom and scroll
-  if (selected && selected[0].tagName == 'TEXTAREA') return
+  if (selected && selected[0].tagName == 'TEXTAREA' ||
+    editing) return
   // $(document).scrollTop(0)
   $('html, body').animate({scrollTop: 0}, 300)
   $(document.body).css('zoom', "100%")
@@ -373,6 +374,7 @@ function togglePast() {
     pastdates = false
     $('#pop .dateheading.complete').hide()
   }
+  select(dateToHeading(stringToDate('0d')), true, false)
 }
 
 function toggleFocusFrame() {
@@ -664,7 +666,6 @@ function clickOff(ev) {
       draggingtask = false
       if (!justdropped) {
         undo()
-        resetDoc()
       }
     }, 100)
     return 
@@ -757,12 +758,16 @@ function clickOff(ev) {
   } else if (['editTaskBut', 'newSubtaskBut', 'scheduleBut', 'collapseBut']
     .includes($(ev.target).attr('id')) && !justcollapsed) {
     eval($(ev.target).attr('function'))
+    editing = true
   } else if ($(ev.target).hasClass('dropdown-item') && !justclicked) {
     eval($(ev.target).attr('function'))
+    editing = true
   }
   // on revert drags on mobile
   $('.drop-hover').removeClass('drop-hover')
   if (!justclicked) { $('nav').hide() }
+  resetDoc()
+  editing = false
 }
 
 function clickOn(ev) {
@@ -872,7 +877,6 @@ function clickOn(ev) {
   } else {
     select()
   }
-  resetDoc()
 }
 
 function keyUp(ev) {
@@ -919,11 +923,6 @@ function keyDown(ev) {
     return
   }
   if (['ArrowUp', 'ArrowDown'].includes(ev.key)) ev.preventDefault()
-  if (ev.ctrlKey || ev.metaKey || ev.altKey || ev.key == 'Enter' ||
-    ev.key == 'Escape') {
-    // reset zoom and scroll to make better
-    resetDoc()
-  }
   // makes sure to unselect on proper things
   if (selected && selected[0].tagName == 'TEXTAREA' && ev.ctrlKey) {
     const selectstart = selected[0].selectionStart

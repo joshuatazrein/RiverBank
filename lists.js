@@ -60,7 +60,6 @@ function toggleDrags(saving) {
       $(x).attr('draggable', 'true')
     })
     dragsenabled = true
-    resetDoc(); // fixes weird shit
     if ($(loads[loadedlist]).val().slice(0, 2) == '- ') {
       $(loads[loadedlist]).addClass('sublist')
     } else {

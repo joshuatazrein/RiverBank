@@ -87,7 +87,7 @@ function archiveTask(play) {
 function toggleComplete(task, saving) {
   // toggle complete on selected task
   // "task" is for autocompleting yesterday's events
-  let completetask
+  var completetask
   if (!task) {
     completetask = selected
     if (selected && selected[0].tagName == 'P') {
@@ -100,14 +100,11 @@ function toggleComplete(task, saving) {
   }
   else completetask = $(task)
   const text = stripChildren(completetask).split(' ')
-  if (!completetask.hasClass('complete') &&
-    /^~/.test(text[text.length - 2])) {
-    if (stringToDate(text[text.length - 2].slice(1)) == 'Invalid Date') {
-      display('invalid repeat date')
-      completetask.text(text.slice(0, text.length - 2) +
-        getChildren(completetask))
-    } else {
-      const date = stringToDate(text[text.length - 2].slice(1), false, true)
+  function createNew(txt) {
+    let date = stringToDate(txt, false, true)
+    console.log(date);
+    if (/\d[dwmy]/.test(txt)) {
+      console.log('relative date');
       const difference = date.getTime() - stringToDate('0d').getTime()
       // get date
       let datetask = completetask.prev()
@@ -115,21 +112,36 @@ function toggleComplete(task, saving) {
         !datetask.hasClass('dateheading')) {
         datetask = datetask.prev()
       }
-      const headingdate = stringToDate(stripChildren(datetask), true)
-      headingdate.setTime(headingdate.getTime() + difference)
-      // save so it doesn't immediately delete
-      const heading = dateToHeading(headingdate, false)
-      const newtask = completetask.clone()
-      newtask.removeClass('complete')
-      newtask.removeClass('taskselect')
-      if (!getHeadingChildren($(heading)).map((x) => {
-          return $(x).text()
-        }).includes(completetask.text())) {
-        $(heading).after(newtask)
-        if (!task || saving != false) {
-          save('+', newtask)
-        }
+      date = stringToDate(stripChildren(datetask), true)
+      date.setTime(date.getTime() + difference)
+    }
+    // save so it doesn't immediately delete
+    const heading = dateToHeading(date, false)
+    const newtask = completetask.clone()
+    newtask.removeClass('complete')
+    newtask.removeClass('taskselect')
+    if (!getHeadingChildren($(heading)).map((x) => {
+        return $(x).text()
+      }).includes(completetask.text())) {
+      $(heading).after(newtask)
+      if (!task || saving != false) {
+        save('+', newtask)
       }
+    }
+  }
+  if (!completetask.hasClass('complete') &&
+    /^~/.test(text[text.length - 2])) {
+    const rtxt = text[text.length - 2].slice(1)
+    if (/[MTWRFSU]+/.test(rtxt)) {
+      for (i in rtxt) {
+        createNew(rtxt.charAt(i))
+      }
+    } else if (stringToDate(text[text.length - 2].slice(1)) == 'Invalid Date') {
+      display('invalid repeat date')
+      completetask.text(text.slice(0, text.length - 2) +
+        getChildren(completetask))
+    } else {
+      createNew(text[text.length - 2].slice(1))
     }
   }
   completetask.toggleClass('complete')
@@ -232,6 +244,11 @@ function dragTask(ev) {
     }
   }
   selected.hide()
+  if (getFrame(selected).attr('id') == 'pop') {
+    uploadData(false, 'pop')
+  } else {
+    uploadData(false, loadedlist)
+  }
 }
 
 function dropTask(ev) {
@@ -337,13 +354,15 @@ function dropTask(ev) {
 
 function dragTaskOver(event) {
   // dragging task over other one; for desktop
-  resetDoc()
   const boxright = $('#listcontainer').offset().left
   if (focused && event.pageX < 50 && $('#poplist').is(':visible')) {
     // switch to other thing
     $('#poplist').hide()
     $('#floplist').show()
     $('#switch').text('>')
+  } else if (event.pageX < 50 && $('#floplist').is(':visible')) {
+    // switch to other thing
+    if ($('#leftcol').hasClass('collapsed')) { toggleCollapse(true) }
   } else if (focused && event.pageX > window.innerWidth - 20 && 
     $('#floplist').is(':visible')) {
     // switch to other thing
@@ -853,6 +872,7 @@ function saveTask() {
     .replace(/_\*(.*)\*_/g, 
     '<span class="bold-italic">$1</span>')
     .replace(/\s\>([^\s]*)\s/g, ' <span class="deadline">>$1</span> ')
+    .replace(/\s\~([^\s]*)\s/g, ' <span class="repeat">~$1</span> ')
     .replace(/\s\[\[(.*)\]\]\s/g, 
     ' <span class="link">[[$1]]</span> ')
     .replace(/\n/g, '<br>').replace(/\s/g, ' ')
@@ -931,6 +951,7 @@ function saveTask() {
 }
 
 function editTask() {
+  editing = true
   // edit selected task
   el = selected
   if (selected.hasClass('dateheading')) return

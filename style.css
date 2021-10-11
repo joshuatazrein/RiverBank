@@ -275,7 +275,6 @@ input {
 }
 
 #timerent {
-  font: 80% var(--menufont), monospace;
   text-align: center;
   border: 1px solid var(--bdcolor);
   color: var(--textcolor);
@@ -604,6 +603,8 @@ span.impspan, span.impspan-list {
   max-height: 1em;
   overflow: hidden;
   font-size: 18px;
+  text-align: right;
+  word-wrap: break-word;
 }
 
 ::-webkit-input-placeholder {
@@ -741,7 +742,6 @@ span.dateheading.complete.folded {
   font-size: 0.5em;
   line-height: 20px;
   height: 20px;
-  display: none;
 }
 
 span.futuredate > span.placeholder {
@@ -798,6 +798,11 @@ span.deadline {
   color: var(--select);
 }
 
+span.repeat {
+  color: var(--select);
+  font: 80% var(--menufont);
+}
+
 /* ## SUBSPANS */
 
 span span.mobhandle {
@@ -830,7 +835,7 @@ span span.note {
 }
 
 span.link, span.bold, span.italic, span.bold-italic, 
-span.weblink, span.deadline {
+span.weblink, span.deadline, span.repeat {
   padding: 0;
   display: inline;
 }
