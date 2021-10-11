@@ -307,9 +307,10 @@ function dateToHeading(date, saving) {
     if (newdate.getTime() < today) {
       heading2.addClass('complete')
     }
+    if (saving) $(heading2).show()
     return heading2
   } else {
-    $(heading1).show()
+    if (saving) $(heading1).show()
     return heading1
   }
 }
