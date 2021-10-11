@@ -102,9 +102,7 @@ function toggleComplete(task, saving) {
   const text = stripChildren(completetask).split(' ')
   function createNew(txt) {
     let date = stringToDate(txt, false, true)
-    console.log(date);
     if (/\d[dwmy]/.test(txt)) {
-      console.log('relative date');
       const difference = date.getTime() - stringToDate('0d').getTime()
       // get date
       let datetask = completetask.prev()

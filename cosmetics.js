@@ -21,6 +21,7 @@ function mobileTest() {
 }
 
 function resetDoc() {
+  console.trace()
   // reset document zoom and scroll
   if (selected && selected[0].tagName == 'TEXTAREA' ||
     editing) return
@@ -774,7 +775,11 @@ function clickOff(ev) {
   // on revert drags on mobile
   $('.drop-hover').removeClass('drop-hover')
   if (!justclicked) { $('nav').hide() }
-  resetDoc()
+  if (ev.target.tagName != 'SPAN' && 
+    !['flopBut', 'popBut'].includes($(ev.target).attr('id')) &&
+    !$(ev.target).hasClass('dropdown-item')) {
+    resetDoc()
+  }
   editing = false
 }
 

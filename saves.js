@@ -606,12 +606,10 @@ function uploadData(reloading, list) {
       } else {
         text = data.flop[list].text
       }
-      console.log('partial upload', text, list);
       $.post("uploadPartial.php", {
         datastr: text,
         datalist: list,
       }, function (d, s, xhr) {
-        console.log('UPLOADED', text, list);
         display('*** upload finished ***')
         const datasave = JSON.stringify(data)
         localStorage.setItem('data', datasave)
@@ -625,7 +623,6 @@ function uploadData(reloading, list) {
         alert('upload failed');
       });
     } else {
-      console.log('full uploading');
       $.post("upload.php", {
         datastr: JSON.stringify(data),
       }, function (data, status, xhr) {
@@ -759,11 +756,9 @@ function reload(force) {
       function (datastr, status, xhr) {
           const diffs = diffsLog(curdata, xhr.responseText)
           if (diffs == 'Diffs:') {
-            console.log('cancelling');
             cancel()
             // don't reload page at all
           } else {
-            console.log('reloading', diffs);
             display('*** download finished, reloading ***');
             // only reload if data differs
             data = JSON.parse(xhr.responseText)

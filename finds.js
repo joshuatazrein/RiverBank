@@ -140,7 +140,6 @@ function stringToDate(string, weekday, future) {
   let date = new Date()
   if (future) {
     date.setDate(date.getDate() + 1)
-    console.log(future, date);
   }
   if (Object.keys(weekdaysNum).includes(string.split(/(\+|-|\s)/)[0])) {
     // analyze as a weekday string
@@ -487,7 +486,6 @@ function taskAbove() {
   while (returntask[0] && !returntask.hasClass('in')) {
     returntask = returntask.prev()
   }
-  console.log(returntask);
   if (returntask[0] && !returntask.is(':visible')) {
     // while invisible
     select(returntask, false)
@@ -813,7 +811,6 @@ function select(el, scroll, animate) {
   } else if ($(el).parent().attr('id') == 'context-menu') {
     // do nothing (context)
   } else {
-    console.log('seelcelckjernte');
     selected = undefined
   }
 }
