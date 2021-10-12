@@ -907,8 +907,15 @@ function loadPage(starting, oldselect, scrolls) {
       clearLogo()
     })
     $(document).off(
-      'keydown scroll keyup contextmenu mousedown mouseup touchend')
-    $(document).on('scroll', resetDoc)
+      'keydown keyup contextmenu mousedown mouseup touchend')
+    $(document).on('touchend', function(ev) {
+      if (!['SPAN', 'TEXTAREA'].includes(ev.target.tagName) &&
+        !['flopBut', 'popBut', 'newHeadingFlopBut'].includes(
+        $(ev.target).attr('id')) &&
+        !$(ev.target).hasClass('dropdown-item')) {
+        resetDoc()
+      }
+    })
     $(document).on('keydown', keyDown)
     $(document).on('keyup', keyUp)
     $(document).on('contextmenu', function(event) {
