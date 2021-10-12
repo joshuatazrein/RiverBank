@@ -20,8 +20,8 @@ function mobileTest() {
   }
 }
 
-function resetDoc() {
-  if ($(document).scrollTop() == 0) return
+function resetDoc(force) {
+  if ($(document).scrollTop() == 0 && !force) return
   // reset document zoom and scroll
   if (selected && selected[0].tagName == 'TEXTAREA' ||
     editing) return
