@@ -953,7 +953,7 @@ function saveTask() {
     eventTimeFormat(selected)
   }
   editing = false
-  setTimeout(resetDoc, 500)
+  setTimeout(resetDoc, 200)
 }
 
 function editTask() {
