@@ -272,12 +272,14 @@ function toggleHelp(saving) {
     save('0')
   }
   updateSizes()
+  resetDoc()
 }
 
 function showHelpSection(section) {
   $('#helpControls, #helpSyntax, #helpDates, #helpCommands').hide()
   $(section).show()
   $(section)[0].scrollIntoView()
+  resetDoc()
 }
 
 function togglePlay() {
