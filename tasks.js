@@ -241,12 +241,14 @@ function dragTask(ev) {
       $(child).remove()
     }
   }
-  selected.hide()
   if (getFrame(selected).attr('id') == 'pop') {
     uploadData(false, 'pop')
   } else {
     uploadData(false, loadedlist)
   }
+  $('#test').empty()
+  $('#test').append(selected)
+  selected.hide()
 }
 
 function dropTask(ev) {
@@ -348,6 +350,7 @@ function dropTask(ev) {
     })
   }
   updateSpanDrags() 
+  resetDoc()
 }
 
 function dragTaskOver(event) {
@@ -499,6 +502,7 @@ function dragTaskOver(event) {
       }
     }
   }
+  resetDoc()
 }
 
 function updateSpanDrags(task) {
@@ -533,6 +537,7 @@ function updateSpanDrags(task) {
           start: function (event) {
             // $(this).hide()
             dragTask(event, $(this))
+            console.log('dragging');
           },
           drag: function (event) {
             dragTaskOver(event)
@@ -553,6 +558,7 @@ function updateSpanDrags(task) {
           addClasses: false,
           start: function (event) {
             dragTask(event, $(this))
+            console.log('dragging');
             $('#listcontainer > span').removeClass('in')
           },
           drag: function (event) {
@@ -946,6 +952,7 @@ function saveTask() {
   if (selected.hasClass('event')) {
     eventTimeFormat(selected)
   }
+  resetDoc()
 }
 
 function editTask() {

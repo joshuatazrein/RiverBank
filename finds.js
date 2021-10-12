@@ -317,7 +317,17 @@ function dateToHeading(date, saving) {
 
 // # HIERARCHY
 
+function isRepeat(el) {
+  el = $(el)
+  for (x in el.children()) {
+    if (isSubtask(x)) return
+    if ($(x).hasClass('repeat')) return true
+  }
+  return false
+}
+
 function isSubtask(el) {
+  el = $(el)
   // tests inline spans until it gets one, otherwise returns true
   for (lineinner of ['link', 'italic', 'bold', 'bold-italic', 'deadline', 
     'weblink', 'timing', 'mobhandle', 'faketiming', 'placeholder',

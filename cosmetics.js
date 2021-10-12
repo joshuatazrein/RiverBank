@@ -21,8 +21,7 @@ function mobileTest() {
 }
 
 function resetDoc() {
-  return // testing
-  console.trace()
+  if ($(document).scrollTop() == 0) return
   // reset document zoom and scroll
   if (selected && selected[0].tagName == 'TEXTAREA' ||
     editing) return
@@ -30,16 +29,6 @@ function resetDoc() {
   $('html, body').animate({scrollTop: 0}, 300)
   $(document.body).css('zoom', "100%")
   document.firstElementChild.style.zoom = "reset";
-  if (flopscrollsave) {
-    $('#flop').scrollTop(flopscrollsave)
-    flopscrollsave = undefined
-  }
-  if (popscrollsave) {
-    $('#pop').scrollTop(popscrollsave)
-    popscrollsave = undefined
-  }
-  $('#flop').removeClass('greyedout')
-  $('#pop').removeClass('greyedout')
 }
 
 function updateHeight() {
@@ -776,11 +765,6 @@ function clickOff(ev) {
   // on revert drags on mobile
   $('.drop-hover').removeClass('drop-hover')
   if (!justclicked) { $('nav').hide() }
-  if (ev.target.tagName != 'SPAN' && 
-    !['flopBut', 'popBut'].includes($(ev.target).attr('id')) &&
-    !$(ev.target).hasClass('dropdown-item')) {
-    resetDoc()
-  }
   editing = false
 }
 

@@ -214,7 +214,7 @@ function migrate() {
           if (/^completed/.test(ch.text()) && 
             heading != todayheading[0]) {
             // takes out the uncompleted heading
-            if (ch.hasClass('folded')) { 
+            if (ch.attr('folded') == 'true') { 
               toggleFold($(heading), false) 
             }
             ch.remove()
@@ -224,7 +224,8 @@ function migrate() {
             .toArray().forEach((x) => { appends.push(x) })
           if (ch.hasClass('event') && !ch.hasClass('complete')) {
             toggleComplete(ch, false)
-          } else if (!ch.hasClass('complete') && !isHeading(ch) &&
+          } else if (!ch.hasClass('complete') && 
+            !isRepeat(ch) && !isHeading(ch) &&
             !ch.hasClass('duedate')) {
             // push all uncompleted tasks
             appends.push(ch)
@@ -905,7 +906,9 @@ function loadPage(starting, oldselect, scrolls) {
       setStyle(data.style)
       clearLogo()
     })
-    $(document).off('keydown keyup contextmenu mousedown mouseup touchend')
+    $(document).off(
+      'keydown scroll keyup contextmenu mousedown mouseup touchend')
+    $(document).on('scroll', resetDoc)
     $(document).on('keydown', keyDown)
     $(document).on('keyup', keyUp)
     $(document).on('contextmenu', function(event) {
