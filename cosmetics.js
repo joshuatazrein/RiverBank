@@ -20,8 +20,8 @@ function mobileTest() {
   }
 }
 
-function resetDoc(force) {
-  if ($(document).scrollTop() == 0 && !force) return
+function resetDoc() {
+  if ($(document).scrollTop() == 0) return
   // reset document zoom and scroll
   if (selected && selected[0].tagName == 'TEXTAREA' ||
     editing) return
@@ -757,15 +757,12 @@ function clickOff(ev) {
   } else if (['editTaskBut', 'newSubtaskBut', 'scheduleBut', 'collapseBut']
     .includes($(ev.target).attr('id')) && !justcollapsed) {
     eval($(ev.target).attr('function'))
-    editing = true
   } else if ($(ev.target).hasClass('dropdown-item') && !justclicked) {
     eval($(ev.target).attr('function'))
-    editing = true
   }
   // on revert drags on mobile
   $('.drop-hover').removeClass('drop-hover')
   if (!justclicked) { $('nav').hide() }
-  editing = false
 }
 
 function clickOn(ev) {
