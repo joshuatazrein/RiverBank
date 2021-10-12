@@ -953,7 +953,7 @@ function saveTask() {
     eventTimeFormat(selected)
   }
   editing = false
-  setTimeout(resetDoc, 1000)
+  setTimeout(resetDoc, 500)
 }
 
 function editTask() {
@@ -1046,6 +1046,7 @@ function editTask() {
       }, 500)
     }
   }
+  selected[0].scrollIntoView()
 }
 
 function createBlankTask() {
