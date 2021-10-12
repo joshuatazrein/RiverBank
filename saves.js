@@ -62,34 +62,34 @@ function clean() {
   }
   cleanLists()
   $('textarea.in').remove()
-  // cleans invisible things which aren't folded under headings
-  let headings = $('span').toArray()
-  headings = headings.filter((x) => {
-    if ($(x).attr('folded') == 'true' &&
-      $(x).css('display') != 'none') {
-      return true
-    }
-  })
-  let foldedlist = []
-  for (heading of headings) {
-    foldedlist =
-      foldedlist.concat(getHeadingChildren($(heading)).map((x) => {
-        return x[0]
-      }))
-  }
-  const blindeds = $('span').toArray().filter((x) => {
-    return ($(x).css('display') == 'none')
-  })
-  for (blinded of blindeds) {
-   if (!foldedlist.includes(blinded) &&
-      $(blinded) != selected && 
-      !($(blinded).hasClass('dateheading') ||
-      (getHeading($(blinded)) && 
-      getHeading($(blinded)).hasClass('dateheading')))) {
-      // filter out subtasks
-      if ($(blinded).parent()[0].tagName != 'SPAN') $(blinded).remove()
-    }
-  }
+  // // cleans invisible things which aren't folded under headings
+  // let headings = $('span').toArray()
+  // headings = headings.filter((x) => {
+  //   if ($(x).attr('folded') == 'true' &&
+  //     $(x).css('display') != 'none') {
+  //     return true
+  //   }
+  // })
+  // let foldedlist = []
+  // for (heading of headings) {
+  //   foldedlist =
+  //     foldedlist.concat(getHeadingChildren($(heading)).map((x) => {
+  //       return x[0]
+  //     }))
+  // }
+  // const blindeds = $('span').toArray().filter((x) => {
+  //   return ($(x).css('display') == 'none')
+  // })
+  // for (blinded of blindeds) {
+  //  if (!foldedlist.includes(blinded) &&
+  //     $(blinded) != selected && 
+  //     !($(blinded).hasClass('dateheading') ||
+  //     (getHeading($(blinded)) && 
+  //     getHeading($(blinded)).hasClass('dateheading')))) {
+  //     // filter out subtasks
+  //     if ($(blinded).parent()[0].tagName != 'SPAN') $(blinded).remove()
+  //   }
+  // }
   // sort headings
   const headingslist = $('#pop').children().filter('.dateheading').toArray()
   const now = stringToDate('today').getTime()

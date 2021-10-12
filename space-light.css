@@ -6,24 +6,24 @@
   --boldweight: 600;
   /* --background:rgb(222, 224, 227); */
   /* --background:rgb(131, 137, 150); */
-  --background: rgb(191, 193, 194);
+  --background: rgb(201, 192, 187);
   /* --background:rgb(191, 193, 194); */
   --lineheight: 1.15em;
-  --bgoverlay: rgba(191, 193, 194, 0.9);
+  --bgoverlay: rgba(201, 192, 187, 0.9);
   /* --select: rgb(135, 206, 235); */
   /* --select: rgb(74, 100, 108); */
-  --select: rgb(81, 110, 118);
+  --select: rgb(165, 113, 100);
   --font: 'Cormorant Garamond', serif;
   --butfont: Andale Mono;
   /* --textcolor: rgb(245, 245, 245); */
   /* --textcolor: rgb(131, 137, 150); */
-  --textcolor: rgb(0, 0, 0);
+  --textcolor: rgb(59, 47, 47);
   --menufont: 'Courier New';
-  --bdcolor: rgb(128, 128, 128);
-  --important: rgb(29, 41, 81);
-  --maybe: rgba(29, 41, 81, 0.5);
-  --event: rgba(81, 110, 118, 0.3);
-  --butbackground: rgba(128, 128, 128, 0.5);
+  --bdcolor: rgba(128, 128, 128, 0.5);
+  --important: rgb(161, 122, 116);
+  --maybe: rgba(161, 122, 116, 0.5);
+  --event: rgba(165, 113, 100, 0.3);
+  --butbackground: rgba(196, 174, 173, 0.5);
   --flopbutbackground: rgba(0, 0, 0, 0.1);
   --indent: 0.5em;
 }

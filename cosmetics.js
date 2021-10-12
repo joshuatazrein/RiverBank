@@ -21,6 +21,7 @@ function mobileTest() {
 }
 
 function resetDoc() {
+  return // testing
   console.trace()
   // reset document zoom and scroll
   if (selected && selected[0].tagName == 'TEXTAREA' ||

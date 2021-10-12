@@ -490,7 +490,9 @@ function taskAbove() {
   if (returntask[0] && !returntask.is(':visible')) {
     // while invisible
     select(returntask, false)
-    return taskAbove()
+    if (taskAbove() && taskAbove() != selected) {
+      return taskAbove()
+    }
  } else if (!returntask[0] || !returntask.hasClass('in')) {
     return selected
   } else {
