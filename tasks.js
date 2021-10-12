@@ -952,7 +952,7 @@ function saveTask() {
   if (selected.hasClass('event')) {
     eventTimeFormat(selected)
   }
-  setTimeout(function() { resetDoc(true) }, 500)
+  setTimeout(resetDoc, 500)
 }
 
 function editTask() {
