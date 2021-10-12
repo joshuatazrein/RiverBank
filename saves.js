@@ -912,7 +912,8 @@ function loadPage(starting, oldselect, scrolls) {
       if (!['SPAN', 'TEXTAREA'].includes(ev.target.tagName) &&
         !['flopBut', 'popBut', 'newHeadingFlopBut'].includes(
         $(ev.target).attr('id')) &&
-        !$(ev.target).hasClass('dropdown-item')) {
+        !$(ev.target).hasClass('dropdown-item') &&
+        editing == false) {
         resetDoc()
       }
     })
