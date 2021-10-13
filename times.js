@@ -21,8 +21,7 @@ timer.on('end', function () {
     }
   }
   if (data.play == 'true') {
-    const timersnd = new Audio('snd/timer.mp3')
-    timersnd.play()
+    $('#timersnd')[0].play()
   }
   if (mobileTest()) {
     setTimeout(function() { alert('timer complete') }, 1000)
@@ -80,7 +79,6 @@ function stopwatchTime(curtime, negative) {
 
 function startTimer() {
   const s = $('#startsnd')[0]
-  s.src = s.src
   s.play()
   let startitme
   if ($('#timerent').val() == ':00') {

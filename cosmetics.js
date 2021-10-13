@@ -3,9 +3,8 @@
 function playPop() {
   // plays completion sound
   const pop = document.getElementById('popsnd')
-  pop.pause()
-  pop.src = pop.src
   pop.play()
+  console.log('pop');
 }
 
 // # WINDOW
