@@ -11,8 +11,9 @@ function playPop() {
 
 function mobileTest() {
   // test if mobile browser or not
+  console.log(navigator.userAgent);
   if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
-    .test(navigator.userAgent)) {
+    .test(navigator.userAgent) || touched) {
     return true
   } else {
     return false
@@ -21,6 +22,7 @@ function mobileTest() {
 
 function resetDoc() {
   if ($(document).scrollTop() == 0) return
+  else if (!mobileTest()) { $(document).scrollTop(0); return }
   // reset document zoom and scroll
   if (selected && selected[0].tagName == 'TEXTAREA' ||
     editing) return

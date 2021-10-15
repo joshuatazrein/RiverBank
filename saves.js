@@ -124,6 +124,7 @@ function clean() {
       toggleFold($(x), false)
     }
   })
+  updatePast()
 }
 
 function clearEmptyHeadlines() {
@@ -220,15 +221,17 @@ function migrate() {
             ch.remove()
             continue
           }
-          ch.children().filter('span.in:not(.complete):not(.duedate)')
-            .toArray().forEach((x) => { appends.push(x) })
           if (ch.hasClass('event') && !ch.hasClass('complete')) {
             toggleComplete(ch, false)
-          } else if (!ch.hasClass('complete') && 
+          } if (!ch.hasClass('complete') && 
             !isRepeat(ch) && !isHeading(ch) &&
             !ch.hasClass('duedate')) {
             // push all uncompleted tasks
             appends.push(ch)
+          }
+          if (!isRepeat(ch)) {
+            ch.children().filter('span.in:not(.complete):not(.duedate)')
+              .toArray().forEach((x) => { appends.push(x) })
           }
         }
       }
@@ -275,6 +278,24 @@ function migrate() {
   now = new Date()
   display('updated futures:' + (now.getTime() - initial))
   var initial = now.getTime()
+}
+
+function updatePast() {
+  console.log('update past');
+  var today = dateToHeading(stringToDate('0d'))
+  var headings = $('#pop').children().toArray()
+  headings = headings.slice(0, headings.indexOf(today))
+  if (pastdates) {
+    headings.forEach(x => { 
+      const el = $(x)
+      if (!el.is(':visible')) el.show() 
+    })
+  } else {
+    headings.forEach(x => { 
+      const el = $(x)
+      if (el.is(':visible')) el.hide() 
+    })
+  }
 }
 
 function updateTitles() {
@@ -521,10 +542,6 @@ function save(changes, changed, undo) {
   now = new Date()
   display('updateSpanDrags: ' + String(now.getTime() - initial))
   initial = now.getTime()
-  // if (draggingtask) { undo() }
-  if (data.pastdates == false) {
-    $('#pop .dateheading.complete').hide()
-  }
 }
 
 function diffsLog(oldString, newString) {
@@ -843,6 +860,7 @@ function loadPage(starting, oldselect, scrolls) {
     window.filtered = undefined // filtering
     window.filteredlist = undefined // filtered tasks
     window.editing = false
+    window.touched = false
     window.activedate = new Date()
     if (activedate.getHours() < 3) {
       activedate.setDate(activedate.getDate() - 1) // active date
@@ -905,6 +923,10 @@ function loadPage(starting, oldselect, scrolls) {
       data.brightness = 'dark'
       setStyle(data.style)
       clearLogo()
+    })
+    $(document).on('touchstart', function () { 
+      touched = true
+      updateSpanDrags() 
     })
     $(document).off(
       'keydown keyup contextmenu mousedown mouseup touchend')

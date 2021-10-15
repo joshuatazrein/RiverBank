@@ -1046,7 +1046,7 @@ function editTask() {
       }, 500)
     }
   }
-  selected[0].scrollIntoView()
+  if (mobileTest()) { selected[0].scrollIntoView() }
 }
 
 function createBlankTask() {
