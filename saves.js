@@ -830,19 +830,24 @@ function loadPage(starting, oldselect, scrolls) {
     $('#username').text(getCookie('user'))
   }
   if (starting) {
-    if (!data.flop && localStorage.getItem('data')) {
-      datastr = JSON.stringify(localStorage.getItem('data').replace(/\\+/g, '\\')
-        .replace(/^\"+/, '').replace(/\"+$/, '')
-        .replace(/\\+$/, '')
-        .replace(/^(\\\")+/, '').replace(/(\\\")+$/, '')
-        .replace(/\\/g, ''))
-      console.log(datastr);
-      data = JSON.parse(datastr)
-      console.log('fixed', data);
-    }
-    while (typeof data == 'string') {
-      data = JSON.parse(data.replace(/\\+/g, '\\')
-        .replace(/^\"+/, '').replace(/\"+$/, ''))
+    try {
+      if (!data.flop && localStorage.getItem('data')) {
+        datastr = JSON.stringify(localStorage.getItem('data').replace(/\\+/g, '\\')
+          .replace(/^\"+/, '').replace(/\"+$/, '')
+          .replace(/\\+$/, '')
+          .replace(/^(\\\")+/, '').replace(/(\\\")+$/, '')
+          .replace(/\\/g, ''))
+        console.log(datastr);
+        data = JSON.parse(datastr)
+        console.log('fixed', data);
+      }
+      while (typeof data == 'string') {
+        data = JSON.parse(data.replace(/\\+/g, '\\')
+          .replace(/^\"+/, '').replace(/\"+$/, ''))
+      }
+    } catch (err) {
+      alert('data corrupted; upload backup');
+      data = JSON.parse(resetstring)
     }
     // start window for first load
     window.stylegot = false // getting style
