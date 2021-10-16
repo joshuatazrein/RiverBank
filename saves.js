@@ -124,7 +124,19 @@ function clean() {
       toggleFold($(x), false)
     }
   })
+  // things
+  // clear duplicates
+  const alreadyheadings = []
+  for (heading of headingslist) {
+    const headingtxt = stripChildren($(heading))
+    if (alreadyheadings.includes(headingtxt)) {
+      $(heading).remove()
+    } else {
+      alreadyheadings.push(headingtxt)
+    }
+  }
   updatePast()
+  clearEmptyDates()
 }
 
 function clearEmptyHeadlines() {
