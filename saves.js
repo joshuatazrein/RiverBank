@@ -822,6 +822,7 @@ function reload2() {
 function loadPage(starting, oldselect, scrolls) {
   // load the page with current data
   loading = true
+  console.log(data.flop);
   var now = new Date()
   var initial = now.getTime()
   // right after signing in
