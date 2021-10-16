@@ -834,6 +834,7 @@ function loadPage(starting, oldselect, scrolls) {
       console.log(localStorage.getItem('data').replace(/\\+/g, '\\')
         .replace(/^(\\\")+/, '').replace(/(\\\")+$/, ''));
       data = JSON.parse(localStorage.getItem('data').replace(/\\+/g, '\\')
+        .replace(/^\"+/, '').replace(/\"+$/, '')
         .replace(/^(\\\")+/, '').replace(/(\\\")+$/, ''))
       console.log('fixed', data);
     }
