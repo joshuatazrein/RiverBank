@@ -831,14 +831,12 @@ function loadPage(starting, oldselect, scrolls) {
   }
   if (starting) {
     if (!data.flop && localStorage.getItem('data')) {
-      console.log(localStorage.getItem('data').replace(/\\+/g, '\\')
-        .replace(/^\"+/, '').replace(/\"+$/, '')
-        .replace(/\\+$/, '')
-        .replace(/^(\\\")+/, '').replace(/(\\\")+$/, ''));
-      data = JSON.parse(localStorage.getItem('data').replace(/\\+/g, '\\')
-        .replace(/^\"+/, '').replace(/\"+$/, '')
-        .replace(/\\+$/, '')
-        .replace(/^(\\\")+/, '').replace(/(\\\")+$/, ''))
+      datastr = localStorage.getItem('data').replace(/\\+/g, '\\')
+      .replace(/^\"+/, '').replace(/\"+$/, '')
+      .replace(/\\+$/, '')
+      .replace(/^(\\\")+/, '').replace(/(\\\")+$/, '')
+      console.log(datastr);
+      data = JSON.parse(datastr)
       console.log('fixed', data);
     }
     while (typeof data == 'string') {
