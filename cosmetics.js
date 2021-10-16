@@ -4,14 +4,12 @@ function playPop() {
   // plays completion sound
   const pop = document.getElementById('popsnd')
   pop.play()
-  console.log('pop');
 }
 
 // # WINDOW
 
 function mobileTest() {
   // test if mobile browser or not
-  console.log(navigator.userAgent);
   if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
     .test(navigator.userAgent) || touched) {
     return true
@@ -116,7 +114,7 @@ function reset() {
   yes = confirm("Are you sure you want to reset?")
   if (yes) {
     data = JSON.parse(resetstring)
-    uploadData(true)
+    uploadData('reload')
   }
 }
 

@@ -281,7 +281,6 @@ function migrate() {
 }
 
 function updatePast() {
-  console.log('update past');
   var today = dateToHeading(stringToDate('0d'))
   var headings = $('#pop').children().toArray()
   headings = headings.slice(0, headings.indexOf(today))
@@ -837,9 +836,7 @@ function loadPage(starting, oldselect, scrolls) {
           .replace(/\\+$/, '')
           .replace(/^(\\\")+/, '').replace(/(\\\")+$/, '')
           .replace(/\\/g, ''))
-        console.log(datastr);
         data = JSON.parse(datastr)
-        console.log('fixed', data);
       }
       while (typeof data == 'string') {
         data = JSON.parse(data.replace(/\\+/g, '\\')
