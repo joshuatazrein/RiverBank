@@ -835,6 +835,9 @@ function loadPage(starting, oldselect, scrolls) {
       data = JSON.parse(localStorage.getItem('data').replace(/\\+/g, '\\'))
       console.log('fixed', data);
     }
+    while (typeof data == 'string') {
+      data = JSON.parse(data)
+    }
     // start window for first load
     window.stylegot = false // getting style
     window.pastdates = false
