@@ -831,11 +831,11 @@ function loadPage(starting, oldselect, scrolls) {
   }
   if (starting) {
     if (!data.flop && localStorage.getItem('data')) {
-      datastr = localStorage.getItem('data').replace(/\\+/g, '\\')
+      datastr = JSON.stringify(localStorage.getItem('data').replace(/\\+/g, '\\')
         .replace(/^\"+/, '').replace(/\"+$/, '')
         .replace(/\\+$/, '')
         .replace(/^(\\\")+/, '').replace(/(\\\")+$/, '')
-        .replace(/\\/g, '')
+        .replace(/\\/g, ''))
       console.log(datastr);
       data = JSON.parse(datastr)
       console.log('fixed', data);
