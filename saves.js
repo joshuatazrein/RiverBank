@@ -832,7 +832,8 @@ function loadPage(starting, oldselect, scrolls) {
   if (starting) {
     console.log(data);
     if (!data.flop && localStorage.getItem('data')) {
-      data = JSON.parse(localStorage.getItem('data').replace(/\\+/g, '\\'))
+      data = JSON.parse(localStorage.getItem('data').replace(/\\+/g, '\\')
+        .replace(/^\"+/, ''))
       console.log('fixed', data);
     }
     while (typeof data == 'string') {
