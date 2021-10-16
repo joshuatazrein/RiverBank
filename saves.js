@@ -831,6 +831,10 @@ function loadPage(starting, oldselect, scrolls) {
   }
   if (starting) {
     console.log(data);
+    if (!data.flop) {
+      data = localStorage.getItem(data)
+      console.log('fixed', data);
+    }
     // start window for first load
     window.stylegot = false // getting style
     window.pastdates = false
