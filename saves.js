@@ -830,14 +830,14 @@ function loadPage(starting, oldselect, scrolls) {
     $('#username').text(getCookie('user'))
   }
   if (starting) {
-    console.log(data);
     if (!data.flop && localStorage.getItem('data')) {
       data = JSON.parse(localStorage.getItem('data').replace(/\\+/g, '\\')
         .replace(/^\"+/, '').replace(/\"+$/, ''))
       console.log('fixed', data);
     }
     while (typeof data == 'string') {
-      data = JSON.parse(data)
+      data = JSON.parse(data.replace(/\\+/g, '\\')
+        .replace(/^\"+/, '').replace(/\"+$/, ''))
     }
     // start window for first load
     window.stylegot = false // getting style
