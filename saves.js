@@ -832,9 +832,9 @@ function loadPage(starting, oldselect, scrolls) {
   if (starting) {
     if (!data.flop && localStorage.getItem('data')) {
       console.log(localStorage.getItem('data').replace(/\\+/g, '\\')
-        .replace(/^\"+/, '').replace(/\"+$/, ''));
+        .replace(/^(\\\")+/, '').replace(/(\\\")+$/, ''));
       data = JSON.parse(localStorage.getItem('data').replace(/\\+/g, '\\')
-        .replace(/^\"+/, '').replace(/\"+$/, ''))
+        .replace(/^(\\\")+/, '').replace(/(\\\")+$/, ''))
       console.log('fixed', data);
     }
     while (typeof data == 'string') {
