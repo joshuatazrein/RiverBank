@@ -832,7 +832,7 @@ function loadPage(starting, oldselect, scrolls) {
   if (starting) {
     console.log(data);
     if (!data.flop && localStorage.getItem('data')) {
-      data = localStorage.getItem('data')
+      data = JSON.parse(localStorage.getItem('data'))
       console.log('fixed', data);
     }
     // start window for first load
