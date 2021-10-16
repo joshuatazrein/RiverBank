@@ -822,7 +822,6 @@ function reload2() {
 function loadPage(starting, oldselect, scrolls) {
   // load the page with current data
   loading = true
-  console.log(data.flop);
   var now = new Date()
   var initial = now.getTime()
   // right after signing in
@@ -831,6 +830,7 @@ function loadPage(starting, oldselect, scrolls) {
     $('#username').text(getCookie('user'))
   }
   if (starting) {
+    console.log(data);
     // start window for first load
     window.stylegot = false // getting style
     window.pastdates = false
