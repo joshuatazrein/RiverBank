@@ -7,9 +7,6 @@ body {
 :root {
   --butwidth: 45px !important;
 }
-span.placeholder {
-  right: 35px;
-}
 span.dateheading {
   padding-right: 60px;
 }
