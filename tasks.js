@@ -837,12 +837,16 @@ function saveTask() {
         selected.val().slice(endindex)
       )
     } else {
+      console.log(selected.val().slice(index + 1, endindex));
+      console.log(stringToDate(selected.val().slice(index + 1, endindex)))
+      console.log(dateToString(stringToDate(selected.val().slice(index + 1, endindex))));
       selected.val(
         selected.val().slice(0, index) +
         '>' +
         dateToString(stringToDate(selected.val().slice(index + 1, endindex))) +
         selected.val().slice(endindex)
       )
+      console.log(selected.val());
       if (addspace) {
         // add space at end
         selected.val(selected.val() + ' ')
@@ -898,17 +902,19 @@ function saveTask() {
   if (selected.val().charAt(selected.val().length - 1) != ' ') {
     selected.val(selected.val() + ' ')
   }
+  console.log(selected.val());
   newstr = selected.val()
     .replace(/\*(.*)\*/g, '<span class="bold">$1</span>')
     .replace(/_(.*)_/g, '<span class="italic">$1</span>')
     .replace(/_\*(.*)\*_/g, 
     '<span class="bold-italic">$1</span>')
-    .replace(/\s\>([^\s]*)\s/g, ' <span class="deadline">>$1</span> ')
-    .replace(/\s\<([^\s]*)\s/g, ' <span class="defer"><$1</span> ')
+    .replace(/\s\>([\.\\-\d]*)\s/g, ' <span class="deadline">>$1</span> ')
+    .replace(/\s\<([\.\\-\d]*)\s/g, ' <span class="defer"><$1</span> ')
     .replace(/\s\~([^\s]*)\s/g, ' <span class="repeat">~$1</span> ')
     .replace(/\s\[\[(.*)\]\]\s/g, 
     ' <span class="link">[[$1]]</span> ')
     .replace(/\n/g, '<br>').replace(/\s/g, ' ')
+  console.log(selected.val());
   newstr += getChildren(el)
   if (selected.val().charAt(0) == '@') {
     // process event signs
@@ -957,6 +963,7 @@ function saveTask() {
   } catch (err) {
     // skip it if it doesn't work    return
   }
+  console.log(selected.val());
   // take away hashtags
   if (savetask.hasClass('h1')) {
     savetask.html(savetask.html().slice(2))
@@ -968,6 +975,7 @@ function saveTask() {
   }
   if (isHeading(savetask) && savetask.attr('folded') != 'true')
     savetask.attr('folded', 'false') // sets heading folds
+    console.log(savetask.text());
   selected.remove()
   savetask.show()
   select(savetask, true)
