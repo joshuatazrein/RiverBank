@@ -331,7 +331,7 @@ function isSubtask(el) {
   // tests inline spans until it gets one, otherwise returns true
   for (lineinner of ['link', 'italic', 'bold', 'bold-italic', 'deadline', 
     'weblink', 'timing', 'mobhandle', 'faketiming', 'placeholder',
-    'repeat']) {
+    'repeat', 'defer']) {
     if (el.hasClass(lineinner)) {
       return false
     }
@@ -653,13 +653,15 @@ function search(skiplinks, deadline) {
           // test for links
           continue
         } else if (skiplinks == 'deadline' &&
-          !$(child).text().includes(deadline)) {
+          !stripChildren($(child)).includes(deadline)) {
           // finds only deadlines with exact match to text and date
+          console.log('skipping', $(child).text(), deadline);
           continue
         } else {
           if (skiplinks != 'complete' && $(child).hasClass('complete')) {
             continue
           } else {
+            console.log('matching', $(child).text());
             // add it
             matches.push({
               'title': search.title,

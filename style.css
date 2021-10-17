@@ -348,7 +348,8 @@ p.dropdown-item {
   width: 50%;
 }
 
-span.duedate > span.duedateBacklink {
+span.duedate > span.duedateBacklink,
+span.deferdate > span.duedateBacklink {
   font-size: 0.5em;
   color: var(--textcolor);
   position: absolute;
@@ -643,12 +644,14 @@ span.in {
   border-radius: 5px;
 }
 
-span.link, span.deadline, span.duedate,
-#events span, #importants span, span.weblink, .dropdown-item {
+span.link, span.deadline, span.defer, span.duedate,
+#events span, #importants span, span.weblink, .dropdown-item,
+span.deferdate {
   cursor: pointer;
 }
 
-span.in, span.duedate > span.duedateBacklink {
+span.in, span.duedate > span.duedateBacklink, 
+span.deferdate > span.duedateBacklink {
   cursor: default;
 }
 
@@ -666,7 +669,16 @@ span.note {
 
 span.duedate {
   color: var(--select);
-  font-style: italic;
+  font-weight: bold;
+  border-radius: 5px;
+  padding-right: 65px;
+  padding-left: 5px;
+  margin-top: 0.25em;
+  position: relative;
+}
+
+span.deferdate {
+  color: var(--select);
   border-radius: 5px;
   padding-right: 65px;
   padding-left: 5px;
@@ -794,7 +806,7 @@ span.timing, span.faketiming {
   font-weight: var(--boldweight);
 }
 
-span.deadline {
+span.deadline, span.defer {
   color: var(--select);
 }
 
@@ -835,7 +847,7 @@ span span.note {
 }
 
 span.link, span.bold, span.italic, span.bold-italic, 
-span.weblink, span.deadline, span.repeat {
+span.weblink, span.deadline, span.repeat, span.defer {
   padding: 0;
   display: inline;
 }

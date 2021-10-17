@@ -382,6 +382,7 @@ function updateImportants() {
 function updateDeadlines() {
   // update displayed deadlines to match data
   $('.duedate').remove()
+  $('.deferdate').remove()
   window.duedates = []
   const collapselist = $('#pop').children().filter('.h1').toArray().filter(
     (x) => { return ($(x).attr('folded') == 'true') })
@@ -422,6 +423,26 @@ function updateDeadlines() {
           'end': date
         })
       }
+    } for (let deadline of $('#test').find('.defer').filter(function () {
+      return !$(this).parent().hasClass('complete')
+    })) {
+      // append under heading
+      const text = stripChildren($(deadline).parent())
+      const index = text.search('<')
+      const date = $(deadline).text().slice(1)
+      const heading = dateToHeading(stringToDate(date), false)
+      const duedate = createBlankTask()
+      duedate.attr('title', 'startdate')
+      // take out deadline
+      duedate.text(text.slice(0, text.search('<')))
+      if (getHeading($(deadline).parent())) {
+        // add span underneath with its heading
+        duedate.append($('<span class="duedateBacklink">' + 
+          stripChildren(getHeading($(deadline).parent())) + '</span>'))
+      }
+      duedate.addClass('deferdate')
+      duedate.removeClass('in')
+      $(heading).after(duedate)
     }
   }
   for (heading of collapselist) {
@@ -749,6 +770,7 @@ function clearLogo() {
 }
 
 function reload(force) {
+  if (ask) return
   // begin reload by downloading server data
   if (window.parent.location.href.includes('welcome')) {
     reload2()
@@ -890,6 +912,7 @@ function loadPage(starting, oldselect, scrolls) {
     window.editing = false
     window.touched = false
     window.activedate = new Date()
+    window.ask = false
     if (activedate.getHours() < 3) {
       activedate.setDate(activedate.getDate() - 1) // active date
     }

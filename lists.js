@@ -119,6 +119,7 @@ function newList(list) {
 
 function deleteList() {
   // delete selected list
+  ask = true
   yes = confirm('are you sure you want to delete this list?')
   if (yes) {
     $('#loads').children()[loadedlist].remove()
@@ -131,6 +132,7 @@ function deleteList() {
       loadList()
     }
   }
+  ask = false
 }
 
 // # FOLDING

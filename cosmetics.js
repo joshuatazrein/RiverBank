@@ -858,12 +858,18 @@ function clickOn(ev) {
   } else if ($(ev.target).hasClass('timing')) {
     // timing generate for thing
     dragTime($(ev.target))
-  } else if ($(ev.target).hasClass('deadline')) {
+  } else if ($(ev.target).hasClass('deadline') ||
+    $(ev.target).hasClass('defer')) {
     select(dateToHeading(stringToDate(
       $(ev.target).text().slice(1))), true)
   } else if ($(ev.target).hasClass('duedate')) {
     // jump to deadline
     $('#searchbar').val(stripChildren($(ev.target)).slice(2))
+    search('deadline', dateToString(stringToDate(
+      stripChildren($(getHeading($(ev.target)))), true)))
+  } else if ($(ev.target).hasClass('deferdate')) {
+    // jump to deadline
+    $('#searchbar').val(stripChildren($(ev.target)).replace(/•\s/g, '• '))
     search('deadline', dateToString(stringToDate(
       stripChildren($(getHeading($(ev.target)))), true)))
   } else if (getFrame($(ev.target)) && $(ev.target).hasClass('in')) {

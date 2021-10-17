@@ -849,6 +849,36 @@ function saveTask() {
       }
     }
   }
+  if (selected.val().includes('<')) {
+    // analyze the string as a search string + replace the date
+    // find the start and end points
+    const index = selected.val().search('<')
+    let endindex = selected.val().slice(index).search(' ')
+    let addspace = false
+    if (endindex == -1) {
+      endindex = selected.val().length
+      addspace = true
+    } else endindex += index
+    if (stringToDate(selected.val().slice(index + 1, endindex)) ==
+      'Invalid Date') {
+      alert('invalid date entered')
+      selected.val(
+        selected.val().slice(0, index) +
+        selected.val().slice(endindex)
+      )
+    } else {
+      selected.val(
+        selected.val().slice(0, index) +
+        '<' +
+        dateToString(stringToDate(selected.val().slice(index + 1, endindex))) +
+        selected.val().slice(endindex)
+      )
+      if (addspace) {
+        // add space at end
+        selected.val(selected.val() + ' ')
+      }
+    }
+  }
   const length = selected.val().length - 2
   if (selected.val().slice(length) == ' !') {
     savetask.addClass('important')
@@ -874,6 +904,7 @@ function saveTask() {
     .replace(/_\*(.*)\*_/g, 
     '<span class="bold-italic">$1</span>')
     .replace(/\s\>([^\s]*)\s/g, ' <span class="deadline">>$1</span> ')
+    .replace(/\s\<([^\s]*)\s/g, ' <span class="defer"><$1</span> ')
     .replace(/\s\~([^\s]*)\s/g, ' <span class="repeat">~$1</span> ')
     .replace(/\s\[\[(.*)\]\]\s/g, 
     ' <span class="link">[[$1]]</span> ')
