@@ -765,7 +765,7 @@ function cancel() {
 function clearLogo() {
   // finishload
   $('#logoimage').animate({opacity: 0}, 500)
-  $('#logoimage').remove()
+  setTimeout(function() { $('#logoimage').remove() }, 500)
   loading = false
 }
 
@@ -824,7 +824,7 @@ function reload(force) {
 function reload2() {
   // data is downloaded, prepare page for reload
   $('body').prepend("<div id='logoimage' class='show' style='z-index:2;opacity:0'><img src='logo.png'></div>")
-  $('#logoimage').animate({'opacity': 0.1}, 250)
+  $('#logoimage').animate({'opacity': 0.1}, 300)
   let selectframe, selectindex
   try {
     if (selected && selected[0].tagName == 'SPAN') {
@@ -963,17 +963,6 @@ function loadPage(starting, oldselect, scrolls) {
       } else if (!t && $('#quickhelp').text() != '') {
         $('#quickhelp').text('')
       }
-    })
-    $.get(data.style + '-' + data.brightness + '.css',
-      function () {
-        display('got style: ' + data.style + '-' + data.brightness + '.css')
-        clearLogo()
-      }
-    ).fail(function () {
-      data.style = 'space'
-      data.brightness = 'dark'
-      setStyle(data.style)
-      clearLogo()
     })
     $(document).on('touchstart', function () { 
       touched = true
@@ -1120,8 +1109,20 @@ function loadPage(starting, oldselect, scrolls) {
     initial = now.getTime()
     display('startdoc: ' + String(curtime));
     now = new Date()
-    $('#logoimage').stop(true)
-    if (!starting) { clearLogo() }
+    if (starting) {
+      $.get(data.style + '-' + data.brightness + '.css',
+      function () {
+        display('got style: ' + data.style + '-' + data.brightness + '.css')
+        clearLogo()
+      }).fail(function () {
+        data.style = 'space'
+        data.brightness = 'dark'
+        setStyle(data.style)
+        clearLogo()
+      })
+    } else {
+      clearLogo()
+    }
     // curtime = now.getTime() - initial
     // initial = now.getTime()
     // display('checkStyle: ' + String(curtime));
@@ -1133,5 +1134,5 @@ function loadPage(starting, oldselect, scrolls) {
   display('loaded: ' + curtime);
   initial = now.getTime()
   clean()
-  setTimeout(startdoc, 500)
+  setTimeout(startdoc, 250)
 }
