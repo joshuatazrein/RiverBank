@@ -93,7 +93,7 @@ function upload() {
       // rewrite existing data with this
       data = JSON.parse(this.result)
       dataString = JSON.stringify(data)
-      uploadData('reload')
+      uploadData('reload', 'compare')
     })
     fileReader.readAsText(this.files[0])
   })
@@ -114,7 +114,7 @@ function reset() {
   yes = confirm("Are you sure you want to reset?")
   if (yes) {
     data = JSON.parse(resetstring)
-    uploadData('reload')
+    uploadData('reload', 'compare')
   }
 }
 
@@ -869,9 +869,8 @@ function clickOn(ev) {
       stripChildren($(getHeading($(ev.target)))), true)))
   } else if ($(ev.target).hasClass('deferdate')) {
     // jump to deadline
-    $('#searchbar').val(stripChildren($(ev.target)).replace(/•\s/g, '• '))
-    search('deadline', dateToString(stringToDate(
-      stripChildren($(getHeading($(ev.target)))), true)))
+    $('#searchbar').val(stripChildren($(ev.target)))
+    search()
   } else if (getFrame($(ev.target)) && $(ev.target).hasClass('in')) {
     // select allowable elements
     select(ev.target, false)
