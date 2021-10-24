@@ -396,6 +396,34 @@ function updateDeadlines() {
   }])) {
     $('#test').empty()
     $('#test').html(list.text)
+    for (let deadline of $('#test').find('.defer').filter(function () {
+      return !$(this).parent().hasClass('complete')
+    })) {
+      // append under heading
+      const text = stripChildren($(deadline).parent())
+      const index = text.search('<')
+      const date = stringToDate($(deadline).text().slice(1), false)
+      const today = stringToDate('0d')
+      if (date.getTime() < today.getTime()) {
+        date = today
+      }
+      const heading = dateToHeading(stringToDate(date), false)
+      const duedate = createBlankTask()
+      duedate.attr('title', 'startdate')
+      // take out deadline
+      duedate.text(text.slice(0, text.search('<')))
+      if (getHeading($(deadline).parent())) {
+        // add span underneath with its heading
+        duedate.append($('<span class="duedateBacklink">' + 
+          stripChildren(getHeading($(deadline).parent())) + '</span>'))
+      }
+      duedate.addClass('deferdate')
+      duedate.removeClass('in')
+      $(heading).after(duedate)
+    }
+  }
+  for (list of data.flop.concat(
+    [{'title':'pop', 'text':$('#pop').html()}])) {
     for (let deadline of $('#test').find('.deadline').filter(function () {
       return !$(this).parent().hasClass('complete')
     })) {
@@ -423,27 +451,7 @@ function updateDeadlines() {
           'end': date
         })
       }
-    } for (let deadline of $('#test').find('.defer').filter(function () {
-      return !$(this).parent().hasClass('complete')
-    })) {
-      // append under heading
-      const text = stripChildren($(deadline).parent())
-      const index = text.search('<')
-      const date = $(deadline).text().slice(1)
-      const heading = dateToHeading(stringToDate(date), false)
-      const duedate = createBlankTask()
-      duedate.attr('title', 'startdate')
-      // take out deadline
-      duedate.text(text.slice(0, text.search('<')))
-      if (getHeading($(deadline).parent())) {
-        // add span underneath with its heading
-        duedate.append($('<span class="duedateBacklink">' + 
-          stripChildren(getHeading($(deadline).parent())) + '</span>'))
-      }
-      duedate.addClass('deferdate')
-      duedate.removeClass('in')
-      $(heading).after(duedate)
-    }
+    } 
   }
   for (heading of collapselist) {
     toggleFold($(heading), false)
@@ -526,7 +534,8 @@ function save(changes, changed, undo) {
         uploadData(false, loadedlist)
       }
     } else {
-      uploadData() 
+      console.log('comparing upload');
+      uploadData(false, 'compare') 
     }
   }
   now = new Date()
@@ -672,6 +681,27 @@ function uploadData(reloading, list) {
       }).fail(function () {
         alert('upload failed');
       });
+    } else if (list == 'compare') {
+      // compare the previous save
+      for (thing of data.keys()) {
+        if (prevsave[thing] != data[thing]) {
+          $.post('uploadSetting.php', {
+            setting: thing,
+            datachange: data[thing]
+          }, function (d, s, xhr) {
+            display('*** upload finished ***', xhr.responseText)
+            const datasave = JSON.stringify(data)
+            localStorage.setItem('data', datasave)
+            prevupload = datasave
+            if (reloading == 'reload') {
+              location.reload()
+            } else if (reloading) {
+              reload(true) // reloads page
+            }
+          })
+          return
+        }
+      }
     } else {
       $.post("upload.php", {
         datastr: JSON.stringify(data),
@@ -790,7 +820,7 @@ function reload(force) {
         '(overwrites changes from other devices)')
       offline = false
       if (doupload) {
-        uploadData(true)
+        uploadData(true, 'compare')
         cancel()
         return
       } else {

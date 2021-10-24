@@ -18,8 +18,8 @@
   --textcolor: whitesmoke;
   --menufont: 'Roboto Mono', monospace;
   --bdcolor: rgba(176, 194, 212);
-  --important: rgb(41, 74, 112);
-  --maybe: rgba(41, 74, 112, 0.5);
+  --important: rgb(143, 176, 214);
+  --maybe: rgba(143, 176, 214, 0.5);
   --event: rgba(145, 163, 176, 0.3);
   --butbackground: rgba(128, 128, 128, 0.3);
   --flopbutbackground: rgba(245, 245, 245, 0.3);
