@@ -663,9 +663,10 @@ function uploadData(reloading, list) {
         uploadData(false)
         return
       }
+      const prevuploadjson = JSON.parse(prevupload)
       for (thing of Object.keys(data).filter(x => { 
         return x != 'flop' && x != 'pop' })) {
-        if (JSON.stringify(prevupload[thing]) != 
+        if (JSON.stringify(prevuploadjson[thing]) != 
           JSON.stringify(data[thing])) {
           console.log('uploading', thing, data[thing]);
           $.post('uploadSetting.php', {
