@@ -299,8 +299,21 @@ function toggleBrightness() {
   } else {
     data.brightness = 'light'
   }
-  setStyle(data.style, false)
-  uploadData('brightness')
+  if (navigator.onLine || offlinemode) {
+    $.get(
+      style + '-' + data.brightness + '.css',
+      function () {
+        $('#theme').remove()
+        $('head').append(
+          $('<link id="theme" rel="stylesheet" type="text/css" href="' +
+            data.style + '-' + data.brightness + '.css" />')
+        );
+      }
+    )
+    save('setting', 'brightness')
+  } else {
+    alert('Connect to the Internet to load styles')
+  }
 }
 
 function setStyle(style, alert) {
