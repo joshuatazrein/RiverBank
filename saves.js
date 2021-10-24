@@ -402,12 +402,12 @@ function updateDeadlines() {
       // append under heading
       const text = stripChildren($(deadline).parent())
       const index = text.search('<')
-      const date = stringToDate($(deadline).text().slice(1), false)
+      let date = stringToDate($(deadline).text().slice(1), false)
       const today = stringToDate('0d')
       if (date.getTime() < today.getTime()) {
         date = today
       }
-      const heading = dateToHeading(stringToDate(date), false)
+      const heading = dateToHeading(today, false)
       const duedate = createBlankTask()
       duedate.attr('title', 'startdate')
       // take out deadline

@@ -122,7 +122,11 @@ function toggleComplete(task, saving) {
         return $(x).text()
       }).includes(completetask.text())) {
       const children = getHeadingChildren(heading)
-      children[children.length - 1].after(newtask)
+      if (children.length > 0) {
+        children[children.length - 1].after(newtask)
+      } else {
+        heading.after(newtask)
+      }
       if (!task || saving != false) {
         save('+', newtask)
       }
