@@ -301,7 +301,7 @@ function toggleBrightness() {
   }
   if (navigator.onLine || offlinemode) {
     $.get(
-      style + '-' + data.brightness + '.css',
+      data.style + '-' + data.brightness + '.css',
       function () {
         $('#theme').remove()
         $('head').append(
