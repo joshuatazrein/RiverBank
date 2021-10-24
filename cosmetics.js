@@ -299,11 +299,11 @@ function toggleBrightness() {
   } else {
     data.brightness = 'light'
   }
-  setStyle(data.style, true, false)
+  setStyle(data.style, false)
   uploadData('brightness')
 }
 
-function setStyle(style, alert, saving) {
+function setStyle(style, alert) {
   // sets the current style
   const floptop = $('#flop').scrollTop()
   if (navigator.onLine || offlinemode) {
@@ -318,7 +318,7 @@ function setStyle(style, alert, saving) {
         );
       }
     )
-    if (saving != false) {
+    if (alert != false) {
       setTimeout(function() {
         select()
         select(dateToHeading(stringToDate('0d')), true)
