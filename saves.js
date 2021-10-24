@@ -681,6 +681,7 @@ function uploadData(reloading, list) {
         }
       }
     } else if (list != undefined) {
+      return
       let text
       if (list == 'pop') {
         text = data.pop
@@ -705,6 +706,7 @@ function uploadData(reloading, list) {
         alert('upload failed');
       });
     } else {
+      return
       $.post("upload.php", {
         datastr: JSON.stringify(data),
       }, function (data, status, xhr) {
