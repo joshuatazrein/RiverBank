@@ -659,7 +659,7 @@ function uploadData(reloading, list) {
   if (navigator.onLine && !offlinemode) {
     if (list == 'compare') {
       // compare the previous save
-      for (thing of data.keys()) {
+      for (thing of Object.keys(data)) {
         if (prevsave[thing] != data[thing]) {
           $.post('uploadSetting.php', {
             setting: thing,
