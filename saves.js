@@ -657,7 +657,28 @@ function uploadData(reloading, list) {
     return
   }
   if (navigator.onLine && !offlinemode) {
-    if (list != undefined) {
+    if (list == 'compare') {
+      // compare the previous save
+      for (thing of data.keys()) {
+        if (prevsave[thing] != data[thing]) {
+          $.post('uploadSetting.php', {
+            setting: thing,
+            datachange: data[thing]
+          }, function (d, s, xhr) {
+            display('*** upload finished ***', xhr.responseText)
+            const datasave = JSON.stringify(data)
+            localStorage.setItem('data', datasave)
+            prevupload = datasave
+            if (reloading == 'reload') {
+              location.reload()
+            } else if (reloading) {
+              reload(true) // reloads page
+            }
+          })
+          return
+        }
+      }
+    } else if (list != undefined) {
       let text
       if (list == 'pop') {
         text = data.pop
@@ -681,27 +702,6 @@ function uploadData(reloading, list) {
       }).fail(function () {
         alert('upload failed');
       });
-    } else if (list == 'compare') {
-      // compare the previous save
-      for (thing of data.keys()) {
-        if (prevsave[thing] != data[thing]) {
-          $.post('uploadSetting.php', {
-            setting: thing,
-            datachange: data[thing]
-          }, function (d, s, xhr) {
-            display('*** upload finished ***', xhr.responseText)
-            const datasave = JSON.stringify(data)
-            localStorage.setItem('data', datasave)
-            prevupload = datasave
-            if (reloading == 'reload') {
-              location.reload()
-            } else if (reloading) {
-              reload(true) // reloads page
-            }
-          })
-          return
-        }
-      }
     } else {
       $.post("upload.php", {
         datastr: JSON.stringify(data),
