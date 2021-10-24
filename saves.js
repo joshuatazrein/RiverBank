@@ -659,11 +659,12 @@ function uploadData(reloading, list) {
   if (navigator.onLine && !offlinemode) {
     if (list == 'compare') {
       // compare the previous save
-      if (!prevupload) {
+      if (prevupload != undefined) {
+        const prevuploadjson = JSON.parse(prevupload)
+      } else {
         uploadData(false)
         return
       }
-      const prevuploadjson = JSON.parse(prevupload)
       for (thing of Object.keys(data).filter(x => { 
         return x != 'flop' && x != 'pop' })) {
         if (JSON.stringify(prevuploadjson[thing]) != 
