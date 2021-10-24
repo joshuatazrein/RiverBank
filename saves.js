@@ -660,6 +660,7 @@ function uploadData(reloading, list) {
     if (list == 'compare') {
       // compare the previous save
       for (thing of Object.keys(data)) {
+        console.log(thing, prevsave[thing], data[thing]);
         if (prevsave[thing] != data[thing]) {
           $.post('uploadSetting.php', {
             setting: thing,
