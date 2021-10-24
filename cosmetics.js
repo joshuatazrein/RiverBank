@@ -93,7 +93,7 @@ function upload() {
       // rewrite existing data with this
       data = JSON.parse(this.result)
       dataString = JSON.stringify(data)
-      uploadData('reload', 'compare')
+      uploadData('reload')
     })
     fileReader.readAsText(this.files[0])
   })
@@ -114,7 +114,7 @@ function reset() {
   yes = confirm("Are you sure you want to reset?")
   if (yes) {
     data = JSON.parse(resetstring)
-    uploadData('reload', 'compare')
+    uploadData('reload')
   }
 }
 
@@ -200,14 +200,14 @@ function changeDateFormat(format) {
     }
   }
   data.dateSplit = format
-  save('0')
+  save('setting', 'dateSplit')
 }
 
 function toggleHeadingAlign() {
   // switch headings between centered and left aligned
   if (data.headingalign == 'left') data.headingalign = 'center'
   else data.headingalign = 'left'
-  save('0')
+  save('setting', 'headingalign')
   document.documentElement.style.setProperty('--headingalign',
     data.headingalign)
 }
@@ -235,7 +235,7 @@ function toggleButs(saving) {
     data.hidebuts = 'true'
     $(':root').css('--butheight', '0px')
   }
-  if (saving != false) save('0')
+  if (saving != false) save('setting', 'hidebuts')
   updateSizes()
 }
 
@@ -249,7 +249,7 @@ function toggleFuturePanes(saving) {
     data.futurepanes = 'show'
   }
   if (saving != false) {
-    save('0')
+    save('setting', 'futurepanes')
   }
 }
 
@@ -268,7 +268,7 @@ function toggleHelp(saving) {
     data.help = 'show'
   }
   if (saving != false) {
-    save('0')
+    save('setting', 'help')
   }
   updateSizes()
   $(document).scrollTop(0)
@@ -286,12 +286,11 @@ function togglePlay() {
   if (data.play == 'true') {
     data.play = 'false'
     alert('sounds off')
-    save('0')
   } else if (data.play == 'false') {
     data.play = 'true'
     alert('sounds on')
-    save('0')
   }
+  save('setting', 'play')
 }
 
 function toggleBrightness() {
@@ -324,7 +323,7 @@ function setStyle(style, alert) {
         select(dateToHeading(stringToDate('0d')), true)
         select()
       }, 500)
-      save()
+      save('setting', 'style')
     }
   } else if (alert != false) {
     alert('Connect to the Internet to load styles')
