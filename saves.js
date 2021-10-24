@@ -667,7 +667,7 @@ function uploadData(reloading, list) {
             setting: thing,
             datachange: data[thing]
           }, function (d, s, xhr) {
-            display(['*** upload finished ***', xhr.responseText])
+            display(xhr.responseText)
             const datasave = JSON.stringify(data)
             localStorage.setItem('data', datasave)
             prevupload = datasave
