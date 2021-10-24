@@ -526,6 +526,9 @@ function save(changes, changed, undo) {
   now = new Date()
   display('saved: ' + String(now.getTime() - initial))
   initial = now.getTime()
+  if (changes == 'setting') {
+    uploadData(false, changed)
+  }
   if (changes != 'X') { 
     if (changed && selected) {
       if (getFrame(selected).attr('id') == 'pop') {
@@ -533,9 +536,6 @@ function save(changes, changed, undo) {
       } else {
         uploadData(false, loadedlist)
       }
-    } else {
-      console.log('comparing upload');
-      uploadData(false, 'compare') 
     }
   }
   now = new Date()
@@ -657,37 +657,26 @@ function uploadData(reloading, list) {
     return
   }
   if (navigator.onLine && !offlinemode) {
-    if (list == 'compare') {
-      // compare the previous save
-      if (prevupload != undefined) {
-        const prevuploadjson = JSON.parse(prevupload)
-      } else {
-        uploadData(false)
-        return
-      }
-      for (thing of Object.keys(data).filter(x => { 
-        return x != 'flop' && x != 'pop' })) {
-        if (JSON.stringify(prevuploadjson[thing]) != 
-          JSON.stringify(data[thing])) {
-          console.log('uploading', thing, data[thing]);
-          $.post('uploadSetting.php', {
-            setting: thing,
-            datachange: data[thing]
-          }, function (d, s, xhr) {
-            display(xhr.responseText)
-            const datasave = JSON.stringify(data)
-            localStorage.setItem('data', datasave)
-            prevupload = datasave
-            if (reloading == 'reload') {
-              location.reload()
-            } else if (reloading) {
-              reload(true) // reloads page
-            }
-          })
-          return
+    if (list != 'pop' && list != loadedlist) {
+      console.log('uploading setting');
+      // setting upload
+      console.log('uploading setting');
+      $.post('uploadSetting.php', {
+        setting: list,
+        datachange: data[list]
+      }, function (d, s, xhr) {
+        display(xhr.responseText)
+        const datasave = JSON.stringify(data)
+        localStorage.setItem('data', datasave)
+        prevupload = datasave
+        if (reloading == 'reload') {
+          location.reload()
+        } else if (reloading) {
+          reload(true) // reloads page
         }
-      }
+      })
     } else if (list != undefined) {
+      return
       let text
       if (list == 'pop') {
         text = data.pop
@@ -712,6 +701,7 @@ function uploadData(reloading, list) {
         alert('upload failed');
       });
     } else {
+      return
       $.post("upload.php", {
         datastr: JSON.stringify(data),
       }, function (data, status, xhr) {

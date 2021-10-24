@@ -250,7 +250,7 @@ function loadList(saving) {
     toggleCollapse(true)
   }
   if (saving != false) {
-    save('L')
+    save('setting', 'loadedlist')
   } else {
     $(loads[loadedlist]).blur()
   }
