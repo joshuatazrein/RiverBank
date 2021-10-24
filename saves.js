@@ -531,7 +531,8 @@ function save(changes, changed, undo) {
   }
   if (changes != 'X') { 
     if (changed && selected) {
-      if (getFrame(selected).attr('id') == 'pop') {
+      if (getFrame(selected) && 
+        getFrame(selected).attr('id') == 'pop') {
         uploadData(false, 'pop')
       } else {
         uploadData(false, loadedlist)
