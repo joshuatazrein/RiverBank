@@ -659,10 +659,13 @@ function uploadData(reloading, list) {
   if (navigator.onLine && !offlinemode) {
     if (list == 'compare') {
       // compare the previous save
-      console.log('prevupload', prevupload);
+      if (!prevupload) {
+        uploadData(false)
+        return
+      }
       for (thing of Object.keys(data).filter(x => { 
         return x != 'flop' && x != 'pop' })) {
-        if (!prevupload || JSON.stringify(prevupload[thing]) != 
+        if (JSON.stringify(prevupload[thing]) != 
           JSON.stringify(data[thing])) {
           console.log('uploading', thing, data[thing]);
           $.post('uploadSetting.php', {
@@ -683,7 +686,6 @@ function uploadData(reloading, list) {
         }
       }
     } else if (list != undefined) {
-      return
       let text
       if (list == 'pop') {
         text = data.pop
@@ -708,7 +710,6 @@ function uploadData(reloading, list) {
         alert('upload failed');
       });
     } else {
-      return
       $.post("upload.php", {
         datastr: JSON.stringify(data),
       }, function (data, status, xhr) {
