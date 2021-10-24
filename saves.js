@@ -661,9 +661,8 @@ function uploadData(reloading, list) {
       // compare the previous save
       for (thing of Object.keys(data).filter(x => { 
         return x != 'flop' && x != 'pop' })) {
-        console.log(thing, prevsave[thing], data[thing]);
         if (JSON.stringify(prevsave[thing]) != JSON.stringify(data[thing])) {
-          console.log('no match');
+          console.log('uploading', thing, data[thing]);
           $.post('uploadSetting.php', {
             setting: thing,
             datachange: data[thing]
