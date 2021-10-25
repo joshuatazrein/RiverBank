@@ -380,6 +380,7 @@ function updateImportants() {
 }
 
 function updateDeadlines() {
+  console.log('updatedeadlines');
   // update displayed deadlines to match data
   $('.duedate').remove()
   $('.deferdate').remove()
@@ -419,11 +420,16 @@ function updateDeadlines() {
       }
       duedate.addClass('deferdate')
       duedate.removeClass('in')
+      console.log(duedate.text());
       $(heading).after(duedate)
     }
   }
-  for (list of data.flop.concat(
-    [{'title':'pop', 'text':$('#pop').html()}])) {
+  for (list of data.flop.concat([{
+    'title': 'pop',
+    'text': $('#pop').html()
+  }])) {
+    $('#test').empty()
+    $('#test').html(list.text)
     for (let deadline of $('#test').find('.deadline').filter(function () {
       return !$(this).parent().hasClass('complete')
     })) {
@@ -433,7 +439,7 @@ function updateDeadlines() {
       const date = $(deadline).text().slice(1)
       const heading = dateToHeading(stringToDate(date), false)
       const duedate = createBlankTask()
-      duedate.attr('title', 'duedate')
+      duedate.attr('quickhelp', 'duedate')
       // take out deadline
       duedate.text('> ' +
         text.slice(0, index).replace(/^•\s/, '').replace(/^\-\s/, ''))
@@ -444,6 +450,7 @@ function updateDeadlines() {
       }
       duedate.addClass('duedate')
       duedate.removeClass('in')
+      console.log(duedate.text());
       $(heading).after(duedate)
       if (list.title != 'pop') {
         window.duedates.push({
