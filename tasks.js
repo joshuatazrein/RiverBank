@@ -118,14 +118,15 @@ function toggleComplete(task, saving) {
     const newtask = completetask.clone()
     newtask.removeClass('complete')
     newtask.removeClass('taskselect')
+    console.log(newtask);
     if (!getHeadingChildren($(heading)).map((x) => {
         return $(x).text()
       }).includes(completetask.text())) {
       const children = getHeadingChildren(heading)
       if (children.length > 0) {
-        children[children.length - 1].after(newtask)
+        $(children[children.length - 1]).after(newtask)
       } else {
-        heading.after(newtask)
+        $(heading).after(newtask)
       }
       if (!task || saving != false) {
         save('+', newtask)
