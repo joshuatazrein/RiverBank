@@ -483,6 +483,14 @@ function stripChildren(el, mode) {
   }
 }
 
+function stripSubSpans(el) {
+  // purifies element without subspans
+  el = $(el).clone()
+  const children = el.children()
+  children.toArray().forEach(x => { $(x).remove() })
+  return el
+}
+
 // # ORDER
 
 function taskAbove() {
@@ -646,7 +654,7 @@ function search(skiplinks, deadline) {
     children = $('#test').find('span.in').toArray()
     for (let child of children) {
       // if it's a match, add to matches
-      if (searchexp.test(stripChildren($(child)))) {
+      if (searchexp.test(stripSubSpans($(child)).text())) {
         // add to matches
         if (skiplinks == true &&
           $(child).text().includes('[[' + searchtext)) {

@@ -400,8 +400,9 @@ function updateDeadlines() {
     for (let deadline of $('#test').find('.defer').filter(function () {
       return !$(this).parent().hasClass('complete')
     })) {
+      // finds deferred tasks
       // append under heading
-      const text = stripChildren($(deadline).parent())
+      const text = stripSubSpans($(deadline).parent()).text()
       const index = text.search('<')
       let date = stringToDate($(deadline).text().slice(1), false)
       const today = stringToDate('0d')
@@ -412,7 +413,7 @@ function updateDeadlines() {
       const duedate = createBlankTask()
       duedate.attr('title', 'startdate')
       // take out deadline
-      duedate.text(text.slice(0, text.search('<')))
+      duedate.text(text)
       if (getHeading($(deadline).parent())) {
         // add span underneath with its heading
         duedate.append($('<span class="duedateBacklink">' + 
@@ -434,15 +435,14 @@ function updateDeadlines() {
       return !$(this).parent().hasClass('complete')
     })) {
       // append under heading
-      const text = stripChildren($(deadline).parent())
+      const text = stripSubSpans($(deadline).parent()).text()
       const index = text.search('>')
       const date = $(deadline).text().slice(1)
       const heading = dateToHeading(stringToDate(date), false)
       const duedate = createBlankTask()
       duedate.attr('quickhelp', 'duedate')
       // take out deadline
-      duedate.text('> ' +
-        text.slice(0, index).replace(/^•\s/, '').replace(/^\-\s/, ''))
+      duedate.text('> ' + text)
       if (getHeading($(deadline).parent())) {
         // add span underneath with its heading
         duedate.append($('<span class="duedateBacklink">' + 
