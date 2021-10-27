@@ -421,9 +421,9 @@ function updateDeadlines() {
         duedate.append($('<span class="duedateBacklink">' + 
           stripChildren(getHeading($(deadline).parent())) + '</span>'))
       }
-      duedate.addClass('deferdate')
+      duedate.attr('class', $(deadline).parent().attr('class'))
       duedate.removeClass('in')
-      console.log(duedate.text());
+      duedate.addClass('deferdate')
       $(heading).after(duedate)
     }
   }
@@ -436,6 +436,7 @@ function updateDeadlines() {
     for (let deadline of $('#test').find('.deadline').filter(function () {
       return !$(this).parent().hasClass('complete')
     })) {
+      // find deadlines
       // append under heading
       const text = stripSubSpans($(deadline).parent()).text()
       const index = text.search('>')
@@ -577,7 +578,7 @@ function save(changes, changed, undo) {
   now = new Date()
   display('clearEmptyDates: ' + String(now.getTime() - initial))
   initial = now.getTime()
-  if (['L', 'X'].includes(changes)) {
+  if (['setting', 'X'].includes(changes)) {
     updateBuffers()
   }
   now = new Date()
@@ -585,7 +586,7 @@ function save(changes, changed, undo) {
   initial = now.getTime()
   if (changes == 'X') {
     updateSpanDrags()
-  } else if (changes == 'L') {
+  } else if (changes == 'setting' && changed == 'loadedlist') {
     updateSpanDrags('flop')
   } else if (changes == '+' && changed) {
     updateSpanDrags(changed)
@@ -1146,6 +1147,7 @@ function loadPage(starting, oldselect, scrolls) {
     initial = now.getTime()
     display('startdoc: ' + String(curtime));
     now = new Date()
+    updateDeadlines()
     if (starting) {
       $.get(data.style + '-' + data.brightness + '.css',
       function () {

@@ -513,6 +513,7 @@ function dragTaskOver(event) {
 
 function updateSpanDrags(task) {
   try {
+    console.log('updating span drags');
     // add handles for drags on mobile, or enable jQuery drags on desktop
     let selector
     if (!task) {
@@ -606,6 +607,7 @@ function updateSpanDrags(task) {
       $('.ui-droppable').removeClass('ui-droppable')
     }
   } catch (err) {
+    console.log(err);
   }
 }
 
