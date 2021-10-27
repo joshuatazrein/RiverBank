@@ -486,8 +486,17 @@ function stripChildren(el, mode) {
 function stripSubSpans(el) {
   // purifies element without subspans
   el = $(el).clone()
+  el.text(el.text()
+    .replace(/^•\s/, '').replace(/^-\s/, ''))
   const children = el.children()
-  children.toArray().forEach(x => { $(x).remove() })
+  const saveClasses = ['bold', 'italic', 'bold-italic']
+  children.toArray().forEach(x => { 
+    let saveChild = false
+    for (c of saveClasses) {
+      if ($(x).hasClass(c)) saveChild = true
+    }
+    if (!saveChild) $(x).remove()
+  })
   return el
 }
 
