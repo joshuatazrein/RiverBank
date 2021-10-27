@@ -495,7 +495,7 @@ function stripSubSpans(el) {
     for (c of saveClasses) {
       if ($(x).hasClass(c)) saveChild = true
     }
-    if (!saveChild) $(x).remove()
+    if (saveChild == false) { $(x).remove() }
   })
   return el
 }
