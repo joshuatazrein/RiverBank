@@ -360,17 +360,19 @@ function updateImportants() {
       .forEach((x) => {
         // add all important tasks to a list
         if (getMainHeading($(x))) {
-          importants.push($('<p><span class="impspan" quickhelp="parent heading" list="' + 
+          importants.push($('<p><span class="impspan" quickhelp="parent \
+            heading" list="' + 
             counter + '">' + stripChildren(getMainHeading($(x))) + '</span>' + 
             '<span class="falselinkimp" quickhelp="important & uncomplete">' + 
-            stripChildren($(x)).replace(/•\s/, '').replace(/\-\s/, '') + 
+            stripSubSpans($(x)).text().replace(/•\s/, '').replace(/\-\s/, '') + 
             '</span></p>'))
         } else {
-          importants.push($('<p><span class="impspan-list" quickhelp="parent list" list="' + 
+          importants.push($('<p><span class="impspan-list" \
+            quickhelp="parent list" list="' + 
             counter + '">' + 
             list.title.replace(/•\s/, '').replace(/\-\s/, '')  + '</span>' + 
-            '<span class="falselinkimp" quickhelp="important & uncomplete">' + stripChildren($(x)) + 
-            '</span></p>'))
+            '<span class="falselinkimp" quickhelp="important & uncomplete">' + 
+            stripSubSpans($(x)).text() + '</span></p>'))
         }
       })
     counter ++

@@ -484,18 +484,27 @@ function stripChildren(el, mode) {
 }
 
 function stripSubSpans(el) {
+  console.log('stipstubspans');
   // purifies element without subspans
   el = $(el).clone()
-  el.text(el.text()
-    .replace(/^•\s/, '').replace(/^-\s/, ''))
+  // el.text(el.text()
+  //   .replace(/^•\s/, '').replace(/^-\s/, ''))
   const children = el.children()
+  console.log(children);
   const saveClasses = ['bold', 'italic', 'bold-italic']
   children.toArray().forEach(x => { 
     let saveChild = false
     for (c of saveClasses) {
-      if ($(x).hasClass(c)) saveChild = true
+      if ($(x).hasClass(c)) {
+        console.log('true');
+        saveChild = true
+      }
     }
-    if (saveChild == false) { $(x).remove() }
+    console.log('thing');
+    if (saveChild == false) { 
+      $(x).remove() 
+      console.log('removing', x);
+    }
   })
   return el
 }
