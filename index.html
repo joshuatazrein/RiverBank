@@ -52,6 +52,7 @@
           <p id='username'></p>
           <div id='editbuts' class='butbar' style='margin:2px 0;'>
             <button quickhelp='options' class='mobilebut opts' id='optionsbut' function='context(ev)' style='font-size:12px;'>...</button>
+            <button quickhelp='set task type' class='mobilebut opts' id='typebut' function='setOptions()'>+#</button>
           </div>
           <div id='searchbarframe'>
             <input id='searchbar' placeholder="search (d: date)" quickhelp='search (see help: "dates")'>
@@ -236,8 +237,6 @@
       <p function='deleteTask()' class='dropdown-item' id='context-deleteTask'>delete (delete)</p>
       <p function='archiveTask()' class='dropdown-item' id='context-archiveTask'>archive (shift space)</p>
       <p function='' class='dropdown-item' id='context-divider'>————————————</p>
-
-      <button quickhelp='set task type' class='mobilebut opts' id='typebut' function='setOptions()'>type</button>
 
       <p function='moveToList()' class='dropdown-item' id='context-moveToList'>move to list</p>
       <p function='toggleComplete()' class='dropdown-item' id='context-toggleComplete'>toggle complete (space)</p>

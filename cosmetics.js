@@ -938,7 +938,8 @@ function keyDown(ev) {
   if (['Command', 'Shift', 'Alt'].includes(ev.key)) {
     return
   }
-  if (['ArrowUp', 'ArrowDown'].includes(ev.key)) ev.preventDefault()
+  if (['ArrowUp', 'ArrowDown'].includes(ev.key) &&
+    selected[0].tagName != 'TEXTAREA') ev.preventDefault()
   // makes sure to unselect on proper things
   if (selected && selected[0].tagName == 'TEXTAREA' && ev.ctrlKey) {
     const selectstart = selected[0].selectionStart

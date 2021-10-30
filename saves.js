@@ -411,7 +411,7 @@ function updateDeadlines() {
       if (date.getTime() < today.getTime()) {
         date = today
       }
-      const heading = dateToHeading(today, false)
+      const heading = dateToHeading(date, false)
       const duedate = createBlankTask()
       duedate.attr('title', 'startdate')
       // take out deadline
@@ -667,6 +667,8 @@ function uploadData(reloading, list) {
     display('identical');
     return
   }
+  const now = new Date()
+  data.timestamp = now.getTime()
   if (navigator.onLine && !offlinemode) {
     if (list != 'pop' && list != loadedlist) {
       console.log('uploading setting');

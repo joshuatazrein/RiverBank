@@ -183,6 +183,9 @@ function moveToList() {
 function setTask(type) {
   // set type of selected task
   if (!selected || selected.hasClass('dateheading')) return
+  const newtask = createBlankTask()
+  selected.after(newtask)
+  select(newtask)
   const list = stripChildren(selected).split(' ').filter((x) => {
     return x != ''
   })
@@ -195,7 +198,6 @@ function setTask(type) {
         list.slice(0, list.length - 1).join(' ') + ' >' +
         getChildren(selected))
     }
-    editTask()
   } else if (type == 'repeat') {
     if (!/~/.test(list[list.length - 1])) {
       selected.html(stripChildren(selected) + ' ~' + getChildren(selected))
@@ -203,7 +205,6 @@ function setTask(type) {
       selected.html(
         list.slice(0, list.length - 1).join(' ') + ' ~' + getChildren(selected))
     }
-    editTask()
   } else {
     selected.attr('class', 'in ' + type)
     if (['-', '•'].includes(selected.text().charAt(0))) {
@@ -219,8 +220,8 @@ function setTask(type) {
     } else if (type == 'note') {
       selected.html('- ' + selected.html())
     }
-    save('0')
   }
+  editTask()
 }
 
 // # DRAGGING

@@ -185,15 +185,12 @@ function eventTimeFormat(el) {
   if ($($(el).children().filter('.timing')).length == 0) return
   let timing = $($(el).children().filter('.timing')[0]).text().split('-')
   timing = timing.map(x => { return process(x) })
-  if (timing.length == 2 && mod12sub(timing[1], timing[0]) > 1) {
+  if (timing.length == 2) {
     $(el).css('padding-bottom', mod12sub(timing[1], timing[0]) + 'em')
-  } else if (timing.length == 1 &&
-    $(el).next().find('.timing')[0]) {
-    // treat start of next event as next time
-    $(el).css('padding-bottom', 
-      mod12sub(
-      process($($(el).next().find('.timing')[0]).text().split('-')[0]), 
-      timing[0]) + 'em')
+    $(el).removeClass('reminder')
+  } else if (timing.length == 1) {
+    $(el).addClass('reminder')
+    $(el).css('padding-bottom', '')
   } else {
     $(el).css('padding-bottom', '')
   }

@@ -640,7 +640,7 @@ span.in {
 }
 
 .taskselect {
-  border: 1px solid var(--select);
+  border: 1px solid var(--select) !important;
   border-radius: 5px;
 }
 
@@ -790,6 +790,11 @@ span.event {
   background-color: var(--event);
   border-radius: 3px;
   margin-bottom: 5px;
+}
+
+span.event.reminder {
+  border: 1px solid var(--event);
+  background-color: var(--background);
 }
 
 span.weblink {
