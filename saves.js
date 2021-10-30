@@ -808,7 +808,10 @@ function clearLogo() {
 }
 
 function reload(force) {
-  if (ask) return
+  if (ask) {
+    console.log('asking');
+    return
+  }
   // begin reload by downloading server data
   if (window.parent.location.href.includes('welcome')) {
     reload2()

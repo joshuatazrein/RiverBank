@@ -119,20 +119,15 @@ function newList(list) {
 
 function deleteList() {
   // delete selected list
-  ask = true
-  yes = confirm('are you sure you want to delete this list?')
-  if (yes) {
-    $('#loads').children()[loadedlist].remove()
-    data.flop.splice(loadedlist, 1)
-    $('#flop').empty()
-    loadedlist = undefined
-    save()
-    if (data.flop.length > 0) {
-      loadedlist = 0
-      loadList()
-    }
+  $('#loads').children()[loadedlist].remove()
+  data.flop.splice(loadedlist, 1)
+  $('#flop').empty()
+  loadedlist = undefined
+  save()
+  if (data.flop.length > 0) {
+    loadedlist = 0
+    loadList()
   }
-  ask = false
 }
 
 // # FOLDING
