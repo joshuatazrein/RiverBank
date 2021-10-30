@@ -123,10 +123,10 @@ function deleteList() {
   data.flop.splice(loadedlist, 1)
   $('#flop').empty()
   loadedlist = undefined
-  save()
+  save('L', undefined, true)
   if (data.flop.length > 0) {
     loadedlist = 0
-    loadList()
+    loadList(false)
   }
 }
 

@@ -786,6 +786,7 @@ function undo() {
     }
   }
   loadedlist = data.loadedlist
+  if (!data.flop[loadedlist]) loadedlist = 0
   loadList(false) // load list from data
   dragsOn(false)
   $('#searchbar').val('')

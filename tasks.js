@@ -532,19 +532,19 @@ function updateSpanDrags(task) {
       $(selector).toArray().forEach((x) => {
         $(x).draggable({
           handle: '.mobhandle',
-          containment: 'window',
           axis: 'y',
+          containment: 'window',
           revert: true,
           appendTo: $('#listcontainer'),
+          distance: 20,
           cursorAt: {top: $(x).height() / 2},
           helper: 'clone',
           refreshPositions: true,
           zIndex: 1,
-          distance: 20,
           addClasses: false,
           start: function (event) {
-            // $(this).hide()
             dragTask(event, $(this))
+            $('#listcontainer > span').removeClass('in')
           },
           drag: function (event) {
             dragTaskOver(event)
