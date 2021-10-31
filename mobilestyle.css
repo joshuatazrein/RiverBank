@@ -22,7 +22,7 @@ span span.mobhandle {
   display: inline-block;
   border: 1px solid var(--select);
   height: 1em !important;
-  width: 3em !important;
+  width: 1em !important;
   max-width: var(--fontsize);
   max-height: var(--fontsize);
   border-radius: 100%;

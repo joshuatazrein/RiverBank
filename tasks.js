@@ -532,6 +532,7 @@ function updateSpanDrags(task) {
       $(selector).toArray().forEach((x) => {
         $(x).draggable({
           handle: '.mobhandle',
+          axis: 'y',
           containment: 'window',
           revert: true,
           appendTo: $('#listcontainer'),
