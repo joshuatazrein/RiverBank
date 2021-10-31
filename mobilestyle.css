@@ -10,40 +10,8 @@ body {
 span.dateheading {
   padding-right: 60px;
 }
-span span span.mobhandle {
-  /* height: 0.85em !important;
-  width: 0.85em !important; */
-  right: calc(2px + 0.08em);
-}
-span.note span.mobhandle {
-  right: calc(2px + 0.15em);
-}
-span span.mobhandle {
-  display: inline-block;
-  border: 1px solid var(--select);
-  height: 1em !important;
-  width: 1em !important;
-  max-width: var(--fontsize);
-  max-height: var(--fontsize);
-  border-radius: 100%;
-  padding: 0;
-  margin: 1px;
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  z-index: 1;
-}
-span.in {
-  padding-right: 40px;
-}
-span.in span.in {
-  width: calc(100% + 5px + 40px - var(--indent));
-}
-span.list span.in, span.note span.in {
-  width: calc(100% + 5px + 40px);
-}
-span span.event {
-  width: calc(100% + var(--indent) + 40px);
+.rendered > * {
+  width: calc(100% - 25px);
 }
 .slider::-webkit-slider-thumb {
   height: 16px;
