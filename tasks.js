@@ -543,10 +543,12 @@ function updateSpanDrags(task) {
           zIndex: 1,
           addClasses: false,
           start: function (event) {
+            console.log('drag started');
             // dragTask(event, $(this))
             // $('#listcontainer > span').removeClass('in')
           },
           drag: function (event) {
+            console.log('dragging');
             // dragTaskOver(event)
           },
         })
@@ -576,23 +578,23 @@ function updateSpanDrags(task) {
     }
     // reset drops
     if (!task) {
-      $('span.in').droppable({
-        accept: 'span.in',
-        hoverClass: 'drop-hover',
-        greedy: true,
-        drop: function (event) {
-          dropTask(event)
-        }
-      })
+      // $('span.in').droppable({
+      //   accept: 'span.in',
+      //   hoverClass: 'drop-hover',
+      //   greedy: true,
+      //   drop: function (event) {
+      //     dropTask(event)
+      //   }
+      // })
     } else {
-      $(selector).droppable({
-        accept: 'span.in',
-        hoverClass: 'drop-hover',
-        greedy: true,
-        drop: function (event) {
-          dropTask(event)
-        }
-      })
+      // $(selector).droppable({
+      //   accept: 'span.in',
+      //   hoverClass: 'drop-hover',
+      //   greedy: true,
+      //   drop: function (event) {
+      //     dropTask(event)
+      //   }
+      // })
     }
     $('.buffer').droppable({
       accept: 'span.in',
