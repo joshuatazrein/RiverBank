@@ -30,11 +30,11 @@ span span.mobhandle {
   margin: 1px;
   position: absolute;
   top: 2px;
-  right: 2px;
+  left: 2px;
   z-index: 1;
 }
 span.in {
-  padding-right: 40px;
+  padding-left: 40px;
 }
 span.in span.in {
   width: calc(100% + 5px + 40px - var(--indent));

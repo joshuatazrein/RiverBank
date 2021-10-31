@@ -531,7 +531,7 @@ function updateSpanDrags(task) {
       $(selector).attr('draggable', 'false')
       $(selector).toArray().forEach((x) => {
         $(x).draggable({
-          // handle: '.mobhandle',
+          handle: '.mobhandle',
           axis: 'y',
           containment: 'window',
           revert: true,
