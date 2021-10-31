@@ -526,14 +526,14 @@ function updateSpanDrags(task) {
     }
     if (mobileTest()) {
       $(selector).find('.mobhandle').remove()
-      // $(selector).prepend(
-      //   '<span class="mobhandle"></span>')
+      $(selector).prepend(
+        '<span class="mobhandle"></span>')
       $(selector).attr('draggable', 'false')
       $(selector).toArray().forEach((x) => {
         $(x).draggable({
+          handle: '.mobhandle',
           axis: 'y',
           containment: 'window',
-          delay: 1000,
           revert: true,
           appendTo: $('#listcontainer'),
           distance: 20,
@@ -544,12 +544,12 @@ function updateSpanDrags(task) {
           addClasses: false,
           start: function (event) {
             console.log('drag started');
-            dragTask(event, $(this))
-            $('#listcontainer > span').removeClass('in')
+            // dragTask(event, $(this))
+            // $('#listcontainer > span').removeClass('in')
           },
           drag: function (event) {
             console.log('dragging');
-            dragTaskOver(event)
+            // dragTaskOver(event)
           },
         })
       })

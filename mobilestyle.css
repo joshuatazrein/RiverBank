@@ -13,12 +13,12 @@ span.dateheading {
 span span span.mobhandle {
   /* height: 0.85em !important;
   width: 0.85em !important; */
-  /* right: calc(2px + 0.08em); */
+  right: calc(2px + 0.08em);
 }
 span.note span.mobhandle {
-  /* right: calc(2px + 0.15em); */
+  right: calc(2px + 0.15em);
 }
-/* span span.mobhandle {
+span span.mobhandle {
   display: inline-block;
   border: 1px solid var(--select);
   height: 1em !important;
@@ -32,18 +32,18 @@ span.note span.mobhandle {
   top: 2px;
   left: 2px;
   z-index: 1;
-} */
+}
 span.in {
-  /* padding-left: 40px; */
+  padding-left: 40px;
 }
 span.in span.in {
-  /* width: calc(100% + 5px + 40px - var(--indent)); */
+  width: calc(100% + 5px + 40px - var(--indent));
 }
 span.list span.in, span.note span.in {
-  /* width: calc(100% + 5px + 40px); */
+  width: calc(100% + 5px + 40px);
 }
 span span.event {
-  /* width: calc(100% + var(--indent) + 40px); */
+  width: calc(100% + var(--indent) + 40px);
 }
 .slider::-webkit-slider-thumb {
   height: 16px;
