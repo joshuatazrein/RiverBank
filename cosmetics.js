@@ -476,7 +476,10 @@ function scrollToToday() {
 
 // # MENUS
 
-function context(ev, mobile) {
+function context(ev) {
+  console.trace()
+  console.log(ev);
+  console.log('context');
   // right-click menu
   justclicked = true
   setTimeout(function () { justclicked = false }, 500)
@@ -485,9 +488,6 @@ function context(ev, mobile) {
     saveTask()
   }
   let target = ev.target
-  if (mobile) {
-    target = $(ev.target).parent()[0]
-  }
   ev.preventDefault()
   if ($(target)[0].tagName == 'TEXTAREA' &&
     !$(target).hasClass('selected')) {
@@ -672,6 +672,7 @@ function setOptions() {
 // # COMMANDS
 
 function clickOff(ev) {
+  if (contextTimer) clearTimeout(contextTimer)
   if (loading == true) { return } // disable while reloading
   // mouse off
   if (draggingtask) { 
@@ -736,11 +737,7 @@ function clickOff(ev) {
   setTimeout(function () { 
     dblclicked = false 
   }, 300)
-  if (mobileTest() && $(ev.target).hasClass('mobhandle') && !draggingtask) {
-    // context menu
-    select($(ev.target).parent(), false)
-    context(ev, true)
-  } else if ($(ev.target).attr('id') == 'popBut') {
+  if ($(ev.target).attr('id') == 'popBut') {
     if (selected == undefined || getFrame(selected).attr('id') != 'pop') {
       select(dateToHeading(stringToDate('0d')), true)
     }
@@ -887,6 +884,13 @@ function clickOn(ev) {
   } else if (getFrame($(ev.target)) && $(ev.target).hasClass('in')) {
     // select allowable elements
     select(ev.target, false)
+    if (mobileTest()) {
+      contextTimer = setTimeout(function() { 
+        console.log(ev);
+        context(ev);
+        selected.trigger('dragend')
+      }, 500)
+    }
   } else if (!isSubtask($(ev.target))) {
     // select parents of 
     select($(ev.target).parent(), false)

@@ -954,6 +954,7 @@ function loadPage(starting, oldselect, scrolls) {
     window.filtered = undefined // filtering
     window.filteredlist = undefined // filtered tasks
     window.editing = false
+    window.contextTimer = undefined // for context on mobile
     window.touched = false
     window.activedate = new Date()
     window.ask = false

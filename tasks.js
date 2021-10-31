@@ -227,6 +227,11 @@ function setTask(type) {
 // # DRAGGING
 
 function dragTask(ev) {
+  if ($('#context-menu').is(':visible')) {
+    ev.stopPropagation()
+    ev.preventDefault()
+    return
+  }
   // begin the drag
   select(ev.target)
   draggingtask = true
@@ -361,6 +366,12 @@ function dropTask(ev) {
 }
 
 function dragTaskOver(event) {
+  if ($('#context-menu').is(':visible')) {
+    console.log('bleh');
+    event.stopPropagation()
+    event.preventDefault()
+    return
+  }
   // dragging task over other one; for desktop
   const boxright = $('#listcontainer').offset().left
   if (focused && event.pageX < 50 && $('#poplist').is(':visible')) {
