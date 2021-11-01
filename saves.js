@@ -657,6 +657,19 @@ function diffsLog(oldString, newString) {
   return diffs
 }
 
+function replaceData() {
+  $.post("upload.php", {
+    datastr: JSON.stringify(data),
+  }, function (data, status, xhr) {
+    diffsLog(prevupload, xhr.responseText) // for debugging saving
+    display('*** upload finished ***')
+    const datasave = JSON.stringify(data)
+    localStorage.setItem('data', datasave)
+    prevupload = datasave
+    reload(true)
+  })
+}
+
 function uploadData(reloading, list) {
   // upload data to the server
   if (window.parent.location.href.includes('welcome')) {
