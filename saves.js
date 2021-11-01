@@ -668,7 +668,7 @@ function uploadData(reloading, list) {
     return
   }
   const now = new Date()
-  data.timestamp = now.getTime()
+  if (data.timestamp) data.timestamp = undefined
   if (navigator.onLine && !offlinemode) {
     if (list != 'pop' && list != loadedlist) {
       console.log('uploading setting');
