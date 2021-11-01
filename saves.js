@@ -658,16 +658,18 @@ function diffsLog(oldString, newString) {
 }
 
 function replaceData() {
-  $.post("upload.php", {
-    datastr: JSON.stringify(data),
-  }, function (data, status, xhr) {
-    diffsLog(prevupload, xhr.responseText) // for debugging saving
-    display('*** upload finished ***')
-    const datasave = JSON.stringify(data)
-    localStorage.setItem('data', datasave)
-    prevupload = datasave
-    reload(true)
-  })
+  setTimeout(function () {
+    $.post("upload.php", {
+      datastr: JSON.stringify(data),
+    }, function (data, status, xhr) {
+      diffsLog(prevupload, xhr.responseText) // for debugging saving
+      display('*** upload finished ***')
+      const datasave = JSON.stringify(data)
+      localStorage.setItem('data', datasave)
+      prevupload = datasave
+      reload(true)
+    })
+  }, 1000)
 }
 
 function uploadData(reloading, list) {
