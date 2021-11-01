@@ -662,12 +662,11 @@ function replaceData() {
     $.post("upload.php", {
       datastr: JSON.stringify(data),
     }, function (data, status, xhr) {
-      diffsLog(prevupload, xhr.responseText) // for debugging saving
       display('*** upload finished ***')
       const datasave = JSON.stringify(data)
       localStorage.setItem('data', datasave)
       prevupload = datasave
-      location.reload()
+      reload2()
     })
   }, 1000)
 }
