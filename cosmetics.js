@@ -114,7 +114,7 @@ function reset() {
   yes = confirm("Are you sure you want to reset?")
   if (yes) {
     data = JSON.parse(resetstring)
-    replaceData('reload')
+    replaceData()
   }
 }
 

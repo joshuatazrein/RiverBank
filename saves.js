@@ -658,17 +658,8 @@ function diffsLog(oldString, newString) {
 }
 
 function replaceData() {
-  setTimeout(function () {
-    $.post("upload.php", {
-      datastr: JSON.stringify(data),
-    }, function (data, status, xhr) {
-      display('*** upload finished ***')
-      const datasave = JSON.stringify(data)
-      localStorage.setItem('data', datasave)
-      prevupload = datasave
-      reload2()
-    })
-  }, 1000)
+  reload2()
+  save()
 }
 
 function uploadData(reloading, list) {
