@@ -667,7 +667,7 @@ function replaceData() {
       const datasave = JSON.stringify(data)
       localStorage.setItem('data', datasave)
       prevupload = datasave
-      reload(true)
+      location.reload()
     })
   }, 1000)
 }
