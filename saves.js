@@ -857,6 +857,21 @@ function reload(force) {
             display('*** download finished, reloading ***');
             // only reload if data differs
             data = JSON.parse(xhr.responseText)
+            if (data.flop == undefined) {
+              data.flop = [{'inbox':''}]
+              data.loadedlist = 0
+            }
+            if (data.pop == undefined) data.pop = ''
+            if (data.loadedlist == undefined) data.loadedlist = 0
+            if (data.style == undefined) data.style = 'space'
+            if (data.brightness == undefined) data.brightness = 'dark'
+            if (data.hidebuts == undefined) data.hidebuts = 'false'
+            if (data.dateSplit == undefined) data.dateSplit = 'mm/dd/yyyy'
+            if (data.weekdays == undefined) data.weekdays = 'Mon'
+            if (data.help == undefined) data.help = 'show'
+            if (data.headingalign == undefined) data.headingalign = 'center'
+            if (data.play == undefined) data.play = 'true'
+            if (data.futurepanes == undefined) data.futurepanes = 'show'
             reload2()
           }
         }
