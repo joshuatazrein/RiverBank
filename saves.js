@@ -872,6 +872,7 @@ function reload(force) {
             if (data.headingalign == undefined) data.headingalign = 'center'
             if (data.play == undefined) data.play = 'true'
             if (data.futurepanes == undefined) data.futurepanes = 'show'
+            console.log(data);
             reload2()
           }
         }
